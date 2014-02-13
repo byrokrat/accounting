@@ -1,0 +1,23 @@
+{
+    "name": "ledgr/accounting",
+    "description": "Classes for working with bookkeeping data",
+    "keywords": ["accounting", "bookkeeping", "VISMA", "SIE"],
+    "homepage": "https://github.com/ledgr/accounting",
+    "type": "library",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "Hannes Forsgård",
+            "email": "hannes.forsgard@fripost.org"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "ledgr\\accounting\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.3.0",
+        "ledgr/utils": "dev-master"
+    }
+}
