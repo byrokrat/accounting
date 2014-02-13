@@ -1,4 +1,5 @@
-# ledgr/accounting
+# ledgr/accounting [![Code Coverage](https://scrutinizer-ci.com/g/ledgr/accounting/badges/coverage.png?s=a4b44f84ab03cc2d0e0ca5b76393faa86b5965ae)](https://scrutinizer-ci.com/g/ledgr/accounting/)
+
 
 Classes for working with bookkeeping data. Specifically transaction
 data can be read and written in the SIE format. Accounting templates from the
