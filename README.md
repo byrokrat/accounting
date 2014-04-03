@@ -5,8 +5,6 @@ Classes for working with bookkeeping data. Specifically transaction
 data can be read and written in the SIE format. Accounting templates from the
 VISMA series of accounting software is also supported.
 
-**License**: [GPL](/LICENSE)
-
 
 Installation using [composer](http://getcomposer.org/)
 ------------------------------------------------------

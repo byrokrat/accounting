@@ -4,7 +4,7 @@
     "keywords": ["accounting", "bookkeeping", "VISMA", "SIE"],
     "homepage": "https://github.com/ledgr/accounting",
     "type": "library",
-    "license": "GPL",
+    "license": "WTFPL",
     "authors": [
         {
             "name": "Hannes Forsgård",
