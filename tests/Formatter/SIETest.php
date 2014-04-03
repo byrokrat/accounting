@@ -7,7 +7,7 @@ use ledgr\accounting\Verification;
 use ledgr\accounting\Transaction;
 use ledgr\accounting\ChartOfAccounts;
 use ledgr\accounting\Account;
-use ledgr\utils\Amount;
+use ledgr\amount\Amount;
 
 class SIETest extends \PHPUnit_Framework_TestCase
 {

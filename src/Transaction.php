@@ -9,7 +9,7 @@
 
 namespace ledgr\accounting;
 
-use ledgr\utils\Amount;
+use ledgr\amount\Amount;
 
 /**
  * Simple accounting transaction class

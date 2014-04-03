@@ -11,7 +11,7 @@ namespace ledgr\accounting;
 
 use ledgr\accounting\Exception\InvalidStructureException;
 use ledgr\accounting\Exception\InvalidTemplateException;
-use ledgr\utils\Amount;
+use ledgr\amount\Amount;
 
 /**
  * Simple accounting template class

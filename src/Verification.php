@@ -10,7 +10,7 @@
 namespace ledgr\accounting;
 
 use DateTime;
-use ledgr\utils\Amount;
+use ledgr\amount\Amount;
 
 /**
  * Simple accounting verification class

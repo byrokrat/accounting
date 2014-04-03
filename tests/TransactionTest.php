@@ -2,7 +2,7 @@
 
 namespace ledgr\accounting;
 
-use ledgr\utils\Amount;
+use ledgr\amount\Amount;
 
 class TransactionTest extends \PHPUnit_Framework_TestCase
 {
