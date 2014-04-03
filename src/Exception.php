@@ -12,6 +12,6 @@ namespace ledgr\accounting;
 /**
  * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
-class Exception extends \Exception
+interface Exception
 {
 }

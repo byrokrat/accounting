@@ -9,8 +9,8 @@
 
 namespace ledgr\accounting;
 
-use ledgr\accounting\Exception\InvalidStructureException;
-use ledgr\accounting\Exception\InvalidTemplateException;
+use ledgr\accounting\Exception\UnexpectedValueException;
+use ledgr\accounting\Exception\InvalidArgumentException;
 use ledgr\amount\Amount;
 
 /**
@@ -57,17 +57,16 @@ class Template
     /**
      * Set template id
      *
-     * @param  string                   $id
+     * @param  string                  $id
      * @return void
-     * @throws InvalidTemplateException If id is longer than 6 characters
+     * @throws InvalidArgumentException If id is longer than 6 characters
      */
     public function setId($id)
     {
         assert('is_string($id)');
         $id = trim($id);
         if (mb_strlen($id) > 6) {
-            $msg = "Invalid template id '$id'. Use max 6 characters.";
-            throw new InvalidTemplateException($msg);
+            throw new InvalidArgumentException("Invalid template id <$id>. Use max 6 characters.");
         }
         $this->id = $id;
     }
@@ -87,15 +86,14 @@ class Template
      *
      * @param  string                   $name
      * @return void
-     * @throws InvalidTemplateException If name is longer than 20 characters
+     * @throws InvalidArgumentException If name is longer than 20 characters
      */
     public function setName($name)
     {
         assert('is_string($name)');
         $name = trim($name);
         if (mb_strlen($name) > 20) {
-            $msg = "Invalid template name '$name'. Use max 20 characters.";
-            throw new InvalidTemplateException($msg);
+            throw new InvalidArgumentException("Invalid template name <$name>. Use max 20 characters.");
         }
         $this->name = $name;
     }
@@ -115,15 +113,14 @@ class Template
      *
      * @param  string                   $text
      * @return void
-     * @throws InvalidTemplateException If text is longer than 60 characters
+     * @throws InvalidArgumentException If text is longer than 60 characters
      */
     public function setText($text)
     {
         assert('is_string($text)');
         $text = trim($text);
         if (mb_strlen($text) > 60) {
-            $msg = "Invalid template text '$text'. Use max 60 characters.";
-            throw new InvalidTemplateException($msg);
+            throw new InvalidArgumentException("Invalid template text <$text>. Use max 60 characters.");
         }
         $this->text = $text;
     }
@@ -220,15 +217,14 @@ class Template
     /**
      * Create verification from template
      *
-     * @param  ChartOfAccounts           $chart
+     * @param  ChartOfAccounts          $chart
      * @return Verification
-     * @throws InvalidStructureException If any key is NOT substituted
+     * @throws UnexpectedValueException If any key is NOT substituted
      */
     public function buildVerification(ChartOfAccounts $chart)
     {
         if (!$this->ready($key)) {
-            $msg = "Unable to substitute template key '$key'";
-            throw new InvalidStructureException($msg);
+            throw new UnexpectedValueException("Unable to substitute template key <$key>");
         }
 
         // Build verification

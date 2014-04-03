@@ -9,11 +9,9 @@
 
 namespace ledgr\accounting\Exception;
 
-use ledgr\accounting\Exception;
-
 /**
  * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
-class InvalidChartException extends Exception
+class UnexpectedValueException extends \UnexpectedValueException implements \ledgr\accounting\Exception
 {
 }

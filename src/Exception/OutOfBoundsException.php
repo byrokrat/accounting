@@ -9,11 +9,9 @@
 
 namespace ledgr\accounting\Exception;
 
-use ledgr\accounting\Exception;
-
 /**
  * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
-class InvalidAccountException extends Exception
+class OutOfBoundsException extends \OutOfBoundsException implements \ledgr\accounting\Exception
 {
 }

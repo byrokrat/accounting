@@ -12,9 +12,9 @@ namespace ledgr\accounting\Formatter;
 use ledgr\accounting\Verification;
 use ledgr\accounting\ChartOfAccounts;
 use ledgr\accounting\Account;
-use ledgr\accounting\Exception\VerificationNotBalancedException;
-use ledgr\accounting\Exception\InvalidYearException;
-use ledgr\accounting\Exception\InvalidChartException;
+use ledgr\accounting\Exception\UnexpectedValueException;
+use ledgr\accounting\Exception\OutOfBoundsException;
+use ledgr\accounting\Exception\RangeException;
 use DateTime;
 
 /**
@@ -184,17 +184,16 @@ class SIE
     /**
      * Add verification to SIE, verification MUST be balanced
      *
-     * @param  Verification                     $ver
-     * @throws VerificationNotBalancedException If $ver is unbalanced
-     * @throws InvalidYearException             If $ver date is out of bounds
+     * @param  Verification             $ver
+     * @throws UnexpectedValueException If $ver is unbalanced
+     * @throws OutOfBoundsException     If $ver date is out of bounds
      * @return SIE Instance for chaining
      */
     public function addVerification(Verification $ver)
     {
         // Verify that verification is balanced
         if (!$ver->isBalanced()) {
-            $msg = "Verification '{$ver->getText()}' is not balanced";
-            throw new VerificationNotBalancedException($msg);
+            throw new UnexpectedValueException("Verification <{$ver->getText()}> is not balanced");
         }
 
         // Verify that verification date matches accounting year
@@ -202,8 +201,7 @@ class SIE
             $verdate = $ver->getDate();
             if ($verdate < $this->yearStart || $verdate > $this->yearStop) {
                 $date = $verdate->format('Y-m-d');
-                $msg = "Verification date '$date' is out of bounds";
-                throw new InvalidYearException($msg);
+                throw new OutOfBoundsException("Verification date <$date> is out of bounds");
             }
         }
 
@@ -339,8 +337,8 @@ class SIE
     /**
      * Create a ChartOfAccounts object from SIE string (in charset CP437)
      *
-     * @param  string                $sie
-     * @throws InvalidChartException If $sie is not valid
+     * @param  string         $sie
+     * @throws RangeException If $sie is not valid
      * @return ChartOfAccounts
      */
     public function importChart($sie)
@@ -356,29 +354,25 @@ class SIE
             switch ($data[0]) {
                 case '#KPTYP':
                     if (!isset($data[1])) {
-                        $msg = "Invalid chart type at line $nr";
-                        throw new InvalidChartException($msg);
+                        throw new RangeException("Invalid chart type at line $nr");
                     }
                     $chart->setChartType($data[1]);
                     break;
                 case '#KONTO':
                     // Account must have form #KONTO number name
                     if (!isset($data[2])) {
-                        $msg = "Invalid account values at line $nr";
-                        throw new InvalidChartException($msg);
+                        throw new RangeException("Invalid account values at line $nr");
                     }
                     $current = array($data[1], $data[2]);
                     break;
                 case '#KTYP':
                     // Account type must have form #KTYP number type
                     if (!isset($data[2])) {
-                        $msg = "Invalid account values at line $nr";
-                        throw new InvalidChartException($msg);
+                        throw new RangeException("Invalid account values at line $nr");
                     }
                     // Type must referer to current account
                     if ($data[1] != $current[0]) {
-                        $msg = "Unexpected account type at line $nr";
-                        throw new InvalidChartException($msg);
+                        throw new RangeException("Unexpected account type at line $nr");
                     }
                     $account = new Account($data[1], $data[2], $current[1]);
                     $chart->addAccount($account);
@@ -389,8 +383,7 @@ class SIE
 
         // There should be no half way processed accounts
         if (!empty($current)) {
-            $msg = "Account type missing for '{$current[0]}'";
-            throw new InvalidChartException($msg);
+            throw new RangeException("Account type missing for '{$current[0]}'");
         }
 
         return $chart;

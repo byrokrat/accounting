@@ -26,7 +26,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\InvalidTemplateException
+     * @expectedException ledgr\accounting\Exception\InvalidArgumentException
      */
     public function testSetIdError()
     {
@@ -43,7 +43,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\InvalidTemplateException
+     * @expectedException ledgr\accounting\Exception\InvalidArgumentException
      */
     public function testSetNameError()
     {
@@ -60,7 +60,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\InvalidTemplateException
+     * @expectedException ledgr\accounting\Exception\InvalidArgumentException
      */
     public function testSetTextError()
     {
@@ -119,7 +119,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\InvalidStructureException
+     * @expectedException ledgr\accounting\Exception\UnexpectedValueException
      */
     public function testMissingAmountKey()
     {

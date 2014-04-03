@@ -33,7 +33,7 @@ class ChartOfAccountsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\InvalidAccountException
+     * @expectedException ledgr\accounting\Exception\OutOfBoundsException
      */
     public function testGetInvalidAccount()
     {
@@ -50,7 +50,7 @@ class ChartOfAccountsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\InvalidAccountException
+     * @expectedException ledgr\accounting\Exception\OutOfBoundsException
      */
     public function testGetInvalidAccountFromName()
     {

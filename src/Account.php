@@ -9,7 +9,7 @@
 
 namespace ledgr\accounting;
 
-use ledgr\accounting\Exception\InvalidAccountException;
+use ledgr\accounting\Exception\InvalidArgumentException;
 
 /**
  * Simple Account class
@@ -36,31 +36,28 @@ class Account
     /**
      * Constructor
      *
-     * @param  string                  $number
-     * @param  string                  $type   Account type (T, S, I or K)
-     * @param  string                  $name
-     * @throws InvalidAccountException If any data is invalid
+     * @param  string                   $number
+     * @param  string                   $type   Account type (T, S, I or K)
+     * @param  string                   $name
+     * @throws InvalidArgumentException If any data is invalid
      */
     public function __construct($number, $type, $name)
     {
         $number = intval($number);
         if ($number < 1000 || $number > 9999) {
-            $msg = "Account must be numeric, 999 < number < 10000";
-            throw new InvalidAccountException($msg);
+            throw new InvalidArgumentException("Account must be numeric, 999 < number < 10000");
         }
 
         $this->number = (string)$number;
 
         if (!in_array($type, array('T', 'S', 'I', 'K'))) {
-            $msg = "Account type must be T, S, I or K";
-            throw new InvalidAccountException($msg);
+            throw new InvalidArgumentException("Account type must be T, S, I or K");
         }
 
         $this->type = $type;
 
         if (!is_string($name) || empty($name)) {
-            $msg = "Account name can not be empty";
-            throw new InvalidAccountException($msg);
+            throw new InvalidArgumentException("Account name can not be empty");
         }
 
         $this->name = $name;

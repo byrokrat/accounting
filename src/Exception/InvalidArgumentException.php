@@ -9,11 +9,9 @@
 
 namespace ledgr\accounting\Exception;
 
-use ledgr\accounting\Exception;
-
 /**
  * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
-class InvalidStructureException extends Exception
+class InvalidArgumentException extends \InvalidArgumentException implements \ledgr\accounting\Exception
 {
 }

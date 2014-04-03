@@ -12,7 +12,7 @@ use ledgr\amount\Amount;
 class SIETest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException ledgr\accounting\Exception\VerificationNotBalancedException
+     * @expectedException ledgr\accounting\Exception\UnexpectedValueException
      */
     public function testUnbalancedVerification()
     {
@@ -24,7 +24,7 @@ class SIETest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\InvalidYearException
+     * @expectedException ledgr\accounting\Exception\OutOfBoundsException
      */
     public function testAccountingYearError()
     {
@@ -170,7 +170,7 @@ class SIETest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\InvalidChartException
+     * @expectedException ledgr\accounting\Exception\RangeException
      */
     public function testImportChartInvalidChartType()
     {
@@ -191,7 +191,7 @@ class SIETest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\InvalidChartException
+     * @expectedException ledgr\accounting\Exception\RangeException
      * @dataProvider invalidSieAccountStringProvider
      */
     public function testImportChartInvalidAccount($account)

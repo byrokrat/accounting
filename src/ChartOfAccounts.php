@@ -9,11 +9,10 @@
 
 namespace ledgr\accounting;
 
-use ledgr\accounting\Exception\InvalidChartException;
-use ledgr\accounting\Exception\InvalidAccountException;
+use ledgr\accounting\Exception\OutOfBoundsException;
 
 /**
- * Container class for charts of accounts.
+ * Container class for accounts
  *
  * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
@@ -44,26 +43,25 @@ class ChartOfAccounts
     /**
      * Get account object for number
      *
-     * @param  string                  $number
+     * @param  string               $number
      * @return Account
-     * @throws InvalidAccountException If account does not exist
+     * @throws OutOfBoundsException If account does not exist
      */
     public function getAccount($number)
     {
         if ($this->accountExists($number)) {
             return $this->accounts[$number];
         } else {
-            $msg = "Account number '$number' does not exist";
-            throw new InvalidAccountException($msg);
+            throw new OutOfBoundsException("Account number <$number> does not exist");
         }
     }
 
     /**
      * Get account object for name
      *
-     * @param  string                  $name
+     * @param  string               $name
      * @return Account
-     * @throws InvalidAccountException If account does not exist
+     * @throws OutOfBoundsException If account does not exist
      */
     public function getAccountFromName($name)
     {
@@ -72,8 +70,7 @@ class ChartOfAccounts
                 return $account;
             }
         }
-        $msg = "Account name '$name' does not exist";
-        throw new InvalidAccountException($msg);
+        throw new OutOfBoundsException("Account <$name> does not exist");
     }
 
     /**

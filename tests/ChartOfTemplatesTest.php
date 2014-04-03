@@ -23,7 +23,7 @@ class ChartOfTemplatesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\InvalidTemplateException
+     * @expectedException ledgr\accounting\Exception\OutOfBoundsException
      */
     public function testTemplateDoesNotExistError()
     {

@@ -9,11 +9,9 @@
 
 namespace ledgr\accounting\Exception;
 
-use ledgr\accounting\Exception;
-
 /**
  * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
-class InvalidTemplateException extends Exception
+class RangeException extends \RangeException implements \ledgr\accounting\Exception
 {
 }

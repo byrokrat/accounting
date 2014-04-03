@@ -9,8 +9,7 @@
 
 namespace ledgr\accounting;
 
-use ledgr\accounting\Exception\InvalidTemplateException;
-use ledgr\accounting\Exception\InvalidStructureException;
+use ledgr\accounting\Exception\OutOfBoundsException;
 
 /**
  * Manage a collection of templates
@@ -66,22 +65,21 @@ class ChartOfTemplates
     /**
      * Get a template clone using id
      *
-     * @param  string                   $id
+     * @param  string               $id
      * @return Template
-     * @throws InvalidTemplateException If template does not exist
+     * @throws OutOfBoundsException If template does not exist
      */
     public function getTemplate($id)
     {
         assert('is_string($id)');
         if (!$this->exists($id)) {
-            $msg = "Unable to fetch template '$id', does not exist";
-            throw new InvalidTemplateException($msg);
+            throw new OutOfBoundsException("Template <$id> does not exist");
         }
         return clone $this->templates[$id];
     }
 
     /**
-     * Get loaded tempaltes. 
+     * Get loaded tempaltes
      *
      * @return array Template ids as keys
      */

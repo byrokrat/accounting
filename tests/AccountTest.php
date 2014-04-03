@@ -21,7 +21,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\InvalidAccountException
+     * @expectedException ledgr\accounting\Exception\InvalidArgumentException
      * @dataProvider invalidAccountProvider
      */
     public function testAddAccountFaliure($account, $type, $name)
