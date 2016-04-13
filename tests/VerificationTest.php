@@ -29,8 +29,8 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTransactions()
     {
-        $bank = new Account('1920', 'T', 'Bank');
-        $income = new Account('3000', 'I', 'Income');
+        $bank = new Account\Asset(1920, 'Bank');
+        $income = new Account\Earning(3000, 'Income');
         $trans = array(
             new Transaction($bank, new Amount('100')),
             new Transaction($bank, new Amount('200')),
@@ -45,8 +45,8 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAccounts()
     {
-        $bank = new Account('1920', 'T', 'Bank');
-        $income = new Account('3000', 'I', 'Income');
+        $bank = new Account\Asset(1920, 'Bank');
+        $income = new Account\Earning(3000, 'Income');
 
         $trans = array(
             new Transaction($bank, new Amount('100')),
@@ -68,8 +68,8 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
 
     public function testIsBalanced()
     {
-        $bank = new Account('1920', 'T', 'Bank');
-        $income = new Account('3000', 'I', 'Income');
+        $bank = new Account\Asset(1920, 'Bank');
+        $income = new Account\Earning(3000, 'Income');
 
         //A balanced verification
         $trans = array(
@@ -97,8 +97,8 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
 
     public function testGetDifference()
     {
-        $bank = new Account('1920', 'T', 'Bank');
-        $income = new Account('3000', 'I', 'Income');
+        $bank = new Account\Asset(1920, 'Bank');
+        $income = new Account\Earning(3000, 'Income');
 
         //A balanced verification
         $trans = array(

@@ -4,48 +4,63 @@ namespace byrokrat\accounting;
 
 class AccountTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * List of invalid account values
-     */
-    public function invalidAccountProvider()
+    public function invalidNumberProvider()
     {
-        return array(
-            array('a', 'I', 'Name'),
-            array('', 'I', 'Name'),
-            array('123', 'I', 'Name'),
-            array('12345', 'I', 'Name'),
-            array('1234', 'A', 'Name'),
-            array('1234', 'I', ''),
-            array('1234', 'I', 123),
+        return [
+            [123],
+            [12345],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidNumberProvider
+     */
+    public function testInvalidAccountNumber($number)
+    {
+        $this->setExpectedException(Exception\InvalidArgumentException::CLASS);
+        new Account\Asset($number, '');
+    }
+
+    public function equalProvider()
+    {
+        return [
+            [new Account\Asset(1234, 'foo'), new Account\Asset(1234, 'foo')],
+            [new Account\Debt(1234, 'foo'), new Account\Debt(1234, 'foo')],
+            [new Account\Earning(1234, 'foo'), new Account\Earning(1234, 'foo')],
+            [new Account\Cost(1234, 'foo'), new Account\Cost(1234, 'foo')],
+        ];
+    }
+
+    /**
+     * @dataProvider equalProvider
+     */
+    public function testEquals(Account $left, Account $right)
+    {
+        $this->assertTrue(
+            $left->equals($right),
+            'Accounts should be equal'
         );
     }
 
+    public function notEqualProvider()
+    {
+        return [
+            [new Account\Asset(1234, 'foo'), new Account\Asset(1235, 'foo')],
+            [new Account\Asset(1234, 'foo'), new Account\Asset(1234, 'bar')],
+            [new Account\Asset(1234, 'foo'), new Account\Debt(1234, 'foo')],
+            [new Account\Asset(1234, 'foo'), new Account\Earning(1234, 'foo')],
+            [new Account\Asset(1234, 'foo'), new Account\Cost(1234, 'foo')],
+        ];
+    }
+
     /**
-     * @expectedException byrokrat\accounting\Exception\InvalidArgumentException
-     * @dataProvider invalidAccountProvider
+     * @dataProvider notEqualProvider
      */
-    public function testAddAccountFaliure($account, $type, $name)
+    public function testNotEquals(Account $left, Account $right)
     {
-        new Account($account, $type, $name);
-    }
-
-    public function testConstruct()
-    {
-        new Account('1920', 'T', 'PlusGiro');
-        $this->assertTrue(true);
-    }
-
-
-    public function testEquals()
-    {
-        $a = new Account('1920', 'T', 'PlusGiro');
-        $a1 = new Account('1920', 'T', 'PlusGiro');
-        $b = new Account('3000', 'T', 'PlusGiro');
-        $c = new Account('1920', 'I', 'PlusGiro');
-        $d = new Account('1920', 'T', 'Bank');
-        $this->assertTrue($a->equals($a1));
-        $this->assertFalse($a->equals($b));
-        $this->assertFalse($a->equals($c));
-        $this->assertFalse($a->equals($d));
+        $this->assertFalse(
+            $left->equals($right),
+            'Accounts should not be equal'
+        );
     }
 }

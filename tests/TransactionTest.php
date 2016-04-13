@@ -6,20 +6,12 @@ use byrokrat\amount\Amount;
 
 class TransactionTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetAccount()
+    public function testGetters()
     {
-        $account = new Account('1920', 'T', 'PlusGiro');
-        $amount = new Amount('100.101');
-        $t = new Transaction($account, $amount);
-        $this->assertEquals($account, $t->getAccount());
-    }
-
-    public function testGetAmount()
-    {
-        $account = new Account('1920', 'T', 'PlusGiro');
-        $amount = new Amount('100');
-        $t = new Transaction($account, $amount);
-        $a = $t->getAmount();
-        $this->assertEquals($amount, $a);
+        $account = $this->prophesize(Account::CLASS)->reveal();
+        $amount = $this->prophesize(Amount::CLASS)->reveal();
+        $transaction = new Transaction($account, $amount);
+        $this->assertEquals($account, $transaction->getAccount());
+        $this->assertEquals($amount, $transaction->getAmount());
     }
 }

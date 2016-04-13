@@ -9,10 +9,10 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
     public function getChart()
     {
         $c = new ChartOfAccounts();
-        $c->addAccount(new Account('1920', 'T', 'Bank'));
-        $c->addAccount(new Account('1510', 'T', 'Claims'));
-        $c->addAccount(new Account('3000', 'I', 'Incomes'));
-        $c->addAccount(new Account('3990', 'I', 'Benefits'));
+        $c->addAccount(new Account\Asset(1920, 'Bank'));
+        $c->addAccount(new Account\Asset(1510, 'Claims'));
+        $c->addAccount(new Account\Earning(3000, 'Incomes'));
+        $c->addAccount(new Account\Earning(3990, 'Benefits'));
         return $c;
     }
 
@@ -83,8 +83,8 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
         $ver = $t->buildVerification($this->getChart());
 
         $expected = array(
-            new Transaction(new Account('1920', 'T', 'Bank'), new Amount('-400')),
-            new Transaction(new Account('1920', 'T', 'Bank'), new Amount('400')),
+            new Transaction(new Account\Asset(1920, 'Bank'), new Amount('-400')),
+            new Transaction(new Account\Asset(1920, 'Bank'), new Amount('400')),
         );
         $this->assertEquals($expected, $ver->getTransactions());
     }
@@ -111,8 +111,8 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
         $ver = $t->buildVerification($this->getChart());
 
         $expected = array(
-            new Transaction(new Account('1920', 'T', 'Bank'), new Amount('450')),
-            new Transaction(new Account('3000', 'I', 'Incomes'), new Amount('-450')),
+            new Transaction(new Account\Asset(1920, 'Bank'), new Amount('450')),
+            new Transaction(new Account\Earning(3000, 'Incomes'), new Amount('-450')),
         );
         $this->assertEquals($expected, $ver->getTransactions());
     }

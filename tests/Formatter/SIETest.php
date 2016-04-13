@@ -17,8 +17,8 @@ class SIETest extends \PHPUnit_Framework_TestCase
     {
         $sie = new SIE();
         $v = new Verification('testver');
-        $v->addTransaction(new Transaction(new Account('1920', 'T', 'Bank'), new Amount('100', 2)));
-        $v->addTransaction(new Transaction(new Account('3000', 'I', 'Income'), new Amount('-50', 2)));
+        $v->addTransaction(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100', 2)));
+        $v->addTransaction(new Transaction(new Account\Earning(3000, 'Income'), new Amount('-50', 2)));
         $sie->addVerification($v);
     }
 
@@ -106,8 +106,8 @@ class SIETest extends \PHPUnit_Framework_TestCase
         $sie->setYear(new \DateTime("$year-01-01"), new \DateTime("$year-12-31"));
 
         $v = new Verification('testver');
-        $v->addTransaction(new Transaction(new Account('1920', 'T', 'Bank'), new Amount('100', 2)));
-        $v->addTransaction(new Transaction(new Account('3000', 'I', 'Income'), new Amount('-100', 2)));
+        $v->addTransaction(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100', 2)));
+        $v->addTransaction(new Transaction(new Account\Earning(3000, 'Income'), new Amount('-100', 2)));
         $sie->addVerification($v);
 
         $txt = $sie->generate();
@@ -130,8 +130,8 @@ class SIETest extends \PHPUnit_Framework_TestCase
     public function testExportChart()
     {
         $chart = new ChartOfAccounts();
-        $chart->addAccount(new Account('1920', 'T', 'Bank'));
-        $chart->addAccount(new Account('3000', 'I', 'Income'));
+        $chart->addAccount(new Account\Asset(1920, 'Bank'));
+        $chart->addAccount(new Account\Earning(3000, 'Income'));
 
         $sie = new SIE();
         $txt = $sie->exportChart('FOOBAR', $chart);
@@ -162,8 +162,8 @@ class SIETest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('BAS2010', $chart->getChartType());
 
         $expected = array(
-            '1920' => new Account('1920', 'T', 'Bank'),
-            '3000' => new Account('3000', 'I', 'Income')
+            '1920' => new Account\Asset(1920, 'Bank'),
+            '3000' => new Account\Earning(3000, 'Income')
         );
         $this->assertEquals($expected, $chart->getAccounts());
     }
@@ -206,8 +206,8 @@ class SIETest extends \PHPUnit_Framework_TestCase
     {
         $sie = new SIE();
         $v = new Verification('testver');
-        $v->addTransaction(new Transaction(new Account('1920', 'T', 'Bank'), new Amount('100', 2)));
-        $v->addTransaction(new Transaction(new Account('3000', 'I', 'Income'), new Amount('-100', 2)));
+        $v->addTransaction(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100', 2)));
+        $v->addTransaction(new Transaction(new Account\Earning(3000, 'Income'), new Amount('-100', 2)));
         $sie->addVerification($v);
         $sie->clear();
         $this->assertEquals(0, preg_match('/#VER/', $sie->generate()));

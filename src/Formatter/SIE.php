@@ -382,7 +382,22 @@ class SIE
                     if ($data[1] != $current[0]) {
                         throw new RangeException("Unexpected account type at line $nr");
                     }
-                    $account = new Account($data[1], $data[2], $current[1]);
+
+                    switch ($data[2]) {
+                        case Account::ASSET:
+                            $account = new Account\Asset(intval($data[1]), $current[1]);
+                            break;
+                        case Account::EARNING:
+                            $account = new Account\Earning(intval($data[1]), $current[1]);
+                            break;
+                        case Account::DEBT:
+                            $account = new Account\Debt(intval($data[1]), $current[1]);
+                            break;
+                        case Account::COST:
+                            $account = new Account\Cost(intval($data[1]), $current[1]);
+                            break;
+                    }
+
                     $chart->addAccount($account);
                     $current = array();
                     break;

@@ -18,53 +18,39 @@
  * Copyright 2016 Hannes Forsgård
  */
 
+declare(strict_types=1);
+
 namespace byrokrat\accounting;
 
 use byrokrat\amount\Amount;
 
 /**
- * Simple accounting transaction class
+ * A transaction is a simple value object containing an account and an amount
  */
 class Transaction
 {
     /**
-     * @var Account Account object
+     * @var Account
      */
     private $account;
 
     /**
-     * @var Amount Amount object
+     * @var Amount
      */
     private $amount;
 
-    /**
-     * Constructor
-     *
-     * @param Account $account
-     * @param Amount  $amount
-     */
     public function __construct(Account $account, Amount $amount)
     {
         $this->account = $account;
         $this->amount = $amount;
     }
 
-    /**
-     * Get account
-     *
-     * @return Account
-     */
-    public function getAccount()
+    public function getAccount(): Account
     {
         return $this->account;
     }
 
-    /**
-     * Get amount
-     *
-     * @return Amount
-     */
-    public function getAmount()
+    public function getAmount(): Amount
     {
         return $this->amount;
     }

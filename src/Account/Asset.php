@@ -18,12 +18,15 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-namespace byrokrat\accounting\Exception;
+namespace byrokrat\accounting\Account;
 
 /**
- * Exception thrown to indicate range errors during program execution.
- * Normally this means there was an arithmetic error other than under/overflow.
+ * Defines an asset account
  */
-class RangeException extends \RangeException implements \byrokrat\accounting\Exception
+class Asset extends \byrokrat\accounting\Account
 {
+    public function getType(): string
+    {
+        return self::ASSET;
+    }
 }

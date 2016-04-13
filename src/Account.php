@@ -18,104 +18,89 @@
  * Copyright 2016 Hannes Forsgård
  */
 
+declare(strict_types=1);
+
 namespace byrokrat\accounting;
 
 use Exception\InvalidArgumentException;
 
 /**
- * Simple Account class
+ * Account value object containing a number and a name
  */
-class Account
+abstract class Account
 {
     /**
-     * @var string Account number
+     * Identifier for asset accounts
+     */
+    const ASSET = 'T';
+
+    /**
+     * Identifier for debt accounts
+     */
+    const DEBT = 'S';
+
+    /**
+     * Identifier for earning accounts
+     */
+    const EARNING = 'I';
+
+    /**
+     * Identifier for cost accounts
+     */
+    const COST = 'K';
+
+    /**
+     * @var int
      */
     private $number;
 
     /**
-     * @var string Account type
-     */
-    private $type;
-
-    /**
-     * @var string Account name
+     * @var string
      */
     private $name;
 
     /**
-     * Constructor
-     *
-     * @param  string $number
-     * @param  string $type   Account type (T, S, I or K)
-     * @param  string $name
-     * @throws Exception\InvalidArgumentException If any data is invalid
+     * @throws Exception\InvalidArgumentException If number is invalid
      */
-    public function __construct($number, $type, $name)
+    public function __construct(int $number, string $name)
     {
-        $number = intval($number);
         if ($number < 1000 || $number > 9999) {
-            throw new Exception\InvalidArgumentException("Account must be numeric, 999 < number < 10000");
+            throw new Exception\InvalidArgumentException("Account must be greater than 999 and lesser than 10000");
         }
-
-        $this->number = (string)$number;
-
-        if (!in_array($type, array('T', 'S', 'I', 'K'))) {
-            throw new Exception\InvalidArgumentException("Account type must be T, S, I or K");
-        }
-
-        $this->type = $type;
-
-        if (!is_string($name) || empty($name)) {
-            throw new Exception\InvalidArgumentException("Account name can not be empty");
-        }
-
+        $this->number = $number;
         $this->name = $name;
     }
 
     /**
-     * Get account number
-     *
-     * @return string
+     * Get account type identifier
      */
-    public function getNumber()
+    abstract public function getType(): string;
+
+    /**
+     * Get 4 digit account number
+     */
+    public function getNumber(): int
     {
         return $this->number;
     }
 
     /**
-     * Get account type
-     *
-     * @return string
+     * Get name of account
      */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * Get account name
-     *
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * Validate that $account equals this instance
-     *
-     * @param  Account $account
-     * @return bool
+     * Check if $account equals this account
      */
-    public function equals(Account $account)
+    public function equals(Account $account): bool
     {
-        if ($this->getNumber() != $account->getNumber()
-            || $this->getType() != $account->getType()
-            || $this->getName() != $account->getName()
-        ) {
-            return false;
-        }
-        return true;
+        return (
+            $this->getType() == $account->getType()
+            && $this->getNumber() == $account->getNumber()
+            && $this->getName() == $account->getName()
+        );
     }
 }
