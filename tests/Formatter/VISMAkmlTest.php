@@ -1,8 +1,8 @@
 <?php
 
-namespace ledgr\accounting\Formatter;
+namespace byrokrat\accounting\Formatter;
 
-use ledgr\accounting\Template;
+use byrokrat\accounting\Template;
 
 class VISMAkmlTest extends \PHPUnit_Framework_TestCase
 {

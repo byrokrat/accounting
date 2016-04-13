@@ -1,8 +1,8 @@
 <?php
 
-namespace ledgr\accounting;
+namespace byrokrat\accounting;
 
-use ledgr\amount\Amount;
+use byrokrat\amount\Amount;
 
 class TransactionTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,18 +1,17 @@
 <?php
 
-namespace ledgr\accounting\Formatter;
+namespace byrokrat\accounting\Formatter;
 
-use DateTime;
-use ledgr\accounting\Verification;
-use ledgr\accounting\Transaction;
-use ledgr\accounting\ChartOfAccounts;
-use ledgr\accounting\Account;
-use ledgr\amount\Amount;
+use byrokrat\accounting\Verification;
+use byrokrat\accounting\Transaction;
+use byrokrat\accounting\ChartOfAccounts;
+use byrokrat\accounting\Account;
+use byrokrat\amount\Amount;
 
 class SIETest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException ledgr\accounting\Exception\UnexpectedValueException
+     * @expectedException byrokrat\accounting\Exception\UnexpectedValueException
      */
     public function testUnbalancedVerification()
     {
@@ -24,13 +23,13 @@ class SIETest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\OutOfBoundsException
+     * @expectedException byrokrat\accounting\Exception\OutOfBoundsException
      */
     public function testAccountingYearError()
     {
         $sie = new SIE();
-        $sie->setYear(new DateTime('2012-01-01'), new DateTime('2012-12-31'));
-        $v = new Verification('testver', new DateTime('2013-01-01'));
+        $sie->setYear(new \DateTime('2012-01-01'), new \DateTime('2012-12-31'));
+        $v = new Verification('testver', new \DateTime('2013-01-01'));
         $sie->addVerification($v);
     }
 
@@ -41,7 +40,7 @@ class SIETest extends \PHPUnit_Framework_TestCase
         $txt = $sie->generate();
         $date = date('Ymd');
         $expected = "#FLAGGA 0\r\n#PROGRAM \"foo\\\"bar\" \"1.0\"\r\n#FORMAT PC8"
-            ."\r\n#GEN $date \"ledgr_SIE\"\r\n#SIETYP 4\r\n#FNAMN \"\"\r\n"
+            ."\r\n#GEN $date \"byrokrat_SIE\"\r\n#SIETYP 4\r\n#FNAMN \"\"\r\n"
             ."#KPTYP \"EUBAS97\"\r\n\r\n";
         $expected = iconv("UTF-8", "CP437", $expected);
         $this->assertEquals($txt, $expected);
@@ -53,7 +52,7 @@ class SIETest extends \PHPUnit_Framework_TestCase
         $sie->setCreator('foo');
         $txt = $sie->generate();
         $date = date('Ymd');
-        $expected = "#FLAGGA 0\r\n#PROGRAM \"ledgr_SIE\" \"1.0\"\r\n#FORMAT"
+        $expected = "#FLAGGA 0\r\n#PROGRAM \"byrokrat_SIE\" \"1.0\"\r\n#FORMAT"
             ." PC8\r\n#GEN $date \"foo\"\r\n#SIETYP 4\r\n#FNAMN \"\"\r\n#KPTYP"
             ." \"EUBAS97\"\r\n\r\n";
         $expected = iconv("UTF-8", "CP437", $expected);
@@ -66,8 +65,8 @@ class SIETest extends \PHPUnit_Framework_TestCase
         $sie->setCompany('foo');
         $txt = $sie->generate();
         $date = date('Ymd');
-        $expected = "#FLAGGA 0\r\n#PROGRAM \"ledgr_SIE\" \"1.0\"\r\n#FORMAT"
-           ." PC8\r\n#GEN $date \"ledgr_SIE\"\r\n#SIETYP 4\r\n#FNAMN \"foo\""
+        $expected = "#FLAGGA 0\r\n#PROGRAM \"byrokrat_SIE\" \"1.0\"\r\n#FORMAT"
+           ." PC8\r\n#GEN $date \"byrokrat_SIE\"\r\n#SIETYP 4\r\n#FNAMN \"foo\""
             ."\r\n#KPTYP \"EUBAS97\"\r\n\r\n";
         $expected = iconv("UTF-8", "CP437", $expected);
         $this->assertEquals($txt, $expected);
@@ -76,11 +75,11 @@ class SIETest extends \PHPUnit_Framework_TestCase
     public function testSetYear()
     {
         $sie = new SIE();
-        $sie->setYear(new DateTime('2013-01-01'), new DateTime('2013-12-31'));
+        $sie->setYear(new \DateTime('2013-01-01'), new \DateTime('2013-12-31'));
         $txt = $sie->generate();
         $date = date('Ymd');
-        $expected = "#FLAGGA 0\r\n#PROGRAM \"ledgr_SIE\" \"1.0\"\r\n#FORMAT"
-            ." PC8\r\n#GEN $date \"ledgr_SIE\"\r\n#SIETYP 4\r\n#FNAMN \"\""
+        $expected = "#FLAGGA 0\r\n#PROGRAM \"byrokrat_SIE\" \"1.0\"\r\n#FORMAT"
+            ." PC8\r\n#GEN $date \"byrokrat_SIE\"\r\n#SIETYP 4\r\n#FNAMN \"\""
             ."\r\n#KPTYP \"EUBAS97\"\r\n#RAR 0 20130101 20131231\r\n\r\n";
         $expected = iconv("UTF-8", "CP437", $expected);
         $this->assertEquals($txt, $expected);
@@ -93,8 +92,8 @@ class SIETest extends \PHPUnit_Framework_TestCase
         $sie->setTypeOfChart('BAS96');
         $txt = $sie->generate();
         $date = date('Ymd');
-        $expected = "#FLAGGA 0\r\n#PROGRAM \"ledgr_SIE\" \"1.0\"\r\n#FORMAT"
-            ." PC8\r\n#GEN $date \"ledgr_SIE\"\r\n#SIETYP 4\r\n#FNAMN \"foo"
+        $expected = "#FLAGGA 0\r\n#PROGRAM \"byrokrat_SIE\" \"1.0\"\r\n#FORMAT"
+            ." PC8\r\n#GEN $date \"byrokrat_SIE\"\r\n#SIETYP 4\r\n#FNAMN \"foo"
             ."\"\r\n#KPTYP \"BAS96\"\r\n\r\n";
         $expected = iconv("UTF-8", "CP437", $expected);
         $this->assertEquals($txt, $expected);
@@ -104,7 +103,7 @@ class SIETest extends \PHPUnit_Framework_TestCase
     {
         $sie = new SIE();
         $year = date('Y');
-        $sie->setYear(new DateTime("$year-01-01"), new DateTime("$year-12-31"));
+        $sie->setYear(new \DateTime("$year-01-01"), new \DateTime("$year-12-31"));
 
         $v = new Verification('testver');
         $v->addTransaction(new Transaction(new Account('1920', 'T', 'Bank'), new Amount('100', 2)));
@@ -114,8 +113,8 @@ class SIETest extends \PHPUnit_Framework_TestCase
         $txt = $sie->generate();
 
         $date = date('Ymd');
-        $expected = "#FLAGGA 0\r\n#PROGRAM \"ledgr_SIE\" \"1.0\"\r\n#FORMAT"
-            ." PC8\r\n#GEN $date \"ledgr_SIE\"\r\n#SIETYP 4\r\n#FNAMN \"\""
+        $expected = "#FLAGGA 0\r\n#PROGRAM \"byrokrat_SIE\" \"1.0\"\r\n#FORMAT"
+            ." PC8\r\n#GEN $date \"byrokrat_SIE\"\r\n#SIETYP 4\r\n#FNAMN \"\""
             ."\r\n#KPTYP \"EUBAS97\"\r\n#RAR 0 {$year}0101 {$year}1231\r\n\r\n"
             ."#KONTO \"1920\" \"Bank\"\r\n#KTYP \"1920\" \"T\"\r\n#KONTO \"3000"
             ."\" \"Income\"\r\n#KTYP \"3000\" \"I\"\r\n"
@@ -138,8 +137,8 @@ class SIETest extends \PHPUnit_Framework_TestCase
         $txt = $sie->exportChart('FOOBAR', $chart);
 
         $date = date('Ymd');
-        $expected = "#FILTYP KONTO\r\n#PROGRAM \"ledgr_SIE\" \"1.0\"\r\n#TEXT"
-            ." \"FOOBAR\"\r\n#FORMAT PC8\r\n#GEN $date \"ledgr_SIE\"\r\n#KPTYP"
+        $expected = "#FILTYP KONTO\r\n#PROGRAM \"byrokrat_SIE\" \"1.0\"\r\n#TEXT"
+            ." \"FOOBAR\"\r\n#FORMAT PC8\r\n#GEN $date \"byrokrat_SIE\"\r\n#KPTYP"
             ." \"EUBAS97\"\r\n\r\n"
             ."#KONTO \"1920\" \"Bank\"\r\n#KTYP \"1920\" \"T\"\r\n#KONTO \"3000\""
             ." \"Income\"\r\n#KTYP \"3000\" \"I\"\r\n";
@@ -150,8 +149,8 @@ class SIETest extends \PHPUnit_Framework_TestCase
 
     public function testImportChart()
     {
-        $siestr = "#FILTYP KONTO\r\n#PROGRAM \"ledgr_SIE\" \"1.0\"\r\n#TEXT"
-            ." \"FOOBAR\"\r\n#FORMAT PC8\r\n#GEN 20120430 \"ledgr_SIE\"\r\n"
+        $siestr = "#FILTYP KONTO\r\n#PROGRAM \"byrokrat_SIE\" \"1.0\"\r\n#TEXT"
+            ." \"FOOBAR\"\r\n#FORMAT PC8\r\n#GEN 20120430 \"byrokrat_SIE\"\r\n"
             ."#KPTYP \"BAS2010\"\r\n\r\n"
             ."#KONTO \"1920\" \"Bank\"\r\n#KTYP \"1920\" \"T\"\r\n#KONTO \""
             ."3000\" \"Income\"\r\n#KTYP \"3000\" \"I\"\r\n";
@@ -170,7 +169,7 @@ class SIETest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\RangeException
+     * @expectedException byrokrat\accounting\Exception\RangeException
      */
     public function testImportChartInvalidChartType()
     {
@@ -191,7 +190,7 @@ class SIETest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\RangeException
+     * @expectedException byrokrat\accounting\Exception\RangeException
      * @dataProvider invalidSieAccountStringProvider
      */
     public function testImportChartInvalidAccount($account)

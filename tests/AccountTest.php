@@ -1,6 +1,6 @@
 <?php
 
-namespace ledgr\accounting;
+namespace byrokrat\accounting;
 
 class AccountTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +21,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\InvalidArgumentException
+     * @expectedException byrokrat\accounting\Exception\InvalidArgumentException
      * @dataProvider invalidAccountProvider
      */
     public function testAddAccountFaliure($account, $type, $name)

@@ -1,9 +1,8 @@
 <?php
 
-namespace ledgr\accounting;
+namespace byrokrat\accounting;
 
-use DateTime;
-use ledgr\amount\Amount;
+use byrokrat\amount\Amount;
 
 class TemplateTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +25,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\InvalidArgumentException
+     * @expectedException byrokrat\accounting\Exception\InvalidArgumentException
      */
     public function testSetIdError()
     {
@@ -43,7 +42,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\InvalidArgumentException
+     * @expectedException byrokrat\accounting\Exception\InvalidArgumentException
      */
     public function testSetNameError()
     {
@@ -60,7 +59,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\InvalidArgumentException
+     * @expectedException byrokrat\accounting\Exception\InvalidArgumentException
      */
     public function testSetTextError()
     {
@@ -119,7 +118,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\UnexpectedValueException
+     * @expectedException byrokrat\accounting\Exception\UnexpectedValueException
      */
     public function testMissingAmountKey()
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace ledgr\accounting;
+namespace byrokrat\accounting;
 
 class ChartOfAccountsTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,7 +33,7 @@ class ChartOfAccountsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\OutOfBoundsException
+     * @expectedException byrokrat\accounting\Exception\OutOfBoundsException
      */
     public function testGetInvalidAccount()
     {
@@ -50,7 +50,7 @@ class ChartOfAccountsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\OutOfBoundsException
+     * @expectedException byrokrat\accounting\Exception\OutOfBoundsException
      */
     public function testGetInvalidAccountFromName()
     {

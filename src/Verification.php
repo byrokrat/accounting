@@ -1,21 +1,29 @@
 <?php
 /**
- * This program is free software. It comes without any warranty, to
- * the extent permitted by applicable law. You can redistribute it
- * and/or modify it under the terms of the Do What The Fuck You Want
- * To Public License, Version 2, as published by Sam Hocevar. See
- * http://www.wtfpl.net/ for more details.
+ * This file is part of byrokrat/accounting.
+ *
+ * byrokrat/accounting is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * byrokrat/accounting is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with byrokrat/accounting. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright 2016 Hannes Forsgård
  */
 
-namespace ledgr\accounting;
+namespace byrokrat\accounting;
 
-use DateTime;
-use ledgr\amount\Amount;
+use byrokrat\amount\Amount;
 
 /**
  * Simple accounting verification class
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 class Verification
 {
@@ -25,7 +33,7 @@ class Verification
     private $text;
 
     /**
-     * @var DateTime Verification date
+     * @var \DateTime Verification date
      */
     private $date;
 
@@ -37,14 +45,14 @@ class Verification
     /**
      * Constructor
      *
-     * @param string   $text Text describing verification
-     * @param DateTime $date
+     * @param string    $text Text describing verification
+     * @param \DateTime $date
      */
-    public function __construct($text = '', DateTime $date = null)
+    public function __construct($text = '', \DateTime $date = null)
     {
         assert('is_string($text)');
         if (!$date) {
-            $date = new DateTime();
+            $date = new \DateTime();
         }
         $this->text = $text;
         $this->date = $date;
@@ -98,7 +106,7 @@ class Verification
     {
         $diff = new Amount('0');
         foreach ($this->getTransactions() as $trans) {
-            $diff->add($trans->getAmount());
+            $diff = $diff->add($trans->getAmount());
         }
 
         return $diff;
@@ -131,7 +139,7 @@ class Verification
     /**
      * Get transaction date
      *
-     * @return DateTime
+     * @return \DateTime
      */
     public function getDate()
     {
@@ -141,10 +149,10 @@ class Verification
     /**
      * Set transaction date
      *
-     * @param  DateTime     $date
+     * @param  \DateTime    $date
      * @return Verification Instance for chaining
      */
-    public function setDate(DateTime $date)
+    public function setDate(\DateTime $date)
     {
         $this->date = $date;
 

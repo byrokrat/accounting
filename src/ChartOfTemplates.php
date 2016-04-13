@@ -1,20 +1,27 @@
 <?php
 /**
- * This program is free software. It comes without any warranty, to
- * the extent permitted by applicable law. You can redistribute it
- * and/or modify it under the terms of the Do What The Fuck You Want
- * To Public License, Version 2, as published by Sam Hocevar. See
- * http://www.wtfpl.net/ for more details.
+ * This file is part of byrokrat/accounting.
+ *
+ * byrokrat/accounting is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * byrokrat/accounting is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with byrokrat/accounting. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright 2016 Hannes Forsgård
  */
 
-namespace ledgr\accounting;
-
-use ledgr\accounting\Exception\OutOfBoundsException;
+namespace byrokrat\accounting;
 
 /**
  * Manage a collection of templates
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 class ChartOfTemplates
 {
@@ -65,15 +72,15 @@ class ChartOfTemplates
     /**
      * Get a template clone using id
      *
-     * @param  string               $id
+     * @param  string $id
      * @return Template
-     * @throws OutOfBoundsException If template does not exist
+     * @throws Exception\OutOfBoundsException If template does not exist
      */
     public function getTemplate($id)
     {
         assert('is_string($id)');
         if (!$this->exists($id)) {
-            throw new OutOfBoundsException("Template <$id> does not exist");
+            throw new Exception\OutOfBoundsException("Template <$id> does not exist");
         }
         return clone $this->templates[$id];
     }

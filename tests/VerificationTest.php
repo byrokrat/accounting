@@ -1,9 +1,8 @@
 <?php
 
-namespace ledgr\accounting;
+namespace byrokrat\accounting;
 
-use DateTime;
-use ledgr\amount\Amount;
+use byrokrat\amount\Amount;
 
 class VerificationTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,7 +16,7 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
     public function testSetGetDate()
     {
         $v = new Verification('test');
-        $now = new DateTime();
+        $now = new \DateTime();
         $this->assertTrue($v->getDate() <= $now);
 
         $v = new Verification('test', $now);

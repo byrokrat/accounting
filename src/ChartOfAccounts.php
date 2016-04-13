@@ -1,20 +1,27 @@
 <?php
 /**
- * This program is free software. It comes without any warranty, to
- * the extent permitted by applicable law. You can redistribute it
- * and/or modify it under the terms of the Do What The Fuck You Want
- * To Public License, Version 2, as published by Sam Hocevar. See
- * http://www.wtfpl.net/ for more details.
+ * This file is part of byrokrat/accounting.
+ *
+ * byrokrat/accounting is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * byrokrat/accounting is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with byrokrat/accounting. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright 2016 Hannes Forsgård
  */
 
-namespace ledgr\accounting;
-
-use ledgr\accounting\Exception\OutOfBoundsException;
+namespace byrokrat\accounting;
 
 /**
  * Container class for accounts
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 class ChartOfAccounts
 {
@@ -43,25 +50,25 @@ class ChartOfAccounts
     /**
      * Get account object for number
      *
-     * @param  string               $number
+     * @param  string $number
      * @return Account
-     * @throws OutOfBoundsException If account does not exist
+     * @throws Exception\OutOfBoundsException If account does not exist
      */
     public function getAccount($number)
     {
         if ($this->accountExists($number)) {
             return $this->accounts[$number];
         } else {
-            throw new OutOfBoundsException("Account number <$number> does not exist");
+            throw new Exception\OutOfBoundsException("Account number <$number> does not exist");
         }
     }
 
     /**
      * Get account object for name
      *
-     * @param  string               $name
+     * @param  string $name
      * @return Account
-     * @throws OutOfBoundsException If account does not exist
+     * @throws Exception\OutOfBoundsException If account does not exist
      */
     public function getAccountFromName($name)
     {
@@ -70,7 +77,7 @@ class ChartOfAccounts
                 return $account;
             }
         }
-        throw new OutOfBoundsException("Account <$name> does not exist");
+        throw new Exception\OutOfBoundsException("Account <$name> does not exist");
     }
 
     /**

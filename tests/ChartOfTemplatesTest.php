@@ -1,6 +1,6 @@
 <?php
 
-namespace ledgr\accounting;
+namespace byrokrat\accounting;
 
 class ChartOfTemplatesTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,7 +23,7 @@ class ChartOfTemplatesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException ledgr\accounting\Exception\OutOfBoundsException
+     * @expectedException byrokrat\accounting\Exception\OutOfBoundsException
      */
     public function testTemplateDoesNotExistError()
     {

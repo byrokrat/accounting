@@ -1,21 +1,31 @@
 <?php
 /**
- * This program is free software. It comes without any warranty, to
- * the extent permitted by applicable law. You can redistribute it
- * and/or modify it under the terms of the Do What The Fuck You Want
- * To Public License, Version 2, as published by Sam Hocevar. See
- * http://www.wtfpl.net/ for more details.
+ * This file is part of byrokrat/accounting.
+ *
+ * byrokrat/accounting is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * byrokrat/accounting is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with byrokrat/accounting. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright 2016 Hannes Forsgård
  */
 
-namespace ledgr\accounting\Formatter;
+namespace byrokrat\accounting\Formatter;
 
-use ledgr\accounting\Verification;
-use ledgr\accounting\ChartOfAccounts;
-use ledgr\accounting\Account;
-use ledgr\accounting\Exception\UnexpectedValueException;
-use ledgr\accounting\Exception\OutOfBoundsException;
-use ledgr\accounting\Exception\RangeException;
-use DateTime;
+use byrokrat\accounting\Verification;
+use byrokrat\accounting\ChartOfAccounts;
+use byrokrat\accounting\Account;
+use byrokrat\accounting\Exception\UnexpectedValueException;
+use byrokrat\accounting\Exception\OutOfBoundsException;
+use byrokrat\accounting\Exception\RangeException;
 
 /**
  * SIE 4I file format implementation.
@@ -27,8 +37,6 @@ use DateTime;
  *
  * This implementation is based on specification 4B from the
  * maintainer (SIE gruppen) dated 2008-09-30.
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 class SIE
 {
@@ -40,7 +48,7 @@ class SIE
     /**
      * @var string Name of program generating SIE
      */
-    private $program = "ledgr_SIE";
+    private $program = "byrokrat_SIE";
 
     /**
      * @var string Version of program generating SIE
@@ -50,7 +58,7 @@ class SIE
     /**
      * @var string Name of person (instance) generating SIE
      */
-    private $creator = 'ledgr_SIE';
+    private $creator = 'byrokrat_SIE';
 
     /**
      * @var string Name of company whose verifications are beeing handled
@@ -58,17 +66,17 @@ class SIE
     private $company = "";
 
     /**
-     * @var DateTime Start of accounting year
+     * @var \DateTime Start of accounting year
      */
     private $yearStart;
 
     /**
-     * @var DateTime End of accounting year
+     * @var \DateTime End of accounting year
      */
     private $yearStop;
 
     /**
-     * @var DateTime Creation date
+     * @var \DateTime Creation date
      */
     private $date;
 
@@ -92,7 +100,7 @@ class SIE
      */
     public function __construct()
     {
-        $this->date = new DateTime();
+        $this->date = new \DateTime();
     }
 
     /**
@@ -153,11 +161,11 @@ class SIE
     /**
      * Set accounting year
      *
-     * @param  DateTime $start Only date part is used
-     * @param  DateTime $stop Only date part is used
+     * @param  \DateTime $start Only date part is used
+     * @param  \DateTime $stop Only date part is used
      * @return SIE instance for chaining
      */
-    public function setYear(DateTime $start, DateTime $stop)
+    public function setYear(\DateTime $start, \DateTime $stop)
     {
         $start->setTime(0, 0, 0);
         $stop->setTime(23, 59, 59);
@@ -235,7 +243,7 @@ class SIE
     /**
      * Generate SIE string (using charset CP437)
      *
-     * @return string 
+     * @return string
      */
     public function generate()
     {
@@ -297,7 +305,7 @@ class SIE
      *
      * @param  string          $description String describing this chart of accounts
      * @param  ChartOfAccounts $chart
-     * @return string 
+     * @return string
      */
     public function exportChart($description, ChartOfAccounts $chart)
     {

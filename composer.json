@@ -1,10 +1,10 @@
 {
-    "name": "ledgr/accounting",
+    "name": "byrokrat/accounting",
     "description": "Classes for working with bookkeeping data",
     "keywords": ["accounting", "bookkeeping", "VISMA", "SIE"],
-    "homepage": "https://github.com/ledgr/accounting",
+    "homepage": "https://github.com/byrokrat/accounting",
     "type": "library",
-    "license": "WTFPL",
+    "license": "GPLv3",
     "authors": [
         {
             "name": "Hannes Forsgård",
@@ -13,11 +13,11 @@
     ],
     "autoload": {
         "psr-4": {
-            "ledgr\\accounting\\": "src/"
+            "byrokrat\\accounting\\": "src/"
         }
     },
     "require": {
         "php": ">=5.3.0",
-        "ledgr/amount": "1.*"
+        "byrokrat/amount": "^1.0"
     }
 }

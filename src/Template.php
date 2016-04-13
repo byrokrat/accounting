@@ -1,22 +1,29 @@
 <?php
 /**
- * This program is free software. It comes without any warranty, to
- * the extent permitted by applicable law. You can redistribute it
- * and/or modify it under the terms of the Do What The Fuck You Want
- * To Public License, Version 2, as published by Sam Hocevar. See
- * http://www.wtfpl.net/ for more details.
+ * This file is part of byrokrat/accounting.
+ *
+ * byrokrat/accounting is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * byrokrat/accounting is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with byrokrat/accounting. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright 2016 Hannes Forsgård
  */
 
-namespace ledgr\accounting;
+namespace byrokrat\accounting;
 
-use ledgr\accounting\Exception\UnexpectedValueException;
-use ledgr\accounting\Exception\InvalidArgumentException;
-use ledgr\amount\Amount;
+use byrokrat\amount\Amount;
 
 /**
  * Simple accounting template class
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 class Template
 {
@@ -57,16 +64,16 @@ class Template
     /**
      * Set template id
      *
-     * @param  string                  $id
+     * @param  string $id
      * @return void
-     * @throws InvalidArgumentException If id is longer than 6 characters
+     * @throws Exception\InvalidArgumentException If id is longer than 6 characters
      */
     public function setId($id)
     {
         assert('is_string($id)');
         $id = trim($id);
         if (mb_strlen($id) > 6) {
-            throw new InvalidArgumentException("Invalid template id <$id>. Use max 6 characters.");
+            throw new Exception\InvalidArgumentException("Invalid template id <$id>. Use max 6 characters.");
         }
         $this->id = $id;
     }
@@ -84,16 +91,16 @@ class Template
     /**
      * Set template name
      *
-     * @param  string                   $name
+     * @param  string $name
      * @return void
-     * @throws InvalidArgumentException If name is longer than 20 characters
+     * @throws Exception\InvalidArgumentException If name is longer than 20 characters
      */
     public function setName($name)
     {
         assert('is_string($name)');
         $name = trim($name);
         if (mb_strlen($name) > 20) {
-            throw new InvalidArgumentException("Invalid template name <$name>. Use max 20 characters.");
+            throw new Exception\InvalidArgumentException("Invalid template name <$name>. Use max 20 characters.");
         }
         $this->name = $name;
     }
@@ -111,16 +118,16 @@ class Template
     /**
      * Set template text
      *
-     * @param  string                   $text
+     * @param  string $text
      * @return void
-     * @throws InvalidArgumentException If text is longer than 60 characters
+     * @throws Exception\InvalidArgumentException If text is longer than 60 characters
      */
     public function setText($text)
     {
         assert('is_string($text)');
         $text = trim($text);
         if (mb_strlen($text) > 60) {
-            throw new InvalidArgumentException("Invalid template text <$text>. Use max 60 characters.");
+            throw new Exception\InvalidArgumentException("Invalid template text <$text>. Use max 60 characters.");
         }
         $this->text = $text;
     }
@@ -217,14 +224,14 @@ class Template
     /**
      * Create verification from template
      *
-     * @param  ChartOfAccounts          $chart
+     * @param  ChartOfAccounts $chart
      * @return Verification
-     * @throws UnexpectedValueException If any key is NOT substituted
+     * @throws Exception\UnexpectedValueException If any key is NOT substituted
      */
     public function buildVerification(ChartOfAccounts $chart)
     {
         if (!$this->ready($key)) {
-            throw new UnexpectedValueException("Unable to substitute template key <$key>");
+            throw new Exception\UnexpectedValueException("Unable to substitute template key <$key>");
         }
 
         // Build verification
