@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace byrokrat\accounting\Formatter;
+namespace byrokrat\accounting\Sie;
 
 use byrokrat\accounting\Verification;
 use byrokrat\accounting\Transaction;

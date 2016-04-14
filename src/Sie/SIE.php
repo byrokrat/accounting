@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-namespace byrokrat\accounting\Formatter;
+namespace byrokrat\accounting\Sie;
 
 use byrokrat\accounting\Verification;
 use byrokrat\accounting\Account;
@@ -190,7 +190,7 @@ class SIE
     {
         // Verify that verification is balanced
         if (!$ver->isBalanced()) {
-            throw new UnexpectedValueException("Verification <{$ver->getText()}> is not balanced");
+            throw new UnexpectedValueException("Verification {$ver->getText()} is not balanced");
         }
 
         // Verify that verification date matches accounting year
@@ -198,14 +198,13 @@ class SIE
             $verdate = $ver->getDate();
             if ($verdate < $this->yearStart || $verdate > $this->yearStop) {
                 $date = $verdate->format('Y-m-d');
-                throw new OutOfBoundsException("Verification date <$date> is out of bounds");
+                throw new OutOfBoundsException("Verification date $date is out of bounds");
             }
         }
 
-        // Set names of used accounts
+        // TODO detta kan göras i en egen getUsedAccounts istället, i efterhand...
         foreach ($ver->getAccounts() as $account) {
-            $nr = $account->getNumber();
-            $this->usedAccounts[$nr] = $account;
+            $this->usedAccounts[$account->getNumber()] = $account;
         }
 
         // Save verification
