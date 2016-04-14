@@ -18,6 +18,8 @@
  * Copyright 2016 Hannes Forsgård
  */
 
+declare(strict_types=1);
+
 namespace byrokrat\accounting\Formatter;
 
 use byrokrat\accounting\Verification;
@@ -254,7 +256,7 @@ class SIE
 
         // Generate accounts
         foreach ($this->usedAccounts as $account) {
-            $number = self::quote($account->getNumber());
+            $number = self::quote((string)$account->getNumber());
             $name = self::quote($account->getName());
             $type = self::quote($this->translateAccountType($account));
             $sie .= "#KONTO $number $name" . self::EOL;
@@ -308,7 +310,7 @@ class SIE
 
         // Generate accounts
         foreach ($accounts->getAccounts() as $account) {
-            $number = self::quote($account->getNumber());
+            $number = self::quote((string)$account->getNumber());
             $name = self::quote($account->getName());
             $type = self::quote($this->translateAccountType($account));
             $sie .= "#KONTO $number $name" . self::EOL;

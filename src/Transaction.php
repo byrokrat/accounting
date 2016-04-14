@@ -18,6 +18,8 @@
  * Copyright 2016 Hannes Forsgård
  */
 
+declare(strict_types=1);
+
 namespace byrokrat\accounting;
 
 use byrokrat\amount\Amount;
