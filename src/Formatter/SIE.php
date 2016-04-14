@@ -88,12 +88,12 @@ class SIE
     /**
      * @var array Loaded verifications
      */
-    private $verifications = array();
+    private $verifications = [];
 
     /**
      * @var array List of accounts used in loaded verifications
      */
-    private $usedAccounts = array();
+    private $usedAccounts = [];
 
     /**
      * Construct
@@ -105,12 +105,10 @@ class SIE
 
     /**
      * Clear added verifications
-     *
-     * @return void
      */
     public function clear()
     {
-        $this->verifications = array();
+        $this->verifications = [];
     }
 
     /**
@@ -120,41 +118,32 @@ class SIE
      * @param  string $version
      * @return SIE instance for chaining
      */
-    public function setProgram($program, $version)
+    public function setProgram(string $program, string $version): self
     {
-        assert('is_string($program)');
-        assert('is_string($version)');
         $this->program = $program;
         $this->version = $version;
-
         return $this;
     }
 
     /**
      * Set creator name (normally logged in user or simliar)
      *
-     * @param  string $creator
      * @return SIE instance for chaining
      */
-    public function setCreator($creator)
+    public function setCreator(string $creator): self
     {
-        assert('is_string($creator)');
         $this->creator = $creator;
-
         return $this;
     }
 
     /**
      * Set name of company whose verifications are beeing handled
      *
-     * @param  string $company
      * @return SIE instance for chaining
      */
-    public function setCompany($company)
+    public function setCompany(string $company): self
     {
-        assert('is_string($company)');
         $this->company = $company;
-
         return $this;
     }
 
@@ -181,11 +170,9 @@ class SIE
      * @param  string $typeOfChart
      * @return SIE instance for chaining
      */
-    public function setTypeOfChart($typeOfChart)
+    public function setTypeOfChart(string $typeOfChart): self
     {
-        assert('is_string($typeOfChart)');
         $this->typeOfChart = $typeOfChart;
-
         return $this;
     }
 
@@ -227,16 +214,11 @@ class SIE
 
     /**
      * Remove control characters, addslashes and quote $str
-     *
-     * @param  string $str
-     * @return string
      */
-    public static function quote($str)
+    public static function quote(string $str): string
     {
-        assert('is_string($str)');
         $str = preg_replace('/[[:cntrl:]]/', '', $str);
         $str = addslashes($str);
-
         return "\"$str\"";
     }
 
