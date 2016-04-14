@@ -18,8 +18,6 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-declare(strict_types=1);
-
 namespace byrokrat\accounting;
 
 use byrokrat\amount\Amount;
@@ -39,17 +37,26 @@ class Transaction
      */
     private $amount;
 
+    /**
+     * Set transaction values
+     */
     public function __construct(Account $account, Amount $amount)
     {
         $this->account = $account;
         $this->amount = $amount;
     }
 
+    /**
+     * Get account for this transaction
+     */
     public function getAccount(): Account
     {
         return $this->account;
     }
 
+    /**
+     * Get amount for this transaction
+     */
     public function getAmount(): Amount
     {
         return $this->amount;

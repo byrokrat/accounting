@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace byrokrat\accounting;
 
@@ -6,124 +7,83 @@ use byrokrat\amount\Amount;
 
 class TemplateTest extends \PHPUnit_Framework_TestCase
 {
-    public function getChart()
+    public function testGetters()
     {
-        $c = new ChartOfAccounts();
-        $c->addAccount(new Account\Asset(1920, 'Bank'));
-        $c->addAccount(new Account\Asset(1510, 'Claims'));
-        $c->addAccount(new Account\Earning(3000, 'Incomes'));
-        $c->addAccount(new Account\Earning(3990, 'Benefits'));
-        return $c;
+        $template = new Template('name', 'text');
+        $this->assertEquals('name', $template->getName());
+        $this->assertEquals('text', $template->getText());
     }
 
-    public function testGetSetId()
+    public function testSubstituteText()
     {
-        $t = new Template();
-        $this->assertEquals('', $t->getId());
-        $t->setId('foo');
-        $this->assertEquals('foo', $t->getId());
+        $template = new Template('', 'One {key} three');
+        $template->substitute(['key' => 'two']);
+        $this->assertEquals(
+            'One two three',
+            $template->getText(),
+            '{key} should be replaced by two'
+        );
     }
 
-    /**
-     * @expectedException byrokrat\accounting\Exception\InvalidArgumentException
-     */
-    public function testSetIdError()
+    public function testSubstituteTransactions()
     {
-        $t = new Template();
-        $t->setId('1234567');
-    }
+        $template = new Template('', '');
+        $template->addRawTransaction('{in}', '-400');
+        $template->addRawTransaction('1920', '{amount}');
 
-    public function testGetSetName()
-    {
-        $t = new Template();
-        $this->assertEquals('', $t->getName());
-        $t->setName('foo');
-        $this->assertEquals('foo', $t->getName());
-    }
-
-    /**
-     * @expectedException byrokrat\accounting\Exception\InvalidArgumentException
-     */
-    public function testSetNameError()
-    {
-        $t = new Template();
-        $t->setName('123456789012345678901');
-    }
-
-    public function testGetSetText()
-    {
-        $t = new Template();
-        $this->assertEquals('', $t->getText());
-        $t->setText('foo');
-        $this->assertEquals('foo', $t->getText());
-    }
-
-    /**
-     * @expectedException byrokrat\accounting\Exception\InvalidArgumentException
-     */
-    public function testSetTextError()
-    {
-        $t = new Template();
-        $t->setText('1234567890123456789012345678901234567890123456789012345678901');
-    }
-
-    public function testVerTextAndAmountTranslation()
-    {
-        $t = new Template();
-        $t->addTransaction('{in}', '-400');
-        $t->addTransaction('1920', '{amount}');
-
-        $t->substitute(
-            array(
+        $template->substitute(
+            [
                 'in' => '1920',
                 'amount' => '400'
-            )
+            ]
         );
 
-        $ver = $t->buildVerification($this->getChart());
+        $expectedTransactions = [
+            ['1920', '-400'],
+            ['1920', '400']
+        ];
 
-        $expected = array(
-            new Transaction(new Account\Asset(1920, 'Bank'), new Amount('-400')),
-            new Transaction(new Account\Asset(1920, 'Bank'), new Amount('400')),
+        $this->assertEquals(
+            $expectedTransactions,
+            $template->getRawTransactions()
         );
-        $this->assertEquals($expected, $ver->getTransactions());
     }
 
-    public function testTransactionTranslation()
+    public function testExceptionOnMissingSubstitutionNumber()
     {
-        $t = new Template();
-        $t->setText('One {key} three');
-        $t->substitute(
-            array(
-                'key' => 'two'
-            )
-        );
-        $ver = $t->buildVerification($this->getChart());
-        $this->assertEquals('One two three', $ver->getText());
+        $this->setExpectedException(Exception\UnexpectedValueException::CLASS);
+        $template = new Template('', '');
+        $template->addRawTransaction('{in}', '-400');
+        $template->buildVerification($this->prophesize(AccountSet::CLASS)->reveal());
     }
 
-    public function testAccountConversion()
+    public function testExceptionOnMissingSubstitutionAmount()
     {
-        $t = new Template();
-        $t->addTransaction('1920', '450');
-        $t->addTransaction('3000', '-450');
+        $this->setExpectedException(Exception\UnexpectedValueException::CLASS);
+        $template = new Template('', '');
+        $template->addRawTransaction('1920', '{amount}');
+        $template->buildVerification($this->prophesize(AccountSet::CLASS)->reveal());
+    }
 
-        $ver = $t->buildVerification($this->getChart());
+    public function testBuildVerification()
+    {
+        $template = new Template('', '');
+        $template->addRawTransaction('1920', '450');
+        $template->addRawTransaction('3000', '-450');
 
-        $expected = array(
+        $accounts = new AccountSet(
+            new Account\Asset(1920, 'Bank'),
+            new Account\Earning(3000, 'Incomes')
+        );
+
+        $expectedTransactions = [
             new Transaction(new Account\Asset(1920, 'Bank'), new Amount('450')),
             new Transaction(new Account\Earning(3000, 'Incomes'), new Amount('-450')),
-        );
-        $this->assertEquals($expected, $ver->getTransactions());
-    }
+        ];
 
-    /**
-     * @expectedException byrokrat\accounting\Exception\UnexpectedValueException
-     */
-    public function testMissingAmountKey()
-    {
-        $t = new Template();
-        $t->addTransaction('3000', '-{value}');
-        $t->buildVerification($this->getChart());
+        $this->assertEquals(
+            $expectedTransactions,
+            $template->buildVerification($accounts)->getTransactions()
+        );
     }
 }

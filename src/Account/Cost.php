@@ -25,8 +25,8 @@ namespace byrokrat\accounting\Account;
  */
 class Cost extends \byrokrat\accounting\Account
 {
-    public function getType(): string
+    public function isCost(): bool
     {
-        return self::COST;
+        return true;
     }
 }

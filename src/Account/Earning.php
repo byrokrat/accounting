@@ -25,8 +25,8 @@ namespace byrokrat\accounting\Account;
  */
 class Earning extends \byrokrat\accounting\Account
 {
-    public function getType(): string
+    public function isEarning(): bool
     {
-        return self::EARNING;
+        return true;
     }
 }

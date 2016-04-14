@@ -48,8 +48,7 @@ class VISMAkml
      */
     public function addTemplate(Template $template)
     {
-        $id = $template->getId();
-        $this->templates[$id] = $template;
+        $this->templates[$template->getName()] = $template;
     }
 
     /**
@@ -73,11 +72,10 @@ class VISMAkml
         $templateIndex = 0;
         foreach ($this->templates as $template) {
             $kml .= "[KontMall{$templateIndex}]" . self::EOL;
-            $kml .= "id={$template->getId()}" . self::EOL;
             $kml .= "namn={$template->getName()}" . self::EOL;
             $kml .= "text={$template->getText()}" . self::EOL;
 
-            foreach ($template->getTransactions() as $index => $arTransData) {
+            foreach ($template->getRawTransactions() as $index => $arTransData) {
                 list($number, $amount) = $arTransData;
                 $lineNr = $index + 1;
                 $kml .= "Rad{$index}_radnr={$lineNr}" . self::EOL;
@@ -103,13 +101,9 @@ class VISMAkml
         $data = @parse_ini_string($kml, true, INI_SCANNER_RAW);
 
         foreach ($data as $values) {
-            $id = isset($values['id']) ? $values['id'] : '';
             $name = isset($values['namn']) ? $values['namn'] : '';
             $text = isset($values['text']) ? $values['text'] : '';
-            $template = new Template();
-            $template->setId($id);
-            $template->setName($name);
-            $template->setText($text);
+            $template = new Template($name, $text);
 
             $index = 0;
             while (true) {
@@ -118,7 +112,7 @@ class VISMAkml
                     break;
                 }
                 // Add this transaction
-                $template->addTransaction(
+                $template->addRawTransaction(
                     $values["Rad{$index}_konto"],
                     $values["Rad{$index}_belopp"]
                 );

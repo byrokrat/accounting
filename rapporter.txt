@@ -1,6 +1,13 @@
 Rappoter
 ========
 
+AccountSet har ersatt ChartOfAccounts. Planen är att AccountPlan ska ärva AccountSet och
+    lägga till metoder för gruppering vid rapportskrivning osv..
+        ex:
+            class EUBAS97 extends AccountSet implements AccountPlan {...}
+
+-------------------------------
+
 Ingående balans; krävs alltid i bokföringen; endast för 1-2000-konton. Kan sparas
 direkt i kontoplan eftersom kontoplan måste vara knutet till bokföringsår!!??
 Kontoplan; varje konto anger vilken typ det är, detta anges ju egentligen av

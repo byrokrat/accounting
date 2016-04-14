@@ -23,64 +23,83 @@ namespace byrokrat\accounting;
 use byrokrat\amount\Amount;
 
 /**
- * Simple accounting verification class
+ * Simple verification value object wrapping a list of transactions
  */
 class Verification
 {
     /**
-     * @var string Text describing verification
+     * @var string Free text description
      */
     private $text;
 
     /**
-     * @var \DateTime Verification date
+     * @var \DateTimeImmutable Creation date
      */
     private $date;
 
     /**
-     * @var array List of transactions associated with this verification
+     * @var Transaction[] Transactions included in verification
      */
-    private $transactions = array();
+    private $transactions = [];
 
     /**
-     * Constructor
+     * Setup verification data
      *
-     * @param string    $text Text describing verification
-     * @param \DateTime $date
+     * @param string             $text Free text description
+     * @param \DateTimeImmutable $date Creation date
      */
-    public function __construct($text = '', \DateTime $date = null)
+    public function __construct(string $text, \DateTimeImmutable $date = null)
     {
-        assert('is_string($text)');
-        if (!$date) {
-            $date = new \DateTime();
-        }
         $this->text = $text;
-        $this->date = $date;
+        $this->date = $date ?: new \DateTimeImmutable;
     }
 
     /**
-     * Add new transaction
-     *
-     * @param  Transaction  $trans
-     * @return Verification Instance for chaining
+     * Get text describing verification
      */
-    public function addTransaction(Transaction $trans)
+    public function getText(): string
     {
-        $this->transactions[] = $trans;
-
-        return $this;
+        return $this->text;
     }
 
     /**
-     * Get array of unique account numbers used in this verification
-     *
-     * @return array
+     * Get transaction date
      */
-    public function getAccounts()
+    public function getDate(): \DateTimeImmutable
     {
-        $accounts = array();
-        foreach ($this->getTransactions() as $trans) {
-            $account = $trans->getAccount();
+        return $this->date;
+    }
+
+    /**
+     * Add one ore more new transactions
+     */
+    public function addTransaction(Transaction ...$transactions)
+    {
+        foreach ($transactions as $transaction) {
+            $this->transactions[] = $transaction;
+        }
+    }
+
+    /**
+     * Get included transactions
+     *
+     * @return Transaction[]
+     */
+    public function getTransactions(): array
+    {
+        return $this->transactions;
+    }
+
+    /**
+     * Get array of unique accounts used in this verification
+     *
+     * @return Account[] List of accounts using account numbers as keys
+     */
+    public function getAccounts(): array
+    {
+        $accounts = [];
+        foreach ($this->getTransactions() as $transaction) {
+            $account = $transaction->getAccount();
             $accounts[$account->getNumber()] = $account;
         }
 
@@ -88,84 +107,27 @@ class Verification
     }
 
     /**
-     * Validate that this verification is balanced
-     *
-     * @return bool
-     */
-    public function isBalanced()
-    {
-        return $this->getDifference()->equals(new Amount('0'));
-    }
-
-    /**
      * Get transaction difference. 0 if verification is balanced
-     *
-     * @return Amount
      */
-    public function getDifference()
+    public function getDifference(): Amount
     {
-        $diff = new Amount('0');
-        foreach ($this->getTransactions() as $trans) {
-            $diff = $diff->add($trans->getAmount());
+        $diff = null;
+        foreach ($this->getTransactions() as $transaction) {
+            if (!isset($diff)) {
+                $diff = $transaction->getAmount();
+                continue;
+            }
+            $diff = $diff->add($transaction->getAmount());
         }
 
-        return $diff;
+        return $diff ?: new Amount('0');
     }
 
     /**
-     * Get text describing verification
-     *
-     * @return string
+     * Validate that this verification is balanced
      */
-    public function getText()
+    public function isBalanced(): bool
     {
-        return $this->text;
-    }
-
-    /**
-     * Set text describing verification
-     *
-     * @param  string       $text
-     * @return Verification Instance for chaining
-     */
-    public function setText($text)
-    {
-        assert('is_string($text)');
-        $this->text = $text;
-
-        return $this;
-    }
-
-    /**
-     * Get transaction date
-     *
-     * @return \DateTime
-     */
-    public function getDate()
-    {
-        return $this->date;
-    }
-
-    /**
-     * Set transaction date
-     *
-     * @param  \DateTime    $date
-     * @return Verification Instance for chaining
-     */
-    public function setDate(\DateTime $date)
-    {
-        $this->date = $date;
-
-        return $this;
-    }
-
-    /**
-     * Get list of transactions
-     *
-     * @return array
-     */
-    public function getTransactions()
-    {
-        return $this->transactions;
+        return $this->getDifference()->isZero();
     }
 }

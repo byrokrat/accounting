@@ -4,7 +4,7 @@
     "keywords": ["accounting", "bookkeeping", "SIE"],
     "homepage": "https://github.com/byrokrat/accounting",
     "type": "library",
-    "license": "GPLv3",
+    "license": "GPL-3.0",
     "authors": [
         {
             "name": "Hannes Forsgård",
@@ -18,7 +18,6 @@
     },
     "require": {
         "php": "^7",
-        "ext-mbstring": "*",
         "byrokrat/amount": "^1.0"
     },
     "require-dev": {

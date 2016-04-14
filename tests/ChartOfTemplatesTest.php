@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace byrokrat\accounting;
 
@@ -9,8 +10,7 @@ class ChartOfTemplatesTest extends \PHPUnit_Framework_TestCase
         $c = new ChartOfTemplates();
         $this->assertFalse($c->exists('T'));
 
-        $T = new Template();
-        $T->setId('T');
+        $T = new Template('T', '');
         $c->addTemplate($T);
         $this->assertTrue($c->exists('T'));
 
@@ -34,8 +34,7 @@ class ChartOfTemplatesTest extends \PHPUnit_Framework_TestCase
     public function testExportImport()
     {
         $c = new ChartOfTemplates();
-        $T = new Template();
-        $T->setId('T');
+        $T = new Template('T', '');
         $c->addTemplate($T);
 
         $str = serialize($c);

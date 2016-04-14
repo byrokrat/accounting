@@ -25,8 +25,8 @@ namespace byrokrat\accounting\Account;
  */
 class Asset extends \byrokrat\accounting\Account
 {
-    public function getType(): string
+    public function isAsset(): bool
     {
-        return self::ASSET;
+        return true;
     }
 }

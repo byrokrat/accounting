@@ -1,137 +1,147 @@
 <?php
+declare(strict_types=1);
 
 namespace byrokrat\accounting;
 
 use byrokrat\amount\Amount;
+use byrokrat\amount\Currency\SEK;
 
 class VerificationTest extends \PHPUnit_Framework_TestCase
 {
-    public function testSetGetText()
+    private function createTransaction(Amount $amount = null, Account $account = null)
     {
-        $v = new Verification();
-        $v->setText('test');
-        $this->assertEquals($v->getText(), 'test');
+        $transaction = $this->prophesize(Transaction::CLASS);
+
+        $transaction->getAmount()->willReturn(
+            $amount ?: $this->prophesize(Amount::CLASS)->reveal()
+        );
+
+        $transaction->getAccount()->willReturn(
+            $account ?: $this->prophesize(Account::CLASS)->reveal()
+        );
+
+        return $transaction->reveal();
     }
 
-    public function testSetGetDate()
+    public function testVerificationText()
     {
-        $v = new Verification('test');
-        $now = new \DateTime();
-        $this->assertTrue($v->getDate() <= $now);
+        $this->assertEquals(
+            (new Verification('foobar'))->getText(),
+            'foobar'
+        );
+    }
 
-        $v = new Verification('test', $now);
-        $this->assertTrue($v->getDate() == $now);
+    public function testVerificationDate()
+    {
+        $now = new \DateTimeImmutable();
 
-        $v = new Verification('test');
-        $v->setDate($now);
-        $this->assertTrue($v->getDate() == $now);
+        $this->assertSame(
+            $now,
+            (new Verification('', $now))->getDate()
+        );
+
+        $this->assertTrue(
+            (new Verification(''))->getDate() >= $now
+        );
     }
 
     public function testGetTransactions()
     {
-        $bank = new Account\Asset(1920, 'Bank');
-        $income = new Account\Earning(3000, 'Income');
-        $trans = array(
-            new Transaction($bank, new Amount('100')),
-            new Transaction($bank, new Amount('200')),
-            new Transaction($income, new Amount('-300')),
+        $transactions = [
+            $this->createTransaction(),
+            $this->createTransaction(),
+        ];
+
+        $verification = new Verification('');
+        $verification->addTransaction(...$transactions);
+
+        $this->assertEquals(
+            $transactions,
+            $verification->getTransactions()
         );
-        $v = new Verification('test');
-        foreach ($trans as $t) {
-            $v->addTransaction($t);
-        }
-        $this->assertEquals($trans, $v->getTransactions());
     }
 
     public function testGetAccounts()
     {
-        $bank = new Account\Asset(1920, 'Bank');
-        $income = new Account\Earning(3000, 'Income');
+        $a1920 = $this->prophesize(Account::CLASS);
+        $a1920->getNumber()->willReturn(1920);
 
-        $trans = array(
-            new Transaction($bank, new Amount('100')),
-            new Transaction($bank, new Amount('200')),
-            new Transaction($income, new Amount('-300')),
+        $a3000 = $this->prophesize(Account::CLASS);
+        $a3000->getNumber()->willReturn(3000);
+
+        $verification = new Verification('');
+        $verification->addTransaction(
+            $this->createTransaction(null, $a1920->reveal()),
+            $this->createTransaction(null, $a1920->reveal()),
+            $this->createTransaction(null, $a3000->reveal())
         );
 
-        $v = new Verification('test');
-        foreach ($trans as $t) {
-            $v->addTransaction($t);
-        }
+        $accounts = $verification->getAccounts();
 
-        $a = $v->getAccounts();
+        $this->assertCount(
+            2,
+            $accounts,
+            'Verification contains 2 unique accounts and this should be relflected in count'
+        );
 
-        $this->assertEquals(2, count($a));
-        $this->assertTrue(isset($a[1920]));
-        $this->assertTrue(isset($a[3000]));
+        $this->assertArrayHasKey(1920, $accounts);
+        $this->assertArrayHasKey(3000, $accounts);
     }
 
-    public function testIsBalanced()
+    public function testBalancedVerification()
     {
-        $bank = new Account\Asset(1920, 'Bank');
-        $income = new Account\Earning(3000, 'Income');
-
-        //A balanced verification
-        $trans = array(
-            new Transaction($bank, new Amount('100')),
-            new Transaction($bank, new Amount('200')),
-            new Transaction($income, new Amount('-300')),
+        $verification = new Verification('');
+        $verification->addTransaction(
+            $this->createTransaction(new Amount('100')),
+            $this->createTransaction(new Amount('200')),
+            $this->createTransaction(new Amount('-300'))
         );
-        $v = new Verification('test');
-        foreach ($trans as $t) {
-            $v->addTransaction($t);
-        }
-        $this->assertTrue($v->isBalanced());
 
-        // A unbalanced verification
-        $trans = array(
-            new Transaction($bank, new Amount('100')),
-            new Transaction($income, new Amount('-300')),
-        );
-        $v = new Verification('test');
-        foreach ($trans as $t) {
-            $v->addTransaction($t);
-        }
-        $this->assertFalse($v->isBalanced());
+        $this->assertTrue($verification->isBalanced());
     }
 
-    public function testGetDifference()
+    public function testNegativeVerification()
     {
-        $bank = new Account\Asset(1920, 'Bank');
-        $income = new Account\Earning(3000, 'Income');
-
-        //A balanced verification
-        $trans = array(
-            new Transaction($bank, new Amount('100')),
-            new Transaction($bank, new Amount('200')),
-            new Transaction($income, new Amount('-300')),
+        $verification = new Verification('');
+        $verification->addTransaction(
+            $this->createTransaction(new Amount('200')),
+            $this->createTransaction(new Amount('-300'))
         );
-        $v = new Verification('test');
-        foreach ($trans as $t) {
-            $v->addTransaction($t);
-        }
-        $this->assertEquals((string)new Amount('0'), (string)$v->getDifference());
 
-        // A negaitve verification
-        $trans = array(
-            new Transaction($bank, new Amount('100')),
-            new Transaction($income, new Amount('-300')),
+        $this->assertFalse($verification->isBalanced());
+        $this->assertEquals(
+            new Amount('-100'),
+            $verification->getDifference()
         );
-        $v = new Verification('test');
-        foreach ($trans as $t) {
-            $v->addTransaction($t);
-        }
-        $this->assertEquals((string)new Amount('-200'), (string)$v->getDifference());
+    }
 
-        // A positive verification
-        $trans = array(
-            new Transaction($bank, new Amount('200')),
-            new Transaction($income, new Amount('-100')),
+    public function testPositiveVerification()
+    {
+        $verification = new Verification('');
+        $verification->addTransaction(
+            $this->createTransaction(new Amount('200')),
+            $this->createTransaction(new Amount('-100'))
         );
-        $v = new Verification('test');
-        foreach ($trans as $t) {
-            $v->addTransaction($t);
-        }
-        $this->assertEquals((string)new Amount('100'), (string)$v->getDifference());
+
+        $this->assertFalse($verification->isBalanced());
+        $this->assertEquals(
+            new Amount('100'),
+            $verification->getDifference()
+        );
+    }
+
+    public function testCurrency()
+    {
+        $verification = new Verification('');
+        $verification->addTransaction(
+            $this->createTransaction(new SEK('200')),
+            $this->createTransaction(new SEK('-100'))
+        );
+
+        $this->assertFalse($verification->isBalanced());
+        $this->assertEquals(
+            new SEK('100'),
+            $verification->getDifference()
+        );
     }
 }

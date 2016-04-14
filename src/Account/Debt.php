@@ -25,8 +25,8 @@ namespace byrokrat\accounting\Account;
  */
 class Debt extends \byrokrat\accounting\Account
 {
-    public function getType(): string
+    public function isDebt(): bool
     {
-        return self::DEBT;
+        return true;
     }
 }

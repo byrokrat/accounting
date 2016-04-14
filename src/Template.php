@@ -23,15 +23,10 @@ namespace byrokrat\accounting;
 use byrokrat\amount\Amount;
 
 /**
- * Simple accounting template class
+ * Build verifications from preconstructed templates
  */
 class Template
 {
-    /**
-     * @var string Template id
-     */
-    private $id;
-
     /**
      * @var string Template name
      */
@@ -45,99 +40,29 @@ class Template
     /**
      * @var array Raw template transactions
      */
-    private $transactions = array();
+    private $transactions = [];
 
     /**
-     * Constructor
-     *
-     * @param string $id
-     * @param string $name
-     * @param string $text
+     * Set template values
      */
-    public function __construct($id = '', $name = '', $text = '')
+    public function __construct(string $name, string $text)
     {
-        $this->setId($id);
-        $this->setName($name);
-        $this->setText($text);
-    }
-
-    /**
-     * Set template id
-     *
-     * @param  string $id
-     * @return void
-     * @throws Exception\InvalidArgumentException If id is longer than 6 characters
-     */
-    public function setId($id)
-    {
-        assert('is_string($id)');
-        $id = trim($id);
-        if (mb_strlen($id) > 6) {
-            throw new Exception\InvalidArgumentException("Invalid template id <$id>. Use max 6 characters.");
-        }
-        $this->id = $id;
-    }
-
-    /**
-     * Get template id
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set template name
-     *
-     * @param  string $name
-     * @return void
-     * @throws Exception\InvalidArgumentException If name is longer than 20 characters
-     */
-    public function setName($name)
-    {
-        assert('is_string($name)');
-        $name = trim($name);
-        if (mb_strlen($name) > 20) {
-            throw new Exception\InvalidArgumentException("Invalid template name <$name>. Use max 20 characters.");
-        }
         $this->name = $name;
+        $this->text = $text;
     }
 
     /**
      * Get template name
-     *
-     * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * Set template text
-     *
-     * @param  string $text
-     * @return void
-     * @throws Exception\InvalidArgumentException If text is longer than 60 characters
+     * Get raw verification text
      */
-    public function setText($text)
-    {
-        assert('is_string($text)');
-        $text = trim($text);
-        if (mb_strlen($text) > 60) {
-            throw new Exception\InvalidArgumentException("Invalid template text <$text>. Use max 60 characters.");
-        }
-        $this->text = $text;
-    }
-
-    /**
-     * Get template text
-     *
-     * @return string
-     */
-    public function getText()
+    public function getText(): string
     {
         return $this->text;
     }
@@ -145,17 +70,11 @@ class Template
     /**
      * Add transaction data
      *
-     * @param  string $number
-     * @param  string $amount
-     * @return void
+     * Substitution variables with the form {var} can be used
      */
-    public function addTransaction($number, $amount)
+    public function addRawTransaction(string $number, string $amount)
     {
-        assert('is_string($number)');
-        assert('is_string($amount)');
-        $number = trim($number);
-        $amount = trim($amount);
-        $this->transactions[] = array($number, $amount);
+        $this->transactions[] = [$number, $amount];
     }
 
     /**
@@ -163,39 +82,15 @@ class Template
      *
      * @return array
      */
-    public function getTransactions()
+    public function getRawTransactions(): array
     {
         return $this->transactions;
     }
 
     /**
-     * Check if template is ready for conversion
+     * Substitute template variables in verification text and transactions
      *
-     * If all variables are substituted
-     *
-     * @param  string $key Will contian non-substituted key on error
-     * @return bool
-     */
-    public function ready(&$key)
-    {
-        foreach ($this->transactions as $arTransData) {
-            foreach ($arTransData as $data) {
-                if (preg_match("/\{[^}]*\}/", $data)) {
-                    $key = $data;
-
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Apply list of substitutions to template
-     *
-     * @param  array $values Substitution key-value-pairs
-     * @return void
+     * @param string[] $values Substitution key-value-pairs
      */
     public function substitute(array $values)
     {
@@ -222,33 +117,42 @@ class Template
     }
 
     /**
+     * Check if template is ready for conversion (all variables are substituted)
+     *
+     * @param string $key Will contian non-substituted key on error
+     */
+    public function ready(&$key): bool
+    {
+        foreach ($this->getRawTransactions() as $transactionData) {
+            foreach ($transactionData as $key) {
+                if (preg_match("/\{[^}]*\}/", $key)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * Create verification from template
      *
-     * @param  ChartOfAccounts $chart
-     * @return Verification
      * @throws Exception\UnexpectedValueException If any key is NOT substituted
      */
-    public function buildVerification(ChartOfAccounts $chart)
+    public function buildVerification(AccountSet $accounts): Verification
     {
         if (!$this->ready($key)) {
-            throw new Exception\UnexpectedValueException("Unable to substitute template key <$key>");
+            throw new Exception\UnexpectedValueException("Unable to substitute template key $key");
         }
 
-        // Build verification
         $ver = new Verification($this->getText());
 
-        foreach ($this->getTransactions() as $arTransData) {
-            list($number, $amount) = $arTransData;
-
-            // Ignore 0 amount transactions
-            if (0 != floatval($amount)) {
-                $ver->addTransaction(
-                    new Transaction(
-                        $chart->getAccount($number),
-                        new Amount($amount)
-                    )
-                );
-            }
+        foreach ($this->getRawTransactions() as list($number, $amount)) {
+            $ver->addTransaction(
+                new Transaction(
+                    $accounts->getAccount(intval($number)),
+                    new Amount($amount)
+                )
+            );
         }
 
         return $ver;

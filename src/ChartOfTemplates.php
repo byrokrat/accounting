@@ -22,75 +22,61 @@ namespace byrokrat\accounting;
 
 /**
  * Manage a collection of templates
+ *
+ * TODO Om denna ska sparas så ska metodnamn mm konvergeras med AccountSet
  */
 class ChartOfTemplates
 {
     /**
-     * @var array List of loaded templates
+     * @var Template[] List of loaded templates
      */
-    private $templates = array();
+    private $templates = [];
 
     /**
      * Add template
      *
-     * If multiple templates with the same id are added the former is
-     * overwritten
-     *
-     * @param  Template $template
-     * @return void
+     * If multiple templates with the same name are added the former is overwritten
      */
     public function addTemplate(Template $template)
     {
-        $id = $template->getId();
-        $this->templates[$id] = $template;
+        $this->templates[$template->getName()] = $template;
     }
 
     /**
-     * Drop template using id
-     *
-     * @param  string $id
-     * @return void
+     * Drop template
      */
-    public function dropTemplate($id)
+    public function dropTemplate(string $name)
     {
-        assert('is_string($id)');
-        unset($this->templates[$id]);
+        unset($this->templates[$name]);
     }
 
     /**
      * Check if template exists
-     *
-     * @param  string $id
-     * @return bool
      */
-    public function exists($id)
+    public function exists(string $name): bool
     {
-        assert('is_string($id)');
-        return isset($this->templates[$id]);
+        return isset($this->templates[$name]);
     }
 
     /**
-     * Get a template clone using id
+     * Get a template clone
      *
-     * @param  string $id
-     * @return Template
      * @throws Exception\OutOfBoundsException If template does not exist
      */
-    public function getTemplate($id)
+    public function getTemplate(string $name): Template
     {
-        assert('is_string($id)');
-        if (!$this->exists($id)) {
-            throw new Exception\OutOfBoundsException("Template <$id> does not exist");
+        if (!$this->exists($name)) {
+            throw new Exception\OutOfBoundsException("Template $name does not exist");
         }
-        return clone $this->templates[$id];
+        return clone $this->templates[$name];
     }
 
     /**
      * Get loaded tempaltes
      *
-     * @return array Template ids as keys
+     * @return Template[]
      */
-    public function getTemplates()
+    public function getTemplates(): array
     {
         return $this->templates;
     }

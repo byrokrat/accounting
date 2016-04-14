@@ -18,11 +18,7 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-declare(strict_types=1);
-
 namespace byrokrat\accounting;
-
-use Exception\InvalidArgumentException;
 
 /**
  * Account value object containing a number and a name
@@ -30,51 +26,33 @@ use Exception\InvalidArgumentException;
 abstract class Account
 {
     /**
-     * Identifier for asset accounts
-     */
-    const ASSET = 'T';
-
-    /**
-     * Identifier for debt accounts
-     */
-    const DEBT = 'S';
-
-    /**
-     * Identifier for earning accounts
-     */
-    const EARNING = 'I';
-
-    /**
-     * Identifier for cost accounts
-     */
-    const COST = 'K';
-
-    /**
-     * @var int
+     * @var int 4 digit account number
      */
     private $number;
 
     /**
-     * @var string
+     * @var string Free text name of account
      */
     private $name;
 
     /**
-     * @throws Exception\InvalidArgumentException If number is invalid
+     * Set account values
+     *
+     * @param  int    $number 4 digit number identifying account
+     * @param  string $name   Free text name of account
+     *
+     * @throws Exception\InvalidArgumentException If $number is < 1000 or > 9999
      */
     public function __construct(int $number, string $name)
     {
         if ($number < 1000 || $number > 9999) {
-            throw new Exception\InvalidArgumentException("Account must be greater than 999 and lesser than 10000");
+            throw new Exception\InvalidArgumentException(
+                'Account number must be greater than 999 and lesser than 10000'
+            );
         }
         $this->number = $number;
         $this->name = $name;
     }
-
-    /**
-     * Get account type identifier
-     */
-    abstract public function getType(): string;
 
     /**
      * Get 4 digit account number
@@ -93,14 +71,48 @@ abstract class Account
     }
 
     /**
-     * Check if $account equals this account
+     * Check if $account is equal to this instance
+     *
+     * @param Account $account Account to compare with current instance
      */
     public function equals(Account $account): bool
     {
         return (
-            $this->getType() == $account->getType()
+            get_class($this) == get_class($account)
             && $this->getNumber() == $account->getNumber()
             && $this->getName() == $account->getName()
         );
+    }
+
+    /**
+     * Check if object represents an asset account
+     */
+    public function isAsset(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Check if object represents a cost account
+     */
+    public function isCost(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Check if object represents a debt account
+     */
+    public function isDebt(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Check if object represents an earnings account
+     */
+    public function isEarning(): bool
+    {
+        return false;
     }
 }

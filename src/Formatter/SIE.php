@@ -21,8 +21,8 @@
 namespace byrokrat\accounting\Formatter;
 
 use byrokrat\accounting\Verification;
-use byrokrat\accounting\ChartOfAccounts;
 use byrokrat\accounting\Account;
+use byrokrat\accounting\AccountSet;
 use byrokrat\accounting\Exception\UnexpectedValueException;
 use byrokrat\accounting\Exception\OutOfBoundsException;
 use byrokrat\accounting\Exception\RangeException;
@@ -274,7 +274,7 @@ class SIE
         foreach ($this->usedAccounts as $account) {
             $number = self::quote($account->getNumber());
             $name = self::quote($account->getName());
-            $type = self::quote($account->getType());
+            $type = self::quote($this->translateAccountType($account));
             $sie .= "#KONTO $number $name" . self::EOL;
             $sie .= "#KTYP $number $type" . self::EOL;
         }
@@ -301,22 +301,19 @@ class SIE
     }
 
     /**
-     * Generate SIE string (using charset CP437) for $chart
+     * Generate SIE string (using charset CP437) for $accounts
      *
-     * @param  string          $description String describing this chart of accounts
-     * @param  ChartOfAccounts $chart
-     * @return string
+     * @param  string     $description String describing this chart of accounts
+     * @param  AccountSet $accounts
      */
-    public function exportChart($description, ChartOfAccounts $chart)
+    public function exportChart(string $description, AccountSet $accounts): string
     {
-        assert('is_string($description)');
-
         // Generate header
         $program = self::quote($this->program);
         $description = self::quote($description);
         $version = self::quote($this->version);
         $creator = self::quote($this->creator);
-        $chartType = self::quote($chart->getChartType());
+        $chartType = 'TODO'; //self::quote($chart->getChartType());
 
         $sie = "#FILTYP KONTO" . self::EOL;
         $sie .= "#PROGRAM $program $version" . self::EOL;
@@ -328,10 +325,10 @@ class SIE
         $sie .= self::EOL;
 
         // Generate accounts
-        foreach ($chart->getAccounts() as $account) {
+        foreach ($accounts->getAccounts() as $account) {
             $number = self::quote($account->getNumber());
             $name = self::quote($account->getName());
-            $type = self::quote($account->getType());
+            $type = self::quote($this->translateAccountType($account));
             $sie .= "#KONTO $number $name" . self::EOL;
             $sie .= "#KTYP $number $type" . self::EOL;
         }
@@ -343,18 +340,36 @@ class SIE
     }
 
     /**
-     * Create a ChartOfAccounts object from SIE string (in charset CP437)
-     *
-     * @param  string         $sie
-     * @throws RangeException If $sie is not valid
-     * @return ChartOfAccounts
+     * Translate account into one character account type identifier
      */
-    public function importChart($sie)
+    private function translateAccountType(Account $account): string
+    {
+        if ($account->isAsset()) {
+            return 'T';
+        }
+        if ($account->isCost()) {
+            return 'K';
+        }
+        if ($account->isDebt()) {
+            return 'S';
+        }
+        if ($account->isEarning()) {
+            return 'I';
+        }
+        // TODO error if this line is reached
+    }
+
+    /**
+     * Create an AccountSet object from SIE string (in charset CP437)
+     *
+     * @throws RangeException If $sie is not valid
+     */
+    public function importChart(string $sie): AccountSet
     {
         $sie = iconv("CP437", "UTF-8", $sie);
         $lines = explode(self::EOL, $sie);
 
-        $chart = new ChartOfAccounts();
+        $accounts = new AccountSet();
         $current = array();
 
         foreach ($lines as $nr => $line) {
@@ -364,7 +379,8 @@ class SIE
                     if (!isset($data[1])) {
                         throw new RangeException("Invalid chart type at line $nr");
                     }
-                    $chart->setChartType($data[1]);
+                    // TODO not supported at the moment
+                    // $accounts->setChartType($data[1]);
                     break;
                 case '#KONTO':
                     // Account must have form #KONTO number name
@@ -384,21 +400,21 @@ class SIE
                     }
 
                     switch ($data[2]) {
-                        case Account::ASSET:
+                        case 'T':
                             $account = new Account\Asset(intval($data[1]), $current[1]);
                             break;
-                        case Account::EARNING:
+                        case 'I':
                             $account = new Account\Earning(intval($data[1]), $current[1]);
                             break;
-                        case Account::DEBT:
+                        case 'S':
                             $account = new Account\Debt(intval($data[1]), $current[1]);
                             break;
-                        case Account::COST:
+                        case 'K':
                             $account = new Account\Cost(intval($data[1]), $current[1]);
                             break;
                     }
 
-                    $chart->addAccount($account);
+                    $accounts->addAccount($account);
                     $current = array();
                     break;
             }
@@ -409,6 +425,6 @@ class SIE
             throw new RangeException("Account type missing for '{$current[0]}'");
         }
 
-        return $chart;
+        return $accounts;
     }
 }
