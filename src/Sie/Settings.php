@@ -24,13 +24,8 @@ namespace byrokrat\accounting\Sie;
 
 /**
  * Value object for storing sie-file settings
- *
- * TODO Bryt ut SettingsInterface så att andra implementeringar kan göras...
- * TODO Ska vara getAccountingYearFirstDay(), getAccountingYearLastDay()
- * TODO Ska chartType verkligen vara här??
- * TODO getTargetCompany() istället för bara getCompany()
  */
-class Settings
+class Settings implements SettingsInterface
 {
     /**
      * @var \DateTimeImmutable[] First and last days of accounting year
@@ -40,7 +35,7 @@ class Settings
     /**
      * @var string Name of program generating SIE
      */
-    private $program = "byrokrat-accounting";
+    private $program = "byrokrat/accounting";
 
     /**
      * @var string Version of program generating SIE
@@ -50,17 +45,17 @@ class Settings
     /**
      * @var string Name of person (instance) generating SIE
      */
-    private $creator = 'byrokrat-accounting';
+    private $creator = 'byrokrat/accounting';
 
     /**
      * @var string Name of company whose verifications are beeing handled
      */
-    private $company = "";
+    private $company = '';
 
     /**
      * @var string Type of chart of accounts used
      */
-    private $chartType = "EUBAS97";
+    private $description = '';
 
     /**
      * Set default accounting year at construct
@@ -92,13 +87,19 @@ class Settings
     }
 
     /**
-     * Get first and last days of accounting year
-     *
-     * @return \DateTimeImmutable[]
+     * Get first day of accounting year
      */
-    public function getAccountingYear(): array
+    public function getAccountingYearFirstDay(): \DateTimeImmutable
     {
-        return $this->accountingYear;
+        return $this->accountingYear[0];
+    }
+
+    /**
+     * Get last day of accounting year
+     */
+    public function getAccountingYearLastDay(): \DateTimeImmutable
+    {
+        return $this->accountingYear[1];
     }
 
     /**
@@ -167,7 +168,7 @@ class Settings
      * @param  string $company Name of company whose verifications are beeing handled
      * @return self   Instance to enable chaining
      */
-    public function setCompany(string $company): self
+    public function setTargetCompany(string $company): self
     {
         $this->company = $company;
         return $this;
@@ -176,28 +177,28 @@ class Settings
     /**
      * Get name of company whose verifications are beeing handled
      */
-    public function getCompany(): string
+    public function getTargetCompany(): string
     {
         return $this->company;
     }
 
     /**
-     * Set type of chart of accounts used
+     * Get free text description
      *
-     * @param  string $chartType Type of chart of accounts used
+     * @param  string $description Free text description
      * @return self   Instance to enable chaining
      */
-    public function setChartType(string $chartType): self
+    public function setDescription(string $description): self
     {
-        $this->chartType = $chartType;
+        $this->description = $description;
         return $this;
     }
 
     /**
-     * Get type of chart of accounts used
+     * Get free text description
      */
-    public function getChartType(): string
+    public function getDescription(): string
     {
-        return $this->chartType;
+        return $this->description;
     }
 }

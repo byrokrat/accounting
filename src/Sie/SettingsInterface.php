@@ -18,46 +18,45 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-declare(strict_types=1);
-
 namespace byrokrat\accounting\Sie;
 
 /**
- * Simple stream helper for creating content
+ * Interface for reading SIE settings
  */
-class Stream
+interface SettingsInterface
 {
     /**
-     * End of line chars used
+     * Get first day of accounting year
      */
-    const EOL = "\r\n";
+    public function getAccountingYearFirstDay(): \DateTimeImmutable;
 
     /**
-     * @var string Written content
+     * Get last day of accounting year
      */
-    private $content = '';
+    public function getAccountingYearLastDay(): \DateTimeImmutable;
 
     /**
-     * Write to stream
+     * Get name of generating program
      */
-    public function write(string $str)
-    {
-        $this->content .= $str;
-    }
+    public function getProgram(): string;
 
     /**
-     * Write line to stream
+     * Get version of generating program
      */
-    public function writeln(string $str)
-    {
-        $this->write($str . self::EOL);
-    }
+    public function getProgramVersion(): string;
 
     /**
-     * Get stream content encoded using CP437
+     * Get creator name (normally logged in user or simliar)
      */
-    public function getContent(): string
-    {
-        return iconv("UTF-8", "CP437", $this->content);
-    }
+    public function getCreator(): string;
+
+    /**
+     * Get name of company whose verifications are beeing handled
+     */
+    public function getTargetCompany(): string;
+
+    /**
+     * Get free text description
+     */
+    public function getDescription(): string;
 }

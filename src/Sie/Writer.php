@@ -22,10 +22,12 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie;
 
-use byrokrat\accounting\Verification;
 use byrokrat\accounting\Account;
 use byrokrat\accounting\AccountSet;
 use byrokrat\accounting\Exception;
+use byrokrat\accounting\Transaction;
+use byrokrat\accounting\Verification;
+use byrokrat\accounting\VerificationSet;
 
 /**
  * SIE 4I file format implementation.
@@ -40,211 +42,142 @@ use byrokrat\accounting\Exception;
  */
 class Writer
 {
-    /**
-     * @var Settings Loaded SIE settings
+    /*
+    TODO Kontroll att transaktion hör till rätt år görs inte längre...
+    if (
+        $verification->getDate() < $settings->getAccountingYearFirstDay()
+        || $verification->getDate() > $settings->getAccountingYearLastDay()
+    ) {
+        throw new Exception\OutOfBoundsException("Verification date is outside of accounting year");
+    }
      */
-    private $settings;
 
-    /**
-     * @var Verification[] Loaded verifications
-     */
-    private $verifications = [];
-
-    /**
-     * Load settings at construct
-     */
-    public function __construct(Settings $settings)
+    public function generate(SettingsInterface $settings, VerificationSet $verifications): string
     {
-        $this->settings = $settings;
+        $output = new Output;
+        $this->writeHeader($settings, $output);
+        $this->writeVerificationSet($verifications, $output);
+        return $output->getContent();
     }
 
     /**
-     * Clear added verifications
+     * Write file header to output
      */
-    public function reset()
+    public function writeHeader(SettingsInterface $settings, Output $output)
     {
-        $this->verifications = [];
-    }
+        $output->writeln('#FLAGGA 0');
+        $output->writeln('#SIETYP 4');
+        $output->writeln('#FORMAT PC8');
 
-    /**
-     * Add one or more verifications
-     *
-     * @throws Exception\UnexpectedValueException If verification is unbalanced
-     * @throws Exception\OutOfBoundsException     If date is outside of accounting year
-     */
-    public function addVerification(Verification ...$verifications)
-    {
-        foreach ($verifications as $verification) {
-            if (!$verification->isBalanced()) {
-                throw new Exception\UnexpectedValueException("Verification is not balanced");
-            }
-
-            list($firstDay, $lastDay) = $this->settings->getAccountingYear();
-            if ($verification->getDate() < $firstDay || $verification->getDate() > $lastDay) {
-                throw new Exception\OutOfBoundsException("Verification date is outside of accounting year");
-            }
-
-            $this->verifications[] = $verification;
-        }
-    }
-
-    /**
-     * Get loaded verifications
-     *
-     * @return Verification[]
-     */
-    public function getVerifications(): array
-    {
-        return $this->verifications;
-    }
-
-    /**
-     * Get accounts used in loaded verifications
-     *
-     * @return Account[]
-     */
-    public function getAccounts(): array
-    {
-        $accounts = [];
-        foreach ($this->verifications as $verification) {
-            foreach ($verification->getAccounts() as $account) {
-                $accounts[$account->getNumber()] = $account;
-            }
-        }
-
-        return $accounts;
-    }
-
-
-    /**
-     * Remove control characters, addslashes and quote $str
-     */
-    public static function quote(string $str): string
-    {
-        $str = preg_replace('/[[:cntrl:]]/', '', $str);
-        $str = addslashes($str);
-        return "\"$str\"";
-    }
-
-    /**
-     * Generate SIE string (using charset CP437)
-     *
-     * @return string
-     */
-    public function generate()
-    {
-        // TODO verifications och settings kan komma hit allesammans!!
-            // Med hjälp av Sie\VerificationBag eller liknande...
-            // Eller ska vi ha en accounting\VerificationSet, kan ju vara bra i andra tillfällen mä...
-        $stream = new Stream;
-
-        $stream->writeln('#FLAGGA 0');
-
-        // TODO %s ska ersättas med quoted values!!!
-        $stream->writeln(
+        $output->writeln(
             '#PROGRAM %s %s',
-            $this->settings->getProgram(),
-            $this->settings->getProgramVersion()
+            $settings->getProgram(),
+            $settings->getProgramVersion()
         );
 
-        $strem->writeln('#FORMAT PC8');
-
-        $strem->writeln(
-            '#GEN '.date('Ymd').' %s',
-            $this->settings->getCreator(),
+        $output->writeln(
+            '#GEN %s %s',
+            date('Ymd'),
+            $settings->getCreator()
         );
 
-        $strem->writeln('#SIETYP 4');
-
-        $strem->writeln(
+        $output->writeln(
             '#FNAMN %s',
-            $this->settings->getCompany(),
+            $settings->getTargetCompany()
         );
 
-        $strem->writeln(
-            '#KPTYP %s',
-            $this->settings->getChartType(),
+        $output->writeln(
+            '#PROSA %s',
+            $settings->getDescription()
         );
 
-        list($firstDay, $lastDay) = $this->settings->getAccountingYear();
-        $strem->writeln(
-            "#RAR 0 {$firstDay->format('Ymd')} {$lastDay->format('Ymd')}"
+        $output->writeln(
+            '#RAR 0 %s %s',
+            $settings->getAccountingYearFirstDay()->format('Ymd'),
+            $settings->getAccountingYearLastDay()->format('Ymd')
         );
-
-        $stream->writeln('');
-
-        foreach ($this->getAccounts() as $account) {
-            $stream->writeln(
-                '#KONTO %s %s',
-                (string)$account->getNumber(),
-                $account->getName()
-            );
-
-            // TODO translatedAccountType() ska implementeras på annat sätt...
-            $stream->writeln(
-                '#KTYP %s %s',
-                (string)$account->getNumber(),
-                $this->translateAccountType($account)
-            );
-        }
-
-        foreach ($this->getVerifications() as $verification) {
-            // TODO verifications har jag inte gjort, se nedan...
-        }
-
-        // Generate header
-        //$program = self::quote($this->program);
-        //$version = self::quote($this->version);
-        //$creator = self::quote($this->creator);
-        //$company = self::quote($this->company);
-        //$chartType = self::quote($this->typeOfChart);
-
-        $sie = '';
-        //$sie = "#FLAGGA 0" . self::EOL;
-        //$sie .= "#PROGRAM $program $version" . self::EOL;
-        //$sie .= "#FORMAT PC8" . self::EOL;
-        //$sie .= "#GEN {$this->date->format('Ymd')} $creator" . self::EOL;
-        //$sie .= "#SIETYP 4" . self::EOL;
-        //$sie .= "#FNAMN $company" . self::EOL;
-        //$sie .= "#KPTYP $chartType" . self::EOL;
-
-        /*if (isset($this->yearStart)) {
-            $start = $this->yearStart->format('Ymd');
-            $stop = $this->yearStop->format('Ymd');
-            $sie .= "#RAR 0 $start $stop" . self::EOL;
-        }*/
-
-        //$sie .= self::EOL;
-
-        // Generate accounts
-        /*foreach ($this->usedAccounts as $account) {
-            $number = self::quote((string)$account->getNumber());
-            $name = self::quote($account->getName());
-            $type = self::quote($this->translateAccountType($account));
-            $sie .= "#KONTO $number $name" . self::EOL;
-            $sie .= "#KTYP $number $type" . self::EOL;
-        }*/
-
-        // Generate verifications
-        foreach ($this->verifications as $ver) {
-            $text = self::quote($ver->getText());
-            $date = $ver->getDate()->format('Ymd');
-            $sie .= self::EOL . "#VER \"\" \"\" $date $text" . self::EOL;
-            $sie .= "{" . self::EOL;
-            foreach ($ver->getTransactions() as $trans) {
-                $sie .=
-                    "\t#TRANS {$trans->getAccount()->getNumber()} {} "
-                    . $trans->getAmount()
-                    . self::EOL;
-            }
-            $sie .= "}" . self::EOL;
-        }
-
-        // Convert charset
-        //$sie = iconv("UTF-8", "CP437", $sie);
-
-        return $stream->getContent();
     }
+
+    /**
+     * Write account to output
+     */
+    public function writeAccount(Account $account, Output $output)
+    {
+        $output->writeln(
+            '#KONTO %s %s',
+            (string)$account->getNumber(),
+            $account->getName()
+        );
+        $output->writeln(
+            '#KTYP %s %s',
+            (string)$account->getNumber(),
+            $this->translateAccountType($account)
+        );
+    }
+
+    /**
+     * Write transaction to output
+     */
+    public function writeTransaction(Transaction $transaction, Output $output)
+    {
+        $output->writeln(
+            "\t#TRANS %s {} %s",
+            (string)$transaction->getAccount()->getNumber(),
+            (string)$transaction->getAmount()
+        );
+    }
+
+    /**
+     * Write verification to output
+     */
+    public function writeVerification(Verification $verification, Output $output)
+    {
+        $output->writeln(
+            '#VER "" "" %s %s',
+            $verification->getText(),
+            $verification->getDate()->format('Ymd')
+        );
+        $output->writeln('{');
+        foreach ($verification->getTransactions() as $transaction) {
+            $this->writeTransaction($transaction, $output);
+        }
+        $output->writeln('}');
+    }
+
+    /**
+     * Write verifications to output
+     */
+    public function writeVerificationSet(VerificationSet $verifications, Output $output)
+    {
+        foreach ($verifications->getAccounts() as $account) {
+            $this->writeAccount($account, $output);
+        }
+        foreach ($verifications as $verification) {
+            $this->writeVerification($verification, $output);
+        }
+    }
+
+    /**
+     * Translate account into one character account type identifier
+     */
+    private function translateAccountType(Account $account): string
+    {
+        // TODO Bryt loss allt översättande från class till typ osv...
+        if ($account->isAsset()) {
+            return 'T';
+        }
+        if ($account->isCost()) {
+            return 'K';
+        }
+        if ($account->isDebt()) {
+            return 'S';
+        }
+        if ($account->isEarning()) {
+            return 'I';
+        }
+        // TODO error if this line is reached
+    }
+
 
     /**
      * Generate SIE string (using charset CP437) for $accounts
@@ -254,16 +187,17 @@ class Writer
      */
     public function exportChart(string $description, AccountSet $accounts): string
     {
-        // Generate header
-        $program = self::quote($this->program);
+        // TODO ska helt enkelt byggas upp i med det nya systemet...
+
+        /*$program = self::quote($this->program);
         $description = self::quote($description);
         $version = self::quote($this->version);
         $creator = self::quote($this->creator);
-        $chartType = 'TODO'; //self::quote($chart->getChartType());
+        $chartType = self::quote('');
 
         $sie = "#FILTYP KONTO" . self::EOL;
         $sie .= "#PROGRAM $program $version" . self::EOL;
-        $sie .= "#TEXT $description" . self::EOL;
+        $sie .= "#PROSA $description" . self::EOL;
         $sie .= "#FORMAT PC8" . self::EOL;
         $sie .= "#GEN {$this->date->format('Ymd')} $creator" . self::EOL;
         $sie .= "#KPTYP $chartType" . self::EOL;
@@ -283,94 +217,6 @@ class Writer
         $sie = iconv("UTF-8", "CP437", $sie);
 
         return $sie;
-    }
-
-    /**
-     * Translate account into one character account type identifier
-     */
-    private function translateAccountType(Account $account): string
-    {
-        if ($account->isAsset()) {
-            return 'T';
-        }
-        if ($account->isCost()) {
-            return 'K';
-        }
-        if ($account->isDebt()) {
-            return 'S';
-        }
-        if ($account->isEarning()) {
-            return 'I';
-        }
-        // TODO error if this line is reached
-    }
-
-    /**
-     * Create an AccountSet object from SIE string (in charset CP437)
-     *
-     * @throws Exception\RangeException If $sie is not valid
-     */
-    public function importChart(string $sie): AccountSet
-    {
-        $sie = iconv("CP437", "UTF-8", $sie);
-        $lines = explode(self::EOL, $sie);
-
-        $accounts = new AccountSet();
-        $current = array();
-
-        foreach ($lines as $nr => $line) {
-            $data = str_getcsv($line, ' ', '"');
-            switch ($data[0]) {
-                case '#KPTYP':
-                    if (!isset($data[1])) {
-                        throw new Exception\RangeException("Invalid chart type at line $nr");
-                    }
-                    // TODO not supported at the moment
-                    // $accounts->setChartType($data[1]);
-                    break;
-                case '#KONTO':
-                    // Account must have form #KONTO number name
-                    if (!isset($data[2])) {
-                        throw new Exception\RangeException("Invalid account values at line $nr");
-                    }
-                    $current = array($data[1], $data[2]);
-                    break;
-                case '#KTYP':
-                    // Account type must have form #KTYP number type
-                    if (!isset($data[2])) {
-                        throw new Exception\RangeException("Invalid account values at line $nr");
-                    }
-                    // Type must referer to current account
-                    if ($data[1] != $current[0]) {
-                        throw new Exception\RangeException("Unexpected account type at line $nr");
-                    }
-
-                    switch ($data[2]) {
-                        case 'T':
-                            $account = new Account\Asset(intval($data[1]), $current[1]);
-                            break;
-                        case 'I':
-                            $account = new Account\Earning(intval($data[1]), $current[1]);
-                            break;
-                        case 'S':
-                            $account = new Account\Debt(intval($data[1]), $current[1]);
-                            break;
-                        case 'K':
-                            $account = new Account\Cost(intval($data[1]), $current[1]);
-                            break;
-                    }
-
-                    $accounts->addAccount($account);
-                    $current = array();
-                    break;
-            }
-        }
-
-        // There should be no half way processed accounts
-        if (!empty($current)) {
-            throw new Exception\RangeException("Account type missing for '{$current[0]}'");
-        }
-
-        return $accounts;
+        */
     }
 }

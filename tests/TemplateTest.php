@@ -5,7 +5,7 @@ namespace byrokrat\accounting;
 
 use byrokrat\amount\Amount;
 
-class TemplateTest extends \PHPUnit_Framework_TestCase
+class TemplateTest extends BaseTestCase
 {
     public function testGetters()
     {

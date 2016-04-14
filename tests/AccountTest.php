@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting;
 
-class AccountTest extends \PHPUnit_Framework_TestCase
+class AccountTest extends BaseTestCase
 {
     public function testExceptionOnToSmallAccountNumber()
     {

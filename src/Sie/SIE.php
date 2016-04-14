@@ -39,6 +39,9 @@ use byrokrat\accounting\Exception\RangeException;
  *
  * This implementation is based on specification 4B from the
  * maintainer (SIE gruppen) dated 2008-09-30.
+ *
+ * TODO Håller på att fasa ut denna fil. Writer implementerar den första delen.
+ * 	saknas fortfarande en reader...
  */
 class SIE
 {

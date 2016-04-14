@@ -25,7 +25,7 @@ namespace byrokrat\accounting;
 /**
  * Container for multiple account objects
  */
-class AccountSet
+class AccountSet implements \IteratorAggregate
 {
     /**
      * @var Account[] Loaded accounts
@@ -45,11 +45,12 @@ class AccountSet
      *
      * Adding the same account number multiple times will overwrite previous value
      */
-    public function addAccount(Account ...$accounts)
+    public function addAccount(Account ...$accounts): self
     {
         foreach ($accounts as $account) {
             $this->accounts[$account->getNumber()] = $account;
         }
+        return $this;
     }
 
     /**
@@ -60,6 +61,16 @@ class AccountSet
     public function getAccounts(): array
     {
         return $this->accounts;
+    }
+
+    /**
+     * Implements the IteratorAggregate interface
+     */
+    public function getIterator(): \Traversable
+    {
+        foreach ($this->getAccounts() as $number => $account) {
+            yield $number => $account;
+        }
     }
 
     /**

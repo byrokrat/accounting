@@ -3,30 +3,30 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting;
 
-class AccountSetTest extends \PHPUnit_Framework_TestCase
+class AccountSetTest extends BaseTestCase
 {
-    private function createAccount(int $number = 0, string $name = '')
-    {
-        $account = $this->prophesize(Account::CLASS);
-        $account->getNumber()->willReturn($number);
-        $account->getName()->willReturn($name);
-
-        return $account->reveal();
-    }
-
     public function testAddAndReadAccounts()
     {
         $accounts = [
-            $this->createAccount(0),
-            $this->createAccount(1),
+            0 => $this->getAccountMock(0),
+            1 => $this->getAccountMock(1),
+            1234 => $this->getAccountMock(1234),
         ];
-        $set = new AccountSet(...$accounts);
-        $this->assertEquals($accounts, $set->getAccounts());
+
+        $this->assertEquals(
+            $accounts,
+            (new AccountSet(...$accounts))->getAccounts()
+        );
+
+        $this->assertEquals(
+            $accounts,
+            iterator_to_array(new AccountSet(...$accounts))
+        );
     }
 
     public function testContainsAccount()
     {
-        $set = new AccountSet($this->createAccount(1234));
+        $set = new AccountSet($this->getAccountMock(1234));
 
         $this->assertTrue(
             $set->contains(1234),
@@ -41,7 +41,7 @@ class AccountSetTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAccount()
     {
-        $account = $this->createAccount(1234, 'foobar');
+        $account = $this->getAccountMock(1234, 'foobar');
         $this->assertEquals(
             $account,
             (new AccountSet($account))->getAccount(1234)
@@ -56,7 +56,7 @@ class AccountSetTest extends \PHPUnit_Framework_TestCase
 
     public function testRemoveAccount()
     {
-        $set = new AccountSet($this->createAccount(1234));
+        $set = new AccountSet($this->getAccountMock(1234));
 
         $this->assertTrue(
             $set->contains(1234),
@@ -78,7 +78,7 @@ class AccountSetTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAccountFromName()
     {
-        $account = $this->createAccount(1234, 'foobar');
+        $account = $this->getAccountMock(1234, 'foobar');
         $this->assertEquals(
             $account,
             (new AccountSet($account))->getAccountFromName('foobar')
@@ -93,8 +93,8 @@ class AccountSetTest extends \PHPUnit_Framework_TestCase
 
     public function testAlterAccount()
     {
-        $set = new AccountSet($this->createAccount(1234, 'foobar'));
-        $set->addAccount($this->createAccount(1234, 'altered'));
+        $set = new AccountSet($this->getAccountMock(1234, 'foobar'));
+        $set->addAccount($this->getAccountMock(1234, 'altered'));
 
         $this->assertSame(
             'altered',

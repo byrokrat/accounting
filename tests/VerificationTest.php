@@ -6,23 +6,8 @@ namespace byrokrat\accounting;
 use byrokrat\amount\Amount;
 use byrokrat\amount\Currency\SEK;
 
-class VerificationTest extends \PHPUnit_Framework_TestCase
+class VerificationTest extends BaseTestCase
 {
-    private function createTransaction(Amount $amount = null, Account $account = null)
-    {
-        $transaction = $this->prophesize(Transaction::CLASS);
-
-        $transaction->getAmount()->willReturn(
-            $amount ?: $this->prophesize(Amount::CLASS)->reveal()
-        );
-
-        $transaction->getAccount()->willReturn(
-            $account ?: $this->prophesize(Account::CLASS)->reveal()
-        );
-
-        return $transaction->reveal();
-    }
-
     public function testVerificationText()
     {
         $this->assertEquals(
@@ -48,8 +33,8 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
     public function testGetTransactions()
     {
         $transactions = [
-            $this->createTransaction(),
-            $this->createTransaction(),
+            $this->getTransactionMock(),
+            $this->getTransactionMock(),
         ];
 
         $verification = new Verification('');
@@ -71,12 +56,12 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
 
         $verification = new Verification('');
         $verification->addTransaction(
-            $this->createTransaction(null, $a1920->reveal()),
-            $this->createTransaction(null, $a1920->reveal()),
-            $this->createTransaction(null, $a3000->reveal())
+            $this->getTransactionMock(null, $a1920->reveal()),
+            $this->getTransactionMock(null, $a1920->reveal()),
+            $this->getTransactionMock(null, $a3000->reveal())
         );
 
-        $accounts = $verification->getAccounts();
+        $accounts = iterator_to_array($verification->getAccounts());
 
         $this->assertCount(
             2,
@@ -92,9 +77,9 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
     {
         $verification = new Verification('');
         $verification->addTransaction(
-            $this->createTransaction(new Amount('100')),
-            $this->createTransaction(new Amount('200')),
-            $this->createTransaction(new Amount('-300'))
+            $this->getTransactionMock(new Amount('100')),
+            $this->getTransactionMock(new Amount('200')),
+            $this->getTransactionMock(new Amount('-300'))
         );
 
         $this->assertTrue($verification->isBalanced());
@@ -104,8 +89,8 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
     {
         $verification = new Verification('');
         $verification->addTransaction(
-            $this->createTransaction(new Amount('200')),
-            $this->createTransaction(new Amount('-300'))
+            $this->getTransactionMock(new Amount('200')),
+            $this->getTransactionMock(new Amount('-300'))
         );
 
         $this->assertFalse($verification->isBalanced());
@@ -119,8 +104,8 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
     {
         $verification = new Verification('');
         $verification->addTransaction(
-            $this->createTransaction(new Amount('200')),
-            $this->createTransaction(new Amount('-100'))
+            $this->getTransactionMock(new Amount('200')),
+            $this->getTransactionMock(new Amount('-100'))
         );
 
         $this->assertFalse($verification->isBalanced());
@@ -134,8 +119,8 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
     {
         $verification = new Verification('');
         $verification->addTransaction(
-            $this->createTransaction(new SEK('200')),
-            $this->createTransaction(new SEK('-100'))
+            $this->getTransactionMock(new SEK('200')),
+            $this->getTransactionMock(new SEK('-100'))
         );
 
         $this->assertFalse($verification->isBalanced());

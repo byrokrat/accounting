@@ -7,16 +7,14 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
 {
     public function testDefaultAccountingYear()
     {
-        list($firstDay, $lastDay) = (new Settings)->getAccountingYear();
-
         $this->assertSame(
             date('Y') . '-01-01',
-            $firstDay->format('Y-m-d')
+            (new Settings)->getAccountingYearFirstDay()->format('Y-m-d')
         );
 
         $this->assertSame(
             date('Y') . '-12-31',
-            $lastDay->format('Y-m-d')
+            (new Settings)->getAccountingYearLastDay()->format('Y-m-d')
         );
     }
 
@@ -26,8 +24,8 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
             ['setProgram', 'getProgram'],
             ['setProgramVersion', 'getProgramVersion'],
             ['setCreator', 'getCreator'],
-            ['setCompany', 'getCompany'],
-            ['setChartType', 'getChartType'],
+            ['setTargetCompany', 'getTargetCompany'],
+            ['setDescription', 'getDescription'],
         ];
     }
 

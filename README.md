@@ -6,12 +6,32 @@
 [![Dependency Status](https://img.shields.io/gemnasium/byrokrat/accounting.svg?style=flat-square)](https://gemnasium.com/byrokrat/accounting)
 
 Classes for working with bookkeeping data according to Swedish standards.
-Transaction data can be read and written in the SIE format.
 
 Installation
 ------------
 ```shell
 composer require byrokrat/accounting
+```
+
+Usage
+-----
+Transaction data can be read and written in the SIE format.
+
+### Generate SIE data
+<!-- @expectOutput /^\#FLAGGA 0/ -->
+```php
+namespace byrokrat\accounting;
+use byrokrat\amount\Amount;
+
+echo (new Sie\Writer)->generate(
+    (new Sie\Settings)->setTargetCompany('my-company'),
+    new VerificationSet(
+        (new Verification('Ver A'))->addTransaction(
+            new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100')),
+            new Transaction(new Account\Earning(3000, 'Intänk'), new Amount('-100'))
+        )
+    )
+);
 ```
 
 Credits

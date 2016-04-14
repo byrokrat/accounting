@@ -75,11 +75,12 @@ class Verification
     /**
      * Add one ore more new transactions
      */
-    public function addTransaction(Transaction ...$transactions)
+    public function addTransaction(Transaction ...$transactions): self
     {
         foreach ($transactions as $transaction) {
             $this->transactions[] = $transaction;
         }
+        return $this;
     }
 
     /**
@@ -93,16 +94,13 @@ class Verification
     }
 
     /**
-     * Get array of unique accounts used in this verification
-     *
-     * @return Account[] List of accounts using account numbers as keys
+     * Get set of accounts used in this verification
      */
-    public function getAccounts(): array
+    public function getAccounts(): AccountSet
     {
-        $accounts = [];
+        $accounts = new AccountSet;
         foreach ($this->getTransactions() as $transaction) {
-            $account = $transaction->getAccount();
-            $accounts[$account->getNumber()] = $account;
+            $accounts->addAccount($transaction->getAccount());
         }
 
         return $accounts;
