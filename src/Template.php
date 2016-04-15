@@ -151,7 +151,7 @@ class Template
         foreach ($this->getRawTransactions() as list($number, $amount)) {
             $ver->addTransaction(
                 new Transaction(
-                    $accounts->getAccount(intval($number)),
+                    $accounts->getAccountFromNumber(intval($number)),
                     new Amount($amount)
                 )
             );

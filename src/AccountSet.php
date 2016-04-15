@@ -44,6 +44,8 @@ class AccountSet implements \IteratorAggregate
      * Add one ore more accounts to container
      *
      * Adding the same account number multiple times will overwrite previous value
+     *
+     * @return self To enable chaining
      */
     public function addAccount(Account ...$accounts): self
     {
@@ -62,9 +64,9 @@ class AccountSet implements \IteratorAggregate
     }
 
     /**
-     * Remove account from set
+     * Remove account number from set
      */
-    public function removeAccount(int $number)
+    public function removeAccountFromNumber(int $number)
     {
         unset($this->accounts[$number]);
     }
@@ -74,12 +76,11 @@ class AccountSet implements \IteratorAggregate
      *
      * @throws Exception\OutOfBoundsException If account does not exist
      */
-    public function getAccount(int $number): Account
+    public function getAccountFromNumber(int $number): Account
     {
         if (!$this->contains($number)) {
-            throw new Exception\OutOfBoundsException("Account number <$number> does not exist");
+            throw new Exception\OutOfBoundsException("Account number $number does not exist");
         }
-
         return $this->accounts[$number];
     }
 
@@ -95,7 +96,7 @@ class AccountSet implements \IteratorAggregate
                 return $account;
             }
         }
-        throw new Exception\OutOfBoundsException("Account <$name> does not exist");
+        throw new Exception\OutOfBoundsException("Account $name does not exist");
     }
 
     /**

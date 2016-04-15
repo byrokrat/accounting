@@ -34,22 +34,7 @@ class AccountSetTest extends BaseTestCase
         );
     }
 
-    public function testGetAccount()
-    {
-        $account = $this->getAccountMock(1234, 'foobar');
-        $this->assertEquals(
-            $account,
-            (new AccountSet($account))->getAccount(1234)
-        );
-    }
-
-    public function testExceptionOnUnknownAccount()
-    {
-        $this->setExpectedException(Exception\OutOfBoundsException::CLASS);
-        (new AccountSet)->getAccount(1234);
-    }
-
-    public function testRemoveAccount()
+    public function testRemoveAccountFromNumber()
     {
         $set = new AccountSet($this->getAccountMock(1234));
 
@@ -58,7 +43,7 @@ class AccountSetTest extends BaseTestCase
             'Set should contain account 1234'
         );
 
-        $set->removeAccount(1234);
+        $set->removeAccountFromNumber(1234);
 
         $this->assertFalse(
             $set->contains(1234),
@@ -66,9 +51,24 @@ class AccountSetTest extends BaseTestCase
         );
 
         $this->assertNull(
-            $set->removeAccount(1234),
+            $set->removeAccountFromNumber(1234),
             'Removing unexisting accounts should do no harm'
         );
+    }
+
+    public function testGetAccountFromNumber()
+    {
+        $account = $this->getAccountMock(1234, 'foobar');
+        $this->assertEquals(
+            $account,
+            (new AccountSet($account))->getAccountFromNumber(1234)
+        );
+    }
+
+    public function testExceptionOnUnknownAccount()
+    {
+        $this->setExpectedException(Exception\OutOfBoundsException::CLASS);
+        (new AccountSet)->getAccountFromNumber(1234);
     }
 
     public function testGetAccountFromName()
@@ -93,7 +93,7 @@ class AccountSetTest extends BaseTestCase
 
         $this->assertSame(
             'altered',
-            $set->getAccount(1234)->getName(),
+            $set->getAccountFromNumber(1234)->getName(),
             'Adding multiple accounts with the same number should overwrite previous values'
         );
     }
