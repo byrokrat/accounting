@@ -1,9 +1,11 @@
 # Accounting
 
 [![Packagist Version](https://img.shields.io/packagist/v/byrokrat/accounting.svg?style=flat-square)](https://packagist.org/packages/byrokrat/accounting)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000&style=flat-square)](LICENSE)
 [![Build Status](https://img.shields.io/travis/byrokrat/accounting/master.svg?style=flat-square)](https://travis-ci.org/byrokrat/accounting)
 [![Quality Score](https://img.shields.io/scrutinizer/g/byrokrat/accounting.svg?style=flat-square)](https://scrutinizer-ci.com/g/byrokrat/accounting)
 [![Dependency Status](https://img.shields.io/gemnasium/byrokrat/accounting.svg?style=flat-square)](https://gemnasium.com/byrokrat/accounting)
+
 
 Classes for working with bookkeeping data according to Swedish standards.
 
@@ -15,9 +17,11 @@ composer require byrokrat/accounting
 
 Usage
 -----
-Transaction data can be read and written in the SIE format.
+> NOTE! This package is under development and the API may change.
 
-### Generate SIE data
+Transaction data can be read and written in the [SIE](http://www.sie.se/) format.
+
+### Generating sie
 <!-- @expectOutput /^\#FLAGGA 0/ -->
 ```php
 namespace byrokrat\accounting;
@@ -36,6 +40,6 @@ echo (new Sie\Writer)->generate(
 
 Credits
 -------
-Accounting is released under the [GNU General Public License](LICENSE)
+Accounting is released under the [GNU General Public License](LICENSE).
 
 @author Hannes Forsgård (hannes.forsgard@fripost.org)
