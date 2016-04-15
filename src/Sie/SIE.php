@@ -205,7 +205,6 @@ class SIE
             }
         }
 
-        // TODO detta kan göras i en egen getUsedAccounts istället, i efterhand...
         foreach ($ver->getAccounts() as $account) {
             $this->usedAccounts[$account->getNumber()] = $account;
         }
@@ -311,7 +310,7 @@ class SIE
         $sie .= self::EOL;
 
         // Generate accounts
-        foreach ($accounts->getAccounts() as $account) {
+        foreach ($accounts as $account) {
             $number = self::quote((string)$account->getNumber());
             $name = self::quote($account->getName());
             $type = self::quote($this->translateAccountType($account));

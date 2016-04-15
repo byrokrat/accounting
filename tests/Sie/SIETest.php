@@ -164,7 +164,7 @@ class SIETest extends \PHPUnit_Framework_TestCase
             '1920' => new Account\Asset(1920, 'Bank'),
             '3000' => new Account\Earning(3000, 'Income')
         );
-        $this->assertEquals($expected, $accounts->getAccounts());
+        $this->assertEquals($expected, iterator_to_array($accounts));
     }
 
     public function testImportChartInvalidChartType()

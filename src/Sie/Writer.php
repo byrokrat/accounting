@@ -187,7 +187,8 @@ class Writer
      */
     public function exportChart(string $description, AccountSet $accounts): string
     {
-        // TODO ska helt enkelt byggas upp i med det nya systemet...
+        // TODO ska helt enkelt byggas upp i med det nya systemet..
+        // TODO eller tas bort helt?
 
         /*$program = self::quote($this->program);
         $description = self::quote($description);
@@ -205,7 +206,7 @@ class Writer
         $sie .= self::EOL;
 
         // Generate accounts
-        foreach ($accounts->getAccounts() as $account) {
+        foreach ($accounts as $account) {
             $number = self::quote((string)$account->getNumber());
             $name = self::quote($account->getName());
             $type = self::quote($this->translateAccountType($account));

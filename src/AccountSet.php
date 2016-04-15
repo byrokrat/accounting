@@ -54,26 +54,6 @@ class AccountSet implements \IteratorAggregate
     }
 
     /**
-     * Get loaded account objects
-     *
-     * @return Account[]
-     */
-    public function getAccounts(): array
-    {
-        return $this->accounts;
-    }
-
-    /**
-     * Implements the IteratorAggregate interface
-     */
-    public function getIterator(): \Traversable
-    {
-        foreach ($this->getAccounts() as $number => $account) {
-            yield $number => $account;
-        }
-    }
-
-    /**
      * Check if account number exists in set
      */
     public function contains(int $number): bool
@@ -116,5 +96,15 @@ class AccountSet implements \IteratorAggregate
             }
         }
         throw new Exception\OutOfBoundsException("Account <$name> does not exist");
+    }
+
+    /**
+     * Implements the IteratorAggregate interface
+     */
+    public function getIterator(): \Traversable
+    {
+        foreach ($this->accounts as $number => $account) {
+            yield $number => $account;
+        }
     }
 }

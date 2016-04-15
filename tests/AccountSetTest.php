@@ -5,18 +5,13 @@ namespace byrokrat\accounting;
 
 class AccountSetTest extends BaseTestCase
 {
-    public function testAddAndReadAccounts()
+    public function testIteration()
     {
         $accounts = [
             0 => $this->getAccountMock(0),
             1 => $this->getAccountMock(1),
             1234 => $this->getAccountMock(1234),
         ];
-
-        $this->assertEquals(
-            $accounts,
-            (new AccountSet(...$accounts))->getAccounts()
-        );
 
         $this->assertEquals(
             $accounts,
