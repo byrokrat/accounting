@@ -3,15 +3,17 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting;
 
+use Prophecy\Argument;
 use byrokrat\amount\Amount;
 
 class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
-    protected function getAccountMock(int $number = 0, string $name = '')
+    protected function getAccountMock(int $number = 0, string $name = '', bool $equals = false)
     {
         $account = $this->prophesize(Account::CLASS);
         $account->getNumber()->willReturn($number);
         $account->getName()->willReturn($name);
+        $account->equals(Argument::any())->willReturn($equals);
 
         return $account->reveal();
     }
@@ -20,16 +22,17 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
     {
         $transaction = $this->prophesize(Transaction::CLASS);
         $transaction->getAmount()->willReturn($amount ?: $this->prophesize(Amount::CLASS)->reveal());
-        $transaction->getAccount()->willReturn($account ?: $this->prophesize(Account::CLASS)->reveal());
+        $transaction->getAccount()->willReturn($account ?: $this->getAccountMock());
 
         return $transaction->reveal();
     }
 
-    protected function getVerificationMock(array $accounts = [])
+    protected function getVerificationMock(array $accounts = [], array $transactions = [])
     {
         $verification = $this->prophesize(Verification::CLASS);
         $verification->isBalanced()->willReturn(true);
         $verification->getAccounts()->willReturn(new AccountSet(...$accounts));
+        $verification->getTransactions()->willReturn(new TransactionSet(...$transactions));
 
         return $verification->reveal();
     }

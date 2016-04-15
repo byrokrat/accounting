@@ -38,6 +38,44 @@ echo (new Sie\Writer)->generate(
 );
 ```
 
+### Calculate account balance
+<!-- @expectOutput /^400\.00$/ -->
+```php
+namespace byrokrat\accounting;
+
+use byrokrat\amount\Currency\SEK;
+
+$bank = new Account\Asset(1920, 'Bank');
+$income = new Account\Earning(3000, 'Income');
+
+// Fetch verifications from persistent storage...
+$verifications = new VerificationSet(
+    (new Verification('First ver'))->addTransaction(
+        new Transaction($bank, new SEK('100')),
+        new Transaction($income, new SEK('-100'))
+    ),
+    (new Verification('Second ver'))->addTransaction(
+        new Transaction($bank, new SEK('200')),
+        new Transaction($income, new SEK('-200'))
+    )
+);
+
+// Setup incoming balance for account 1920
+$balance = new AccountBalance($bank, new SEK('100'));
+
+// Calculate outgoing balance
+$processor = new TransactionProcessor;
+
+$processor->onAccount($bank, function (Transaction $transaction) use ($balance) {
+    $balance->addTransaction($transaction);
+});
+
+$processor->process($verifications);
+
+// Outputs 400
+echo $balance->getOutgoingBalance();
+```
+
 Credits
 -------
 Accounting is released under the [GNU General Public License](LICENSE).

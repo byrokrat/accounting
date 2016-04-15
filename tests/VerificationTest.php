@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace byrokrat\accounting;
 
 use byrokrat\amount\Amount;
-use byrokrat\amount\Currency\SEK;
 
 class VerificationTest extends BaseTestCase
 {
@@ -30,103 +29,60 @@ class VerificationTest extends BaseTestCase
         );
     }
 
-    public function testGetTransactions()
+    public function testTransactions()
     {
-        $transactions = [
-            $this->getTransactionMock(),
-            $this->getTransactionMock(),
-        ];
+        $transaction = $this->getTransactionMock();
 
-        $verification = new Verification('');
-        $verification->addTransaction(...$transactions);
+        $transactions = $this->prophesize(TransactionSet::CLASS);
+        $transactions->addTransaction($transaction)->shouldBeCalled();
+        $transactions = $transactions->reveal();
 
-        $this->assertEquals(
+        $verification = new Verification('', new \DateTimeImmutable, $transactions);
+
+        $this->assertSame(
             $transactions,
             $verification->getTransactions()
         );
+
+        $verification->addTransaction($transaction);
     }
 
     public function testGetAccounts()
     {
-        $a1920 = $this->prophesize(Account::CLASS);
-        $a1920->getNumber()->willReturn(1920);
+        $accounts = $this->prophesize(AccountSet::CLASS)->reveal();
 
-        $a3000 = $this->prophesize(Account::CLASS);
-        $a3000->getNumber()->willReturn(3000);
+        $transactions = $this->prophesize(TransactionSet::CLASS);
+        $transactions->getAccounts()->willReturn($accounts);
 
-        $verification = new Verification('');
-        $verification->addTransaction(
-            $this->getTransactionMock(null, $a1920->reveal()),
-            $this->getTransactionMock(null, $a1920->reveal()),
-            $this->getTransactionMock(null, $a3000->reveal())
-        );
+        $verification = new Verification('', new \DateTimeImmutable, $transactions->reveal());
 
-        $accounts = iterator_to_array($verification->getAccounts());
-
-        $this->assertCount(
-            2,
+        $this->assertSame(
             $accounts,
-            'Verification contains 2 unique accounts and this should be relflected in count'
-        );
-
-        $this->assertArrayHasKey(1920, $accounts);
-        $this->assertArrayHasKey(3000, $accounts);
-    }
-
-    public function testBalancedVerification()
-    {
-        $verification = new Verification('');
-        $verification->addTransaction(
-            $this->getTransactionMock(new Amount('100')),
-            $this->getTransactionMock(new Amount('200')),
-            $this->getTransactionMock(new Amount('-300'))
-        );
-
-        $this->assertTrue($verification->isBalanced());
-    }
-
-    public function testNegativeVerification()
-    {
-        $verification = new Verification('');
-        $verification->addTransaction(
-            $this->getTransactionMock(new Amount('200')),
-            $this->getTransactionMock(new Amount('-300'))
-        );
-
-        $this->assertFalse($verification->isBalanced());
-        $this->assertEquals(
-            new Amount('-100'),
-            $verification->getDifference()
+            $verification->getAccounts()
         );
     }
 
-    public function testPositiveVerification()
+    public function testIsBalanced()
     {
-        $verification = new Verification('');
-        $verification->addTransaction(
-            $this->getTransactionMock(new Amount('200')),
-            $this->getTransactionMock(new Amount('-100'))
-        );
+        $transactions = $this->prophesize(TransactionSet::CLASS);
+        $transactions->getSum()->willReturn(new Amount('0'));
 
-        $this->assertFalse($verification->isBalanced());
-        $this->assertEquals(
-            new Amount('100'),
-            $verification->getDifference()
+        $verification = new Verification('', new \DateTimeImmutable, $transactions->reveal());
+
+        $this->assertTrue(
+            $verification->isBalanced()
         );
     }
 
-    public function testCurrency()
+    public function testIsNotBalanced()
     {
-        $verification = new Verification('');
-        $verification->addTransaction(
-            $this->getTransactionMock(new SEK('200')),
-            $this->getTransactionMock(new SEK('-100'))
-        );
+        $transactions = $this->prophesize(TransactionSet::CLASS);
+        $transactions->getSum()->willReturn(new Amount('100'));
 
-        $this->assertFalse($verification->isBalanced());
-        $this->assertEquals(
-            new SEK('100'),
-            $verification->getDifference()
+        $verification = new Verification('', new \DateTimeImmutable, $transactions->reveal());
+
+        $this->assertFalse(
+            $verification->isBalanced()
         );
     }
 }

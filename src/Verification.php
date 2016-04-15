@@ -22,8 +22,6 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting;
 
-use byrokrat\amount\Amount;
-
 /**
  * Simple verification value object wrapping a list of transactions
  */
@@ -40,20 +38,22 @@ class Verification
     private $date;
 
     /**
-     * @var Transaction[] Transactions included in verification
+     * @var TransactionSet Transactions included in verification
      */
-    private $transactions = [];
+    private $transactions;
 
     /**
      * Setup verification data
      *
-     * @param string             $text Free text description
-     * @param \DateTimeImmutable $date Creation date
+     * @param string             $text         Free text description
+     * @param \DateTimeImmutable $date         Creation date
+     * @param TransactionSet     $transactions Collection of transactions
      */
-    public function __construct(string $text, \DateTimeImmutable $date = null)
+    public function __construct(string $text, \DateTimeImmutable $date = null, TransactionSet $transactions = null)
     {
         $this->text = $text;
         $this->date = $date ?: new \DateTimeImmutable;
+        $this->transactions = $transactions ?: new TransactionSet;
     }
 
     /**
@@ -74,53 +74,21 @@ class Verification
 
     /**
      * Add one ore more new transactions
+     *
+     * @return self To enable chaining
      */
     public function addTransaction(Transaction ...$transactions): self
     {
-        foreach ($transactions as $transaction) {
-            $this->transactions[] = $transaction;
-        }
+        $this->transactions->addTransaction(...$transactions);
         return $this;
     }
 
     /**
      * Get included transactions
-     *
-     * @return Transaction[]
      */
-    public function getTransactions(): array
+    public function getTransactions(): TransactionSet
     {
         return $this->transactions;
-    }
-
-    /**
-     * Get set of accounts used in this verification
-     */
-    public function getAccounts(): AccountSet
-    {
-        $accounts = new AccountSet;
-        foreach ($this->getTransactions() as $transaction) {
-            $accounts->addAccount($transaction->getAccount());
-        }
-
-        return $accounts;
-    }
-
-    /**
-     * Get transaction difference. 0 if verification is balanced
-     */
-    public function getDifference(): Amount
-    {
-        $diff = null;
-        foreach ($this->getTransactions() as $transaction) {
-            if (!isset($diff)) {
-                $diff = $transaction->getAmount();
-                continue;
-            }
-            $diff = $diff->add($transaction->getAmount());
-        }
-
-        return $diff ?: new Amount('0');
     }
 
     /**
@@ -128,6 +96,14 @@ class Verification
      */
     public function isBalanced(): bool
     {
-        return $this->getDifference()->isZero();
+        return $this->getTransactions()->getSum()->isZero();
+    }
+
+    /**
+     * Get set of accounts used in this verification
+     */
+    public function getAccounts(): AccountSet
+    {
+        return $this->getTransactions()->getAccounts();
     }
 }

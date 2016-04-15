@@ -41,7 +41,7 @@ use byrokrat\accounting\Exception\RangeException;
  * maintainer (SIE gruppen) dated 2008-09-30.
  *
  * TODO Håller på att fasa ut denna fil. Writer implementerar den första delen.
- * 	saknas fortfarande en reader...
+ *   saknas fortfarande en reader...
  */
 class SIE
 {
