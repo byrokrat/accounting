@@ -57,22 +57,14 @@ class VerificationSet implements \IteratorAggregate
     }
 
     /**
-     * Get loaded verification objects
-     *
-     * @return Verification[]
-     */
-    public function getVerifications(): array
-    {
-        return $this->verifications;
-    }
-
-    /**
      * Implements the IteratorAggregate interface
+     *
+     * @return \Traversable Yields serial numbers as keys and Verification objects as values
      */
     public function getIterator(): \Traversable
     {
-        foreach ($this->getVerifications() as $index => $verification) {
-            yield $index => $verification;
+        foreach ($this->verifications as $serial => $verification) {
+            yield ++$serial => $verification;
         }
     }
 
@@ -82,7 +74,7 @@ class VerificationSet implements \IteratorAggregate
     public function getAccounts(): AccountSet
     {
         $accounts = new AccountSet;
-        foreach ($this->getVerifications() as $verification) {
+        foreach ($this->getIterator() as $verification) {
             foreach ($verification->getAccounts() as $account) {
                 $accounts->addAccount($account);
             }

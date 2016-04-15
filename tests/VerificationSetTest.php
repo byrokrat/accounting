@@ -13,17 +13,12 @@ class VerificationSetTest extends BaseTestCase
         new VerificationSet($ver->reveal());
     }
 
-    public function testGetVerifications()
+    public function testIteration()
     {
         $verifications = [
-            0 => $this->getVerificationMock(),
             1 => $this->getVerificationMock(),
+            2 => $this->getVerificationMock(),
         ];
-
-        $this->assertEquals(
-            $verifications,
-            (new VerificationSet(...$verifications))->getVerifications()
-        );
 
         $this->assertEquals(
             $verifications,
@@ -39,8 +34,8 @@ class VerificationSetTest extends BaseTestCase
         ];
 
         $verifications = [
-            0 => $this->getVerificationMock($accounts),
             1 => $this->getVerificationMock($accounts),
+            2 => $this->getVerificationMock($accounts),
         ];
 
         $this->assertEquals(

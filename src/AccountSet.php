@@ -100,6 +100,8 @@ class AccountSet implements \IteratorAggregate
 
     /**
      * Implements the IteratorAggregate interface
+     *
+     * @return \Traversable Yields account numbers as keys and Account objects as values
      */
     public function getIterator(): \Traversable
     {
