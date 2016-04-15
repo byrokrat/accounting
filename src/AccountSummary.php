@@ -164,4 +164,12 @@ class AccountSummary extends Account
     {
         return $this->account->isEarning();
     }
+
+    /**
+     * Passthru to decorated object
+     */
+    public function getType(): string
+    {
+        return $this->account->getType();
+    }
 }

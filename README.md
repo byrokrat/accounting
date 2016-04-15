@@ -39,35 +39,40 @@ echo (new Sie\Writer)->generate(
 ```
 
 ### Calculate account balances
-<!-- @expectOutput /^300\.00$/ -->
+<!-- @expectOutput /^400\.00$/ -->
 ```php
 namespace byrokrat\accounting;
 
-use byrokrat\amount\Amount;
+use byrokrat\amount\Currency\SEK;
 
-// Create or accounts
-$accounts = new AccountSet(
-    new Account\Asset(1920, 'Bank'),
-    new Account\Earning(3000, 'Income')
-);
+// Create accounts (specifying incoming balance for 1920)
+$accounts = (new AccountSetBuilder)
+    ->createAccount(1920, 'Bank', new SEK('100'))
+    ->createAccount(3000, 'Income')
+    ->getAccounts();
 
-// Fetch verifications from persistent storage...
-$verifications = new VerificationSet(
-    (new Verification('First ver'))->addTransaction(
-        new Transaction($accounts->getAccountFromNumber(1920), new Amount('100')),
-        new Transaction($accounts->getAccountFromNumber(3000), new Amount('-100'))
-    ),
-    (new Verification('Second ver'))->addTransaction(
-        new Transaction($accounts->getAccountFromNumber(1920), new Amount('200')),
-        new Transaction($accounts->getAccountFromNumber(3000), new Amount('-200'))
+// Create verifications (fetching from persistent storage?)
+$verifications = (new VerificationSetBuilder($accounts))
+    ->createVerification(
+        'First ver',
+        new \DateTimeImmutable,
+        [1920, new SEK('100')],
+        [3000, new SEK('-100')]
     )
-);
+    ->createVerification(
+        'Second ver',
+        new \DateTimeImmutable,
+        [1920, new SEK('200')],
+        [3000, new SEK('-200')]
+    )
+    ->getVerifications();
 
 $summaries = (new AccountSummaryBuilder)
     ->setVerifications($verifications)
+    ->setDefaultIncomingBalance(new SEK('0'))
     ->processAccounts($accounts);
 
-// Outputs 300
+// Outputs 400
 echo $summaries->getAccountFromNumber(1920)->getOutgoingBalance();
 ```
 

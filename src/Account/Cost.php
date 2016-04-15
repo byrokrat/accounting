@@ -31,4 +31,9 @@ class Cost extends \byrokrat\accounting\Account
     {
         return true;
     }
+
+    public function getType(): string
+    {
+        return __CLASS__;
+    }
 }

@@ -66,6 +66,7 @@ class AccountSummaryTest extends BaseTestCase
             ['isCost'],
             ['isDebt'],
             ['isEarning'],
+            ['getType'],
         ];
     }
 

@@ -22,6 +22,8 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\amount\Amount;
+
 /**
  * Fetch summaries for set of accounts
  */
@@ -31,6 +33,11 @@ class AccountSummaryBuilder
      * @var VerificationSet Verifications to process
      */
     private $verifications;
+
+    /**
+     * @var Amount Default incoming balance
+     */
+    private $defaultIncoming;
 
     /**
      * Set verifications to process
@@ -44,7 +51,51 @@ class AccountSummaryBuilder
     }
 
     /**
+     * Get verifications to process
+     *
+     * @throws Exception\OutOfBoundsException If verifications is not set
+     */
+    public function getVerifications(): VerificationSet
+    {
+        if (!isset($this->verifications)) {
+            throw new Exception\OutOfBoundsException(
+                'Verifications not loaded, did you call setVerifications()?'
+            );
+        }
+        return $this->verifications;
+    }
+
+    /**
+     * Set the default incoming balance, used if a plain account is passed
+     *
+     * @return self To enable chaining
+     */
+    public function setDefaultIncomingBalance(Amount $defaultIncoming): self
+    {
+        $this->defaultIncoming = $defaultIncoming;
+        return $this;
+    }
+
+    /**
+     * Get the default incoming balance
+     *
+     * @throws Exception\OutOfBoundsException If default balance is not set
+     */
+    public function getDefaultIncomingBalance(): Amount
+    {
+        if (!isset($this->defaultIncoming)) {
+            throw new Exception\OutOfBoundsException(
+                'Default balance not set, did you call setDefaultIncomingBalance()?'
+            );
+        }
+        return $this->defaultIncoming;
+    }
+
+    /**
      * Calculate summaries for accounts
+     *
+     * Please note that if $accounts contains AccountSummary objects these
+     * will be edited and not cloned.
      *
      * @param  AccountSet $accounts
      * @return AccountSet
@@ -55,10 +106,9 @@ class AccountSummaryBuilder
         $processor = new TransactionProcessor;
 
         foreach ($accounts as $account) {
-
-            // TODO incoming balance must be loaded somehow... Currency is unknown here..
-            // This forces the use of the standard Amount clas...
-            $summary = new AccountSummary($account, new \byrokrat\amount\Amount('0'));
+            $summary = $account instanceof AccountSummary
+                ? $account
+                : new AccountSummary($account, $this->getDefaultIncomingBalance());
 
             $processor->onAccount($account, function (Transaction $transaction) use ($summary) {
                 $summary->addTransaction($transaction);
@@ -67,7 +117,7 @@ class AccountSummaryBuilder
             $summaries->addAccount($summary);
         }
 
-        $processor->process($this->verifications);
+        $processor->process($this->getVerifications());
 
         return $summaries;
     }

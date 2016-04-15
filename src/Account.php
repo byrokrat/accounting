@@ -80,7 +80,7 @@ abstract class Account
     public function equals(Account $account): bool
     {
         return (
-            get_class($this) == get_class($account)
+            $this->getType() == $account->getType()
             && $this->getNumber() == $account->getNumber()
             && $this->getName() == $account->getName()
         );
@@ -116,5 +116,13 @@ abstract class Account
     public function isEarning(): bool
     {
         return false;
+    }
+
+    /**
+     * Get account type identifier
+     */
+    public function getType(): string
+    {
+        return __CLASS__;
     }
 }
