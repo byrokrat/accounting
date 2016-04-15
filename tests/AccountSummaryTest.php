@@ -5,18 +5,18 @@ namespace byrokrat\accounting;
 
 use byrokrat\amount\Amount;
 
-class AccountBalanceTest extends BaseTestCase
+class AccountSummaryTest extends BaseTestCase
 {
     public function testExceptionOnInvalidAccount()
     {
         $this->setExpectedException(Exception\InvalidArgumentException::CLASS);
 
-        $balance = new AccountBalance(
+        $summary = new AccountSummary(
             $this->getAccountMock(1234, 'foo'),
             new Amount('0')
         );
 
-        $balance->addTransaction(
+        $summary->addTransaction(
             $this->getTransactionMock(
                 new Amount('0'),
                 $this->getAccountMock(9999, 'bar')
@@ -32,14 +32,14 @@ class AccountBalanceTest extends BaseTestCase
         $transactions->addTransaction($transaction)->shouldBeCalled();
         $transactions = $transactions->reveal();
 
-        $balance = new AccountBalance($this->getAccountMock(0, '', true), new Amount('0'), $transactions);
+        $summary = new AccountSummary($this->getAccountMock(0, '', true), new Amount('0'), $transactions);
 
         $this->assertSame(
             $transactions,
-            $balance->getTransactions()
+            $summary->getTransactions()
         );
 
-        $balance->addTransaction($transaction);
+        $summary->addTransaction($transaction);
     }
 
     public function testGetOutgoingBalance()
@@ -48,11 +48,35 @@ class AccountBalanceTest extends BaseTestCase
         $transactions->getSum()->willReturn(new Amount('-100'));
         $transactions = $transactions->reveal();
 
-        $balance = new AccountBalance($this->getAccountMock(), new Amount('400'), $transactions);
+        $summary = new AccountSummary($this->getAccountMock(), new Amount('400'), $transactions);
 
         $this->assertEquals(
             new Amount('300'),
-            $balance->getOutgoingBalance()
+            $summary->getOutgoingBalance()
         );
+    }
+
+    public function decoratedMethodsProvider()
+    {
+        return [
+            ['getNumber'],
+            ['getName'],
+            ['equals', $this->getAccountMock()],
+            ['isAsset'],
+            ['isCost'],
+            ['isDebt'],
+            ['isEarning'],
+        ];
+    }
+
+    /**
+     * @dataProvider decoratedMethodsProvider
+     */
+    public function testDecoration($method, $argument = null)
+    {
+        $decorated = $this->prophesize(Account::CLASS);
+        $decorated->$method($argument)->shouldBeCalled();
+
+        (new AccountSummary($decorated->reveal(), new Amount('0')))->$method($argument);
     }
 }

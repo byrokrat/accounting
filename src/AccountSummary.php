@@ -25,12 +25,12 @@ namespace byrokrat\accounting;
 use byrokrat\amount\Amount;
 
 /**
- * Managing balance for a specific account
+ * Decorates account with transaction support
  */
-class AccountBalance
+class AccountSummary extends Account
 {
     /**
-     * @var Account The handled account
+     * @var Account The decorated account
      */
     private $account;
 
@@ -47,7 +47,7 @@ class AccountBalance
     /**
      * Setup balance data
      *
-     * @param Account        $account      The handled account
+     * @param Account        $account      Decorated account
      * @param Amount         $incoming     Incoming balance for account
      * @param TransactionSet $transactions Collection of transactions
      */
@@ -59,14 +59,6 @@ class AccountBalance
     }
 
     /**
-     * Get handled account
-     */
-    public function getAccount(): Account
-    {
-        return $this->account;
-    }
-
-    /**
      * Add one ore more new transactions
      *
      * @return self To enable chaining
@@ -75,14 +67,14 @@ class AccountBalance
     public function addTransaction(Transaction ...$transactions): self
     {
         foreach ($transactions as $transaction) {
-            if (!$this->getAccount()->equals($transaction->getAccount())) {
+            if (!$this->equals($transaction->getAccount())) {
                 throw new Exception\InvalidArgumentException(
                     sprintf(
-                        "Transaction account '%s %s' does not match handled account '%s %s'",
+                        "Transaction account '%s %s' does not match account '%s %s'",
                         $transaction->getAccount()->getNumber(),
                         $transaction->getAccount()->getName(),
-                        $this->getAccount()->getNumber(),
-                        $this->getAccount()->getName()
+                        $this->getNumber(),
+                        $this->getName()
                     )
                 );
             }
@@ -115,5 +107,61 @@ class AccountBalance
         return $this->getTransactions()->getSum()->add(
             $this->getIncomingBalance()
         );
+    }
+
+    /**
+     * Passthru to decorated object
+     */
+    public function getNumber(): int
+    {
+        return $this->account->getNumber();
+    }
+
+    /**
+     * Passthru to decorated object
+     */
+    public function getName(): string
+    {
+        return $this->account->getName();
+    }
+
+    /**
+     * Passthru to decorated object
+     */
+    public function equals(Account $account): bool
+    {
+        return $this->account->equals($account);
+    }
+
+    /**
+     * Passthru to decorated object
+     */
+    public function isAsset(): bool
+    {
+        return $this->account->isAsset();
+    }
+
+    /**
+     * Passthru to decorated object
+     */
+    public function isCost(): bool
+    {
+        return $this->account->isCost();
+    }
+
+    /**
+     * Passthru to decorated object
+     */
+    public function isDebt(): bool
+    {
+        return $this->account->isDebt();
+    }
+
+    /**
+     * Passthru to decorated object
+     */
+    public function isEarning(): bool
+    {
+        return $this->account->isEarning();
     }
 }

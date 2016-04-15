@@ -38,46 +38,43 @@ echo (new Sie\Writer)->generate(
 );
 ```
 
-### Calculate account balance
-<!-- @expectOutput /^400\.00$/ -->
+### Calculate account balances
+<!-- @expectOutput /^300\.00$/ -->
 ```php
 namespace byrokrat\accounting;
 
-use byrokrat\amount\Currency\SEK;
+use byrokrat\amount\Amount;
 
-$bank = new Account\Asset(1920, 'Bank');
-$income = new Account\Earning(3000, 'Income');
+// Create or accounts
+$accounts = new AccountSet(
+    new Account\Asset(1920, 'Bank'),
+    new Account\Earning(3000, 'Income')
+);
 
 // Fetch verifications from persistent storage...
 $verifications = new VerificationSet(
     (new Verification('First ver'))->addTransaction(
-        new Transaction($bank, new SEK('100')),
-        new Transaction($income, new SEK('-100'))
+        new Transaction($accounts->getAccountFromNumber(1920), new Amount('100')),
+        new Transaction($accounts->getAccountFromNumber(3000), new Amount('-100'))
     ),
     (new Verification('Second ver'))->addTransaction(
-        new Transaction($bank, new SEK('200')),
-        new Transaction($income, new SEK('-200'))
+        new Transaction($accounts->getAccountFromNumber(1920), new Amount('200')),
+        new Transaction($accounts->getAccountFromNumber(3000), new Amount('-200'))
     )
 );
 
-// Setup incoming balance for account 1920
-$balance = new AccountBalance($bank, new SEK('100'));
+$summaries = (new AccountSummaryBuilder)
+    ->setVerifications($verifications)
+    ->processAccounts($accounts);
 
-// Calculate outgoing balance
-$processor = new TransactionProcessor;
-
-$processor->onAccount($bank, function (Transaction $transaction) use ($balance) {
-    $balance->addTransaction($transaction);
-});
-
-$processor->process($verifications);
-
-// Outputs 400
-echo $balance->getOutgoingBalance();
+// Outputs 300
+echo $summaries->getAccountFromNumber(1920)->getOutgoingBalance();
 ```
+
+TODO
+----
+See TODO comments spread out in source.
 
 Credits
 -------
-Accounting is released under the [GNU General Public License](LICENSE).
-
 @author Hannes Forsgård (hannes.forsgard@fripost.org)
