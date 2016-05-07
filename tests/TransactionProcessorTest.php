@@ -1,5 +1,6 @@
 <?php
-declare(strict_types=1);
+
+declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
@@ -18,7 +19,7 @@ class TransactionProcessorTest extends BaseTestCase
         });
 
         $processor->process(
-            new VerificationSet(
+            new Journal(
                 $this->getVerificationMock([], [
                     $this->getTransactionMock(
                         new Amount('100'),

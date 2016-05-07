@@ -18,7 +18,7 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
@@ -30,9 +30,9 @@ use byrokrat\amount\Amount;
 class AccountSummaryBuilder
 {
     /**
-     * @var VerificationSet Verifications to process
+     * @var Journal Verifications to process
      */
-    private $verifications;
+    private $journal;
 
     /**
      * @var Amount Default incoming balance
@@ -44,25 +44,25 @@ class AccountSummaryBuilder
      *
      * @return self To enable chaining
      */
-    public function setVerifications(VerificationSet $verifications): self
+    public function setJournal(Journal $journal): self
     {
-        $this->verifications = $verifications;
+        $this->journal = $journal;
         return $this;
     }
 
     /**
      * Get verifications to process
      *
-     * @throws Exception\OutOfBoundsException If verifications is not set
+     * @throws Exception\OutOfBoundsException If journal is not set
      */
-    public function getVerifications(): VerificationSet
+    public function getJournal(): Journal
     {
-        if (!isset($this->verifications)) {
+        if (!isset($this->journal)) {
             throw new Exception\OutOfBoundsException(
-                'Verifications not loaded, did you call setVerifications()?'
+                'Journal not loaded, did you call setJournal()?'
             );
         }
-        return $this->verifications;
+        return $this->journal;
     }
 
     /**
@@ -117,7 +117,7 @@ class AccountSummaryBuilder
             $summaries->addAccount($summary);
         }
 
-        $processor->process($this->getVerifications());
+        $processor->process($this->getJournal());
 
         return $summaries;
     }

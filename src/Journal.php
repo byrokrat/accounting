@@ -18,14 +18,14 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
 /**
  * Container for multiple verification objects
  */
-class VerificationSet implements \IteratorAggregate
+class Journal implements \IteratorAggregate
 {
     /**
      * @var Verification[] Loaded verifications

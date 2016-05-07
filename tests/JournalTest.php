@@ -1,16 +1,17 @@
 <?php
-declare(strict_types=1);
+
+declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
-class VerificationSetTest extends BaseTestCase
+class JournalTest extends BaseTestCase
 {
     public function testExceptionOnUnbalancedVerification()
     {
         $this->setExpectedException(Exception\UnexpectedValueException::CLASS);
         $ver = $this->prophesize(Verification::CLASS);
         $ver->isBalanced()->willReturn(false);
-        new VerificationSet($ver->reveal());
+        new Journal($ver->reveal());
     }
 
     public function testIteration()
@@ -22,7 +23,7 @@ class VerificationSetTest extends BaseTestCase
 
         $this->assertEquals(
             $verifications,
-            iterator_to_array(new VerificationSet(...$verifications))
+            iterator_to_array(new Journal(...$verifications))
         );
     }
 
@@ -40,7 +41,7 @@ class VerificationSetTest extends BaseTestCase
 
         $this->assertEquals(
             $accounts,
-            iterator_to_array((new VerificationSet(...$verifications))->getAccounts())
+            iterator_to_array((new Journal(...$verifications))->getAccounts())
         );
     }
 }

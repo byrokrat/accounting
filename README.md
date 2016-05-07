@@ -1,9 +1,10 @@
-# Accounting
+# Byrokrat.Accounting
 
 [![Packagist Version](https://img.shields.io/packagist/v/byrokrat/accounting.svg?style=flat-square)](https://packagist.org/packages/byrokrat/accounting)
 [![license](https://img.shields.io/github/license/byrokrat/accounting.svg?maxAge=2592000&style=flat-square)](LICENSE)
 [![Build Status](https://img.shields.io/travis/byrokrat/accounting/master.svg?style=flat-square)](https://travis-ci.org/byrokrat/accounting)
 [![Quality Score](https://img.shields.io/scrutinizer/g/byrokrat/accounting.svg?style=flat-square)](https://scrutinizer-ci.com/g/byrokrat/accounting)
+[![Scrutinizer Coverage](https://img.shields.io/scrutinizer/coverage/g/byrokrat/accounting.svg?style=flat-square)](https://scrutinizer-ci.com/g/byrokrat/accounting/?branch=master)
 [![Dependency Status](https://img.shields.io/gemnasium/byrokrat/accounting.svg?style=flat-square)](https://gemnasium.com/byrokrat/accounting)
 
 
@@ -29,7 +30,7 @@ use byrokrat\amount\Amount;
 
 echo (new Sie\Writer)->generate(
     (new Sie\Settings)->setTargetCompany('my-company'),
-    new VerificationSet(
+    new Journal(
         (new Verification('Ver A'))->addTransaction(
             new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100')),
             new Transaction(new Account\Earning(3000, 'Intänk'), new Amount('-100'))
@@ -51,8 +52,8 @@ $accounts = (new AccountSetBuilder)
     ->createAccount(3000, 'Income')
     ->getAccounts();
 
-// Create verifications (fetching from persistent storage?)
-$verifications = (new VerificationSetBuilder($accounts))
+// Create jounrnal (fetching from persistent storage?)
+$journal = (new JournalBuilder($accounts))
     ->createVerification(
         'First ver',
         new \DateTimeImmutable,
@@ -65,10 +66,10 @@ $verifications = (new VerificationSetBuilder($accounts))
         [1920, new SEK('200')],
         [3000, new SEK('-200')]
     )
-    ->getVerifications();
+    ->getJournal();
 
 $summaries = (new AccountSummaryBuilder)
-    ->setVerifications($verifications)
+    ->setJournal($journal)
     ->setDefaultIncomingBalance(new SEK('0'))
     ->processAccounts($accounts);
 
@@ -76,7 +77,7 @@ $summaries = (new AccountSummaryBuilder)
 echo $summaries->getAccountFromNumber(1920)->getOutgoingBalance();
 ```
 
-TODO
+Todo
 ----
 See TODO comments spread out in source.
 

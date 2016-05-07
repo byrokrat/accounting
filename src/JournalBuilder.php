@@ -18,14 +18,14 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
 /**
- * Builder to simplify the creation of verifications
+ * Builder to simplify the creation of journals
  */
-class VerificationSetBuilder
+class JournalBuilder
 {
     /**
      * @var AccountSet Created accounts
@@ -33,9 +33,9 @@ class VerificationSetBuilder
     private $accounts;
 
     /**
-     * @var VerificationSet Created verifications
+     * @var Journal Created verifications
      */
-    private $verifications;
+    private $journal;
 
     /**
      * Initialize builder
@@ -53,7 +53,7 @@ class VerificationSetBuilder
      */
     public function reset(): self
     {
-        $this->verifications = new VerificationSet;
+        $this->journal = new Journal;
         return $this;
     }
 
@@ -76,16 +76,16 @@ class VerificationSetBuilder
             ));
         }
 
-        $this->verifications->addVerification($verification);
+        $this->journal->addVerification($verification);
 
         return $this;
     }
 
     /**
-     * Grab the generated verifications
+     * Grab the generated journal
      */
-    public function getVerifications(): VerificationSet
+    public function getJournal(): Journal
     {
-        return $this->verifications;
+        return $this->journal;
     }
 }

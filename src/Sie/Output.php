@@ -18,7 +18,7 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie;
 

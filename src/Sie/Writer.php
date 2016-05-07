@@ -18,7 +18,7 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie;
 
@@ -27,7 +27,7 @@ use byrokrat\accounting\AccountSet;
 use byrokrat\accounting\Exception;
 use byrokrat\accounting\Transaction;
 use byrokrat\accounting\Verification;
-use byrokrat\accounting\VerificationSet;
+use byrokrat\accounting\Journal;
 
 /**
  * SIE 4I file format implementation.
@@ -52,11 +52,11 @@ class Writer
     }
      */
 
-    public function generate(SettingsInterface $settings, VerificationSet $verifications): string
+    public function generate(SettingsInterface $settings, Journal $journal): string
     {
         $output = new Output;
         $this->writeHeader($settings, $output);
-        $this->writeVerificationSet($verifications, $output);
+        $this->writeJournal($journal, $output);
         return $output->getContent();
     }
 
@@ -145,14 +145,14 @@ class Writer
     }
 
     /**
-     * Write verifications to output
+     * Write journal to output
      */
-    public function writeVerificationSet(VerificationSet $verifications, Output $output)
+    public function writeJournal(Journal $journal, Output $output)
     {
-        foreach ($verifications->getAccounts() as $account) {
+        foreach ($journal->getAccounts() as $account) {
             $this->writeAccount($account, $output);
         }
-        foreach ($verifications as $verification) {
+        foreach ($journal as $verification) {
             $this->writeVerification($verification, $output);
         }
     }

@@ -18,7 +18,7 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
@@ -45,11 +45,11 @@ class TransactionProcessor
     }
 
     /**
-     * Process transactions in verifications and fire registered callbacks
+     * Process transactions in journal and fire registered callbacks
      */
-    public function process(VerificationSet $verifications)
+    public function process(Journal $journal)
     {
-        foreach ($verifications as $verification) {
+        foreach ($journal as $verification) {
             foreach ($verification->getTransactions() as $transaction) {
                 if (isset($this->callbacks[$transaction->getAccount()->getNumber()])) {
                     $this->callbacks[$transaction->getAccount()->getNumber()]($transaction);
