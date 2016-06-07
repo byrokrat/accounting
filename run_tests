@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+vendor/bin/phpeg generate src/Sie4/Grammar.peg
+phpunit

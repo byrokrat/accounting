@@ -24,5 +24,8 @@
     "require": {
         "php": "^7",
         "byrokrat/amount": "^1.0"
+    },
+    "require-dev": {
+        "scato/phpeg": "^1.0"
     }
 }
