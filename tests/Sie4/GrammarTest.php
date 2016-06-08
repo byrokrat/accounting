@@ -9,7 +9,7 @@ namespace byrokrat\accounting\Sie4;
  *
  * Referenced rules are from the SIE specs dated 2008-09-30
  *
- * @covers Grammar
+ * @covers byrokrat\accounting\Sie4\Grammar
  */
 class GrammarTest extends GrammarTestCase
 {
