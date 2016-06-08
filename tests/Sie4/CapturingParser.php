@@ -9,6 +9,8 @@ namespace byrokrat\accounting\Sie4;
  */
 class CapturingParser extends Grammar implements ConsumerInterface
 {
+    use Helper\CurrencyBuilder;
+
     /**
      * @var array Content captured during parsing
      */

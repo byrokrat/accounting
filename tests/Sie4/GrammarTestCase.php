@@ -65,18 +65,4 @@ abstract class GrammarTestCase extends \PHPUnit_Framework_TestCase
             $message ?: "Failed asserting lexemes found in '$source'"
         );
     }
-
-    /**
-     * Assert that the contents of $left and $right are considered equal by the SIE grammar
-     */
-    public function assertSieEquals($left, $right, $message = '')
-    {
-        $this->assertSieSyntax($left, $message);
-        $this->assertSieSyntax($right, $message);
-        $this->assertEquals(
-            $this->parseSie($left),
-            $this->parseSie($right),
-            $message ?: 'Failed asserting that two SIE strings are equal'
-        );
-    }
 }

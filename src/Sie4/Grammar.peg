@@ -21,26 +21,42 @@
 namespace byrokrat\accounting\Sie4;
 
 /**
- * Grammar for generating a parser for Sie version 4
+ * Grammar for generating a SIE version 4 compliant parser
  *
- * Build using scato/phpeg. Please note that the concrete parser used must
- * implement the ConsumerInterface.
+ * Build using scato/phpeg. Please note that a concrete parser used implement
+ * the ConsumerInterface.
  *
  * @see     ConsumerInterface
- * @example "vendor/bin/phpeg generate Grammar.peg" To rebuild the parser
+ * @example "vendor/bin/phpeg generate src/Sie4/Grammar.peg" To rebuild the parser (from project root)
  */
 grammar Grammar
 {
     start FILE = ROW*;
 
-    ROW = ADRESS / UNKNOWN_ROW / EMPTY_LINE;
+    ROW = ADRESS_ROW / UNKNOWN_ROW / EMPTY_LINE;
 
-    UNKNOWN_ROW = '#' label:[a-zA-Z]+ fields:FIELD+ EOL {
+    UNKNOWN_ROW = SPACE '#' label:[a-zA-Z]+ fields:FIELD+ EOL {
         return $this->onUnknown(implode($label), $fields);
     };
 
-    ADRESS = '#ADRESS' kontakt:FIELD? utdelningsadr:FIELD? postadr:FIELD? tel:FIELD? END_OF_FIELD {
+    ADRESS_ROW = SPACE '#ADRESS' kontakt:FIELD utdelningsadr:FIELD postadr:FIELD tel:FIELD END_OF_ROW {
         return $this->onAdress((string)$kontakt, (string)$utdelningsadr, (string)$postadr, (string)$tel);
+    };
+
+    FLAG_ROW = SPACE '#FLAGGA' flag:BOOLEAN END_OF_ROW {
+        // TODO BOOLEAN should be a kind of field, see amount below..
+        // TODO possibly implement as a trait, see Helper/CurrencyBuilder
+        return $this->onFlag($flag);
+    };
+
+    CURRENCY_ROW = SPACE '#VALUTA' iso4217:FIELD END_OF_ROW {
+        return $this->onCurrency($iso4217);
+    };
+
+    AMOUNT = negation:"-"? units:[0-9]+ "."? subunits:([0-9]? [0-9]?) {
+        // TODO amount should be a kind of field (meaning support for SPACE delimiters and quotes...)
+        // TODO a lot of testing needed: - optional, decimal delimiter optional, subunits 0-2 chars
+        return $this->onAmount($negation.implode($units).'.'.implode($subunits));
     };
 
     FIELD = SPACE content:CONTENT SPACE {
@@ -49,11 +65,11 @@ grammar Grammar
 
     CONTENT = [a-zA-Z0-9]+;
 
+    EMPTY_LINE = SPACE EOL;
+
+    END_OF_ROW = FIELD* EOL;
+
     SPACE = (" " / "\t")*;
 
     EOL = "\r"? "\n";
-
-    EMPTY_LINE = SPACE EOL;
-
-    END_OF_FIELD = field* EOL;
 }

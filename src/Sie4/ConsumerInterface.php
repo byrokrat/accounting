@@ -22,6 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4;
 
+use byrokrat\amount\Currency;
+
 /**
  * Defines callbacks for the different row parsing expressions
  *
@@ -30,7 +32,26 @@ namespace byrokrat\accounting\Sie4;
  */
 interface ConsumerInterface
 {
+    /**
+     * Called when a currency is definied using #VALUTA
+     *
+     * @param  string $currency Te iso-4217 currency code
+     * @return string The accepted currency code
+     * @see    Helper\CurrencyBuilder
+     */
+    public function onCurrency(string $currency): string;
+
+    /**
+     * Called when a monetary amount is encountered
+     *
+     * @param  string   $amount The raw amount
+     * @return Currency Currency object representing amount
+     * @see    Helper\CurrencyBuilder
+     */
+    public function onAmount(string $amount): Currency;
+
     public function onUnknown(string $label, array $fields);
 
+    // TODO should english names be used after all??
     public function onAdress(string $kontakt, string $utdelningsadr, string $postadr, string $tel);
 }

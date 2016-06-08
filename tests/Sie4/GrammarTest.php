@@ -25,9 +25,9 @@ class GrammarTest extends GrammarTestCase
 
     public function testEndOfLineCharacters()
     {
-        $this->assertSieEquals(
-            "#FOO bar\n",
-            "#FOO bar\r\n",
+        $this->assertSieLexemes(
+            [['#FLAGGA', '1']],
+            "#FLAGGA 1\r\n",
             "An optional \\r line ending char should be allowed according to rule 5.5"
         );
     }
@@ -41,6 +41,9 @@ class GrammarTest extends GrammarTestCase
         );
     }
 
+    /**
+     * @depends testUnknownLabels #FOO is an unknown
+     */
     public function testFieldDelimiters()
     {
         $this->assertSieLexemes(
@@ -50,6 +53,27 @@ class GrammarTest extends GrammarTestCase
         );
     }
 
+    public function testSpaceAtStartOfLine()
+    {
+        $this->assertSieLexemes(
+            [['#FLAGGA', '1']],
+            " \t #FLAGGA 1\n",
+            "Tabs and spaces should be allowed at the start of a line"
+        );
+    }
+
+    public function testSpaceAtEndOfLine()
+    {
+        $this->assertSieLexemes(
+            [['#FLAGGA', '1']],
+            "#FLAGGA 1\t \t\n",
+            "Tabs and spaces should be allowed at the end of a line"
+        );
+    }
+
+    /**
+     * @depends testUnknownLabels #FOO is an unknown
+     */
     public function testQuotedFields()
     {
         return $this->markTestSkipped('Not implemented...');
@@ -85,7 +109,8 @@ class GrammarTest extends GrammarTestCase
 
     /**
      * @dataProvider invalidCharactersProvider
-     * @depends      testQuotedFields Quotes are needed to validate that tab is disallowed inside fields
+     * @depends testQuotedFields Quotes are needed to validate that tab is disallowed inside fields
+     * @depends testUnknownLabels #FOO is an unknown
      */
     public function testInvalidCharacters($char)
     {
@@ -95,6 +120,9 @@ class GrammarTest extends GrammarTestCase
         );
     }
 
+    /**
+     * @depends testUnknownLabels #FOO is an unknown
+     */
     public function testValidCharacters()
     {
         return $this->markTestSkipped('Not implemented...');
@@ -112,4 +140,15 @@ class GrammarTest extends GrammarTestCase
     }
 
     // TODO tests for rules 5.8 to 5.10 are missing
+
+    public function testUnknownLabels()
+    {
+        $this->assertSieLexemes(
+            [['#UNKNOWN', 'foo']],
+            "#UNKNOWN foo\n",
+            "Unknown labels should not trigger errors according to rule 7.1"
+        );
+    }
+
+    // TODO test for rule 7.3 is missing
 }
