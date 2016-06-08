@@ -9,6 +9,7 @@ install:
     - composer require hanneskod/readme-tester:dev-master
 
 script:
+    - vendor/bin/phpeg generate src/Sie4/Grammar.peg
     - if [[ "$TRAVIS_PHP_VERSION" == '7.0' ]]; then phpunit --coverage-clover=coverage.clover ; fi
     - if [[ "$TRAVIS_PHP_VERSION" != '7.0' ]]; then phpunit ; fi
 
