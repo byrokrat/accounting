@@ -30,7 +30,7 @@ use byrokrat\amount\Amount;
 class AccountSetBuilder
 {
     /**
-     * @var AccountSet Created accounts
+     * @var AccountSet Added accounts
      */
     private $accounts;
 
@@ -44,8 +44,6 @@ class AccountSetBuilder
 
     /**
      * Reset builder state
-     *
-     * @return self To enable chaining
      */
     public function reset(): self
     {
@@ -54,14 +52,13 @@ class AccountSetBuilder
     }
 
     /**
-     * Create account from values
+     * Add a new account definition
      *
-     * @param  int    $number          Account number
-     * @param  string $name            Name of account
-     * @param  Amount $incomingBalance The incoming balance of account
-     * @return self   To enable chaining
+     * @param int    $number          Account number
+     * @param string $name            Name of account
+     * @param Amount $incomingBalance The incoming balance of account
      */
-    public function createAccount(int $number, string $name, Amount $incomingBalance = null): self
+    public function addAccount(int $number, string $name, Amount $incomingBalance = null): self
     {
         if ($number < 2000) {
             $account = new Account\Asset($number, $name);

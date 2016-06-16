@@ -46,21 +46,21 @@ namespace byrokrat\accounting;
 
 use byrokrat\amount\Currency\SEK;
 
-// Create accounts (specifying incoming balance for 1920)
+// Build accounts (specifying incoming balance for 1920)
 $accounts = (new AccountSetBuilder)
-    ->createAccount(1920, 'Bank', new SEK('100'))
-    ->createAccount(3000, 'Income')
+    ->addAccount(1920, 'Bank', new SEK('100'))
+    ->addAccount(3000, 'Income')
     ->getAccounts();
 
-// Create jounrnal (fetching from persistent storage?)
+// Build jounrnal (fetching from persistent storage?)
 $journal = (new JournalBuilder($accounts))
-    ->createVerification(
+    ->addVerification(
         'First ver',
         new \DateTimeImmutable,
         [1920, new SEK('100')],
         [3000, new SEK('-100')]
     )
-    ->createVerification(
+    ->addVerification(
         'Second ver',
         new \DateTimeImmutable,
         [1920, new SEK('200')],

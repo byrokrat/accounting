@@ -28,12 +28,12 @@ namespace byrokrat\accounting;
 class JournalBuilder
 {
     /**
-     * @var AccountSet Created accounts
+     * @var AccountSet Added accounts
      */
     private $accounts;
 
     /**
-     * @var Journal Created verifications
+     * @var Journal Added verifications
      */
     private $journal;
 
@@ -48,8 +48,6 @@ class JournalBuilder
 
     /**
      * Reset builder state
-     *
-     * @return self To enable chaining
      */
     public function reset(): self
     {
@@ -58,14 +56,13 @@ class JournalBuilder
     }
 
     /**
-     * Create verification from values
+     * Add a new verification definition
      *
-     * @param  string            $text            Verification text
-     * @param  DateTimeImmutable $date            Date of verification
-     * @param  array             $transactionData Any number of arrays with an account number and an amount
-     * @return self              To enable chaining
+     * @param string             $text            Verification text
+     * @param \DateTimeImmutable $date            Date of verification
+     * @param array              $transactionData Any number of arrays with an account number and an amount
      */
-    public function createVerification(string $text, \DateTimeImmutable $date, array ...$transactionData): self
+    public function addVerification(string $text, \DateTimeImmutable $date, array ...$transactionData): self
     {
         $verification = new Verification($text, $date);
 
