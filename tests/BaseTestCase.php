@@ -19,10 +19,27 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
         return $account->reveal();
     }
 
+    protected function getAmountMock()
+    {
+        return $this->prophesize(Amount::CLASS)->reveal();
+    }
+
+    protected function getQueryableMock(array $content = [])
+    {
+        $queryable = $this->prophesize(Queryable::CLASS);
+        $queryable->getQueryableContent()->will(function () use ($content) {
+            foreach ($content as $item) {
+                yield $item;
+            }
+        });
+
+        return $queryable->reveal();
+    }
+
     protected function getTransactionMock(Amount $amount = null, Account $account = null)
     {
         $transaction = $this->prophesize(Transaction::CLASS);
-        $transaction->getAmount()->willReturn($amount ?: $this->prophesize(Amount::CLASS)->reveal());
+        $transaction->getAmount()->willReturn($amount ?: $this->getAmountMock());
         $transaction->getAccount()->willReturn($account ?: $this->getAccountMock());
 
         return $transaction->reveal();
