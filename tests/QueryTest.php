@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\amount\Amount;
+
 class QueryTest extends BaseTestCase
 {
     public function testInvalidConstructorArgument()
@@ -39,9 +41,18 @@ class QueryTest extends BaseTestCase
         $queryable1 = $this->getQueryableMock(['bar']);
         $queryable2 = $this->getQueryableMock(['foo', $queryable1]);
 
+        $query = new Query(['before', $queryable2, 'after']);
+
         $this->assertSame(
             ['before', $queryable2, 'foo', $queryable1, 'bar', 'after'],
-            (new Query(['before', $queryable2, 'after']))->toArray()
+            $query->toArray(),
+            'Nested iteration should yield values bottom down'
+        );
+
+        $this->assertSame(
+            ['before', $queryable2, 'foo', $queryable1, 'bar', 'after'],
+            $query->toArray(),
+            'Query should be rewindable and yield the same results the second time'
         );
     }
 
@@ -253,6 +264,23 @@ class QueryTest extends BaseTestCase
             (new Query(['b', 'a', 'r']))->reduce(function ($carry, $item) {
                 return $carry . $item;
             }, 'foo')
+        );
+    }
+
+    public function testSumTransactions()
+    {
+        $this->assertEquals(
+            new Amount('0'),
+            (new Query)->sumTransactions()
+        );
+
+        $this->assertEquals(
+            new Amount('10'),
+            (new Query([
+                $this->getTransactionMock(new Amount('5')),
+                $this->getTransactionMock(new Amount('5')),
+                'not a transaction'
+            ]))->sumTransactions()
         );
     }
 

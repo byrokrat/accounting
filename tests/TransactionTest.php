@@ -4,16 +4,24 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
-use byrokrat\amount\Amount;
-
+/**
+ * @covers \byrokrat\accounting\Transaction
+ */
 class TransactionTest extends BaseTestCase
 {
     public function testGetters()
     {
-        $account = $this->prophesize(Account::CLASS)->reveal();
-        $amount = $this->prophesize(Amount::CLASS)->reveal();
+        $account = $this->getAccountMock();
+        $amount = $this->getAmountMock();
+
         $transaction = new Transaction($account, $amount);
+
         $this->assertEquals($account, $transaction->getAccount());
         $this->assertEquals($amount, $transaction->getAmount());
+
+        $this->assertEquals(
+            [$account, $amount],
+            ($transaction)->query()->toArray()
+        );
     }
 }

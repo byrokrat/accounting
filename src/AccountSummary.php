@@ -40,28 +40,26 @@ class AccountSummary extends Account
     private $incoming;
 
     /**
-     * @var TransactionSet Transactions included in calculation
+     * @var Transaction[] Transactions included in calculation
      */
-    private $transactions;
+    private $transactions = [];
 
     /**
      * Setup balance data
      *
-     * @param Account        $account      Decorated account
-     * @param Amount         $incoming     Incoming balance for account
-     * @param TransactionSet $transactions Collection of transactions
+     * @param Account $account  Decorated account
+     * @param Amount  $incoming Incoming balance for account
      */
-    public function __construct(Account $account, Amount $incoming, TransactionSet $transactions = null)
+    public function __construct(Account $account, Amount $incoming, Transaction ...$transactions)
     {
         $this->account = $account;
         $this->incoming = $incoming;
-        $this->transactions = $transactions ?: new TransactionSet;
+        $this->addTransaction(...$transactions);
     }
 
     /**
      * Add one ore more new transactions
      *
-     * @return self To enable chaining
      * @throws Exception\InvalidArgumentException If a transaction does not match account
      */
     public function addTransaction(Transaction ...$transactions): self
@@ -78,15 +76,17 @@ class AccountSummary extends Account
                     )
                 );
             }
-            $this->transactions->addTransaction($transaction);
+            $this->transactions[] = $transaction;
         }
         return $this;
     }
 
     /**
      * Get included transactions
+     *
+     * @return Transaction[]
      */
-    public function getTransactions(): TransactionSet
+    public function getTransactions(): array
     {
         return $this->transactions;
     }
@@ -104,7 +104,8 @@ class AccountSummary extends Account
      */
     public function getOutgoingBalance(): Amount
     {
-        return $this->getTransactions()->getSum()->add(
+        // TODO if calculations are supposed to be bundled like this we should properly implement Queryable
+        return (new Query($this->getTransactions()))->sumTransactions()->add(
             $this->getIncomingBalance()
         );
     }

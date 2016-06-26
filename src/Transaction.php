@@ -27,7 +27,7 @@ use byrokrat\amount\Amount;
 /**
  * A transaction is a simple value object containing an account and an amount
  */
-class Transaction
+class Transaction implements Queryable, \IteratorAggregate
 {
     /**
      * @var Account
@@ -62,5 +62,22 @@ class Transaction
     public function getAmount(): Amount
     {
         return $this->amount;
+    }
+
+    /**
+     * Implements the Queryable interface
+     */
+    public function query(): Query
+    {
+        return new Query($this->getIterator());
+    }
+
+    /**
+     * Implements to IteratorAggregate interface
+     */
+    public function getIterator(): \Generator
+    {
+        yield $this->getAccount();
+        yield $this->getAmount();
     }
 }

@@ -84,7 +84,7 @@ class TemplateTest extends BaseTestCase
 
         $this->assertEquals(
             $expectedTransactions,
-            iterator_to_array($template->buildVerification($accounts)->getTransactions())
+            $template->buildVerification($accounts)->getTransactions()
         );
     }
 }

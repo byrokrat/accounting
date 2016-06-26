@@ -18,15 +18,11 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-namespace byrokrat\accounting;
+namespace byrokrat\accounting\Exception;
 
 /**
- * Defines an object with queryable content
+ * Exception thrown if an error which can only be found on runtime occurs
  */
-interface Queryable
+class RuntimeException extends \RuntimeException implements \byrokrat\accounting\Exception
 {
-    /**
-     * Get a query object loaded with queryable content
-     */
-    public function query(): Query;
 }

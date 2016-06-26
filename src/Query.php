@@ -49,7 +49,12 @@ class Query implements \IteratorAggregate, \Countable
                     );
                 }
 
-                yield from $this->generateQueryableContent($items);
+                foreach ($items as $item) {
+                    yield $item;
+                    if ($item instanceof Queryable) {
+                        yield from $item->query();
+                    }
+                }
             }
         };
     }
@@ -268,6 +273,27 @@ class Query implements \IteratorAggregate, \Countable
     }
 
     /**
+     * Summarize amounts of contained transactions
+     *
+     * Please note that if query contains no transactions a 0 amount will be
+     * returned, which may interfere with other currency objects.
+     */
+    public function sumTransactions(): Amount
+    {
+        return $this->reduce(
+            function (Amount $carry = null, $transaction) {
+                if (!$transaction instanceof Transaction) {
+                    return $carry;
+                }
+                if (is_null($carry)) {
+                    return $transaction->getAmount();
+                }
+                return $carry->add($transaction->getAmount());
+            }
+        ) ?: new Amount('0');
+    }
+
+    /**
      * Filter that returns only Transaction objects
      */
     public function transactions(): self
@@ -327,20 +353,5 @@ class Query implements \IteratorAggregate, \Countable
         return $this->filter(function ($item) use ($filter) {
             return (new Query([$item]))->filter($filter)->isEmpty();
         });
-    }
-
-    /**
-     * Recursively iterate over items and quearyables
-     *
-     * @param array|\Traversable $items The items to iterate over
-     */
-    private function generateQueryableContent($items): \Generator
-    {
-        foreach ($items as $item) {
-            yield $item;
-            if ($item instanceof Queryable) {
-                yield from $this->generateQueryableContent($item->getQueryableContent());
-            }
-        }
     }
 }

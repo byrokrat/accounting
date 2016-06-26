@@ -103,21 +103,26 @@ class AccountSummaryBuilder
     public function processAccounts(AccountSet $accounts): AccountSet
     {
         $summaries = new AccountSet;
-        $processor = new TransactionProcessor;
+        $query = (new Query($this->getJournal()))->transactions();
 
         foreach ($accounts as $account) {
             $summary = $account instanceof AccountSummary
                 ? $account
                 : new AccountSummary($account, $this->getDefaultIncomingBalance());
 
-            $processor->onAccount($account, function (Transaction $transaction) use ($summary) {
-                $summary->addTransaction($transaction);
-            });
+            $query->lazyOn(
+                function (Transaction $transaction) use ($summary) {
+                    return $transaction->getAccount()->equals($summary);
+                },
+                function (Transaction $transaction) use ($summary) {
+                    $summary->addTransaction($transaction);
+                }
+            );
 
             $summaries->addAccount($summary);
         }
 
-        $processor->process($this->getJournal());
+        $query->exec();
 
         return $summaries;
     }

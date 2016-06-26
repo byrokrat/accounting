@@ -22,10 +22,12 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\amount\Amount;
+
 /**
  * Simple verification value object wrapping a list of transactions
  */
-class Verification
+class Verification implements Queryable, \IteratorAggregate
 {
     /**
      * @var string Free text description
@@ -38,22 +40,33 @@ class Verification
     private $date;
 
     /**
-     * @var TransactionSet Transactions included in verification
+     * @var Transaction[] Transactions included in verification
      */
-    private $transactions;
+    private $transactions = [];
 
     /**
      * Setup verification data
      *
      * @param string             $text         Free text description
      * @param \DateTimeImmutable $date         Creation date
-     * @param TransactionSet     $transactions Collection of transactions
+     * @param Transaction        $transactions Any number of transaction objects
      */
-    public function __construct(string $text, \DateTimeImmutable $date = null, TransactionSet $transactions = null)
+    public function __construct(string $text = '', \DateTimeImmutable $date = null, Transaction ...$transactions)
     {
         $this->text = $text;
         $this->date = $date ?: new \DateTimeImmutable;
-        $this->transactions = $transactions ?: new TransactionSet;
+        $this->addTransaction(...$transactions);
+    }
+
+    /**
+     * Add one ore more new transactions
+     */
+    public function addTransaction(Transaction ...$transactions): self
+    {
+        foreach ($transactions as $transaction) {
+            $this->transactions[] = $transaction;
+        }
+        return $this;
     }
 
     /**
@@ -73,30 +86,55 @@ class Verification
     }
 
     /**
-     * Add one ore more new transactions
-     *
-     * @return self To enable chaining
-     */
-    public function addTransaction(Transaction ...$transactions): self
-    {
-        $this->transactions->addTransaction(...$transactions);
-        return $this;
-    }
-
-    /**
      * Get included transactions
+     *
+     * @return Transaction[]
      */
-    public function getTransactions(): TransactionSet
+    public function getTransactions(): array
     {
         return $this->transactions;
     }
 
     /**
-     * Validate that this verification is balanced
+     * Implements the IteratorAggregate interface
+     */
+    public function getIterator(): \Generator
+    {
+        foreach ($this->getTransactions() as $transaction) {
+            yield $transaction;
+        }
+    }
+
+    /**
+     * For verifications queryable content consists of transactions
+     */
+    public function query(): Query
+    {
+        return new Query($this->getIterator());
+    }
+
+    /**
+     * Check if verification is balanced
      */
     public function isBalanced(): bool
     {
-        return $this->getTransactions()->getSum()->isZero();
+        return $this->query()->sumTransactions()->isZero();
+    }
+
+    /**
+     * Get the sum of all positive transactions
+     *
+     * @throws Exception\RuntimeException if verification is not balanced
+     */
+    public function getMagnitude(): Amount
+    {
+        if (!$this->isBalanced()) {
+            throw new Exception\RuntimeException('Unable to calculate magnitude of unbalanced verification');
+        }
+
+        return $this->query()->transactions()->filter(function (Transaction $transaction) {
+            return !$transaction->getAmount()->isNegative();
+        })->sumTransactions();
     }
 
     /**
@@ -104,6 +142,6 @@ class Verification
      */
     public function getAccounts(): AccountSet
     {
-        return $this->getTransactions()->getAccounts();
+        return new AccountSet(...$this->query()->accounts()->toArray());
     }
 }
