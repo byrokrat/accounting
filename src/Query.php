@@ -37,23 +37,26 @@ class Query implements \IteratorAggregate, \Countable
     /**
      * Load data to query
      *
-     * @param array|\Traversable $items Any number of collections of items
+     * @param array|\Traversable|\Closure $items Items to query. If items is a
+     *     Closure it is expected to take no parameters and return a generator.
      */
-    public function __construct(...$collections)
+    public function __construct($items = [])
     {
-        $this->iteratorFactory = function () use ($collections) {
-            foreach ($collections as $index => $items) {
-                if (!is_array($items) && !$items instanceof \Traversable) {
-                    throw new Exception\InvalidArgumentException(
-                        "Unexpected query source $index (" . gettype($items) . '), expecting array or Traversable.'
-                    );
-                }
+        if ($items instanceof \Closure) {
+            return $this->iteratorFactory = $items;
+        }
 
-                foreach ($items as $item) {
-                    yield $item;
-                    if ($item instanceof Queryable) {
-                        yield from $item->query();
-                    }
+        $this->iteratorFactory = function () use ($items) {
+            if (!is_array($items) && !$items instanceof \Traversable) {
+                throw new Exception\InvalidArgumentException(
+                    "Unexpected query source (" . gettype($items) . '), expecting array or Traversable.'
+                );
+            }
+
+            foreach ($items as $item) {
+                yield $item;
+                if ($item instanceof Queryable) {
+                    yield from $item->query();
                 }
             }
         };
@@ -62,7 +65,7 @@ class Query implements \IteratorAggregate, \Countable
     /**
      * Filter that returns only Account objects
      */
-    public function accounts(): self
+    public function accounts(): Query
     {
         return $this->filter(function ($item) {
             return $item instanceof Account;
@@ -72,7 +75,7 @@ class Query implements \IteratorAggregate, \Countable
     /**
      * Filter that returns only Amount objects
      */
-    public function amounts(): self
+    public function amounts(): Query
     {
         return $this->filter(function ($item) {
             return $item instanceof Amount;
@@ -106,7 +109,7 @@ class Query implements \IteratorAggregate, \Countable
      *
      * @param callable $callback Executed for all items matching query
      */
-    public function each(callable $callback): self
+    public function each(callable $callback): Query
     {
         return $this->lazyEach($callback)->exec();
     }
@@ -114,7 +117,7 @@ class Query implements \IteratorAggregate, \Countable
     /**
      * Execute loaded filters and maps by iterating over all items
      */
-    public function exec(): self
+    public function exec(): Query
     {
         foreach ($this->getIterator() as $void) {
         }
@@ -123,23 +126,21 @@ class Query implements \IteratorAggregate, \Countable
     }
 
     /**
-     * Filter the query set by keeping those items that pass a truth test definied in $filter
+     * Create a new querywith those items that pass a truth test definied in $filter
      *
      * @param callable $filter Takes one argument and returnes a boolean
      */
-    public function filter(callable $filter): self
+    public function filter(callable $filter): Query
     {
         $outerIterator = ($this->iteratorFactory)();
 
-        $this->iteratorFactory = function () use ($outerIterator, $filter) {
+        return new Query(function () use ($outerIterator, $filter) {
             foreach ($outerIterator as $item) {
                 if ($filter($item)) {
                     yield $item;
                 }
             }
-        };
-
-        return $this;
+        });
     }
 
     /**
@@ -181,7 +182,7 @@ class Query implements \IteratorAggregate, \Countable
      *
      * @param callable $callback Executed for all items matching query
      */
-    public function lazyEach(callable $callback): self
+    public function lazyEach(callable $callback): Query
     {
         return $this->filter(function ($item) use ($callback) {
             $callback($item);
@@ -196,7 +197,7 @@ class Query implements \IteratorAggregate, \Countable
      * @param  callable $filter   Takes an $item and returns a boolean
      * @param  callable $callback Called for all items matching $filter
      */
-    public function lazyOn(callable $filter, callable $callback): self
+    public function lazyOn(callable $filter, callable $callback): Query
     {
         return $this->filter(function ($item) use ($filter, $callback) {
             if ($filter($item)) {
@@ -208,21 +209,19 @@ class Query implements \IteratorAggregate, \Countable
     }
 
     /**
-     * Transform items in query by passing each items to $callback
+     * Create a new Query that transform items by passing each item to $callback
      *
      * @param callable $callback Takes one argument and returnes a modified version
      */
-    public function map(callable $callback): self
+    public function map(callable $callback): Query
     {
         $outerIterator = ($this->iteratorFactory)();
 
-        $this->iteratorFactory = function () use ($outerIterator, $callback) {
+        return new Query(function () use ($outerIterator, $callback) {
             foreach ($outerIterator as $item) {
                 yield $callback($item);
             }
-        };
-
-        return $this;
+        });
     }
 
     /**
@@ -249,7 +248,7 @@ class Query implements \IteratorAggregate, \Countable
     /**
      * Filter that returns only Queryable objects
      */
-    public function queryables(): self
+    public function queryables(): Query
     {
         return $this->filter(function ($item) {
             return $item instanceof Queryable;
@@ -273,30 +272,9 @@ class Query implements \IteratorAggregate, \Countable
     }
 
     /**
-     * Summarize amounts of contained transactions
-     *
-     * Please note that if query contains no transactions a 0 amount will be
-     * returned, which may interfere with other currency objects.
-     */
-    public function sumTransactions(): Amount
-    {
-        return $this->reduce(
-            function (Amount $carry = null, $transaction) {
-                if (!$transaction instanceof Transaction) {
-                    return $carry;
-                }
-                if (is_null($carry)) {
-                    return $transaction->getAmount();
-                }
-                return $carry->add($transaction->getAmount());
-            }
-        ) ?: new Amount('0');
-    }
-
-    /**
      * Filter that returns only Transaction objects
      */
-    public function transactions(): self
+    public function transactions(): Query
     {
         return $this->filter(function ($item) {
             return $item instanceof Transaction;
@@ -306,7 +284,7 @@ class Query implements \IteratorAggregate, \Countable
     /**
      * Filter unique items in query
      */
-    public function unique(): self
+    public function unique(): Query
     {
         $uniqueItems = [];
 
@@ -324,7 +302,7 @@ class Query implements \IteratorAggregate, \Countable
     /**
      * Filter that returns only Verification objects
      */
-    public function verifications(): self
+    public function verifications(): Query
     {
         return $this->filter(function ($item) {
             return $item instanceof Verification;
@@ -336,7 +314,7 @@ class Query implements \IteratorAggregate, \Countable
      *
      * @param callable $filter Takes one argument and returnes a boolean
      */
-    public function where(callable $filter): self
+    public function where(callable $filter): Query
     {
         return $this->filter(function ($item) use ($filter) {
             return !(new Query([$item]))->filter($filter)->isEmpty();
@@ -348,7 +326,7 @@ class Query implements \IteratorAggregate, \Countable
      *
      * @param callable $filter Takes one argument and returnes a boolean
      */
-    public function whereNot(callable $filter): self
+    public function whereNot(callable $filter): Query
     {
         return $this->filter(function ($item) use ($filter) {
             return (new Query([$item]))->filter($filter)->isEmpty();

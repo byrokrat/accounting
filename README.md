@@ -18,7 +18,7 @@ composer require byrokrat/accounting
 
 Usage
 -----
-> NOTE! This package is under development and the API may change.
+> NOTE! This package is under development and the API subject to change.
 
 Transaction data can be read and written in the [SIE](http://www.sie.se/) format.
 
@@ -40,20 +40,22 @@ echo (new Sie\Writer)->generate(
 ```
 
 ### Calculate account balances
-<!-- @expectOutput /^400\.00$/ -->
+<!-- @expectOutput /^300\.00$/ -->
 ```php
 namespace byrokrat\accounting;
 
 use byrokrat\amount\Currency\SEK;
 
-// Build accounts (specifying incoming balance for 1920)
-$accounts = (new AccountSetBuilder)
-    ->addAccount(1920, 'Bank', new SEK('100'))
-    ->addAccount(3000, 'Income')
-    ->getAccounts();
+// Build accounts
+$accountFactory = new AccountFactory;
+
+$accounts = [
+    $accountFactory->createAccount(1920, 'Bank'),
+    $accountFactory->createAccount(3000, 'Income'),
+];
 
 // Build jounrnal (fetching from persistent storage?)
-$journal = (new JournalBuilder($accounts))
+$journal = (new JournalBuilder(new AccountSet(...$accounts)))
     ->addVerification(
         'First ver',
         new \DateTimeImmutable,
@@ -68,13 +70,63 @@ $journal = (new JournalBuilder($accounts))
     )
     ->getJournal();
 
-$summaries = (new AccountSummaryBuilder)
-    ->setJournal($journal)
-    ->setDefaultIncomingBalance(new SEK('0'))
-    ->processAccounts($accounts);
+$summaries = [];
 
-// Outputs 400
-echo $summaries->getAccountFromNumber(1920)->getOutgoingBalance();
+(new Query($journal))->transactions()->each(function ($transaction) use (&$summaries) {
+    $key = $transaction->getAccount()->getNumber();
+    $summaries[$key] = $summaries[$key] ?? new Summary;
+    $summaries[$key]->addTransaction($transaction);
+});
+
+// Outputs 300
+echo $summaries[1920]->getOutgoingBalance();
+```
+
+Building queries
+----------------
+The package is shipped with a generic solution for querying accounting data: the
+
+### Iterate over verifications concerning a specific account
+[Query](/src/Query.php) object.
+
+<!-- @expectOutput /^Ver using account 1921$/ -->
+```php
+namespace byrokrat\accounting;
+
+use byrokrat\amount\Currency\SEK;
+
+$accountFactory = new AccountFactory;
+
+$accounts = [
+    $accountFactory->createAccount(1920, 'Bank'),
+    $accountFactory->createAccount(1921, 'Cash'),
+    $accountFactory->createAccount(3000, 'Income'),
+];
+
+$journal = (new JournalBuilder(new AccountSet(...$accounts)))
+    ->addVerification(
+        'Ver using account 1920',
+        new \DateTimeImmutable,
+        [1920, new SEK('100')],
+        [3000, new SEK('-100')]
+    )
+    ->addVerification(
+        'Ver using account 1921',
+        new \DateTimeImmutable,
+        [1921, new SEK('200')],
+        [3000, new SEK('-200')]
+    )
+    ->getJournal();
+
+$filteredVerifications = (new Query($journal))
+    ->verifications()
+    ->where(function ($item) {
+        return $item instanceof Account && $item->getNumber() == 1921;
+    })
+    ->toArray();
+
+// Outputs 'Ver using account 1921'
+echo $filteredVerifications[0]->getText();
 ```
 
 Todo

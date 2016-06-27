@@ -40,6 +40,11 @@ class Verification implements Queryable, \IteratorAggregate
     private $date;
 
     /**
+     * @var Summary Transaction summaries
+     */
+    private $summary;
+
+    /**
      * @var Transaction[] Transactions included in verification
      */
     private $transactions = [];
@@ -55,6 +60,7 @@ class Verification implements Queryable, \IteratorAggregate
     {
         $this->text = $text;
         $this->date = $date ?: new \DateTimeImmutable;
+        $this->summary = new Summary;
         $this->addTransaction(...$transactions);
     }
 
@@ -65,6 +71,7 @@ class Verification implements Queryable, \IteratorAggregate
     {
         foreach ($transactions as $transaction) {
             $this->transactions[] = $transaction;
+            $this->summary->addTransaction($transaction);
         }
         return $this;
     }
@@ -118,23 +125,15 @@ class Verification implements Queryable, \IteratorAggregate
      */
     public function isBalanced(): bool
     {
-        return $this->query()->sumTransactions()->isZero();
+        return $this->summary->isBalanced();
     }
 
     /**
      * Get the sum of all positive transactions
-     *
-     * @throws Exception\RuntimeException if verification is not balanced
      */
     public function getMagnitude(): Amount
     {
-        if (!$this->isBalanced()) {
-            throw new Exception\RuntimeException('Unable to calculate magnitude of unbalanced verification');
-        }
-
-        return $this->query()->transactions()->filter(function (Transaction $transaction) {
-            return !$transaction->getAmount()->isNegative();
-        })->sumTransactions();
+        return $this->summary->getMagnitude();
     }
 
     /**

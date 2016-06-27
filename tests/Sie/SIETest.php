@@ -29,6 +29,8 @@ class SIETest extends \PHPUnit_Framework_TestCase
         $sie = new SIE();
         $sie->setYear(new \DateTime('2012-01-01'), new \DateTime('2012-12-31'));
         $v = new Verification('testver', new \DateTimeImmutable('2013-01-01'));
+        $v->addTransaction(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100', 2)));
+        $v->addTransaction(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('-100', 2)));
         $sie->addVerification($v);
     }
 

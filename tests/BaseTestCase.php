@@ -37,7 +37,7 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
     protected function getTransactionMock(Amount $amount = null, Account $account = null): Transaction
     {
         $transaction = $this->prophesize(Transaction::CLASS);
-        $transaction->getAmount()->willReturn($amount ?: $this->getAmountMock());
+        $transaction->getAmount()->willReturn($amount ?: new Amount('0'));
         $transaction->getAccount()->willReturn($account ?: $this->getAccountMock());
         $transaction->query()->will(function () use ($amount, $account) {
             return new Query([$amount, $account]);

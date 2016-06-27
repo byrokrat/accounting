@@ -25,17 +25,6 @@ class QueryTest extends BaseTestCase
     /**
      * @depends testToArray
      */
-    public function testMultimpleConstructorArguments()
-    {
-        $this->assertSame(
-            [1, 2, 3],
-            (new Query([1], [2], [3]))->toArray()
-        );
-    }
-
-    /**
-     * @depends testToArray
-     */
     public function testNestedIteration()
     {
         $queryable1 = $this->getQueryableMock(['bar']);
@@ -64,6 +53,24 @@ class QueryTest extends BaseTestCase
         $this->assertSame(
             [1, 2, 3],
             (new Query([1, $this->getQueryableMock([2]), 3]))->filter('is_integer')->toArray()
+        );
+    }
+
+    /**
+     * @depends testFilter
+     */
+    public function testThatFilterCreatesNewQuery()
+    {
+        $query = new Query([1, 'A', 2]);
+
+        $this->assertSame(
+            [1, 2],
+            $query->filter('is_integer')->toArray()
+        );
+
+        $this->assertSame(
+            [1, 'A', 2],
+            $query->toArray()
         );
     }
 
@@ -244,6 +251,26 @@ class QueryTest extends BaseTestCase
         );
     }
 
+    /**
+     * @depends testMap
+     */
+    public function testThatMapReturnesNewQuery()
+    {
+        $query = new Query([0, 10]);
+
+        $this->assertSame(
+            [10, 20],
+            $query->map(function ($integer) {
+                return $integer + 10;
+            })->toArray()
+        );
+
+        $this->assertSame(
+            [0, 10],
+            $query->toArray()
+        );
+    }
+
     public function testReduce()
     {
         $this->assertSame(
@@ -264,23 +291,6 @@ class QueryTest extends BaseTestCase
             (new Query(['b', 'a', 'r']))->reduce(function ($carry, $item) {
                 return $carry . $item;
             }, 'foo')
-        );
-    }
-
-    public function testSumTransactions()
-    {
-        $this->assertEquals(
-            new Amount('0'),
-            (new Query)->sumTransactions()
-        );
-
-        $this->assertEquals(
-            new Amount('10'),
-            (new Query([
-                $this->getTransactionMock(new Amount('5')),
-                $this->getTransactionMock(new Amount('5')),
-                'not a transaction'
-            ]))->sumTransactions()
         );
     }
 
