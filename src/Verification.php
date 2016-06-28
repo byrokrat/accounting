@@ -22,15 +22,17 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\amount\Amount;
+
 /**
  * Simple verification value object wrapping a list of transactions
  */
-class Verification
+class Verification implements Queryable, \IteratorAggregate
 {
     /**
      * @var string Free text description
      */
-    private $text;
+    private $description;
 
     /**
      * @var \DateTimeImmutable Creation date
@@ -38,30 +40,48 @@ class Verification
     private $date;
 
     /**
-     * @var TransactionSet Transactions included in verification
+     * @var Summary Transaction summaries
      */
-    private $transactions;
+    private $summary;
+
+    /**
+     * @var Transaction[] Transactions included in verification
+     */
+    private $transactions = [];
 
     /**
      * Setup verification data
      *
-     * @param string             $text         Free text description
+     * @param string             $description  Free text description
      * @param \DateTimeImmutable $date         Creation date
-     * @param TransactionSet     $transactions Collection of transactions
+     * @param Transaction        $transactions Any number of transaction objects
      */
-    public function __construct(string $text, \DateTimeImmutable $date = null, TransactionSet $transactions = null)
+    public function __construct(string $description = '', \DateTimeImmutable $date = null, Transaction ...$transactions)
     {
-        $this->text = $text;
+        $this->description = $description;
         $this->date = $date ?: new \DateTimeImmutable;
-        $this->transactions = $transactions ?: new TransactionSet;
+        $this->summary = new Summary;
+        $this->addTransaction(...$transactions);
+    }
+
+    /**
+     * Add one ore more new transactions
+     */
+    public function addTransaction(Transaction ...$transactions): self
+    {
+        foreach ($transactions as $transaction) {
+            $this->transactions[] = $transaction;
+            $this->summary->addTransaction($transaction);
+        }
+        return $this;
     }
 
     /**
      * Get text describing verification
      */
-    public function getText(): string
+    public function getDescription(): string
     {
-        return $this->text;
+        return $this->description;
     }
 
     /**
@@ -73,37 +93,46 @@ class Verification
     }
 
     /**
-     * Add one ore more new transactions
-     *
-     * @return self To enable chaining
-     */
-    public function addTransaction(Transaction ...$transactions): self
-    {
-        $this->transactions->addTransaction(...$transactions);
-        return $this;
-    }
-
-    /**
      * Get included transactions
+     *
+     * @return Transaction[]
      */
-    public function getTransactions(): TransactionSet
+    public function getTransactions(): array
     {
         return $this->transactions;
     }
 
     /**
-     * Validate that this verification is balanced
+     * Implements the IteratorAggregate interface
      */
-    public function isBalanced(): bool
+    public function getIterator(): \Generator
     {
-        return $this->getTransactions()->getSum()->isZero();
+        foreach ($this->getTransactions() as $transaction) {
+            yield $transaction;
+        }
     }
 
     /**
-     * Get set of accounts used in this verification
+     * For verifications queryable content consists of transactions
      */
-    public function getAccounts(): AccountSet
+    public function query(): Query
     {
-        return $this->getTransactions()->getAccounts();
+        return new Query($this->getIterator());
+    }
+
+    /**
+     * Check if verification is balanced
+     */
+    public function isBalanced(): bool
+    {
+        return $this->summary->isBalanced();
+    }
+
+    /**
+     * Get the sum of all positive transactions
+     */
+    public function getMagnitude(): Amount
+    {
+        return $this->summary->getMagnitude();
     }
 }

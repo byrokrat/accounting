@@ -18,11 +18,73 @@ composer require byrokrat/accounting
 
 Usage
 -----
-> NOTE! This package is under development and the API may change.
+> NOTE! This package is under development and the API subject to change.
+
+### Building queries
+
+The package is shipped with a generic solution for querying accounting data: the
+[Query](/src/Query.php) object.
+
+<!-- @expectOutput /^-300\.00Verification using account 1921$/ -->
+```php
+namespace byrokrat\accounting;
+
+use byrokrat\amount\Currency\SEK;
+
+// Create an account plan
+
+$accountFactory = new AccountFactory;
+
+$accounts = new Query([
+    $accountFactory->createAccount(1920, 'Bank'),
+    $accountFactory->createAccount(1921, 'Cash'),
+    $accountFactory->createAccount(3000, 'Income'),
+]);
+
+// Create some verifications
+
+$verifications = new Query([
+    new Verification(
+        'Verification text',
+        new \DateTimeImmutable,
+        new Transaction($accounts->findAccountFromNumber(1920), new SEK('100')),
+        new Transaction($accounts->findAccountFromNumber(3000), new SEK('-100'))
+    ),
+    new Verification(
+        'Verification using account 1921',
+        new \DateTimeImmutable,
+        new Transaction($accounts->findAccountFromNumber(1921), new SEK('200')),
+        new Transaction($accounts->findAccountFromNumber(3000), new SEK('-200'))
+    )
+]);
+
+// Calculate account balances
+
+$summaries = [];
+
+$verifications->transactions()->each(function ($transaction) use (&$summaries) {
+    $key = $transaction->getAccount()->getNumber();
+    $summaries[$key] = $summaries[$key] ?? new Summary;
+    $summaries[$key]->addTransaction($transaction);
+});
+
+// Outputs -300
+echo $summaries[3000]->getOutgoingBalance();
+
+// Iterate over verifications concerning a specific account
+
+$verificationsUsingAccount1921 = $verifications->verifications()->where(function ($item) {
+    return $item instanceof Account && $item->getNumber() == 1921;
+})->toArray();
+
+// Outputs 'Verification using account 1921'
+echo $verificationsUsingAccount1921[0]->getDescription();
+```
+
+### Generating sie
 
 Transaction data can be read and written in the [SIE](http://www.sie.se/) format.
 
-### Generating sie
 <!-- @expectOutput /^\#FLAGGA 0/ -->
 ```php
 namespace byrokrat\accounting;
@@ -30,51 +92,13 @@ use byrokrat\amount\Amount;
 
 echo (new Sie\Writer)->generate(
     (new Sie\Settings)->setTargetCompany('my-company'),
-    new Journal(
+    new Query([
         (new Verification('Ver A'))->addTransaction(
             new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100')),
             new Transaction(new Account\Earning(3000, 'Intänk'), new Amount('-100'))
         )
-    )
+    ])
 );
-```
-
-### Calculate account balances
-<!-- @expectOutput /^400\.00$/ -->
-```php
-namespace byrokrat\accounting;
-
-use byrokrat\amount\Currency\SEK;
-
-// Create accounts (specifying incoming balance for 1920)
-$accounts = (new AccountSetBuilder)
-    ->createAccount(1920, 'Bank', new SEK('100'))
-    ->createAccount(3000, 'Income')
-    ->getAccounts();
-
-// Create jounrnal (fetching from persistent storage?)
-$journal = (new JournalBuilder($accounts))
-    ->createVerification(
-        'First ver',
-        new \DateTimeImmutable,
-        [1920, new SEK('100')],
-        [3000, new SEK('-100')]
-    )
-    ->createVerification(
-        'Second ver',
-        new \DateTimeImmutable,
-        [1920, new SEK('200')],
-        [3000, new SEK('-200')]
-    )
-    ->getJournal();
-
-$summaries = (new AccountSummaryBuilder)
-    ->setJournal($journal)
-    ->setDefaultIncomingBalance(new SEK('0'))
-    ->processAccounts($accounts);
-
-// Outputs 400
-echo $summaries->getAccountFromNumber(1920)->getOutgoingBalance();
 ```
 
 Todo

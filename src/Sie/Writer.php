@@ -22,12 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie;
 
-use byrokrat\accounting\Account;
-use byrokrat\accounting\AccountSet;
-use byrokrat\accounting\Exception;
-use byrokrat\accounting\Transaction;
-use byrokrat\accounting\Verification;
-use byrokrat\accounting\Journal;
+use byrokrat\accounting\{Account, Exception, Transaction, Verification, Query};
 
 /**
  * SIE 4I file format implementation.
@@ -52,11 +47,11 @@ class Writer
     }
      */
 
-    public function generate(SettingsInterface $settings, Journal $journal): string
+    public function generate(SettingsInterface $settings, Query $verifications): string
     {
         $output = new Output;
         $this->writeHeader($settings, $output);
-        $this->writeJournal($journal, $output);
+        $this->writeVerifications($verifications, $output);
         return $output->getContent();
     }
 
@@ -106,7 +101,7 @@ class Writer
         $output->writeln(
             '#KONTO %s %s',
             (string)$account->getNumber(),
-            $account->getName()
+            $account->getDescription()
         );
         $output->writeln(
             '#KTYP %s %s',
@@ -134,7 +129,7 @@ class Writer
     {
         $output->writeln(
             '#VER "" "" %s %s',
-            $verification->getText(),
+            $verification->getDescription(),
             $verification->getDate()->format('Ymd')
         );
         $output->writeln('{');
@@ -145,16 +140,17 @@ class Writer
     }
 
     /**
-     * Write journal to output
+     * Write verifications to output
      */
-    public function writeJournal(Journal $journal, Output $output)
+    public function writeVerifications(Query $verifications, Output $output)
     {
-        foreach ($journal->getAccounts() as $account) {
+        $verifications->accounts()->each(function ($account) use ($output) {
             $this->writeAccount($account, $output);
-        }
-        foreach ($journal as $verification) {
+        });
+
+        $verifications->verifications()->each(function ($verification) use ($output) {
             $this->writeVerification($verification, $output);
-        }
+        });
     }
 
     /**
@@ -182,10 +178,10 @@ class Writer
     /**
      * Generate SIE string (using charset CP437) for $accounts
      *
-     * @param  string     $description String describing this chart of accounts
-     * @param  AccountSet $accounts
+     * @param  string $description String describing this chart of accounts
+     * @param  Query  $accounts
      */
-    public function exportChart(string $description, AccountSet $accounts): string
+    public function exportChart(string $description, Query $accounts): string
     {
         // TODO ska helt enkelt byggas upp i med det nya systemet..
         // TODO eller tas bort helt?
@@ -208,7 +204,7 @@ class Writer
         // Generate accounts
         foreach ($accounts as $account) {
             $number = self::quote((string)$account->getNumber());
-            $name = self::quote($account->getName());
+            $name = self::quote($account->getDescription());
             $type = self::quote($this->translateAccountType($account));
             $sie .= "#KONTO $number $name" . self::EOL;
             $sie .= "#KTYP $number $type" . self::EOL;

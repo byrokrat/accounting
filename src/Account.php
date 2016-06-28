@@ -23,7 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\accounting;
 
 /**
- * Account value object containing a number and a name
+ * Account value object containing a number and a description
  */
 abstract class Account
 {
@@ -33,19 +33,19 @@ abstract class Account
     private $number;
 
     /**
-     * @var string Free text name of account
+     * @var string Free text description of account
      */
-    private $name;
+    private $description;
 
     /**
      * Set account values
      *
-     * @param  int    $number 4 digit number identifying account
-     * @param  string $name   Free text name of account
+     * @param  int    $number      4 digit number identifying account
+     * @param  string $description Free text description of account
      *
      * @throws Exception\InvalidArgumentException If $number is < 1000 or > 9999
      */
-    public function __construct(int $number, string $name)
+    public function __construct(int $number, string $description)
     {
         if ($number < 1000 || $number > 9999) {
             throw new Exception\InvalidArgumentException(
@@ -53,7 +53,7 @@ abstract class Account
             );
         }
         $this->number = $number;
-        $this->name = $name;
+        $this->description = $description;
     }
 
     /**
@@ -65,11 +65,11 @@ abstract class Account
     }
 
     /**
-     * Get name of account
+     * Get account description
      */
-    public function getName(): string
+    public function getDescription(): string
     {
-        return $this->name;
+        return $this->description;
     }
 
     /**
@@ -82,7 +82,7 @@ abstract class Account
         return (
             $this->getType() == $account->getType()
             && $this->getNumber() == $account->getNumber()
-            && $this->getName() == $account->getName()
+            && $this->getDescription() == $account->getDescription()
         );
     }
 

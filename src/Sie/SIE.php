@@ -22,12 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie;
 
-use byrokrat\accounting\Verification;
-use byrokrat\accounting\Account;
-use byrokrat\accounting\AccountSet;
-use byrokrat\accounting\Exception\UnexpectedValueException;
-use byrokrat\accounting\Exception\OutOfBoundsException;
-use byrokrat\accounting\Exception\RangeException;
+use byrokrat\accounting\{Account, Exception, Verification, Query};
 
 /**
  * SIE 4I file format implementation.
@@ -91,14 +86,9 @@ class SIE
     private $typeOfChart = "EUBAS97";
 
     /**
-     * @var array Loaded verifications
+     * @var Verification[] Loaded verifications
      */
     private $verifications = [];
-
-    /**
-     * @var array List of accounts used in loaded verifications
-     */
-    private $usedAccounts = [];
 
     /**
      * Construct
@@ -184,16 +174,14 @@ class SIE
     /**
      * Add verification to SIE, verification MUST be balanced
      *
-     * @param  Verification             $ver
-     * @throws UnexpectedValueException If $ver is unbalanced
-     * @throws OutOfBoundsException     If $ver date is out of bounds
-     * @return SIE Instance for chaining
+     * @throws Exception\UnexpectedValueException If $ver is unbalanced
+     * @throws Exception\OutOfBoundsException     If $ver date is out of bounds
      */
-    public function addVerification(Verification $ver)
+    public function addVerification(Verification $ver): self
     {
         // Verify that verification is balanced
         if (!$ver->isBalanced()) {
-            throw new UnexpectedValueException("Verification {$ver->getText()} is not balanced");
+            throw new Exception\UnexpectedValueException("Verification {$ver->getDescription()} is not balanced");
         }
 
         // Verify that verification date matches accounting year
@@ -201,12 +189,8 @@ class SIE
             $verdate = $ver->getDate();
             if ($verdate < $this->yearStart || $verdate > $this->yearStop) {
                 $date = $verdate->format('Y-m-d');
-                throw new OutOfBoundsException("Verification date $date is out of bounds");
+                throw new Exception\OutOfBoundsException("Verification date $date is out of bounds");
             }
-        }
-
-        foreach ($ver->getAccounts() as $account) {
-            $this->usedAccounts[$account->getNumber()] = $account;
         }
 
         // Save verification
@@ -255,29 +239,33 @@ class SIE
 
         $sie .= self::EOL;
 
+        $query = new Query($this->verifications);
+
         // Generate accounts
-        foreach ($this->usedAccounts as $account) {
+        $query->accounts()->each(function ($account) use (&$sie) {
             $number = self::quote((string)$account->getNumber());
-            $name = self::quote($account->getName());
+            $name = self::quote($account->getDescription());
             $type = self::quote($this->translateAccountType($account));
             $sie .= "#KONTO $number $name" . self::EOL;
             $sie .= "#KTYP $number $type" . self::EOL;
-        }
+        });
 
         // Generate verifications
-        foreach ($this->verifications as $ver) {
-            $text = self::quote($ver->getText());
+        $query->verifications()->each(function ($ver) use (&$sie) {
+            $text = self::quote($ver->getDescription());
             $date = $ver->getDate()->format('Ymd');
             $sie .= self::EOL . "#VER \"\" \"\" $date $text" . self::EOL;
             $sie .= "{" . self::EOL;
-            foreach ($ver->getTransactions() as $trans) {
+
+            (new Query($ver))->transactions()->each(function ($trans) use (&$sie) {
                 $sie .=
                     "\t#TRANS {$trans->getAccount()->getNumber()} {} "
                     . $trans->getAmount()
                     . self::EOL;
-            }
+            });
+
             $sie .= "}" . self::EOL;
-        }
+        });
 
         // Convert charset
         $sie = iconv("UTF-8", "CP437", $sie);
@@ -286,12 +274,12 @@ class SIE
     }
 
     /**
-     * Generate SIE string (using charset CP437) for $accounts
+     * Generate SIE string (using charset CP437) with accounts
      *
-     * @param  string     $description String describing this chart of accounts
-     * @param  AccountSet $accounts
+     * @param  string $description String describing this chart of accounts
+     * @param  Query  $query
      */
-    public function exportChart(string $description, AccountSet $accounts): string
+    public function exportChart(string $description, Query $query): string
     {
         // Generate header
         $program = self::quote($this->program);
@@ -310,13 +298,13 @@ class SIE
         $sie .= self::EOL;
 
         // Generate accounts
-        foreach ($accounts as $account) {
+        $query->accounts()->each(function ($account) use (&$sie) {
             $number = self::quote((string)$account->getNumber());
-            $name = self::quote($account->getName());
+            $name = self::quote($account->getDescription());
             $type = self::quote($this->translateAccountType($account));
             $sie .= "#KONTO $number $name" . self::EOL;
             $sie .= "#KTYP $number $type" . self::EOL;
-        }
+        });
 
         // Convert charset
         $sie = iconv("UTF-8", "CP437", $sie);
@@ -345,24 +333,25 @@ class SIE
     }
 
     /**
-     * Create an AccountSet object from SIE string (in charset CP437)
+     * Create accounts from SIE string (in charset CP437)
      *
-     * @throws RangeException If $sie is not valid
+     * @throws Exception\RangeException If $sie is not valid
+     * @return Account[] Array with the created acount objects
      */
-    public function importChart(string $sie): AccountSet
+    public function importChart(string $sie): array
     {
         $sie = iconv("CP437", "UTF-8", $sie);
         $lines = explode(self::EOL, $sie);
 
-        $accounts = new AccountSet();
-        $current = array();
+        $accounts = [];
+        $current = [];
 
         foreach ($lines as $nr => $line) {
             $data = str_getcsv($line, ' ', '"');
             switch ($data[0]) {
                 case '#KPTYP':
                     if (!isset($data[1])) {
-                        throw new RangeException("Invalid chart type at line $nr");
+                        throw new Exception\RangeException("Invalid chart type at line $nr");
                     }
                     // TODO not supported at the moment
                     // $accounts->setChartType($data[1]);
@@ -370,18 +359,18 @@ class SIE
                 case '#KONTO':
                     // Account must have form #KONTO number name
                     if (!isset($data[2])) {
-                        throw new RangeException("Invalid account values at line $nr");
+                        throw new Exception\RangeException("Invalid account values at line $nr");
                     }
                     $current = array($data[1], $data[2]);
                     break;
                 case '#KTYP':
                     // Account type must have form #KTYP number type
                     if (!isset($data[2])) {
-                        throw new RangeException("Invalid account values at line $nr");
+                        throw new Exception\RangeException("Invalid account values at line $nr");
                     }
                     // Type must referer to current account
                     if ($data[1] != $current[0]) {
-                        throw new RangeException("Unexpected account type at line $nr");
+                        throw new Exception\RangeException("Unexpected account type at line $nr");
                     }
 
                     switch ($data[2]) {
@@ -399,15 +388,15 @@ class SIE
                             break;
                     }
 
-                    $accounts->addAccount($account);
-                    $current = array();
+                    $accounts[] = $account;
+                    $current = [];
                     break;
             }
         }
 
         // There should be no half way processed accounts
         if (!empty($current)) {
-            throw new RangeException("Account type missing for '{$current[0]}'");
+            throw new Exception\RangeException("Account type missing for '{$current[0]}'");
         }
 
         return $accounts;

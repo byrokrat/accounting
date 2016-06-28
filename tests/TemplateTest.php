@@ -10,18 +10,20 @@ class TemplateTest extends BaseTestCase
 {
     public function testGetters()
     {
-        $template = new Template('name', 'text');
-        $this->assertEquals('name', $template->getName());
-        $this->assertEquals('text', $template->getText());
+        $template = new Template('id', 'description');
+
+        $this->assertEquals('id', $template->getTemplateId());
+        $this->assertEquals('description', $template->getDescription());
     }
 
-    public function testSubstituteText()
+    public function testSubstituteDescription()
     {
         $template = new Template('', 'One {key} three');
         $template->substitute(['key' => 'two']);
+
         $this->assertEquals(
             'One two three',
-            $template->getText(),
+            $template->getDescription(),
             '{key} should be replaced by two'
         );
     }
@@ -55,7 +57,7 @@ class TemplateTest extends BaseTestCase
         $this->setExpectedException(Exception\UnexpectedValueException::CLASS);
         $template = new Template('', '');
         $template->addRawTransaction('{in}', '-400');
-        $template->buildVerification($this->prophesize(AccountSet::CLASS)->reveal());
+        $template->buildVerification($this->prophesize(Query::CLASS)->reveal());
     }
 
     public function testExceptionOnMissingSubstitutionAmount()
@@ -63,7 +65,7 @@ class TemplateTest extends BaseTestCase
         $this->setExpectedException(Exception\UnexpectedValueException::CLASS);
         $template = new Template('', '');
         $template->addRawTransaction('1920', '{amount}');
-        $template->buildVerification($this->prophesize(AccountSet::CLASS)->reveal());
+        $template->buildVerification($this->prophesize(Query::CLASS)->reveal());
     }
 
     public function testBuildVerification()
@@ -72,10 +74,10 @@ class TemplateTest extends BaseTestCase
         $template->addRawTransaction('1920', '450');
         $template->addRawTransaction('3000', '-450');
 
-        $accounts = new AccountSet(
+        $accounts = new Query([
             new Account\Asset(1920, 'Bank'),
             new Account\Earning(3000, 'Incomes')
-        );
+        ]);
 
         $expectedTransactions = [
             new Transaction(new Account\Asset(1920, 'Bank'), new Amount('450')),
@@ -84,7 +86,7 @@ class TemplateTest extends BaseTestCase
 
         $this->assertEquals(
             $expectedTransactions,
-            iterator_to_array($template->buildVerification($accounts)->getTransactions())
+            $template->buildVerification($accounts)->getTransactions()
         );
     }
 }

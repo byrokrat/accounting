@@ -30,14 +30,14 @@ use byrokrat\amount\Amount;
 class Template
 {
     /**
-     * @var string Template name
+     * @var string Template identifier
      */
-    private $name;
+    private $templateId;
 
     /**
-     * @var string Raw verification text
+     * @var string Raw verification description
      */
-    private $text;
+    private $description;
 
     /**
      * @var array Raw template transactions
@@ -47,26 +47,26 @@ class Template
     /**
      * Set template values
      */
-    public function __construct(string $name, string $text)
+    public function __construct(string $templateId, string $description)
     {
-        $this->name = $name;
-        $this->text = $text;
+        $this->templateId = $templateId;
+        $this->description = $description;
     }
 
     /**
-     * Get template name
+     * Get template identifier
      */
-    public function getName(): string
+    public function getTemplateId(): string
     {
-        return $this->name;
+        return $this->templateId;
     }
 
     /**
-     * Get raw verification text
+     * Get raw verification description
      */
-    public function getText(): string
+    public function getDescription(): string
     {
-        return $this->text;
+        return $this->description;
     }
 
     /**
@@ -90,7 +90,7 @@ class Template
     }
 
     /**
-     * Substitute template variables in verification text and transactions
+     * Substitute template variables in verification description and transactions
      *
      * @param string[] $values Substitution key-value-pairs
      */
@@ -104,8 +104,8 @@ class Template
             array_keys($values)
         );
 
-        // Substitute terms in verification text
-        $this->text = trim(str_replace($keys, $values, $this->text));
+        // Substitute terms in verification description
+        $this->description = trim(str_replace($keys, $values, $this->description));
 
         // Substitue terms in transactions
         $this->transactions = array_map(
@@ -138,20 +138,21 @@ class Template
     /**
      * Create verification from template
      *
+     * @param  Query $data Query object containing account data
      * @throws Exception\UnexpectedValueException If any key is NOT substituted
      */
-    public function buildVerification(AccountSet $accounts): Verification
+    public function buildVerification(Query $data): Verification
     {
         if (!$this->ready($key)) {
             throw new Exception\UnexpectedValueException("Unable to substitute template key $key");
         }
 
-        $ver = new Verification($this->getText());
+        $ver = new Verification($this->getDescription());
 
         foreach ($this->getRawTransactions() as list($number, $amount)) {
             $ver->addTransaction(
                 new Transaction(
-                    $accounts->getAccountFromNumber(intval($number)),
+                    $data->findAccountFromNumber(intval($number)),
                     new Amount($amount)
                 )
             );
