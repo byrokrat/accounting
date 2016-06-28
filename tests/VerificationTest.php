@@ -12,10 +12,10 @@ use byrokrat\amount\Currency\SEK;
  */
 class VerificationTest extends BaseTestCase
 {
-    public function testGetText()
+    public function testGetDescription()
     {
         $this->assertEquals(
-            (new Verification('foobar'))->getText(),
+            (new Verification('foobar'))->getDescription(),
             'foobar'
         );
     }

@@ -368,14 +368,14 @@ class QueryTest extends BaseTestCase
         $account = $this->getAccountMock(1234, 'foobar');
         $this->assertEquals(
             $account,
-            (new Query([1, null, $account]))->findAccountFromName('foobar')
+            (new Query([1, null, $account]))->findAccountFromDesc('foobar')
         );
     }
 
-    public function testExceptionOnUnknownAccountName()
+    public function testExceptionOnUnknownAccountDescription()
     {
         $this->setExpectedException(Exception\OutOfBoundsException::CLASS);
-        (new Query)->findAccountFromName('foobar');
+        (new Query)->findAccountFromDesc('foobar');
     }
 
     /**

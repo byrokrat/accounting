@@ -181,7 +181,7 @@ class SIE
     {
         // Verify that verification is balanced
         if (!$ver->isBalanced()) {
-            throw new Exception\UnexpectedValueException("Verification {$ver->getText()} is not balanced");
+            throw new Exception\UnexpectedValueException("Verification {$ver->getDescription()} is not balanced");
         }
 
         // Verify that verification date matches accounting year
@@ -244,7 +244,7 @@ class SIE
         // Generate accounts
         $query->accounts()->each(function ($account) use (&$sie) {
             $number = self::quote((string)$account->getNumber());
-            $name = self::quote($account->getName());
+            $name = self::quote($account->getDescription());
             $type = self::quote($this->translateAccountType($account));
             $sie .= "#KONTO $number $name" . self::EOL;
             $sie .= "#KTYP $number $type" . self::EOL;
@@ -252,7 +252,7 @@ class SIE
 
         // Generate verifications
         $query->verifications()->each(function ($ver) use (&$sie) {
-            $text = self::quote($ver->getText());
+            $text = self::quote($ver->getDescription());
             $date = $ver->getDate()->format('Ymd');
             $sie .= self::EOL . "#VER \"\" \"\" $date $text" . self::EOL;
             $sie .= "{" . self::EOL;
@@ -300,7 +300,7 @@ class SIE
         // Generate accounts
         $query->accounts()->each(function ($account) use (&$sie) {
             $number = self::quote((string)$account->getNumber());
-            $name = self::quote($account->getName());
+            $name = self::quote($account->getDescription());
             $type = self::quote($this->translateAccountType($account));
             $sie .= "#KONTO $number $name" . self::EOL;
             $sie .= "#KTYP $number $type" . self::EOL;

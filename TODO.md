@@ -1,7 +1,5 @@
 ## Brygga till query..
 
-* `getText()` i Verification, `getName()` i Account. Annar i andra? Standardisera namn... (se även Template)
-
 * Endast använda mig av RuntimeException istället för alla konstiga olika jag har nu??
   Kolla igenom var de används någonstans...
 

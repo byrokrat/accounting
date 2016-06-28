@@ -101,7 +101,7 @@ class Writer
         $output->writeln(
             '#KONTO %s %s',
             (string)$account->getNumber(),
-            $account->getName()
+            $account->getDescription()
         );
         $output->writeln(
             '#KTYP %s %s',
@@ -129,7 +129,7 @@ class Writer
     {
         $output->writeln(
             '#VER "" "" %s %s',
-            $verification->getText(),
+            $verification->getDescription(),
             $verification->getDate()->format('Ymd')
         );
         $output->writeln('{');
@@ -204,7 +204,7 @@ class Writer
         // Generate accounts
         foreach ($accounts as $account) {
             $number = self::quote((string)$account->getNumber());
-            $name = self::quote($account->getName());
+            $name = self::quote($account->getDescription());
             $type = self::quote($this->translateAccountType($account));
             $sie .= "#KONTO $number $name" . self::EOL;
             $sie .= "#KTYP $number $type" . self::EOL;

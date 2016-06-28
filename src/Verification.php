@@ -32,7 +32,7 @@ class Verification implements Queryable, \IteratorAggregate
     /**
      * @var string Free text description
      */
-    private $text;
+    private $description;
 
     /**
      * @var \DateTimeImmutable Creation date
@@ -52,13 +52,13 @@ class Verification implements Queryable, \IteratorAggregate
     /**
      * Setup verification data
      *
-     * @param string             $text         Free text description
+     * @param string             $description  Free text description
      * @param \DateTimeImmutable $date         Creation date
      * @param Transaction        $transactions Any number of transaction objects
      */
-    public function __construct(string $text = '', \DateTimeImmutable $date = null, Transaction ...$transactions)
+    public function __construct(string $description = '', \DateTimeImmutable $date = null, Transaction ...$transactions)
     {
-        $this->text = $text;
+        $this->description = $description;
         $this->date = $date ?: new \DateTimeImmutable;
         $this->summary = new Summary;
         $this->addTransaction(...$transactions);
@@ -79,9 +79,9 @@ class Verification implements Queryable, \IteratorAggregate
     /**
      * Get text describing verification
      */
-    public function getText(): string
+    public function getDescription(): string
     {
-        return $this->text;
+        return $this->description;
     }
 
     /**

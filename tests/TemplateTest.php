@@ -10,18 +10,20 @@ class TemplateTest extends BaseTestCase
 {
     public function testGetters()
     {
-        $template = new Template('name', 'text');
-        $this->assertEquals('name', $template->getName());
-        $this->assertEquals('text', $template->getText());
+        $template = new Template('id', 'description');
+
+        $this->assertEquals('id', $template->getTemplateId());
+        $this->assertEquals('description', $template->getDescription());
     }
 
-    public function testSubstituteText()
+    public function testSubstituteDescription()
     {
         $template = new Template('', 'One {key} three');
         $template->substitute(['key' => 'two']);
+
         $this->assertEquals(
             'One two three',
-            $template->getText(),
+            $template->getDescription(),
             '{key} should be replaced by two'
         );
     }

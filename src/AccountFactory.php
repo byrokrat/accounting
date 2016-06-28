@@ -30,25 +30,25 @@ class AccountFactory
     /**
      * Create a new account object
      *
-     * @param int    $number Account number
-     * @param string $name   Name of account
+     * @param int    $number      Account number
+     * @param string $description Description of account
      *
      * TODO write tests for this class
      */
-    public function createAccount(int $number, string $name): Account
+    public function createAccount(int $number, string $description): Account
     {
         if ($number < 2000) {
-            return new Account\Asset($number, $name);
+            return new Account\Asset($number, $description);
         }
 
         if ($number < 3000) {
-            return new Account\Debt($number, $name);
+            return new Account\Debt($number, $description);
         }
 
         if ($number < 4000) {
-            return new Account\Earning($number, $name);
+            return new Account\Earning($number, $description);
         }
 
-        return new Account\Cost($number, $name);
+        return new Account\Cost($number, $description);
     }
 }

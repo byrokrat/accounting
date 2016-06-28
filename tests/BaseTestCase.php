@@ -9,11 +9,11 @@ use byrokrat\amount\Amount;
 
 class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
-    protected function getAccountMock(int $number = 0, string $name = '', bool $equals = false): Account
+    protected function getAccountMock(int $number = 0, string $description = '', bool $equals = false): Account
     {
         $account = $this->prophesize(Account::CLASS);
         $account->getNumber()->willReturn($number);
-        $account->getName()->willReturn($name);
+        $account->getDescription()->willReturn($description);
         $account->equals(Argument::any())->willReturn($equals);
 
         return $account->reveal();

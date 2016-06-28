@@ -78,7 +78,7 @@ $verificationsUsingAccount1921 = $verifications->verifications()->where(function
 })->toArray();
 
 // Outputs 'Verification using account 1921'
-echo $verificationsUsingAccount1921[0]->getText();
+echo $verificationsUsingAccount1921[0]->getDescription();
 ```
 
 ### Generating sie

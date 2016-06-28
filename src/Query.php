@@ -170,21 +170,22 @@ class Query implements \IteratorAggregate, \Countable
     }
 
     /**
-     * Find account object from name
+     * Find account object from description
      *
      * @throws Exception\OutOfBoundsException If account does not exist
      */
-    public function findAccountFromName(string $name): Account
+    public function findAccountFromDesc(string $description): Account
     {
-        $account = $this->accounts()->find(function ($account) use ($name) {
-            return $account->getName() == $name;
+        $account = $this->accounts()->find(function ($account) use ($description) {
+            // TODO perform some kind of regular expression match here (or at least case insensitive)
+            return $account->getDescription() == $description;
         });
 
         if ($account) {
             return $account;
         }
 
-        throw new Exception\OutOfBoundsException("Account $name does not exist");
+        throw new Exception\OutOfBoundsException("Account $description does not exist");
     }
 
     /**
