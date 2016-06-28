@@ -38,7 +38,7 @@ class DelegatingParser extends Grammar implements ConsumerInterface
         $this->strategy = $strategy;
     }
 
-    public function onUnknown(string $label, array $fields);
+    public function onUnknown(string $label, array $fields)
     {
         $this->strategy->onUnknown($label, $fields);
     }
