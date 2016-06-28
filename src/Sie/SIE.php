@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie;
 
-use byrokrat\accounting\{Account, AccountSet, Exception, Verification, Query};
+use byrokrat\accounting\{Account, Exception, Verification, Query};
 
 /**
  * SIE 4I file format implementation.
@@ -274,12 +274,12 @@ class SIE
     }
 
     /**
-     * Generate SIE string (using charset CP437) for $accounts
+     * Generate SIE string (using charset CP437) with accounts
      *
-     * @param  string     $description String describing this chart of accounts
-     * @param  AccountSet $accounts
+     * @param  string $description String describing this chart of accounts
+     * @param  Query  $query
      */
-    public function exportChart(string $description, AccountSet $accounts): string
+    public function exportChart(string $description, Query $query): string
     {
         // Generate header
         $program = self::quote($this->program);
@@ -298,13 +298,13 @@ class SIE
         $sie .= self::EOL;
 
         // Generate accounts
-        foreach ($accounts as $account) {
+        $query->accounts()->each(function ($account) use (&$sie) {
             $number = self::quote((string)$account->getNumber());
             $name = self::quote($account->getName());
             $type = self::quote($this->translateAccountType($account));
             $sie .= "#KONTO $number $name" . self::EOL;
             $sie .= "#KTYP $number $type" . self::EOL;
-        }
+        });
 
         // Convert charset
         $sie = iconv("UTF-8", "CP437", $sie);
@@ -333,17 +333,18 @@ class SIE
     }
 
     /**
-     * Create an AccountSet object from SIE string (in charset CP437)
+     * Create accounts from SIE string (in charset CP437)
      *
      * @throws Exception\RangeException If $sie is not valid
+     * @return Account[] Array with the created acount objects
      */
-    public function importChart(string $sie): AccountSet
+    public function importChart(string $sie): array
     {
         $sie = iconv("CP437", "UTF-8", $sie);
         $lines = explode(self::EOL, $sie);
 
-        $accounts = new AccountSet();
-        $current = array();
+        $accounts = [];
+        $current = [];
 
         foreach ($lines as $nr => $line) {
             $data = str_getcsv($line, ' ', '"');
@@ -387,8 +388,8 @@ class SIE
                             break;
                     }
 
-                    $accounts->addAccount($account);
-                    $current = array();
+                    $accounts[] = $account;
+                    $current = [];
                     break;
             }
         }

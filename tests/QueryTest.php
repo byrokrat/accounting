@@ -347,4 +347,51 @@ class QueryTest extends BaseTestCase
             'queryableC should be kept as it does not contain the subitem foo'
         );
     }
+
+    public function testFindAccountFromNumber()
+    {
+        $account = $this->getAccountMock(1234, 'foobar');
+        $this->assertEquals(
+            $account,
+            (new Query(['foo', $account, 'bar']))->findAccountFromNumber(1234)
+        );
+    }
+
+    public function testExceptionOnUnknownAccountNumber()
+    {
+        $this->setExpectedException(Exception\OutOfBoundsException::CLASS);
+        (new Query)->findAccountFromNumber(1234);
+    }
+
+    public function testFindAccountFromName()
+    {
+        $account = $this->getAccountMock(1234, 'foobar');
+        $this->assertEquals(
+            $account,
+            (new Query([1, null, $account]))->findAccountFromName('foobar')
+        );
+    }
+
+    public function testExceptionOnUnknownAccountName()
+    {
+        $this->setExpectedException(Exception\OutOfBoundsException::CLASS);
+        (new Query)->findAccountFromName('foobar');
+    }
+
+    /**
+     * @depends testToArray
+     */
+    public function testLoad()
+    {
+        $this->assertSame(
+            [1, 2, 3, 4],
+            (new Query([1, 2]))->load([3, 4])->toArray()
+        );
+    }
+
+    public function testExceptionOnLoadingUnvalidData()
+    {
+        $this->setExpectedException(Exception\InvalidArgumentException::CLASS);
+        (new Query)->load(null);
+    }
 }

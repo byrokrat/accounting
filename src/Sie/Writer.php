@@ -22,12 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie;
 
-use byrokrat\accounting\Account;
-use byrokrat\accounting\AccountSet;
-use byrokrat\accounting\Exception;
-use byrokrat\accounting\Transaction;
-use byrokrat\accounting\Verification;
-use byrokrat\accounting\Query;
+use byrokrat\accounting\{Account, Exception, Transaction, Verification, Query};
 
 /**
  * SIE 4I file format implementation.
@@ -183,10 +178,10 @@ class Writer
     /**
      * Generate SIE string (using charset CP437) for $accounts
      *
-     * @param  string     $description String describing this chart of accounts
-     * @param  AccountSet $accounts
+     * @param  string $description String describing this chart of accounts
+     * @param  Query  $accounts
      */
-    public function exportChart(string $description, AccountSet $accounts): string
+    public function exportChart(string $description, Query $accounts): string
     {
         // TODO ska helt enkelt byggas upp i med det nya systemet..
         // TODO eller tas bort helt?

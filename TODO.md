@@ -1,13 +1,5 @@
 ## Brygga till query..
 
-* Arbeta bort `AccountSet`:
-  - Flytta intresant funktionalitet till Query
-  - Arbeta stegvis bort från alla delar av koden där AccountSet används
-  - släng och knyt ihop säcken..
-
-* TODO fler grejer till Query:
-  - addSource() eller vad det nu ska heta för att tillföra data (inject() ??)
-
 * `getText()` i Verification, `getName()` i Account. Annar i andra? Standardisera namn... (se även Template)
 
 * Endast använda mig av RuntimeException istället för alla konstiga olika jag har nu??

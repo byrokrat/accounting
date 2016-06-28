@@ -31,31 +31,32 @@ namespace byrokrat\accounting;
 
 use byrokrat\amount\Currency\SEK;
 
-// Build accounts
+// Create an account plan
+
 $accountFactory = new AccountFactory;
 
-$accounts = new AccountSet(...[
+$accounts = new Query([
     $accountFactory->createAccount(1920, 'Bank'),
     $accountFactory->createAccount(1921, 'Cash'),
     $accountFactory->createAccount(3000, 'Income'),
 ]);
 
-// Create a set of verifications
+// Create some verifications
+
 $verifications = new Query([
     new Verification(
         'Verification text',
         new \DateTimeImmutable,
-        new Transaction($accounts->getAccountFromNumber(1920), new SEK('100')),
-        new Transaction($accounts->getAccountFromNumber(3000), new SEK('-100'))
+        new Transaction($accounts->findAccountFromNumber(1920), new SEK('100')),
+        new Transaction($accounts->findAccountFromNumber(3000), new SEK('-100'))
     ),
     new Verification(
         'Verification using account 1921',
         new \DateTimeImmutable,
-        new Transaction($accounts->getAccountFromNumber(1921), new SEK('200')),
-        new Transaction($accounts->getAccountFromNumber(3000), new SEK('-200'))
+        new Transaction($accounts->findAccountFromNumber(1921), new SEK('200')),
+        new Transaction($accounts->findAccountFromNumber(3000), new SEK('-200'))
     )
 ]);
-
 
 // Calculate account balances
 
@@ -69,7 +70,6 @@ $verifications->transactions()->each(function ($transaction) use (&$summaries) {
 
 // Outputs -300
 echo $summaries[3000]->getOutgoingBalance();
-
 
 // Iterate over verifications concerning a specific account
 

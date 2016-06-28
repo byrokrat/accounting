@@ -138,9 +138,10 @@ class Template
     /**
      * Create verification from template
      *
+     * @param  Query $data Query object containing account data
      * @throws Exception\UnexpectedValueException If any key is NOT substituted
      */
-    public function buildVerification(AccountSet $accounts): Verification
+    public function buildVerification(Query $data): Verification
     {
         if (!$this->ready($key)) {
             throw new Exception\UnexpectedValueException("Unable to substitute template key $key");
@@ -151,7 +152,7 @@ class Template
         foreach ($this->getRawTransactions() as list($number, $amount)) {
             $ver->addTransaction(
                 new Transaction(
-                    $accounts->getAccountFromNumber(intval($number)),
+                    $data->findAccountFromNumber(intval($number)),
                     new Amount($amount)
                 )
             );

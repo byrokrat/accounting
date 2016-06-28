@@ -37,23 +37,20 @@ class Query implements \IteratorAggregate, \Countable
     /**
      * Load data to query
      *
-     * @param array|\Traversable|\Closure $items Items to query. If items is a
+     * @param array|\Traversable|\Closure $data Items to query. If items is a
      *     Closure it is expected to take no parameters and return a generator.
      */
-    public function __construct($items = [])
+    public function __construct($data = [])
     {
-        if ($items instanceof \Closure) {
-            return $this->iteratorFactory = $items;
+        if ($data instanceof \Closure) {
+            $this->iteratorFactory = $data;
+            return;
         }
 
-        $this->iteratorFactory = function () use ($items) {
-            if (!is_array($items) && !$items instanceof \Traversable) {
-                throw new Exception\InvalidArgumentException(
-                    "Unexpected query source (" . gettype($items) . '), expecting array or Traversable.'
-                );
-            }
+        $this->validateTraversability($data);
 
-            foreach ($items as $item) {
+        $this->iteratorFactory = function () use ($data) {
+            foreach ($data as $item) {
                 yield $item;
                 if ($item instanceof Queryable) {
                     yield from $item->query();
@@ -144,6 +141,53 @@ class Query implements \IteratorAggregate, \Countable
     }
 
     /**
+     * Get the first item in query matching filter
+     *
+     * @param  callable $filter Takes one argument and returnes a boolean
+     * @return mixed    The first matching item, null if no item is found
+     */
+    public function find(callable $filter)
+    {
+        return $this->filter($filter)->first();
+    }
+
+    /**
+     * Find account object from number
+     *
+     * @throws Exception\OutOfBoundsException If account does not exist
+     */
+    public function findAccountFromNumber(int $number): Account
+    {
+        $account = $this->accounts()->find(function ($account) use ($number) {
+            return $account->getNumber() == $number;
+        });
+
+        if ($account) {
+            return $account;
+        }
+
+        throw new Exception\OutOfBoundsException("Account number $number does not exist");
+    }
+
+    /**
+     * Find account object from name
+     *
+     * @throws Exception\OutOfBoundsException If account does not exist
+     */
+    public function findAccountFromName(string $name): Account
+    {
+        $account = $this->accounts()->find(function ($account) use ($name) {
+            return $account->getName() == $name;
+        });
+
+        if ($account) {
+            return $account;
+        }
+
+        throw new Exception\OutOfBoundsException("Account $name does not exist");
+    }
+
+    /**
      * Get the first item matched by query
      *
      * @return mixed The first item in query, null if no item is found
@@ -205,6 +249,28 @@ class Query implements \IteratorAggregate, \Countable
             }
 
             return true;
+        });
+    }
+
+    /**
+     * Create a new Query including addtional data
+     *
+     * @param  array|\Traversable $data Items to include
+     * @throws Exception\InvalidArgumentException if $data is not traversable
+     */
+    public function load($data): Query
+    {
+        $this->validateTraversability($data);
+        $outerIterator = ($this->iteratorFactory)();
+
+        return new Query(function () use ($outerIterator, $data) {
+            yield from $outerIterator;
+            foreach ($data as $item) {
+                yield $item;
+                if ($item instanceof Queryable) {
+                    yield from $item->query();
+                }
+            }
         });
     }
 
@@ -331,5 +397,21 @@ class Query implements \IteratorAggregate, \Countable
         return $this->filter(function ($item) use ($filter) {
             return (new Query([$item]))->filter($filter)->isEmpty();
         });
+    }
+
+    /**
+     * Validate that data can be traversed using a foreach loop
+     *
+     * @param  mixed $data
+     * @return void
+     * @throws Exception\InvalidArgumentException if $data is not traversable
+     */
+    private function validateTraversability($data)
+    {
+        if (!is_array($data) && !$data instanceof \Traversable) {
+            throw new Exception\InvalidArgumentException(
+                "Unexpected query source (" . gettype($data) . '), expecting array or Traversable.'
+            );
+        }
     }
 }
