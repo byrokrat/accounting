@@ -27,7 +27,7 @@ use byrokrat\accounting\AccountSet;
 use byrokrat\accounting\Exception;
 use byrokrat\accounting\Transaction;
 use byrokrat\accounting\Verification;
-use byrokrat\accounting\Journal;
+use byrokrat\accounting\Query;
 
 /**
  * SIE 4I file format implementation.
@@ -52,11 +52,11 @@ class Writer
     }
      */
 
-    public function generate(SettingsInterface $settings, Journal $journal): string
+    public function generate(SettingsInterface $settings, Query $verifications): string
     {
         $output = new Output;
         $this->writeHeader($settings, $output);
-        $this->writeJournal($journal, $output);
+        $this->writeVerifications($verifications, $output);
         return $output->getContent();
     }
 
@@ -145,16 +145,17 @@ class Writer
     }
 
     /**
-     * Write journal to output
+     * Write verifications to output
      */
-    public function writeJournal(Journal $journal, Output $output)
+    public function writeVerifications(Query $verifications, Output $output)
     {
-        foreach ($journal->getAccounts() as $account) {
+        $verifications->accounts()->each(function ($account) use ($output) {
             $this->writeAccount($account, $output);
-        }
-        foreach ($journal as $verification) {
+        });
+
+        $verifications->verifications()->each(function ($verification) use ($output) {
             $this->writeVerification($verification, $output);
-        }
+        });
     }
 
     /**

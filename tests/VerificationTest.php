@@ -89,27 +89,4 @@ class VerificationTest extends BaseTestCase
             ->addTransaction($this->getTransactionMock(new Amount('100')))
             ->getMagnitude();
     }
-
-    public function testGetAccounts()
-    {
-        $a1920 = $this->getAccountMock(1920);
-        $a3000 = $this->getAccountMock(3000);
-
-        $accounts = iterator_to_array(
-            (new Verification)
-                ->addTransaction($this->getTransactionMock(null, $a1920))
-                ->addTransaction($this->getTransactionMock(null, $a1920))
-                ->addTransaction($this->getTransactionMock(null, $a3000))
-                ->getAccounts()
-        );
-
-        $this->assertCount(
-            2,
-            $accounts,
-            'Set contains 2 unique accounts and that should be relflected in the count'
-        );
-
-        $this->assertArrayHasKey(1920, $accounts);
-        $this->assertArrayHasKey(3000, $accounts);
-    }
 }

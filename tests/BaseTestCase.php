@@ -50,7 +50,6 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
     {
         $verification = $this->prophesize(Verification::CLASS);
         $verification->isBalanced()->willReturn(true);
-        $verification->getAccounts()->willReturn(new AccountSet(...$accounts));
         $verification->getTransactions()->willReturn($transactions);
         $verification->query()->will(function () use ($transactions) {
             return new Query($transactions);

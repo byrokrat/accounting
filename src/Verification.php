@@ -135,12 +135,4 @@ class Verification implements Queryable, \IteratorAggregate
     {
         return $this->summary->getMagnitude();
     }
-
-    /**
-     * Get set of accounts used in this verification
-     */
-    public function getAccounts(): AccountSet
-    {
-        return new AccountSet(...$this->query()->accounts()->toArray());
-    }
 }

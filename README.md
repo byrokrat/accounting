@@ -20,27 +20,12 @@ Usage
 -----
 > NOTE! This package is under development and the API subject to change.
 
-Transaction data can be read and written in the [SIE](http://www.sie.se/) format.
+### Building queries
 
-### Generating sie
-<!-- @expectOutput /^\#FLAGGA 0/ -->
-```php
-namespace byrokrat\accounting;
-use byrokrat\amount\Amount;
+The package is shipped with a generic solution for querying accounting data: the
+[Query](/src/Query.php) object.
 
-echo (new Sie\Writer)->generate(
-    (new Sie\Settings)->setTargetCompany('my-company'),
-    new Journal(
-        (new Verification('Ver A'))->addTransaction(
-            new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100')),
-            new Transaction(new Account\Earning(3000, 'Intänk'), new Amount('-100'))
-        )
-    )
-);
-```
-
-### Calculate account balances
-<!-- @expectOutput /^300\.00$/ -->
+<!-- @expectOutput /^-300\.00Verification using account 1921$/ -->
 ```php
 namespace byrokrat\accounting;
 
@@ -49,84 +34,71 @@ use byrokrat\amount\Currency\SEK;
 // Build accounts
 $accountFactory = new AccountFactory;
 
-$accounts = [
+$accounts = new AccountSet(...[
     $accountFactory->createAccount(1920, 'Bank'),
+    $accountFactory->createAccount(1921, 'Cash'),
     $accountFactory->createAccount(3000, 'Income'),
-];
+]);
 
-// Build jounrnal (fetching from persistent storage?)
-$journal = (new JournalBuilder(new AccountSet(...$accounts)))
-    ->addVerification(
-        'First ver',
+// Create a set of verifications
+$verifications = new Query([
+    new Verification(
+        'Verification text',
         new \DateTimeImmutable,
-        [1920, new SEK('100')],
-        [3000, new SEK('-100')]
-    )
-    ->addVerification(
-        'Second ver',
+        new Transaction($accounts->getAccountFromNumber(1920), new SEK('100')),
+        new Transaction($accounts->getAccountFromNumber(3000), new SEK('-100'))
+    ),
+    new Verification(
+        'Verification using account 1921',
         new \DateTimeImmutable,
-        [1920, new SEK('200')],
-        [3000, new SEK('-200')]
+        new Transaction($accounts->getAccountFromNumber(1921), new SEK('200')),
+        new Transaction($accounts->getAccountFromNumber(3000), new SEK('-200'))
     )
-    ->getJournal();
+]);
+
+
+// Calculate account balances
 
 $summaries = [];
 
-(new Query($journal))->transactions()->each(function ($transaction) use (&$summaries) {
+$verifications->transactions()->each(function ($transaction) use (&$summaries) {
     $key = $transaction->getAccount()->getNumber();
     $summaries[$key] = $summaries[$key] ?? new Summary;
     $summaries[$key]->addTransaction($transaction);
 });
 
-// Outputs 300
-echo $summaries[1920]->getOutgoingBalance();
+// Outputs -300
+echo $summaries[3000]->getOutgoingBalance();
+
+
+// Iterate over verifications concerning a specific account
+
+$verificationsUsingAccount1921 = $verifications->verifications()->where(function ($item) {
+    return $item instanceof Account && $item->getNumber() == 1921;
+})->toArray();
+
+// Outputs 'Verification using account 1921'
+echo $verificationsUsingAccount1921[0]->getText();
 ```
 
-Building queries
-----------------
-The package is shipped with a generic solution for querying accounting data: the
+### Generating sie
 
-### Iterate over verifications concerning a specific account
-[Query](/src/Query.php) object.
+Transaction data can be read and written in the [SIE](http://www.sie.se/) format.
 
-<!-- @expectOutput /^Ver using account 1921$/ -->
+<!-- @expectOutput /^\#FLAGGA 0/ -->
 ```php
 namespace byrokrat\accounting;
+use byrokrat\amount\Amount;
 
-use byrokrat\amount\Currency\SEK;
-
-$accountFactory = new AccountFactory;
-
-$accounts = [
-    $accountFactory->createAccount(1920, 'Bank'),
-    $accountFactory->createAccount(1921, 'Cash'),
-    $accountFactory->createAccount(3000, 'Income'),
-];
-
-$journal = (new JournalBuilder(new AccountSet(...$accounts)))
-    ->addVerification(
-        'Ver using account 1920',
-        new \DateTimeImmutable,
-        [1920, new SEK('100')],
-        [3000, new SEK('-100')]
-    )
-    ->addVerification(
-        'Ver using account 1921',
-        new \DateTimeImmutable,
-        [1921, new SEK('200')],
-        [3000, new SEK('-200')]
-    )
-    ->getJournal();
-
-$filteredVerifications = (new Query($journal))
-    ->verifications()
-    ->where(function ($item) {
-        return $item instanceof Account && $item->getNumber() == 1921;
-    })
-    ->toArray();
-
-// Outputs 'Ver using account 1921'
-echo $filteredVerifications[0]->getText();
+echo (new Sie\Writer)->generate(
+    (new Sie\Settings)->setTargetCompany('my-company'),
+    new Query([
+        (new Verification('Ver A'))->addTransaction(
+            new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100')),
+            new Transaction(new Account\Earning(3000, 'Intänk'), new Amount('-100'))
+        )
+    ])
+);
 ```
 
 Todo
