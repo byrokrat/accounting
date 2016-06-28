@@ -1,7 +1,6 @@
-## Brygga till query..
+## Exceptions
 
-* Endast använda mig av RuntimeException istället för alla konstiga olika jag har nu??
-  Kolla igenom var de används någonstans...
+* Fundera igenom vilken struktur jag vill ha på undantagen...
 
 ## Transaktioner
 
@@ -14,7 +13,7 @@ Består av summeringar för varje konto:
 * ingående balans (vid årets början, från "ingående balans")
 * ingående saldo (vid periodens början, om huvudbok inte skrivs ut för hela året)
 * poster (Transactions) som berör kontot (beräknas från verifikationer) (+ verifikationsbeskrivning)
-* utgående saldo (beräknas)
+* utgående saldo
 * varje transaktion listas och behöver veta villket verifikat det tillhör..
 
 ## Verifikationslista
@@ -23,7 +22,7 @@ Verifikationer behöver kunna hålla koll på sina egna numreringar...
 
 ```php
 (new Query($data))->verifications()->each(function (Verification $ver) {
-    echo $ver->getVerificationNumber();
+    echo $ver->getVerificationNumber(); // eller motsvarande
     echo '...';
 });
 ```
