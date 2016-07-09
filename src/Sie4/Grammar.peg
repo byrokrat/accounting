@@ -35,7 +35,7 @@ grammar Grammar
 
     ROW = ADRESS_ROW / UNKNOWN_ROW / EMPTY_LINE;
 
-    UNKNOWN_ROW = SPACE '#' label:[a-zA-Z]+ fields:FIELD+ EOL {
+    UNKNOWN_ROW = SPACE '#' label:[a-zA-Z]+ fields:FIELD+ END_OF_LINE {
         return $this->onUnknown(implode($label), $fields);
     };
 
@@ -55,21 +55,32 @@ grammar Grammar
 
     AMOUNT = negation:"-"? units:[0-9]+ "."? subunits:([0-9]? [0-9]?) {
         // TODO amount should be a kind of field (meaning support for SPACE delimiters and quotes...)
+            // or should amount be a kind of content?
         // TODO a lot of testing needed: - optional, decimal delimiter optional, subunits 0-2 chars
         return $this->onAmount($negation.implode($units).'.'.implode($subunits));
     };
 
-    FIELD = SPACE content:CONTENT SPACE {
+    FIELD = SPACE field:(CONTENT / QUOTED_CONTENT) SPACE {
+        return $field;
+    };
+
+    QUOTED_CONTENT = '"' content:(ESCAPED_QUOTE / ' ' / CONTENT)+ '"' {
         return implode($content);
     };
 
-    CONTENT = [a-zA-Z0-9]+;
+    CONTENT = chars:[a-zA-Z0-9!#$%&'()*+,-.\/:;<=>?@\[\\\]^_`{|}~]+ {
+        return implode($chars);
+    };
 
-    EMPTY_LINE = SPACE EOL;
+    ESCAPED_QUOTE = '\"' {
+        return '"';
+    };
 
-    END_OF_ROW = FIELD* EOL;
+    EMPTY_LINE = SPACE END_OF_LINE;
+
+    END_OF_ROW = FIELD* END_OF_LINE;
 
     SPACE = (" " / "\t")*;
 
-    EOL = "\r"? "\n";
+    END_OF_LINE = "\r"? "\n";
 }

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
+set -e
 vendor/bin/phpeg generate src/Sie4/Grammar.peg
 phpunit

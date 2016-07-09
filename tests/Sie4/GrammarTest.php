@@ -41,9 +41,6 @@ class GrammarTest extends GrammarTestCase
         );
     }
 
-    /**
-     * @depends testUnknownLabels #FOO is an unknown
-     */
     public function testFieldDelimiters()
     {
         $this->assertSieLexemes(
@@ -71,14 +68,10 @@ class GrammarTest extends GrammarTestCase
         );
     }
 
-    /**
-     * @depends testUnknownLabels #FOO is an unknown
-     */
     public function testQuotedFields()
     {
-        return $this->markTestSkipped('Not implemented...');
-
-        $this->assertSieSyntax(
+        $this->assertSieLexemes(
+            [['#FOO', "bar"]],
             "#FOO \"bar\"\n",
             "Quoted fields should be allowed according to rule 5.7"
         );
@@ -91,7 +84,7 @@ class GrammarTest extends GrammarTestCase
 
         $this->assertSieLexemes(
             [['#FOO', 'bar " baz']],
-            "#FOO \" \\\" \"\n",
+            "#FOO \"bar \\\" baz\"\n",
             "Escaped quotes should be allowed within quoted fields according to rule 5.7"
         );
     }
@@ -109,8 +102,6 @@ class GrammarTest extends GrammarTestCase
 
     /**
      * @dataProvider invalidCharactersProvider
-     * @depends testQuotedFields Quotes are needed to validate that tab is disallowed inside fields
-     * @depends testUnknownLabels #FOO is an unknown
      */
     public function testInvalidCharacters($char)
     {
@@ -121,22 +112,16 @@ class GrammarTest extends GrammarTestCase
     }
 
     /**
-     * @depends testUnknownLabels #FOO is an unknown
+     * The quote (chr(34)) and space characters (chr(32)) are left out as they are special cases
      */
     public function testValidCharacters()
     {
-        return $this->markTestSkipped('Not implemented...');
-
-        // The quote (chr(34)) and space characters (chr(32)) are left out as they are special cases
-        $field = chr(33);
-        foreach (range(35, 126) as $ascii) {
-            $field .= chr($ascii);
+        foreach (array_merge([33], range(35, 126)) as $ascii) {
+            $this->assertSieSyntax(
+                "#FOO " . chr($ascii) . "\n",
+                "Ascii character $ascii (" . chr($ascii) . ") should be allowed according to rule 5.7"
+            );
         }
-
-        $this->assertSieSyntax(
-            "#FOO $field\n",
-            "Ascii characters 32-126 should be allowed according to rule 5.7"
-        );
     }
 
     // TODO tests for rules 5.8 to 5.10 are missing
