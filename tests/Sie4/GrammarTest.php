@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4;
 
+use byrokrat\amount\Currency\{SEK, EUR};
+
 /**
  * Tests the grammar specification in Grammar.peg
  *
@@ -11,81 +13,128 @@ namespace byrokrat\accounting\Sie4;
  *
  * @covers byrokrat\accounting\Sie4\Grammar
  */
-class GrammarTest extends GrammarTestCase
+class GrammarTest extends \PHPUnit_Framework_TestCase
 {
-    public function testRequiredLabels()
+    /**
+     * Assert that a parser callback method was called when parsing source
+     */
+    private function assertParser(string $method, array $args, string $source)
     {
-        $this->assertInvalidSieSyntax(
-            "this is not a label\n",
-            "Each line must start with a '#' marked label according to rule 5.3"
-        );
+        $parser = $this->getMockBuilder(Parser::CLASS)
+            ->setMethods([$method])
+            ->getMock();
+
+        $parser->expects($this->once())
+            ->method($method)
+            ->with(...$args);
+
+        $parser->parse($source);
+    }
+
+    /**
+     * Each line must start with a '#' marked label according to rule 5.3
+     */
+    public function testLabelRequired()
+    {
+        $this->setExpectedException(\InvalidArgumentException::CLASS);
+        (new Parser)->parse("this is not a label\n");
     }
 
     // TODO Tests for rule 5.4 are missing
 
+    /**
+     * An optional \\r line ending char should be allowed according to rule 5.5
+     */
     public function testEndOfLineCharacters()
     {
-        $this->assertSieLexemes(
-            [['#FLAGGA', '1']],
-            "#FLAGGA 1\r\n",
-            "An optional \\r line ending char should be allowed according to rule 5.5"
+        $this->assertParser(
+            'onUnknown',
+            ['FOO', ['bar']],
+            "#FOO bar\r\n"
         );
     }
 
+    /**
+     * Empty lines should be ignored according to rule 5.6
+     */
     public function testEmptyLines()
     {
-        $this->assertSieLexemes(
-            [],
-            "\n \n\t\n \t \n",
-            "Empty lines should be ignored according to rule 5.6"
+        $this->assertParser(
+            'onUnknown',
+            ['FOO', ['bar']],
+            "\n \n\t\n \t \n#FOO bar\n \n\t\n \t \n"
         );
     }
 
+    /**
+     * Tabs and spaces should be allowed as delimiters according to rule 5.7
+     */
     public function testFieldDelimiters()
     {
-        $this->assertSieLexemes(
-            [['#FOO', 'foo', 'bar', 'baz']],
-            "#FOO foo\t \tbar\tbaz\n",
-            "Tabs and spaces should be allowed as delimiters according to rule 5.7"
+        $this->assertParser(
+            'onUnknown',
+            ['FOO', ['foo', 'bar', 'baz']],
+            "#FOO foo\t \tbar\tbaz\n"
         );
     }
 
+    /**
+     * Tabs and spaces should be allowed at the start of a line
+     */
     public function testSpaceAtStartOfLine()
     {
-        $this->assertSieLexemes(
-            [['#FLAGGA', '1']],
-            " \t #FLAGGA 1\n",
-            "Tabs and spaces should be allowed at the start of a line"
+        $this->assertParser(
+            'onUnknown',
+            ['FOO', ['bar']],
+            " \t #FOO bar\n"
         );
     }
 
+    /**
+     * Tabs and spaces should be allowed at the end of a line
+     */
     public function testSpaceAtEndOfLine()
     {
-        $this->assertSieLexemes(
-            [['#FLAGGA', '1']],
-            "#FLAGGA 1\t \t\n",
-            "Tabs and spaces should be allowed at the end of a line"
+        $this->assertParser(
+            'onUnknown',
+            ['FOO', ['bar']],
+            "#FOO bar\t \t\n"
         );
     }
 
+    /**
+     * Quoted fields should be allowed according to rule 5.7
+     */
     public function testQuotedFields()
     {
-        $this->assertSieLexemes(
-            [['#FOO', "bar"]],
-            "#FOO \"bar\"\n",
-            "Quoted fields should be allowed according to rule 5.7"
+        $this->assertParser(
+            'onUnknown',
+            ['FOO', ['bar']],
+            "#FOO \"bar\"\n"
         );
+    }
 
-        $this->assertSieLexemes(
-            [['#FOO', "bar baz"]],
-            "#FOO \"bar baz\"\n",
-            "Spaces should be allowed within quoted fields according to rule 5.7"
+    /**
+     * Spaces should be allowed within quoted fields according to rule 5.7
+     */
+    public function testSpaceInsideQuotedFields()
+    {
+        $this->assertParser(
+            'onUnknown',
+            ['FOO', ['bar baz']],
+            "#FOO \"bar baz\"\n"
         );
+    }
 
-        $this->assertSieLexemes(
-            [['#FOO', 'bar " baz']],
-            "#FOO \"bar \\\" baz\"\n",
-            "Escaped quotes should be allowed within quoted fields according to rule 5.7"
+    /**
+     * Escaped quotes should be allowed within quoted fields according to rule 5.7
+     */
+    public function testEscapedQuotesInsideQuotedFields()
+    {
+        $this->assertParser(
+            'onUnknown',
+            ['FOO', ['bar " baz']],
+            "#FOO \"bar \\\" baz\"\n"
         );
     }
 
@@ -101,37 +150,143 @@ class GrammarTest extends GrammarTestCase
     }
 
     /**
+     * Test characters not allowed in a field according to rule 5.7
+     *
      * @dataProvider invalidCharactersProvider
      */
     public function testInvalidCharacters($char)
     {
-        $this->assertInvalidSieSyntax(
-            "#FOO \"bar{$char}baz\"\n",
-            "Character '$char' (Ascii " . ord($char) . ") should not be allowed in a field according to rule 5.7"
-        );
+        $this->setExpectedException(\InvalidArgumentException::CLASS);
+        (new Parser)->parse("#FOO \"bar{$char}baz\"\n");
     }
 
     /**
-     * The quote (chr(34)) and space characters (chr(32)) are left out as they are special cases
+     * Test characters allowed according to rule 5.7
+     *
+     * Note that the quote (chr(34)) and space characters (chr(32)) are left out
+     * as they are special cases.
      */
     public function testValidCharacters()
     {
         foreach (array_merge([33], range(35, 126)) as $ascii) {
-            $this->assertSieSyntax(
-                "#FOO " . chr($ascii) . "\n",
-                "Ascii character $ascii (" . chr($ascii) . ") should be allowed according to rule 5.7"
+            $this->assertParser(
+                'onUnknown',
+                ['FOO', [chr($ascii)]],
+                "#FOO " . chr($ascii) . "\n"
             );
         }
     }
 
-    // TODO tests for rules 5.8 to 5.10 are missing
+    public function booleanProvider()
+    {
+        return [
+            ['0', false],
+            ['1', true],
+            ['"0"', false],
+            ['"1"', true],
+        ];
+    }
 
+    /**
+     * @dataProvider booleanProvider
+     */
+    public function testBooleanFlagPost(string $flag, bool $boolval)
+    {
+        $this->assertParser(
+            'onFlag',
+            [$boolval],
+            "#FLAGGA $flag\n"
+        );
+    }
+
+    public function integerProvider()
+    {
+        return [
+            ['1', 1],
+            ['0', 0],
+            ['-1', -1],
+            ['1234', 1234],
+            ['"1234"', 1234],
+            ['"-1"', -1],
+        ];
+    }
+
+    /**
+     * @dataProvider integerProvider
+     */
+    public function testIntegerSieVersionPost(string $raw, int $intval)
+    {
+        $this->assertParser(
+            'onSieVersion',
+            [$intval],
+            "#SIETYP $raw\n"
+        );
+    }
+
+    public function currencyProvider()
+    {
+        return [
+            ['1', new SEK('1')],
+            ['10.11', new SEK('10.11')],
+            ['10.1', new SEK('10.10')],
+            ['-1', new SEK('-1')],
+            ['"1.00"', new SEK('1')],
+        ];
+    }
+
+    /**
+     * @dataProvider currencyProvider
+     */
+    public function testCurrencyIncomingBalancePost(string $raw, SEK $currency)
+    {
+        $this->assertParser(
+            'onIncomingBalance',
+            [0, '1920', $currency, 0],
+            "#IB 0 1920 $raw 0\n"
+        );
+    }
+
+    public function testCurrencPost()
+    {
+        $this->assertParser(
+            'onIncomingBalance',
+            [0, '1920', new EUR('10'), 0],
+            "#VALUTA EUR\n#IB 0 1920 10 0\n"
+        );
+    }
+
+    public function dateProvider()
+    {
+        return [
+            ['20160722', new \DateTime('20160722')],
+            ['"20160722"', new \DateTime('20160722')],
+            ['201607', new \DateTime('20160701')],
+            ['2016', new \DateTime('20160101')],
+            ['20160722', new \DateTime('20160722')],
+        ];
+    }
+
+    /**
+     * @dataProvider dateProvider
+     */
+    public function testDates(string $raw, \DateTime $date)
+    {
+        $this->assertParser(
+            'onMagnitudeDate',
+            [$date],
+            "#OMFATTN $raw\n"
+        );
+    }
+
+    /**
+     * Unknown labels should not trigger errors according to rule 7.1
+     */
     public function testUnknownLabels()
     {
-        $this->assertSieLexemes(
-            [['#UNKNOWN', 'foo']],
-            "#UNKNOWN foo\n",
-            "Unknown labels should not trigger errors according to rule 7.1"
+        $this->assertParser(
+            'onUnknown',
+            ['UNKNOWN', ['foo']],
+            "#UNKNOWN foo\n"
         );
     }
 

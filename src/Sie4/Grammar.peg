@@ -21,54 +21,157 @@
 namespace byrokrat\accounting\Sie4;
 
 /**
- * Grammar for generating a SIE version 4 compliant parser
+ * Grammar for generating a SIE version 4 compliant parser using scato/phpeg
  *
- * Build using scato/phpeg. Please note that a concrete parser used implement
- * the ConsumerInterface.
- *
- * @see     ConsumerInterface
  * @example "vendor/bin/phpeg generate src/Sie4/Grammar.peg" To rebuild the parser (from project root)
+ * @see     Parser for a concrete parser implementation
  */
 grammar Grammar
 {
-    start FILE = ROW*;
+    start FILE = POST*;
 
-    ROW = ADRESS_ROW / UNKNOWN_ROW / EMPTY_LINE;
+    POST = FLAG_POST
+        / SIE_VERSION_POST
+        / CURRENCY_POST
+        / INCOMING_BALANCE_POST
+        / MAGNITUDE_DATE_POST
+        / ADDRESS_POST
+        / UNKNOWN_ROW
+        / EMPTY_LINE;
 
-    UNKNOWN_ROW = SPACE '#' label:[a-zA-Z]+ fields:FIELD+ END_OF_LINE {
-        return $this->onUnknown(implode($label), $fields);
+    UNKNOWN_ROW = ROW_START label:[a-zA-Z]+ vars:STRING+ EOL {
+        return $this->onUnknown(implode($label), $vars);
     };
 
-    ADRESS_ROW = SPACE '#ADRESS' kontakt:FIELD utdelningsadr:FIELD postadr:FIELD tel:FIELD END_OF_ROW {
-        return $this->onAdress((string)$kontakt, (string)$utdelningsadr, (string)$postadr, (string)$tel);
-    };
-
-    FLAG_ROW = SPACE '#FLAGGA' flag:BOOLEAN END_OF_ROW {
-        // TODO BOOLEAN should be a kind of field, see amount below..
-        // TODO possibly implement as a trait, see Helper/CurrencyBuilder
+    FLAG_POST = ROW_START 'FLAGGA' flag:BOOLEAN ROW_END {
         return $this->onFlag($flag);
     };
 
-    CURRENCY_ROW = SPACE '#VALUTA' iso4217:FIELD END_OF_ROW {
-        return $this->onCurrency($iso4217);
+    SIE_VERSION_POST = ROW_START 'SIETYP' ver:INTEGER ROW_END {
+        return $this->onSieVersion($ver);
     };
 
-    AMOUNT = negation:"-"? units:[0-9]+ "."? subunits:([0-9]? [0-9]?) {
-        // TODO amount should be a kind of field (meaning support for SPACE delimiters and quotes...)
-            // or should amount be a kind of content?
-        // TODO a lot of testing needed: - optional, decimal delimiter optional, subunits 0-2 chars
+    ADDRESS_POST = ROW_START 'ADRESS' contact:STRING address:STRING location:STRING phone:STRING ROW_END {
+        return $this->onAddress((string)$contact, (string)$address, (string)$location, (string)$phone);
+    };
+
+    CURRENCY_POST = ROW_START 'VALUTA' currency:STRING ROW_END {
+        return $this->onCurrency($currency);
+    };
+
+    INCOMING_BALANCE_POST = ROW_START 'IB' year:INTEGER account:STRING balance:AMOUNT quantity:INTEGER? ROW_END {
+        // TODO account ska vara en egen type med alla finesser definierade i Helper...
+        return $this->onIncomingBalance(
+            $year,
+            $account,
+            $balance,
+            $quantity ?: 0
+        );
+    };
+
+    MAGNITUDE_DATE_POST = ROW_START 'OMFATTN' date:DATE ROW_END {
+        $this->onMagnitudeDate($date);
+    };
+
+    VERIFICATION_ROW = ROW_START ROW_END {
+        // TODO create verification object
+        return 'created verification';
+    };
+
+    TRANSACTION_ROW = ROW_START ROW_END {
+        // TODO create transaction object...
+        return 'created transaction';
+    };
+
+    VERIFICATION_POST = ver:VERIFICATION_ROW SUBENTRY_START trans:(TRANSACTION_ROW / UNKNOWN_ROW)* SUBENTRY_END {
+        // TODO hur säkerställa att UNKNOWN_ROW inte returnerar någonting??
+        return $ver->addTransaction(...$trans);
+    };
+
+    SUBENTRY_START = _ '{' _ EOL;
+
+    SUBENTRY_END = _ '}' _ EOL;
+
+
+    ROW_START = _ '#';
+
+    ROW_END = STRING* EOL;
+
+    //
+    // The type system
+    //
+
+    // Date
+
+    DATE = _ date:(RAW_DATE / QUOTED_DATE) _ {
+        return $date;
+    };
+
+    QUOTED_DATE = '"' date:RAW_DATE '"' {
+            return $date;
+    };
+
+    RAW_DATE = year:([0-9] [0-9] [0-9] [0-9]) month:([0-9] [0-9])? day:([0-9] [0-9])? {
+        return new \DateTime(
+            implode($year)
+            . (implode((array)$month) ?: '01')
+            . (implode((array)$day) ?: '01')
+        );
+    };
+
+    // Amount
+
+    AMOUNT = _ amount:(RAW_AMOUNT / QUOTED_AMOUNT) _ {
+        return $amount;
+    };
+
+    QUOTED_AMOUNT = '"' amount:RAW_AMOUNT '"' {
+        return $amount;
+    };
+
+    RAW_AMOUNT = negation:"-"? units:[0-9]+ "."? subunits:([0-9]? [0-9]?) {
         return $this->onAmount($negation.implode($units).'.'.implode($subunits));
     };
 
-    FIELD = SPACE field:(CONTENT / QUOTED_CONTENT) SPACE {
-        return $field;
+    // Integer
+
+    INTEGER = _ int:(RAW_INTEGER / QUOTED_INTEGER) _ {
+        return $int;
     };
 
-    QUOTED_CONTENT = '"' content:(ESCAPED_QUOTE / ' ' / CONTENT)+ '"' {
-        return implode($content);
+    QUOTED_INTEGER = '"' int:RAW_INTEGER '"' {
+        return $int;
     };
 
-    CONTENT = chars:[a-zA-Z0-9!#$%&'()*+,-.\/:;<=>?@\[\\\]^_`{|}~]+ {
+    RAW_INTEGER = negation:"-"? units:[0-9]+ {
+        return intval($negation.implode($units));
+    };
+
+    // Boolean
+
+    BOOLEAN = _ bool:(RAW_BOOLEAN / QUOTED_BOOLEAN) _ {
+        return $bool;
+    };
+
+    QUOTED_BOOLEAN = '"' bool:RAW_BOOLEAN '"' {
+        return $bool;
+    };
+
+    RAW_BOOLEAN = bool:[01] {
+        return !!$bool;
+    };
+
+    // String
+
+    STRING = _ string:(VALID_CHARS / QUOTED_STRING) _ {
+        return $string;
+    };
+
+    QUOTED_STRING = '"' string:(ESCAPED_QUOTE / ' ' / VALID_CHARS)+ '"' {
+        return implode($string);
+    };
+
+    VALID_CHARS = chars:[a-zA-Z0-9!#$%&'()*+,-.\/:;<=>?@\[\\\]^_`{|}~]+ {
         return implode($chars);
     };
 
@@ -76,11 +179,13 @@ grammar Grammar
         return '"';
     };
 
-    EMPTY_LINE = SPACE END_OF_LINE;
+    //
+    // Miscellaneous
+    //
 
-    END_OF_ROW = FIELD* END_OF_LINE;
+    EMPTY_LINE = _ EOL;
 
-    SPACE = (" " / "\t")*;
+    EOL = "\r"? "\n";
 
-    END_OF_LINE = "\r"? "\n";
+    _ = (" " / "\t")*;
 }

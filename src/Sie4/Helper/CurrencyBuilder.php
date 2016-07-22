@@ -36,18 +36,27 @@ trait CurrencyBuilder
     private $currencyClassname = 'byrokrat\\amount\\Currency\\SEK';
 
     /**
-     * Implementation of ConsumerInterface::onCurrency
+     * Called when a currency is definied using #VALUTA
+     *
+     * @param  string $currency Te iso-4217 currency code
+     * @return string Accepted currency code
      */
     public function onCurrency(string $currency): string
     {
         $this->currencyClassname = "byrokrat\\amount\\Currency\\$currency";
+
         if (!class_exists($this->currencyClassname)) {
             throw new InvalidArgumentException("Unknown currency $currency");
         }
+
+        return $this->currencyClassname;
     }
 
     /**
-     * Implementation of ConsumerInterface::onAmount
+     * Called when a monetary amount is encountered
+     *
+     * @param  string   $amount The raw amount
+     * @return Currency Currency object representing amount
      */
     public function onAmount(string $amount): Currency
     {
