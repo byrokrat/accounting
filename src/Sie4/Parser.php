@@ -22,6 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4;
 
+use byrokrat\accounting\Account;
+use byrokrat\accounting\AccountFactory;
 use byrokrat\amount\Currency;
 
 /**
@@ -29,14 +31,22 @@ use byrokrat\amount\Currency;
  */
 class Parser extends Grammar
 {
-    use Helper\CurrencyBuilder;
+    use Helper\AccountHelper, Helper\CurrencyHelper;
+
+    /**
+     * Inject account factory
+     */
+    public function __construct(AccountFactory $factory = null)
+    {
+        $this->setAccountFactory($factory ?: new AccountFactory);
+    }
 
     /**
      * Called when an unknown row is encountered
      *
      * @param  string   $label Row label
      * @param  string[] $vars  Row variables
-     * @return mixed    Undefined
+     * @return void
      */
     public function onUnknown(string $label, array $vars)
     {
@@ -46,42 +56,9 @@ class Parser extends Grammar
      * Called when an #FLAGGA row is encountered
      *
      * @param  boolean $flag
-     * @return mixed   Undefined
+     * @return void
      */
-    public function onFlag(bool $flag)
-    {
-    }
-
-    /**
-     * Called when an #SIETYP row is encountered
-     *
-     * @param  int   $ver The SIE version the parsed file targets
-     * @return mixed Undefined
-     */
-    public function onSieVersion(int $ver)
-    {
-    }
-
-    /**
-     * Called when an #IB row is encountered
-     *
-     * @param  int      $year     0 means current year, -1 preavious, and so on..
-     * @param  string   $account  Account balance is specified for
-     * @param  Currency $balance  Te incoming balance
-     * @param  integer  $quantity Quantity if registered for account
-     * @return mixed    Undefined
-     */
-    public function onIncomingBalance(int $year, string $account, Currency $balance, int $quantity = 0)
-    {
-    }
-
-    /**
-     * Called when an #OMFATTN row is encountered
-     *
-     * @param  DateTime $date
-     * @return mixed    Undefined
-     */
-    public function onMagnitudeDate(\DateTime $date)
+    public function onFlagga(bool $flag)
     {
     }
 
@@ -92,9 +69,42 @@ class Parser extends Grammar
      * @param  string $address  Street address
      * @param  string $location Secondary address field
      * @param  string $phone    Phone number
-     * @return mixed  Undefined
+     * @return void
      */
-    public function onAddress(string $contact, string $address, string $location, string $phone)
+    public function onAdress(string $contact, string $address, string $location, string $phone)
+    {
+    }
+
+    /**
+     * Called when an #OMFATTN row is encountered
+     *
+     * @param  DateTime $date
+     * @return void
+     */
+    public function onOmfattn(\DateTime $date)
+    {
+    }
+
+    /**
+     * Called when an #SIETYP row is encountered
+     *
+     * @param  int   $ver The SIE version the parsed file targets
+     * @return void
+     */
+    public function onSietyp(int $ver)
+    {
+    }
+
+    /**
+     * Called when an #IB row is encountered
+     *
+     * @param  int      $year     0 means current year, -1 preavious, and so on..
+     * @param  Account  $account  Account balance is specified for
+     * @param  Currency $balance  Te incoming balance
+     * @param  integer  $quantity Quantity if registered for account
+     * @return void
+     */
+    public function onIb(int $year, Account $account, Currency $balance, int $quantity = 0)
     {
     }
 }

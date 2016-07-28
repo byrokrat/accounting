@@ -4,7 +4,9 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4;
 
-use byrokrat\amount\Currency\{SEK, EUR};
+use byrokrat\accounting\Account;
+use byrokrat\amount\Currency\SEK;
+use byrokrat\amount\Currency\EUR;
 
 /**
  * Tests the grammar specification in Grammar.peg
@@ -32,12 +34,22 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Helper that prepends a #FLAGGA post and add line breaks between posts
+     */
+    private function buildContent(...$posts)
+    {
+        return "#FLAGGA 1\n" . implode("\n", $posts) . "\n";
+    }
+
+    /**
      * Each line must start with a '#' marked label according to rule 5.3
      */
     public function testLabelRequired()
     {
         $this->setExpectedException(\InvalidArgumentException::CLASS);
-        (new Parser)->parse("this is not a label\n");
+        (new Parser)->parse(
+            $this->buildContent("this is not a label")
+        );
     }
 
     // TODO Tests for rule 5.4 are missing
@@ -50,7 +62,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
         $this->assertParser(
             'onUnknown',
             ['FOO', ['bar']],
-            "#FOO bar\r\n"
+            $this->buildContent("#FOO bar\r\n")
         );
     }
 
@@ -62,7 +74,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
         $this->assertParser(
             'onUnknown',
             ['FOO', ['bar']],
-            "\n \n\t\n \t \n#FOO bar\n \n\t\n \t \n"
+            $this->buildContent(" ", "\t", " \t ", "#FOO bar", " ", "\t", " \t ")
         );
     }
 
@@ -74,7 +86,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
         $this->assertParser(
             'onUnknown',
             ['FOO', ['foo', 'bar', 'baz']],
-            "#FOO foo\t \tbar\tbaz\n"
+            $this->buildContent("#FOO foo\t \tbar\tbaz")
         );
     }
 
@@ -86,7 +98,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
         $this->assertParser(
             'onUnknown',
             ['FOO', ['bar']],
-            " \t #FOO bar\n"
+            $this->buildContent(" \t #FOO bar")
         );
     }
 
@@ -98,7 +110,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
         $this->assertParser(
             'onUnknown',
             ['FOO', ['bar']],
-            "#FOO bar\t \t\n"
+            $this->buildContent("#FOO bar\t \t")
         );
     }
 
@@ -110,7 +122,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
         $this->assertParser(
             'onUnknown',
             ['FOO', ['bar']],
-            "#FOO \"bar\"\n"
+            $this->buildContent("#FOO \"bar\"")
         );
     }
 
@@ -122,7 +134,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
         $this->assertParser(
             'onUnknown',
             ['FOO', ['bar baz']],
-            "#FOO \"bar baz\"\n"
+            $this->buildContent("#FOO \"bar baz\"")
         );
     }
 
@@ -134,7 +146,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
         $this->assertParser(
             'onUnknown',
             ['FOO', ['bar " baz']],
-            "#FOO \"bar \\\" baz\"\n"
+            $this->buildContent("#FOO \"bar \\\" baz\"")
         );
     }
 
@@ -157,7 +169,9 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     public function testInvalidCharacters($char)
     {
         $this->setExpectedException(\InvalidArgumentException::CLASS);
-        (new Parser)->parse("#FOO \"bar{$char}baz\"\n");
+        (new Parser)->parse(
+            $this->buildContent("#FOO \"bar{$char}baz\"")
+        );
     }
 
     /**
@@ -172,7 +186,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
             $this->assertParser(
                 'onUnknown',
                 ['FOO', [chr($ascii)]],
-                "#FOO " . chr($ascii) . "\n"
+                $this->buildContent("#FOO " . chr($ascii))
             );
         }
     }
@@ -193,7 +207,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     public function testBooleanFlagPost(string $flag, bool $boolval)
     {
         $this->assertParser(
-            'onFlag',
+            'onFlagga',
             [$boolval],
             "#FLAGGA $flag\n"
         );
@@ -217,9 +231,9 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     public function testIntegerSieVersionPost(string $raw, int $intval)
     {
         $this->assertParser(
-            'onSieVersion',
+            'onSietyp',
             [$intval],
-            "#SIETYP $raw\n"
+            $this->buildContent("#SIETYP $raw")
         );
     }
 
@@ -240,18 +254,18 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     public function testCurrencyIncomingBalancePost(string $raw, SEK $currency)
     {
         $this->assertParser(
-            'onIncomingBalance',
-            [0, '1920', $currency, 0],
-            "#IB 0 1920 $raw 0\n"
+            'onIb',
+            [0, new Account\Asset(1920, 'bank'), $currency, 0],
+            $this->buildContent("#KONTO 1920 bank", "#IB 0 1920 $raw 0")
         );
     }
 
     public function testCurrencPost()
     {
         $this->assertParser(
-            'onIncomingBalance',
-            [0, '1920', new EUR('10'), 0],
-            "#VALUTA EUR\n#IB 0 1920 10 0\n"
+            'onIb',
+            [0, new Account\Asset(1920, 'bank'), new EUR('10'), 0],
+            $this->buildContent("#VALUTA EUR", "#KONTO 1920 bank", "#IB 0 1920 10 0")
         );
     }
 
@@ -272,9 +286,9 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     public function testDates(string $raw, \DateTime $date)
     {
         $this->assertParser(
-            'onMagnitudeDate',
+            'onOmfattn',
             [$date],
-            "#OMFATTN $raw\n"
+            $this->buildContent("#OMFATTN $raw")
         );
     }
 
@@ -286,7 +300,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
         $this->assertParser(
             'onUnknown',
             ['UNKNOWN', ['foo']],
-            "#UNKNOWN foo\n"
+            $this->buildContent("#UNKNOWN foo")
         );
     }
 

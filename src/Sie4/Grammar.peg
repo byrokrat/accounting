@@ -28,70 +28,159 @@ namespace byrokrat\accounting\Sie4;
  */
 grammar Grammar
 {
-    start FILE = POST*;
+    // TODO check out the phpeg documentation on error reporting!
 
-    POST = FLAG_POST
-        / SIE_VERSION_POST
-        / CURRENCY_POST
-        / INCOMING_BALANCE_POST
-        / MAGNITUDE_DATE_POST
-        / ADDRESS_POST
-        / UNKNOWN_ROW
-        / EMPTY_LINE;
+    start FILE = EMPTY_LINE* FLAGGA_POST IDENTIFICATION_POST* ACCOUNT_PLAN_POST* BALANCE_POST*;
 
-    UNKNOWN_ROW = ROW_START label:[a-zA-Z]+ vars:STRING+ EOL {
-        return $this->onUnknown(implode($label), $vars);
+    FLAGGA_POST = ROW_START 'FLAGGA' flag:BOOLEAN ROW_END {
+        $this->onFlagga($flag);
     };
 
-    FLAG_POST = ROW_START 'FLAGGA' flag:BOOLEAN ROW_END {
-        return $this->onFlag($flag);
+    // Posts for identification and meta-data
+
+    IDENTIFICATION_POST = ADRESS_POST
+        / OMFATTN_POST
+        / SIETYP_POST
+        / VALUTA_POST
+        / IGNORED_ROW;
+
+    ADRESS_POST = ROW_START 'ADRESS' contact:STRING address:STRING location:STRING phone:STRING ROW_END {
+        $this->onAdress((string)$contact, (string)$address, (string)$location, (string)$phone);
     };
 
-    SIE_VERSION_POST = ROW_START 'SIETYP' ver:INTEGER ROW_END {
-        return $this->onSieVersion($ver);
+    OMFATTN_POST = ROW_START 'OMFATTN' date:DATE ROW_END {
+        $this->onOmfattn($date);
     };
 
-    ADDRESS_POST = ROW_START 'ADRESS' contact:STRING address:STRING location:STRING phone:STRING ROW_END {
-        return $this->onAddress((string)$contact, (string)$address, (string)$location, (string)$phone);
+    SIETYP_POST = ROW_START 'SIETYP' ver:INTEGER ROW_END {
+        $this->onSietyp($ver);
     };
 
-    CURRENCY_POST = ROW_START 'VALUTA' currency:STRING ROW_END {
-        return $this->onCurrency($currency);
+    VALUTA_POST = ROW_START 'VALUTA' currency:STRING ROW_END {
+        $this->onValuta($currency);
     };
 
-    INCOMING_BALANCE_POST = ROW_START 'IB' year:INTEGER account:STRING balance:AMOUNT quantity:INTEGER? ROW_END {
-        // TODO account ska vara en egen type med alla finesser definierade i Helper...
-        return $this->onIncomingBalance(
-            $year,
-            $account,
-            $balance,
-            $quantity ?: 0
-        );
+    // Posts defining the account plan
+
+    // TODO skriv test för #KONTO, #KTYP, #ENHET, #SRU
+
+    ACCOUNT_PLAN_POST = KONTO_POST
+        / KTYP_POST
+        / ENHET_POST
+        / SRU_POST
+        / DIM_POST
+        / UNDERDIM_POST
+        / OBJEKT_POST
+        / IGNORED_ROW;
+
+    KONTO_POST = ROW_START 'KONTO' number:INTEGER description:STRING ROW_END {
+        $this->onKonto($number, $description);
     };
 
-    MAGNITUDE_DATE_POST = ROW_START 'OMFATTN' date:DATE ROW_END {
-        $this->onMagnitudeDate($date);
+    KTYP_POST = ROW_START 'KTYP' number:INTEGER type:STRING ROW_END {
+        $this->onKtyp($number, $type);
     };
 
-    VERIFICATION_ROW = ROW_START ROW_END {
+    ENHET_POST = ROW_START 'ENHET' account:ACCOUNT unit:STRING ROW_END {
+        $account->setAttribute('unit', $unit);
+    };
+
+    SRU_POST = ROW_START 'SRU' account:ACCOUNT sru:INTEGER ROW_END {
+        $account->setAttribute('sru', $sru);
+    };
+
+    DIM_POST = ROW_START 'DIM' number:INTEGER name:STRING ROW_END {
+        // TODO implement #DIM
+    };
+
+    UNDERDIM_POST = ROW_START 'UNDERDIM' number:INTEGER name:STRING superdim:INTEGER ROW_END {
+        // TODO implement #UNDERDIM
+    };
+
+    OBJEKT_POST = ROW_START 'OBJEKT' dim:INTEGER number:INTEGER name:STRING ROW_END {
+        // TODO implement #OBJEKT
+    };
+
+    // Posts defining balances and verifications
+
+    BALANCE_POST = IB_POST
+        / VER_POST
+        / IGNORED_ROW;
+
+    IB_POST = ROW_START 'IB' year:INTEGER account:ACCOUNT balance:AMOUNT quantity:INTEGER? ROW_END {
+        $this->onIb($year, $account, $balance, $quantity ?: 0);
+    };
+
+    TRANS_POST = ROW_START 'TRANS' ROW_END {
+        // TODO implement #TRANS kontonr {objektlista} belopp transdat transtext kvantitet sign (some optional...)
+        // TODO also implement #RTRANS and #BTRANS
+        // TODO create transaction object
+    };
+
+    VER_POST = ver:VER_ROW SUBENTRY_START trans:(TRANS_POST / IGNORED_ROW)* SUBENTRY_END {
+        // TODO hur säkerställa att IGNORED_ROW inte returnerar någonting??
+            // returnerar void så det borde gå att trimma alla void från arrayen $trans
+        $ver->addTransaction(...$trans);
+    };
+
+    VER_ROW = ROW_START 'VER' ROW_END {
+        // TODO implement #VER serie vernr verdatum vertext regdatum sign (some optional...)
         // TODO create verification object
-        return 'created verification';
     };
 
-    TRANSACTION_ROW = ROW_START ROW_END {
-        // TODO create transaction object...
-        return 'created transaction';
+    //
+    // Unknown posts
+    //
+
+    IGNORED_ROW = UNKNOWN_POST / EMPTY_LINE;
+
+    UNKNOWN_POST = ROW_START !VALID_LABEL label:VALID_CHARS vars:STRING+ EOL {
+        $this->onUnknown($label, $vars);
     };
 
-    VERIFICATION_POST = ver:VERIFICATION_ROW SUBENTRY_START trans:(TRANSACTION_ROW / UNKNOWN_ROW)* SUBENTRY_END {
-        // TODO hur säkerställa att UNKNOWN_ROW inte returnerar någonting??
-        return $ver->addTransaction(...$trans);
-    };
+    VALID_LABEL = 'ADRESS'
+        / 'BKOD'
+        / 'DIM'
+        / 'ENHET'
+        / 'FLAGGA'
+        / 'FNAMN'
+        / 'FNR'
+        / 'FORMAT'
+        / 'FTYP'
+        / 'GEN'
+        / 'IB'
+        / 'KONTO'
+        / 'KPTYP'
+        / 'KTYP'
+        / 'OBJEKT'
+        / 'OIB'
+        / 'OMFATTN'
+        / 'ORGNR'
+        / 'OUB'
+        / 'PBUDGET'
+        / 'PROGRAM'
+        / 'PROSA'
+        / 'PSALDO'
+        / 'RAR'
+        / 'RES'
+        / 'SIETYP'
+        / 'SRU'
+        / 'TAXAR'
+        / 'TRANS'
+        / 'RTRANS'
+        / 'BTRANS'
+        / 'UB'
+        / 'UNDERDIM'
+        / 'VALUTA'
+        / 'VER';
+
+    //
+    // Row utilities
+    //
 
     SUBENTRY_START = _ '{' _ EOL;
 
     SUBENTRY_END = _ '}' _ EOL;
-
 
     ROW_START = _ '#';
 
@@ -131,6 +220,12 @@ grammar Grammar
 
     RAW_AMOUNT = negation:"-"? units:[0-9]+ "."? subunits:([0-9]? [0-9]?) {
         return $this->onAmount($negation.implode($units).'.'.implode($subunits));
+    };
+
+    // Account
+
+    ACCOUNT = number:INTEGER {
+        return $this->getAccount($number);
     };
 
     // Integer

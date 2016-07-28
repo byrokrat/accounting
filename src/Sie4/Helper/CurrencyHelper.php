@@ -28,7 +28,7 @@ use byrokrat\amount\Currency;
 /**
  * Helper that keeps track of the defined currency and creates monetary objects
  */
-trait CurrencyBuilder
+trait CurrencyHelper
 {
     /**
      * @var string Name of class to represent parsed amounts
@@ -41,7 +41,7 @@ trait CurrencyBuilder
      * @param  string $currency Te iso-4217 currency code
      * @return string Accepted currency code
      */
-    public function onCurrency(string $currency): string
+    public function onValuta(string $currency): string
     {
         $this->currencyClassname = "byrokrat\\amount\\Currency\\$currency";
 
