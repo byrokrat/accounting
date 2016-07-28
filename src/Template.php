@@ -27,8 +27,10 @@ use byrokrat\amount\Amount;
 /**
  * Build verifications from preconstructed templates
  */
-class Template
+class Template implements Attributable
 {
+    use AttributableTrait;
+
     /**
      * @var string Template identifier
      */
@@ -119,32 +121,33 @@ class Template
     }
 
     /**
-     * Check if template is ready for conversion (all variables are substituted)
-     *
-     * @param string $key Will contian non-substituted key on error
+     * Get an array of all unsubstituted template keys
      */
-    public function ready(&$key): bool
+    public function getUnsubstitutedKeys(): array
     {
+        $keys = [];
+
         foreach ($this->getRawTransactions() as $transactionData) {
             foreach ($transactionData as $key) {
                 if (preg_match("/\{[^}]*\}/", $key)) {
-                    return false;
+                    $keys[] = $key;
                 }
             }
         }
-        return true;
+
+        return $keys;
     }
 
     /**
      * Create verification from template
      *
-     * @param  Query $data Query object containing account data
+     * @param  Query $accounts Query object containing account data
      * @throws Exception\UnexpectedValueException If any key is NOT substituted
      */
-    public function buildVerification(Query $data): Verification
+    public function buildVerification(Query $accounts): Verification
     {
-        if (!$this->ready($key)) {
-            throw new Exception\UnexpectedValueException("Unable to substitute template key $key");
+        if ($keys = $this->getUnsubstitutedKeys()) {
+            throw new Exception\UnexpectedValueException('Unable to substitute template key(s): ' . implode(', ', $keys));
         }
 
         $ver = new Verification($this->getDescription());
@@ -152,10 +155,14 @@ class Template
         foreach ($this->getRawTransactions() as list($number, $amount)) {
             $ver->addTransaction(
                 new Transaction(
-                    $data->findAccountFromNumber(intval($number)),
+                    $accounts->findAccountFromNumber(intval($number)),
                     new Amount($amount)
                 )
             );
+        }
+
+        foreach ($this->getAttributes() as $name => $value) {
+            $ver->setAttribute($name, $value);
         }
 
         return $ver;
