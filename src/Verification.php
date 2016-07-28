@@ -27,8 +27,10 @@ use byrokrat\amount\Amount;
 /**
  * Simple verification value object wrapping a list of transactions
  */
-class Verification implements Queryable, \IteratorAggregate
+class Verification implements Queryable, Attributable, \IteratorAggregate
 {
+    use AttributableTrait;
+
     /**
      * @var string Free text description
      */

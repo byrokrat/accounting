@@ -27,8 +27,10 @@ use byrokrat\amount\Amount;
 /**
  * A transaction is a simple value object containing an account and an amount
  */
-class Transaction implements Queryable, \IteratorAggregate
+class Transaction implements Queryable, Attributable, \IteratorAggregate
 {
+    use AttributableTrait;
+
     /**
      * @var Account
      */

@@ -108,4 +108,9 @@ class AccountTest extends BaseTestCase
             'Accounts should not be equal'
         );
     }
+
+    public function testAttributes()
+    {
+        $this->assertAttributable(new Account\Asset(1234, ''));
+    }
 }

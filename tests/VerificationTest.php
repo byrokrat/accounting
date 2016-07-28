@@ -89,4 +89,9 @@ class VerificationTest extends BaseTestCase
             ->addTransaction($this->getTransactionMock(new Amount('100')))
             ->getMagnitude();
     }
+
+    public function testAttributes()
+    {
+        $this->assertAttributable(new Verification);
+    }
 }

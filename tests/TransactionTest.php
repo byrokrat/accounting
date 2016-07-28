@@ -24,4 +24,11 @@ class TransactionTest extends BaseTestCase
             ($transaction)->query()->toArray()
         );
     }
+
+    public function testAttributes()
+    {
+        $this->assertAttributable(
+            new Transaction($this->getAccountMock(), $this->getAmountMock())
+        );
+    }
 }

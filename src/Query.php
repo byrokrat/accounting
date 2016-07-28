@@ -80,6 +80,16 @@ class Query implements \IteratorAggregate, \Countable
     }
 
     /**
+     * Filter that returns only Attributable objects
+     */
+    public function attributables(): Query
+    {
+        return $this->filter(function ($item) {
+            return $item instanceof Attributable;
+        });
+    }
+
+    /**
      * Check if query contains a given value
      *
      * @param mixed $value The value to search for

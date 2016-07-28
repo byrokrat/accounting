@@ -204,10 +204,22 @@ class QueryTest extends BaseTestCase
      */
     public function testVerifications()
     {
-        $verifications = $this->getVerificationMock();
+        $verification = $this->getVerificationMock();
         $this->assertSame(
-            [$verifications],
-            (new Query([1, $verifications, 3]))->verifications()->toArray()
+            [$verification],
+            (new Query([1, $verification, 3]))->verifications()->toArray()
+        );
+    }
+
+    /**
+     * @depends testFilter
+     */
+    public function testAttributables()
+    {
+        $attributable = $this->createMock(Attributable::CLASS);
+        $this->assertSame(
+            [$attributable],
+            (new Query([1, $attributable, 3]))->attributables()->toArray()
         );
     }
 
