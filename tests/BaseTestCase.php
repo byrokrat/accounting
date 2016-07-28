@@ -62,22 +62,28 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
     {
         $this->assertSame(
             '',
-            $attributable->getAttribute('foo'),
+            $attributable->getAttribute('FOO'),
             'When not set reading an attribute should return the empty string'
         );
 
-        $attributable->setAttribute('foo', 'bar');
+        $attributable->setAttribute('FOO', 'bar');
 
         $this->assertSame(
             'bar',
-            $attributable->getAttribute('foo'),
+            $attributable->getAttribute('FOO'),
             'Getting a set attribute should return it'
         );
 
         $this->assertSame(
             'bar',
-            $attributable->getAttribute('FoO'),
+            $attributable->getAttribute('foO'),
             'Getting a set attribute should base case-insensitive'
+        );
+
+        $this->assertSame(
+            ['foo' => 'bar'],
+            $attributable->getAttributes(),
+            'Getting all attributes should return attribute i small case'
         );
     }
 }

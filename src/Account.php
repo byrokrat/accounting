@@ -47,7 +47,7 @@ abstract class Account implements Attributable
      *
      * @throws Exception\InvalidArgumentException If $number is < 1000 or > 9999
      */
-    public function __construct(int $number, string $description)
+    public function __construct(int $number, string $description, array $attributes = [])
     {
         if ($number < 1000 || $number > 9999) {
             throw new Exception\InvalidArgumentException(
@@ -56,6 +56,10 @@ abstract class Account implements Attributable
         }
         $this->number = $number;
         $this->description = $description;
+
+        foreach ($attributes as $name => $value) {
+            $this->setAttribute($name, $value);
+        }
     }
 
     /**

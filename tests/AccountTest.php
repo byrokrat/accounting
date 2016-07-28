@@ -113,4 +113,12 @@ class AccountTest extends BaseTestCase
     {
         $this->assertAttributable(new Account\Asset(1234, ''));
     }
+
+    public function testSetAttributesAtConstruct()
+    {
+        $this->assertSame(
+            'bar',
+            (new Account\Asset(1234, '', ['foo' => 'bar']))->getAttribute('foo')
+        );
+    }
 }

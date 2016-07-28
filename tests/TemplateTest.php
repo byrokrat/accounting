@@ -8,12 +8,20 @@ use byrokrat\amount\Amount;
 
 class TemplateTest extends BaseTestCase
 {
-    public function testGetters()
+    public function testGetId()
     {
-        $template = new Template('id', 'description');
+        $this->assertEquals(
+            'id',
+            (new Template('id', ''))->getTemplateId()
+        );
+    }
 
-        $this->assertEquals('id', $template->getTemplateId());
-        $this->assertEquals('description', $template->getDescription());
+    public function testGetDescription()
+    {
+        $this->assertEquals(
+            'description',
+            (new Template('', 'description'))->getDescription()
+        );
     }
 
     public function testSubstituteDescription()
@@ -41,13 +49,11 @@ class TemplateTest extends BaseTestCase
             ]
         );
 
-        $expectedTransactions = [
-            ['1920', '-400'],
-            ['1920', '400']
-        ];
-
         $this->assertEquals(
-            $expectedTransactions,
+            [
+                ['1920', '-400'],
+                ['1920', '400']
+            ],
             $template->getRawTransactions()
         );
     }
@@ -74,19 +80,37 @@ class TemplateTest extends BaseTestCase
         $template->addRawTransaction('1920', '450');
         $template->addRawTransaction('3000', '-450');
 
-        $accounts = new Query([
+        $template->setAttribute('foo', 'bar');
+
+        $verification = $template->buildVerification(new Query([
             new Account\Asset(1920, 'Bank'),
             new Account\Earning(3000, 'Incomes')
-        ]);
-
-        $expectedTransactions = [
-            new Transaction(new Account\Asset(1920, 'Bank'), new Amount('450')),
-            new Transaction(new Account\Earning(3000, 'Incomes'), new Amount('-450')),
-        ];
+        ]));
 
         $this->assertEquals(
-            $expectedTransactions,
-            $template->buildVerification($accounts)->getTransactions()
+            [
+                new Transaction(new Account\Asset(1920, 'Bank'), new Amount('450')),
+                new Transaction(new Account\Earning(3000, 'Incomes'), new Amount('-450')),
+            ],
+            $verification->getTransactions()
+        );
+
+        return $verification;
+    }
+
+    public function testAttributes()
+    {
+        $this->assertAttributable(new Template('', ''));
+    }
+
+    /**
+     * @depends testBuildVerification
+     */
+    public function testAttributesWrittenToVerification(Verification $verification)
+    {
+        $this->assertEquals(
+            'bar',
+            $verification->getAttribute('foo')
         );
     }
 }

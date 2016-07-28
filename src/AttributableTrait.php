@@ -37,7 +37,7 @@ trait AttributableTrait
      */
     public function setAttribute(string $name, $value)
     {
-        $this->attributes[strtoupper($name)] = $value;
+        $this->attributes[strtolower($name)] = $value;
     }
 
     /**
@@ -45,6 +45,14 @@ trait AttributableTrait
      */
     public function getAttribute(string $name)
     {
-        return $this->attributes[strtoupper($name)] ?? '';
+        return $this->attributes[strtolower($name)] ?? '';
+    }
+
+    /**
+     * Implements Attributable::getAttributes
+     */
+    public function getAttributes(): array
+    {
+        return $this->attributes;
     }
 }

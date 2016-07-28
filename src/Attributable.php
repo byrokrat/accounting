@@ -43,4 +43,11 @@ interface Attributable
      * @return mixed
      */
     public function getAttribute(string $name);
+
+    /**
+     * Get the array of all registered attributes
+     *
+     * @return array
+     */
+    public function getAttributes(): array;
 }
