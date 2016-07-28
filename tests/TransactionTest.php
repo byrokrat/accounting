@@ -21,7 +21,7 @@ class TransactionTest extends BaseTestCase
 
         $this->assertEquals(
             [$account, $amount],
-            ($transaction)->query()->toArray()
+            $transaction->query()->toArray()
         );
     }
 

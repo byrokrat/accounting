@@ -125,6 +125,6 @@ abstract class Account implements Attributable
      */
     public function getType(): string
     {
-        return __CLASS__;
+        return get_class($this);
     }
 }
