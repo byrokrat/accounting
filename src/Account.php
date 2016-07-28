@@ -25,8 +25,10 @@ namespace byrokrat\accounting;
 /**
  * Account value object containing a number and a description
  */
-abstract class Account
+abstract class Account implements Attributable
 {
+    use AttributableTrait;
+
     /**
      * @var int 4 digit account number
      */
@@ -123,6 +125,6 @@ abstract class Account
      */
     public function getType(): string
     {
-        return __CLASS__;
+        return get_class($this);
     }
 }

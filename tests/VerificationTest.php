@@ -45,6 +45,19 @@ class VerificationTest extends BaseTestCase
             [$transactionA, $transactionB],
             $verification->getTransactions()
         );
+
+        return $verification;
+    }
+
+    /**
+     * @depends testGetTransactions
+     */
+    public function testQuery(Verification $verification)
+    {
+        $this->assertCount(
+            2,
+            $verification->query()->transactions()->toArray()
+        );
     }
 
     public function transactionArithmeticsProvider()
@@ -88,5 +101,10 @@ class VerificationTest extends BaseTestCase
         (new Verification)
             ->addTransaction($this->getTransactionMock(new Amount('100')))
             ->getMagnitude();
+    }
+
+    public function testAttributes()
+    {
+        $this->assertAttributable(new Verification);
     }
 }

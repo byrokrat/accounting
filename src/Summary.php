@@ -93,7 +93,7 @@ class Summary
 
         if ($transaction->getAmount()->isPositive()) {
             $this->debit = $this->debit->add($transaction->getAmount());
-        } else  {
+        } else {
             $this->credit = $this->credit->add($transaction->getAmount()->getAbsolute());
         }
 

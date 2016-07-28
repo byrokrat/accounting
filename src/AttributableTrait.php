@@ -20,15 +20,31 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Account;
+namespace byrokrat\accounting;
 
 /**
- * Defines an asset account
+ * Implements setAttribute and getAttribute
  */
-class Asset extends \byrokrat\accounting\Account
+trait AttributableTrait
 {
-    public function isAsset(): bool
+    /**
+     * @var array Registered attributes
+     */
+    private $attributes = [];
+
+    /**
+     * Implements Attributable::setAttribute
+     */
+    public function setAttribute(string $name, $value)
     {
-        return true;
+        $this->attributes[strtoupper($name)] = $value;
+    }
+
+    /**
+     * Implements Attributable::getAttribute
+     */
+    public function getAttribute(string $name)
+    {
+        return $this->attributes[strtoupper($name)] ?? '';
     }
 }

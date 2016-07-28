@@ -18,17 +18,29 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-declare(strict_types = 1);
-
-namespace byrokrat\accounting\Account;
+namespace byrokrat\accounting;
 
 /**
- * Defines an asset account
+ * Defines setAttribute and getAttribute
  */
-class Asset extends \byrokrat\accounting\Account
+interface Attributable
 {
-    public function isAsset(): bool
-    {
-        return true;
-    }
+    /**
+     * Register attribute
+     *
+     * @param  string $name  Case-insensitive name of attribute
+     * @param  mixed  $value Value to register
+     * @return void
+     */
+    public function setAttribute(string $name, $value);
+
+    /**
+     * Read registered attribute
+     *
+     * If attribute does not exist the empty string is returned.
+     *
+     * @param  string $name Case-insensitive name of attribute
+     * @return mixed
+     */
+    public function getAttribute(string $name);
 }
