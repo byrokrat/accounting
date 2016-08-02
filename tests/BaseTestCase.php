@@ -9,6 +9,47 @@ use byrokrat\amount\Amount;
 
 class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * Create an AccountFactory prophecy
+     *
+     * @param  array &$accounts Store of created account prophecies
+     * @return \Prophecy\ObjectProphecy
+     */
+    public function prophesizeAccountFactory(array &$accounts = [])
+    {
+        $factory = $this->prophesize(AccountFactory::CLASS);
+
+        $that = $this;
+        $factory->createAccount(Argument::any(), Argument::any())->will(function ($args) use ($that, &$accounts) {
+            $accounts[$args[0]] = $that->prophesizeAccount($args[0], $args[1]);
+            return $accounts[$args[0]]->reveal();
+        });
+
+        return $factory;
+    }
+
+    /**
+     * Create an Account prophecy
+     *
+     * @param  integer $number Will be returned by getNumber()
+     * @param  string  $desc   Will be returned by getDescription()
+     * @param  bool    $equals Will be returned by equals()
+     * @param  array   $attr   Will be returned by getAttributes()
+     * @return \Prophecy\ObjectProphecy
+     */
+    public function prophesizeAccount(int $number = 0, string $desc = '', bool $equals = false, array $attr = [])
+    {
+        // TODO this method could replace getAccountMock()..
+
+        $account = $this->prophesize(Account::CLASS);
+        $account->getNumber()->willReturn($number);
+        $account->getDescription()->willReturn($desc);
+        $account->equals(Argument::any())->willReturn($equals);
+        $account->getAttributes()->willReturn($attr);
+
+        return $account;
+    }
+
     protected function getAccountMock(int $number = 0, string $description = '', bool $equals = false): Account
     {
         $account = $this->prophesize(Account::CLASS);

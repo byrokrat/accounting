@@ -6,7 +6,6 @@ namespace byrokrat\accounting\Sie4;
 
 use byrokrat\accounting\Account;
 use byrokrat\amount\Currency\SEK;
-use byrokrat\amount\Currency\EUR;
 
 /**
  * Tests the grammar specification in Grammar.peg
@@ -191,7 +190,10 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function booleanProvider()
+    /**
+     * Valid boolean representations
+     */
+    public function validBooleansProvider()
     {
         return [
             ['0', false],
@@ -202,18 +204,23 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider booleanProvider
+     * Valid dates (see rule 5.10)
      */
-    public function testBooleanFlagPost(string $flag, bool $boolval)
+    public function validDatesProvider()
     {
-        $this->assertParser(
-            'onFlagga',
-            [$boolval],
-            "#FLAGGA $flag\n"
-        );
+        return [
+            ['20160722', new \DateTime('20160722')],
+            ['"20160722"', new \DateTime('20160722')],
+            ['201607', new \DateTime('20160701')],
+            ['2016', new \DateTime('20160101')],
+            ['20160722', new \DateTime('20160722')],
+        ];
     }
 
-    public function integerProvider()
+    /**
+     * Valid integer representations
+     */
+    public function validIntegersProvider()
     {
         return [
             ['1', 1],
@@ -226,18 +233,9 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider integerProvider
+     * Valid money representations according to rule 5.9
      */
-    public function testIntegerSieVersionPost(string $raw, int $intval)
-    {
-        $this->assertParser(
-            'onSietyp',
-            [$intval],
-            $this->buildContent("#SIETYP $raw")
-        );
-    }
-
-    public function currencyProvider()
+    public function validMoneyProvider()
     {
         return [
             ['1', new SEK('1')],
@@ -249,46 +247,104 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider currencyProvider
+     * @dataProvider validBooleansProvider
      */
-    public function testCurrencyIncomingBalancePost(string $raw, SEK $currency)
+    public function testOnFlagga(string $flag, bool $boolval)
     {
         $this->assertParser(
-            'onIb',
-            [0, new Account\Asset(1920, 'bank'), $currency, 0],
-            $this->buildContent("#KONTO 1920 bank", "#IB 0 1920 $raw 0")
+            'onFlagga',
+            [$boolval],
+            "#FLAGGA $flag\n"
         );
     }
 
-    public function testCurrencPost()
+    public function testOnAdress()
     {
         $this->assertParser(
-            'onIb',
-            [0, new Account\Asset(1920, 'bank'), new EUR('10'), 0],
-            $this->buildContent("#VALUTA EUR", "#KONTO 1920 bank", "#IB 0 1920 10 0")
+            'onAdress',
+            ['A', 'B', 'C', 'D'],
+            $this->buildContent("#ADRESS A B C D")
         );
-    }
-
-    public function dateProvider()
-    {
-        return [
-            ['20160722', new \DateTime('20160722')],
-            ['"20160722"', new \DateTime('20160722')],
-            ['201607', new \DateTime('20160701')],
-            ['2016', new \DateTime('20160101')],
-            ['20160722', new \DateTime('20160722')],
-        ];
     }
 
     /**
-     * @dataProvider dateProvider
+     * @dataProvider validDatesProvider
      */
-    public function testDates(string $raw, \DateTime $date)
+    public function testOnOmfattn(string $raw, \DateTime $date)
     {
         $this->assertParser(
             'onOmfattn',
             [$date],
             $this->buildContent("#OMFATTN $raw")
+        );
+    }
+
+    /**
+     * @dataProvider validIntegersProvider
+     */
+    public function testOnSietyp(string $raw, int $intval)
+    {
+        $this->assertParser(
+            'onSietyp',
+            [$intval],
+            $this->buildContent("#SIETYP $raw")
+        );
+    }
+
+    public function testOnValuta()
+    {
+        $this->assertParser(
+            'onValuta',
+            ['EUR'],
+            $this->buildContent("#VALUTA EUR")
+        );
+    }
+
+    public function testOnKonto()
+    {
+        $this->assertParser(
+            'onKonto',
+            [1920, 'bank'],
+            $this->buildContent("#KONTO 1920 bank")
+        );
+    }
+
+    public function testOnKtyp()
+    {
+        $this->assertParser(
+            'onKtyp',
+            [1920, 'S'],
+            $this->buildContent("#KTYP 1920 S")
+        );
+    }
+
+    public function testOnEnhet()
+    {
+        $this->assertParser(
+            'onEnhet',
+            [1920, 'kr'],
+            $this->buildContent("#ENHET 1920 kr")
+        );
+    }
+
+    public function testOnSru()
+    {
+        $this->assertParser(
+            'onSru',
+            [1920, '2000'],
+            $this->buildContent("#SRU 1920 2000")
+        );
+    }
+
+    /**
+     * @dataProvider validMoneyProvider
+     */
+    public function testOnIb(string $raw, SEK $momey)
+    {
+        $this->assertParser(
+            'onIb',
+            [0, new Account\Asset(1920, 'UNSPECIFIED'), $momey, 0],
+            $this->buildContent("#IB 0 1920 $raw 0")
         );
     }
 

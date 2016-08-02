@@ -31,10 +31,10 @@ use byrokrat\amount\Currency;
  */
 class Parser extends Grammar
 {
-    use Helper\AccountHelper, Helper\CurrencyHelper;
+    use Helper\AccountHelper, Helper\CurrencyHelper, Helper\ErrorHelper;
 
     /**
-     * Inject account factory
+     * Set factory to use when creating account objects
      */
     public function __construct(AccountFactory $factory = null)
     {
@@ -50,6 +50,8 @@ class Parser extends Grammar
      */
     public function onUnknown(string $label, array $vars)
     {
+        // TODO Move to ErrorHelper?
+        $this->registerError("Encountered unknown statement $label " . implode(' ', $vars));
     }
 
     /**

@@ -51,7 +51,15 @@ trait AccountHelper
     private $factory;
 
     /**
-     * Inject account factory
+     * Called when a recoverable runtime error occurs
+     *
+     * @param  string $message A message describing the error
+     * @return void
+     */
+    abstract public function registerError(string $message);
+
+    /**
+     * Set factory to use when creating account objects
      */
     public function setAccountFactory(AccountFactory $factory)
     {
@@ -59,7 +67,7 @@ trait AccountHelper
     }
 
     /**
-     * Called when an #KONTO row is encountered
+     * Called when an #KONTO post is encountered
      *
      * @param  integer $number      Number of account
      * @param  string  $description Free text description of account
@@ -71,7 +79,7 @@ trait AccountHelper
     }
 
     /**
-     * Called when an #KTYP row is encountered
+     * Called when an #KTYP post is encountered
      *
      * @param  integer $number  Number of account
      * @param  string  $type    Type of account (T, S, I or K)
@@ -80,22 +88,31 @@ trait AccountHelper
     public function onKtyp(int $number, string $type): Account
     {
         if (!isset($this->accountTypeMap[$type])) {
-            // TODO maybe not throw an exception but instead log the error...
-            // $this->registerError("Unknown type $type for account number $number");
-            // return $this->getAccount($number);
-            throw new \byrokrat\accounting\Exception\OutOfBoundsException("Unknown account type $type");
+            $this->registerError("Unknown type $type for account number $number");
+            return $this->getAccount($number);
         }
-
-        // TODO säkerställ att attribut flyttas över till det nya objektet
-            // kräver någon form av getAttributes(): array till Attributable
-            // kan också användas för att göra Template Attributable...
-
-        // när dessa två saker är fixade, plus att jag har test för detta, så är det dax att gå vidare...
 
         return $this->accounts[$number] = new $this->accountTypeMap[$type](
             $number,
-            $this->getAccount($number)->getDescription()
+            $this->getAccount($number)->getDescription(),
+            $this->getAccount($number)->getAttributes()
         );
+    }
+
+    /**
+     * Called when an #ENHET post is encountered
+     */
+    public function onEnhet(int $account, string $unit)
+    {
+        $this->getAccount($account)->setAttribute('unit', $unit);
+    }
+
+    /**
+     * Called when an #SRU post is encountered
+     */
+    public function onSru(int $account, int $sru)
+    {
+        $this->getAccount($account)->setAttribute('sru', $sru);
     }
 
     /**

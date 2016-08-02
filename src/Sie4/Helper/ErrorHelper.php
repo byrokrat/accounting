@@ -22,17 +22,15 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Helper;
 
-use byrokrat\amount\Currency;
-
 /**
- * Helper that keeps track of the defined currency and creates monetary objects
+ * Helper that keeps track of parsing errors
  */
-trait CurrencyHelper
+trait ErrorHelper
 {
     /**
-     * @var string Name of class to represent parsed amounts
+     * @var string[] List of recoverable runtime error messages
      */
-    private $currencyClassname = 'byrokrat\\amount\\Currency\\SEK';
+    private $errorMessages = [];
 
     /**
      * Called when a recoverable runtime error occurs
@@ -40,33 +38,18 @@ trait CurrencyHelper
      * @param  string $message A message describing the error
      * @return void
      */
-    abstract public function registerError(string $message);
-
-    /**
-     * Called when a currency is definied using #VALUTA
-     *
-     * @param  string $currency The iso-4217 currency code
-     * @return void
-     */
-    public function onValuta(string $currency)
+    public function registerError(string $message)
     {
-        $currencyClassname = "byrokrat\\amount\\Currency\\$currency";
-
-        if (!class_exists($currencyClassname)) {
-            return $this->registerError("Unknown currency $currency");
-        }
-
-        $this->currencyClassname = $currencyClassname;
+        $this->errorMessages[] = $message;
     }
 
     /**
-     * Called when a monetary amount is encountered
+     * Get recorded error messages
      *
-     * @param  string   $amount The raw amount
-     * @return Currency Currency object representing amount
+     * @return string[]
      */
-    public function createMoney(string $amount): Currency
+    public function getErrors(): array
     {
-        return new $this->currencyClassname($amount);
+        return $this->errorMessages;
     }
 }

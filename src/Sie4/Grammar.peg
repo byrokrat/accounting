@@ -62,8 +62,6 @@ grammar Grammar
 
     // Posts defining the account plan
 
-    // TODO skriv test för #KONTO, #KTYP, #ENHET, #SRU
-
     ACCOUNT_PLAN_POST = KONTO_POST
         / KTYP_POST
         / ENHET_POST
@@ -81,23 +79,23 @@ grammar Grammar
         $this->onKtyp($number, $type);
     };
 
-    ENHET_POST = ROW_START 'ENHET' account:ACCOUNT unit:STRING ROW_END {
-        $account->setAttribute('unit', $unit);
+    ENHET_POST = ROW_START 'ENHET' account:INTEGER unit:STRING ROW_END {
+        $this->onEnhet($account, $unit);
     };
 
-    SRU_POST = ROW_START 'SRU' account:ACCOUNT sru:INTEGER ROW_END {
-        $account->setAttribute('sru', $sru);
+    SRU_POST = ROW_START 'SRU' account:INTEGER sru:INTEGER ROW_END {
+        $this->onSru($account, $sru);
     };
 
-    DIM_POST = ROW_START 'DIM' number:INTEGER name:STRING ROW_END {
+    DIM_POST = ROW_START 'DIM' dim:INTEGER name:STRING ROW_END {
         // TODO implement #DIM
     };
 
-    UNDERDIM_POST = ROW_START 'UNDERDIM' number:INTEGER name:STRING superdim:INTEGER ROW_END {
+    UNDERDIM_POST = ROW_START 'UNDERDIM' dim:INTEGER name:STRING superdim:INTEGER ROW_END {
         // TODO implement #UNDERDIM
     };
 
-    OBJEKT_POST = ROW_START 'OBJEKT' dim:INTEGER number:INTEGER name:STRING ROW_END {
+    OBJEKT_POST = ROW_START 'OBJEKT' dim:INTEGER obj:INTEGER name:STRING ROW_END {
         // TODO implement #OBJEKT
     };
 
@@ -219,7 +217,7 @@ grammar Grammar
     };
 
     RAW_AMOUNT = negation:"-"? units:[0-9]+ "."? subunits:([0-9]? [0-9]?) {
-        return $this->onAmount($negation.implode($units).'.'.implode($subunits));
+        return $this->createMoney($negation.implode($units).'.'.implode($subunits));
     };
 
     // Account
