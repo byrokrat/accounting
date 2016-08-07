@@ -7,6 +7,9 @@ namespace byrokrat\accounting;
 use Prophecy\Argument;
 use byrokrat\amount\Amount;
 
+/**
+ * @deprecated
+ */
 class BaseTestCase extends \PHPUnit_Framework_TestCase
 {
     protected function getAccountMock(int $number = 0, string $description = '', bool $equals = false): Account
@@ -24,9 +27,9 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
         return $this->prophesize(Amount::CLASS)->reveal();
     }
 
-    protected function getQueryableMock(array $content = []): Queryable
+    protected function getQueryableMock(array $content = []): Interfaces\Queryable
     {
-        $queryable = $this->prophesize(Queryable::CLASS);
+        $queryable = $this->prophesize(Interfaces\Queryable::CLASS);
         $queryable->query()->will(function () use ($content) {
             return new Query($content);
         });
@@ -56,34 +59,5 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
         });
 
         return $verification->reveal();
-    }
-
-    protected function assertAttributable($attributable)
-    {
-        $this->assertSame(
-            '',
-            $attributable->getAttribute('FOO'),
-            'When not set reading an attribute should return the empty string'
-        );
-
-        $attributable->setAttribute('FOO', 'bar');
-
-        $this->assertSame(
-            'bar',
-            $attributable->getAttribute('FOO'),
-            'Getting a set attribute should return it'
-        );
-
-        $this->assertSame(
-            'bar',
-            $attributable->getAttribute('foO'),
-            'Getting a set attribute should base case-insensitive'
-        );
-
-        $this->assertSame(
-            ['foo' => 'bar'],
-            $attributable->getAttributes(),
-            'Getting all attributes should return attribute i small case'
-        );
     }
 }

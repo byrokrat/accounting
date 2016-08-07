@@ -16,9 +16,9 @@ class SIETest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(Exception\UnexpectedValueException::CLASS);
         $sie = new SIE();
-        $ver = new Verification('testver');
-        $ver->addTransaction(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100', 2)));
-        $ver->addTransaction(new Transaction(new Account\Earning(3000, 'Income'), new Amount('-50', 2)));
+        $ver = new Verification();
+        $ver->addTransactions(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100', 2)));
+        $ver->addTransactions(new Transaction(new Account\Earning(3000, 'Income'), new Amount('-50', 2)));
         $sie->addVerification($ver);
     }
 
@@ -27,9 +27,9 @@ class SIETest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(Exception\OutOfBoundsException::CLASS);
         $sie = new SIE();
         $sie->setYear(new \DateTime('2012-01-01'), new \DateTime('2012-12-31'));
-        $ver = new Verification('testver', new \DateTimeImmutable('2013-01-01'));
-        $ver->addTransaction(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100', 2)));
-        $ver->addTransaction(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('-100', 2)));
+        $ver = (new Verification)->setDate(new \DateTimeImmutable('2013-01-01'));
+        $ver->addTransactions(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100', 2)));
+        $ver->addTransactions(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('-100', 2)));
         $sie->addVerification($ver);
     }
 
@@ -100,9 +100,9 @@ class SIETest extends \PHPUnit_Framework_TestCase
         $year = date('Y');
         $sie->setYear(new \DateTime("$year-01-01"), new \DateTime("$year-12-31"));
 
-        $ver = new Verification('testver');
-        $ver->addTransaction(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100', 2)));
-        $ver->addTransaction(new Transaction(new Account\Earning(3000, 'Income'), new Amount('-100', 2)));
+        $ver = new Verification();
+        $ver->addTransactions(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100', 2)));
+        $ver->addTransactions(new Transaction(new Account\Earning(3000, 'Income'), new Amount('-100', 2)));
         $sie->addVerification($ver);
 
         $date = date('Ymd');
@@ -111,7 +111,7 @@ class SIETest extends \PHPUnit_Framework_TestCase
             ."\r\n#KPTYP \"EUBAS97\"\r\n#RAR 0 {$year}0101 {$year}1231\r\n\r\n"
             ."#KONTO \"1920\" \"Bank\"\r\n#KTYP \"1920\" \"T\"\r\n#KONTO \"3000"
             ."\" \"Income\"\r\n#KTYP \"3000\" \"I\"\r\n"
-            ."\r\n#VER \"\" \"\" $date \"testver\"\r\n{\r\n"
+            ."\r\n#VER \"\" \"\" $date \"\"\r\n{\r\n"
             ."\t#TRANS 1920 {} 100.00\r\n"
             ."\t#TRANS 3000 {} -100.00\r\n"
             ."}\r\n";
@@ -200,9 +200,9 @@ class SIETest extends \PHPUnit_Framework_TestCase
     public function testClear()
     {
         $sie = new SIE();
-        $ver = new Verification('testver');
-        $ver->addTransaction(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100', 2)));
-        $ver->addTransaction(new Transaction(new Account\Earning(3000, 'Income'), new Amount('-100', 2)));
+        $ver = new Verification();
+        $ver->addTransactions(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100', 2)));
+        $ver->addTransactions(new Transaction(new Account\Earning(3000, 'Income'), new Amount('-100', 2)));
         $sie->addVerification($ver);
         $sie->clear();
         $this->assertEquals(0, preg_match('/#VER/', $sie->generate()));

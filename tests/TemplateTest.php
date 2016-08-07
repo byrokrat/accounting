@@ -6,8 +6,10 @@ namespace byrokrat\accounting;
 
 use byrokrat\amount\Amount;
 
-class TemplateTest extends BaseTestCase
+class TemplateTest extends \PHPUnit_Framework_TestCase
 {
+    use utils\InterfaceAssertionsTrait;
+
     public function testGetId()
     {
         $this->assertEquals(
@@ -16,11 +18,11 @@ class TemplateTest extends BaseTestCase
         );
     }
 
-    public function testGetDescription()
+    public function testDescribable()
     {
-        $this->assertEquals(
+        $this->assertDescribable(
             'description',
-            (new Template('', 'description'))->getDescription()
+            new Template('', 'description')
         );
     }
 
@@ -98,7 +100,7 @@ class TemplateTest extends BaseTestCase
         return $verification;
     }
 
-    public function testAttributes()
+    public function testAttributable()
     {
         $this->assertAttributable(new Template('', ''));
     }

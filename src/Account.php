@@ -9,7 +9,7 @@
  *
  * byrokrat/accounting is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -22,12 +22,17 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\accounting\Interfaces\Attributable;
+use byrokrat\accounting\Interfaces\Describable;
+use byrokrat\accounting\Interfaces\Traits\AttributableTrait;
+use byrokrat\accounting\Interfaces\Traits\DescribableTrait;
+
 /**
  * Account value object containing a number and a description
  */
-abstract class Account implements Attributable
+abstract class Account implements Attributable, Describable
 {
-    use AttributableTrait;
+    use AttributableTrait, DescribableTrait;
 
     /**
      * @var int 4 digit account number
@@ -35,15 +40,11 @@ abstract class Account implements Attributable
     private $number;
 
     /**
-     * @var string Free text description of account
-     */
-    private $description;
-
-    /**
      * Set account values
      *
-     * @param  int    $number      4 digit number identifying account
-     * @param  string $description Free text description of account
+     * @param int    $number      4 digit number identifying account
+     * @param string $description Free text description of account
+     * @param array  $attributes  Optional attributes to load at construct
      *
      * @throws Exception\InvalidArgumentException If $number is < 1000 or > 9999
      */
@@ -54,8 +55,9 @@ abstract class Account implements Attributable
                 'Account number must be greater than 999 and lesser than 10000'
             );
         }
+
         $this->number = $number;
-        $this->description = $description;
+        $this->setDescription($description);
 
         foreach ($attributes as $name => $value) {
             $this->setAttribute($name, $value);
@@ -68,14 +70,6 @@ abstract class Account implements Attributable
     public function getNumber(): int
     {
         return $this->number;
-    }
-
-    /**
-     * Get account description
-     */
-    public function getDescription(): string
-    {
-        return $this->description;
     }
 
     /**

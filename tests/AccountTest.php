@@ -4,8 +4,10 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
-class AccountTest extends BaseTestCase
+class AccountTest extends \PHPUnit_Framework_TestCase
 {
+    use utils\InterfaceAssertionsTrait;
+
     public function testExceptionOnToSmallAccountNumber()
     {
         $this->setExpectedException(Exception\InvalidArgumentException::CLASS);
@@ -109,7 +111,7 @@ class AccountTest extends BaseTestCase
         );
     }
 
-    public function testAttributes()
+    public function testAttributable()
     {
         $this->assertAttributable(new Account\Asset(1234, ''));
     }
@@ -119,6 +121,14 @@ class AccountTest extends BaseTestCase
         $this->assertSame(
             'bar',
             (new Account\Asset(1234, '', ['foo' => 'bar']))->getAttribute('foo')
+        );
+    }
+
+    public function testDescribable()
+    {
+        $this->assertDescribable(
+            '',
+            new Account\Debt(1234, '')
         );
     }
 }

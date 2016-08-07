@@ -9,7 +9,7 @@
  *
  * byrokrat/accounting is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -27,7 +27,7 @@ use byrokrat\amount\Amount;
 /**
  * Create summaries for collections of transactions
  */
-class Summary
+class TransactionSummary
 {
     /**
      * @var Amount Incoming balance
@@ -81,9 +81,9 @@ class Summary
     }
 
     /**
-     * Add transaction to summary
+     * Add transaction to summary calculations
      */
-    public function addTransaction(Transaction $transaction): self
+    public function addToSummary(Transaction $transaction): self
     {
         if (!$this->isInitialized()) {
             $this->initialize($transaction->getAmount()->subtract($transaction->getAmount()));
@@ -101,7 +101,7 @@ class Summary
     }
 
     /**
-     * Get incoming balance
+     * Get calculated incoming balance
      */
     public function getIncomingBalance(): Amount
     {
@@ -110,7 +110,7 @@ class Summary
     }
 
     /**
-     * Get outgoing balance
+     * Get calculated outgoing balance
      */
     public function getOutgoingBalance(): Amount
     {
@@ -119,7 +119,7 @@ class Summary
     }
 
     /**
-     * Get current debit summary
+     * Get calculated debit summary
      */
     public function getDebit(): Amount
     {
@@ -128,7 +128,7 @@ class Summary
     }
 
     /**
-     * Get current credit summary
+     * Get calculated credit summary
      */
     public function getCredit(): Amount
     {
@@ -137,7 +137,7 @@ class Summary
     }
 
     /**
-     * Check if current summary is balanced
+     * Check if summary is balanced
      */
     public function isBalanced(): bool
     {

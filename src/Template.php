@@ -9,7 +9,7 @@
  *
  * byrokrat/accounting is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -22,24 +22,23 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\accounting\Interfaces\Attributable;
+use byrokrat\accounting\Interfaces\Describable;
+use byrokrat\accounting\Interfaces\Traits\AttributableTrait;
+use byrokrat\accounting\Interfaces\Traits\DescribableTrait;
 use byrokrat\amount\Amount;
 
 /**
  * Build verifications from preconstructed templates
  */
-class Template implements Attributable
+class Template implements Attributable, Describable
 {
-    use AttributableTrait;
+    use AttributableTrait, DescribableTrait;
 
     /**
      * @var string Template identifier
      */
     private $templateId;
-
-    /**
-     * @var string Raw verification description
-     */
-    private $description;
 
     /**
      * @var array Raw template transactions
@@ -52,7 +51,7 @@ class Template implements Attributable
     public function __construct(string $templateId, string $description)
     {
         $this->templateId = $templateId;
-        $this->description = $description;
+        $this->setDescription($description);
     }
 
     /**
@@ -61,14 +60,6 @@ class Template implements Attributable
     public function getTemplateId(): string
     {
         return $this->templateId;
-    }
-
-    /**
-     * Get raw verification description
-     */
-    public function getDescription(): string
-    {
-        return $this->description;
     }
 
     /**
@@ -107,7 +98,7 @@ class Template implements Attributable
         );
 
         // Substitute terms in verification description
-        $this->description = trim(str_replace($keys, $values, $this->description));
+        $this->setDescription(trim(str_replace($keys, $values, $this->getDescription())));
 
         // Substitue terms in transactions
         $this->transactions = array_map(
@@ -147,13 +138,15 @@ class Template implements Attributable
     public function buildVerification(Query $accounts): Verification
     {
         if ($keys = $this->getUnsubstitutedKeys()) {
-            throw new Exception\UnexpectedValueException('Unable to substitute template key(s): ' . implode(', ', $keys));
+            throw new Exception\UnexpectedValueException(
+                'Unable to substitute template key(s): ' . implode(', ', $keys)
+            );
         }
 
-        $ver = new Verification($this->getDescription());
+        $ver = (new Verification)->setDescription($this->getDescription());
 
         foreach ($this->getRawTransactions() as list($number, $amount)) {
-            $ver->addTransaction(
+            $ver->addTransactions(
                 new Transaction(
                     $accounts->findAccountFromNumber(intval($number)),
                     new Amount($amount)

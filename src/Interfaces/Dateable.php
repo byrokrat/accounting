@@ -9,7 +9,7 @@
  *
  * byrokrat/accounting is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -18,15 +18,29 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-namespace byrokrat\accounting;
+namespace byrokrat\accounting\Interfaces;
+
+use byrokrat\accounting\Exception\LogicException;
 
 /**
- * Defines an object with queryable content
+ * Defines methods for reading and writing dates to objects
  */
-interface Queryable
+interface Dateable
 {
     /**
-     * Get a query object loaded with queryable content
+     * Set date
      */
-    public function query(): Query;
+    public function setDate(\DateTimeInterface $date): self;
+
+    /**
+     * Check if a date is set
+     */
+    public function hasDate(): bool;
+
+    /**
+     * Get loaded date
+     *
+     * @throws LogicException if date is not set
+     */
+    public function getDate(): \DateTimeInterface;
 }

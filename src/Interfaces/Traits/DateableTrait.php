@@ -9,7 +9,7 @@
  *
  * byrokrat/accounting is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -18,41 +18,39 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+namespace byrokrat\accounting\Interfaces\Traits;
 
-namespace byrokrat\accounting;
+use byrokrat\accounting\Interfaces\Dateable;
+use byrokrat\accounting\Exception\LogicException;
 
 /**
- * Implements setAttribute and getAttribute
+ * Basic implementation of the Dateable interface
  */
-trait AttributableTrait
+trait DateableTrait
 {
     /**
-     * @var array Registered attributes
+     * @var \DateTimeInterface
      */
-    private $attributes = [];
+    private $date;
 
-    /**
-     * Implements Attributable::setAttribute
-     */
-    public function setAttribute(string $name, $value)
+    public function setDate(\DateTimeInterface $date): Dateable
     {
-        $this->attributes[strtolower($name)] = $value;
+        $this->date = $date;
+
+        return $this;
     }
 
-    /**
-     * Implements Attributable::getAttribute
-     */
-    public function getAttribute(string $name)
+    public function hasDate(): bool
     {
-        return $this->attributes[strtolower($name)] ?? '';
+        return isset($this->date);
     }
 
-    /**
-     * Implements Attributable::getAttributes
-     */
-    public function getAttributes(): array
+    public function getDate(): \DateTimeInterface
     {
-        return $this->attributes;
+        if (!$this->hasDate()) {
+            throw new LogicException('Trying to get date when date is not set');
+        }
+
+        return $this->date;
     }
 }

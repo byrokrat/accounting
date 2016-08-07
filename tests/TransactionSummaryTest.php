@@ -6,14 +6,16 @@ namespace byrokrat\accounting;
 
 use byrokrat\amount\Amount;
 
-class SummaryTest extends BaseTestCase
+class TransactionSummaryTest extends \PHPUnit_Framework_TestCase
 {
+    use utils\PropheciesTrait;
+
     public function testBasicSummary()
     {
-        $summary = new Summary(new Amount('10'));
+        $summary = new TransactionSummary(new Amount('10'));
 
-        $summary->addTransaction($this->getTransactionMock(new Amount('5')));
-        $summary->addTransaction($this->getTransactionMock(new Amount('-5')));
+        $summary->addToSummary($this->prophesizeTransaction(new Amount('5'))->reveal());
+        $summary->addToSummary($this->prophesizeTransaction(new Amount('-5'))->reveal());
 
         $this->assertEquals(
             new Amount('10'),
@@ -45,11 +47,11 @@ class SummaryTest extends BaseTestCase
 
     public function testPositiveBalance()
     {
-        $summary = new Summary(new Amount('10'));
+        $summary = new TransactionSummary(new Amount('10'));
 
-        $summary->addTransaction($this->getTransactionMock(new Amount('5')));
-        $summary->addTransaction($this->getTransactionMock(new Amount('5')));
-        $summary->addTransaction($this->getTransactionMock(new Amount('-5')));
+        $summary->addToSummary($this->prophesizeTransaction(new Amount('5'))->reveal());
+        $summary->addToSummary($this->prophesizeTransaction(new Amount('5'))->reveal());
+        $summary->addToSummary($this->prophesizeTransaction(new Amount('-5'))->reveal());
 
         $this->assertEquals(
             new Amount('10'),
@@ -76,11 +78,11 @@ class SummaryTest extends BaseTestCase
 
     public function testNegativeBalance()
     {
-        $summary = new Summary(new Amount('10'));
+        $summary = new TransactionSummary(new Amount('10'));
 
-        $summary->addTransaction($this->getTransactionMock(new Amount('5')));
-        $summary->addTransaction($this->getTransactionMock(new Amount('-5')));
-        $summary->addTransaction($this->getTransactionMock(new Amount('-5')));
+        $summary->addToSummary($this->prophesizeTransaction(new Amount('5'))->reveal());
+        $summary->addToSummary($this->prophesizeTransaction(new Amount('-5'))->reveal());
+        $summary->addToSummary($this->prophesizeTransaction(new Amount('-5'))->reveal());
 
         $this->assertEquals(
             new Amount('10'),
@@ -107,10 +109,10 @@ class SummaryTest extends BaseTestCase
 
     public function testNegativeIncomingBalance()
     {
-        $summary = new Summary(new Amount('-10'));
+        $summary = new TransactionSummary(new Amount('-10'));
 
-        $summary->addTransaction($this->getTransactionMock(new Amount('5')));
-        $summary->addTransaction($this->getTransactionMock(new Amount('-5')));
+        $summary->addToSummary($this->prophesizeTransaction(new Amount('5'))->reveal());
+        $summary->addToSummary($this->prophesizeTransaction(new Amount('-5'))->reveal());
 
         $this->assertEquals(
             new Amount('-10'),
@@ -144,17 +146,17 @@ class SummaryTest extends BaseTestCase
     {
         $this->setExpectedException(Exception\RuntimeException::CLASS);
 
-        (new Summary)
-            ->addTransaction($this->getTransactionMock(new Amount('5')))
+        (new TransactionSummary)
+            ->addToSummary($this->prophesizeTransaction(new Amount('5'))->reveal())
             ->getMagnitude();
     }
 
     public function testWithoutIncomingBalance()
     {
-        $summary = new Summary;
+        $summary = new TransactionSummary;
 
-        $summary->addTransaction($this->getTransactionMock(new Amount('5')));
-        $summary->addTransaction($this->getTransactionMock(new Amount('-5')));
+        $summary->addToSummary($this->prophesizeTransaction(new Amount('5'))->reveal());
+        $summary->addToSummary($this->prophesizeTransaction(new Amount('-5'))->reveal());
 
         $this->assertEquals(
             new Amount('0'),
@@ -187,6 +189,6 @@ class SummaryTest extends BaseTestCase
     public function testExceptionOnUninitializedSummaries()
     {
         $this->setExpectedException(Exception\RuntimeException::CLASS);
-        (new Summary)->getMagnitude();
+        (new TransactionSummary)->getMagnitude();
     }
 }

@@ -9,7 +9,7 @@
  *
  * byrokrat/accounting is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -22,36 +22,51 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\accounting\Interfaces\Attributable;
+use byrokrat\accounting\Interfaces\Dateable;
+use byrokrat\accounting\Interfaces\Describable;
+use byrokrat\accounting\Interfaces\Signable;
+use byrokrat\accounting\Interfaces\Queryable;
+use byrokrat\accounting\Interfaces\Traits\AttributableTrait;
+use byrokrat\accounting\Interfaces\Traits\DateableTrait;
+use byrokrat\accounting\Interfaces\Traits\DescribableTrait;
+use byrokrat\accounting\Interfaces\Traits\SignableTrait;
 use byrokrat\amount\Amount;
 
 /**
  * A transaction is a simple value object containing an account and an amount
  */
-class Transaction implements Queryable, Attributable, \IteratorAggregate
+class Transaction implements Attributable, Dateable, Describable, Signable, Queryable, \IteratorAggregate
 {
-    use AttributableTrait;
+    use AttributableTrait, DateableTrait, DescribableTrait, SignableTrait;
 
     /**
-     * @var Account
+     * @var Account Account this transaction concerns
      */
     private $account;
 
     /**
-     * @var Amount
+     * @var Amount The amount of money moved to or from account
      */
     private $amount;
 
     /**
+     * @var integer The quantity of stuff moved to or from account
+     */
+    private $quantity;
+
+    /**
      * Set transaction values
      */
-    public function __construct(Account $account, Amount $amount)
+    public function __construct(Account $account, Amount $amount, int $quantity = 0)
     {
         $this->account = $account;
         $this->amount = $amount;
+        $this->quantity = $quantity;
     }
 
     /**
-     * Get account for this transaction
+     * Get Account this transaction concerns
      */
     public function getAccount(): Account
     {
@@ -59,11 +74,19 @@ class Transaction implements Queryable, Attributable, \IteratorAggregate
     }
 
     /**
-     * Get amount for this transaction
+     * Get amount of money moved to or from account
      */
     public function getAmount(): Amount
     {
         return $this->amount;
+    }
+
+    /**
+     * Get quantity of stuff moved to or from account
+     */
+    public function getQuantity(): int
+    {
+        return $this->quantity;
     }
 
     /**
@@ -75,7 +98,7 @@ class Transaction implements Queryable, Attributable, \IteratorAggregate
     }
 
     /**
-     * Implements to IteratorAggregate interface
+     * Implements the IteratorAggregate interface
      */
     public function getIterator(): \Generator
     {

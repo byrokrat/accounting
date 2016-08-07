@@ -9,7 +9,7 @@
  *
  * byrokrat/accounting is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -22,27 +22,36 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\accounting\Interfaces\Attributable;
+use byrokrat\accounting\Interfaces\Dateable;
+use byrokrat\accounting\Interfaces\Describable;
+use byrokrat\accounting\Interfaces\Signable;
+use byrokrat\accounting\Interfaces\Queryable;
+use byrokrat\accounting\Interfaces\Traits\AttributableTrait;
+use byrokrat\accounting\Interfaces\Traits\DateableTrait;
+use byrokrat\accounting\Interfaces\Traits\DescribableTrait;
+use byrokrat\accounting\Interfaces\Traits\SignableTrait;
 use byrokrat\amount\Amount;
 
 /**
  * Simple verification value object wrapping a list of transactions
  */
-class Verification implements Queryable, Attributable, \IteratorAggregate
+class Verification implements Attributable, Dateable, Describable, Signable, Queryable, \IteratorAggregate
 {
-    use AttributableTrait;
+    use AttributableTrait, DateableTrait, DescribableTrait, SignableTrait;
 
     /**
-     * @var string Free text description
+     * @var int Verification number
      */
-    private $description;
+    private $number = 0;
 
     /**
-     * @var \DateTimeImmutable Creation date
+     * @var \DateTimeInterface Date verification was entered inte the registry
      */
-    private $date;
+    private $registrationDate;
 
     /**
-     * @var Summary Transaction summaries
+     * @var TransactionSummary Transaction summaries
      */
     private $summary;
 
@@ -52,46 +61,71 @@ class Verification implements Queryable, Attributable, \IteratorAggregate
     private $transactions = [];
 
     /**
-     * Setup verification data
-     *
-     * @param string             $description  Free text description
-     * @param \DateTimeImmutable $date         Creation date
-     * @param Transaction        $transactions Any number of transaction objects
+     * Optionally load dependencies at construct
      */
-    public function __construct(string $description = '', \DateTimeImmutable $date = null, Transaction ...$transactions)
+    public function __construct(TransactionSummary $summary = null)
     {
-        $this->description = $description;
-        $this->date = $date ?: new \DateTimeImmutable;
-        $this->summary = new Summary;
-        $this->addTransaction(...$transactions);
+        $this->setDate(new \DateTimeImmutable);
+        $this->summary = $summary ?: new TransactionSummary;
+    }
+
+    /**
+     * Set verification number
+     */
+    public function setNumber(int $number): self
+    {
+        $this->number = $number;
+
+        return $this;
+    }
+
+    /**
+     * Check if a verification number is set
+     */
+    public function hasNumber(): bool
+    {
+        return $this->number > 0;
+    }
+
+    /**
+     * Get verification number
+     */
+    public function getNumber(): int
+    {
+        return $this->number;
+    }
+
+    /**
+     * Set the date verification was entered inte the registry
+     */
+    public function setRegistrationDate(\DateTimeInterface $date): self
+    {
+        $this->registrationDate = $date;
+
+        return $this;
+    }
+
+    /**
+     * Get the date verification was entered inte the registry
+     *
+     * If no registration date is set the regular verification date is returned.
+     */
+    public function getRegistrationDate(): \DateTimeInterface
+    {
+        return $this->registrationDate ?: $this->getDate();
     }
 
     /**
      * Add one ore more new transactions
      */
-    public function addTransaction(Transaction ...$transactions): self
+    public function addTransactions(Transaction ...$transactions): self
     {
         foreach ($transactions as $transaction) {
             $this->transactions[] = $transaction;
-            $this->summary->addTransaction($transaction);
+            $this->summary->addToSummary($transaction);
         }
+
         return $this;
-    }
-
-    /**
-     * Get text describing verification
-     */
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-
-    /**
-     * Get transaction date
-     */
-    public function getDate(): \DateTimeImmutable
-    {
-        return $this->date;
     }
 
     /**

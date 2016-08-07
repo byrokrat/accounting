@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
-class AccountFactoryTest extends BaseTestCase
+class AccountFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testAccountTypes()
     {

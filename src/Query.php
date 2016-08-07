@@ -9,7 +9,7 @@
  *
  * byrokrat/accounting is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -52,7 +52,7 @@ class Query implements \IteratorAggregate, \Countable
         $this->iteratorFactory = function () use ($data) {
             foreach ($data as $item) {
                 yield $item;
-                if ($item instanceof Queryable) {
+                if ($item instanceof Interfaces\Queryable) {
                     yield from $item->query();
                 }
             }
@@ -85,7 +85,7 @@ class Query implements \IteratorAggregate, \Countable
     public function attributables(): Query
     {
         return $this->filter(function ($item) {
-            return $item instanceof Attributable;
+            return $item instanceof Interfaces\Attributable;
         });
     }
 
@@ -109,6 +109,26 @@ class Query implements \IteratorAggregate, \Countable
     public function count(): int
     {
         return iterator_count($this->getIterator());
+    }
+
+    /**
+     * Filter that returns only Dateable objects
+     */
+    public function dateables(): Query
+    {
+        return $this->filter(function ($item) {
+            return $item instanceof Interfaces\Dateable;
+        });
+    }
+
+    /**
+     * Filter that returns only Describable objects
+     */
+    public function describables(): Query
+    {
+        return $this->filter(function ($item) {
+            return $item instanceof Interfaces\Describable;
+        });
     }
 
     /**
@@ -278,7 +298,7 @@ class Query implements \IteratorAggregate, \Countable
             yield from $outerIterator;
             foreach ($data as $item) {
                 yield $item;
-                if ($item instanceof Queryable) {
+                if ($item instanceof Interfaces\Queryable) {
                     yield from $item->query();
                 }
             }
@@ -298,6 +318,16 @@ class Query implements \IteratorAggregate, \Countable
             foreach ($outerIterator as $item) {
                 yield $callback($item);
             }
+        });
+    }
+
+    /**
+     * Filter that returns only Signable objects
+     */
+    public function signables(): Query
+    {
+        return $this->filter(function ($item) {
+            return $item instanceof Interfaces\Signable;
         });
     }
 
@@ -328,7 +358,7 @@ class Query implements \IteratorAggregate, \Countable
     public function queryables(): Query
     {
         return $this->filter(function ($item) {
-            return $item instanceof Queryable;
+            return $item instanceof Interfaces\Queryable;
         });
     }
 

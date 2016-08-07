@@ -6,8 +6,10 @@ namespace byrokrat\accounting;
 
 use byrokrat\amount\Amount;
 
-class QueryTest extends BaseTestCase
+class QueryTest extends \PHPUnit_Framework_TestCase
 {
+    use utils\PropheciesTrait;
+
     public function testInvalidConstructorArgument()
     {
         $this->setExpectedException(Exception\InvalidArgumentException::CLASS);
@@ -27,8 +29,8 @@ class QueryTest extends BaseTestCase
      */
     public function testNestedIteration()
     {
-        $queryable1 = $this->getQueryableMock(['bar']);
-        $queryable2 = $this->getQueryableMock(['foo', $queryable1]);
+        $queryable1 = $this->prophesizeQueryable(['bar'])->reveal();
+        $queryable2 = $this->prophesizeQueryable(['foo', $queryable1])->reveal();
 
         $query = new Query(['before', $queryable2, 'after']);
 
@@ -52,7 +54,7 @@ class QueryTest extends BaseTestCase
     {
         $this->assertSame(
             [1, 2, 3],
-            (new Query([1, $this->getQueryableMock([2]), 3]))->filter('is_integer')->toArray()
+            (new Query([1, $this->prophesizeQueryable([2])->reveal(), 3]))->filter('is_integer')->toArray()
         );
     }
 
@@ -147,7 +149,7 @@ class QueryTest extends BaseTestCase
     {
         $this->assertSame(
             3,
-            count((new Query([1, $this->getQueryableMock([2]), 3]))->filter('is_integer'))
+            count((new Query([1, $this->prophesizeQueryable([2])->reveal(), 3]))->filter('is_integer'))
         );
     }
 
@@ -156,9 +158,8 @@ class QueryTest extends BaseTestCase
      */
     public function testAccounts()
     {
-        $account = $this->getAccountMock();
         $this->assertSame(
-            [$account],
+            [$account = $this->prophesizeAccount()->reveal()],
             (new Query([1, $account, 3]))->accounts()->toArray()
         );
     }
@@ -168,10 +169,43 @@ class QueryTest extends BaseTestCase
      */
     public function testAmounts()
     {
-        $amount = $this->getAmountMock();
         $this->assertSame(
-            [$amount],
+            [$amount = $this->prophesizeAmount()->reveal()],
             (new Query([1, $amount, 3]))->amounts()->toArray()
+        );
+    }
+
+    /**
+     * @depends testFilter
+     */
+    public function testAttributables()
+    {
+        $attributable = $this->createMock(Interfaces\Attributable::CLASS);
+        $this->assertSame(
+            [$attributable],
+            (new Query([1, $attributable, 3]))->attributables()->toArray()
+        );
+    }
+
+    /**
+     * @depends testFilter
+     */
+    public function testDateables()
+    {
+        $this->assertSame(
+            [$dateable = $this->prophesize(Interfaces\Dateable::CLASS)->reveal()],
+            (new Query([1, $dateable, 3]))->dateables()->toArray()
+        );
+    }
+
+    /**
+     * @depends testFilter
+     */
+    public function testDescribables()
+    {
+        $this->assertSame(
+            [$describable = $this->prophesize(Interfaces\Describable::CLASS)->reveal()],
+            (new Query([1, $describable, 3]))->describables()->toArray()
         );
     }
 
@@ -180,10 +214,20 @@ class QueryTest extends BaseTestCase
      */
     public function testQueryables()
     {
-        $queryable = $this->getQueryableMock();
         $this->assertSame(
-            [$queryable],
+            [$queryable = $this->prophesizeQueryable()->reveal()],
             (new Query([1, $queryable, 3]))->queryables()->toArray()
+        );
+    }
+
+    /**
+     * @depends testFilter
+     */
+    public function testSignables()
+    {
+        $this->assertSame(
+            [$signable = $this->prophesize(Interfaces\Signable::CLASS)->reveal()],
+            (new Query([1, $signable, 3]))->signables()->toArray()
         );
     }
 
@@ -192,9 +236,8 @@ class QueryTest extends BaseTestCase
      */
     public function testTransactions()
     {
-        $transaction = $this->getTransactionMock();
         $this->assertSame(
-            [$transaction],
+            [$transaction = $this->prophesizeTransaction()->reveal()],
             (new Query([1, $transaction, 3]))->transactions()->toArray()
         );
     }
@@ -204,22 +247,9 @@ class QueryTest extends BaseTestCase
      */
     public function testVerifications()
     {
-        $verification = $this->getVerificationMock();
         $this->assertSame(
-            [$verification],
+            [$verification = $this->prophesizeVerification()->reveal()],
             (new Query([1, $verification, 3]))->verifications()->toArray()
-        );
-    }
-
-    /**
-     * @depends testFilter
-     */
-    public function testAttributables()
-    {
-        $attributable = $this->createMock(Attributable::CLASS);
-        $this->assertSame(
-            [$attributable],
-            (new Query([1, $attributable, 3]))->attributables()->toArray()
         );
     }
 
@@ -322,8 +352,8 @@ class QueryTest extends BaseTestCase
      */
     public function testUniqueWithObjectItems()
     {
-        $queryableA = $this->getQueryableMock();
-        $queryableB = $this->getQueryableMock();
+        $queryableA = $this->prophesizeQueryable()->reveal();
+        $queryableB = $this->prophesizeQueryable()->reveal();
 
         $this->assertSame(
             [$queryableA, $queryableB],
@@ -337,9 +367,9 @@ class QueryTest extends BaseTestCase
      */
     public function testWhereAndWhereNot()
     {
-        $queryableA = $this->getQueryableMock(['A', 'foo']);
-        $queryableB = $this->getQueryableMock(['B', 'foo']);
-        $queryableC = $this->getQueryableMock(['C', 'bar']);
+        $queryableA = $this->prophesizeQueryable(['A', 'foo'])->reveal();
+        $queryableB = $this->prophesizeQueryable(['B', 'foo'])->reveal();
+        $queryableC = $this->prophesizeQueryable(['C', 'bar'])->reveal();
 
         $query = new Query([$queryableA, $queryableB, $queryableC]);
 
@@ -362,9 +392,8 @@ class QueryTest extends BaseTestCase
 
     public function testFindAccountFromNumber()
     {
-        $account = $this->getAccountMock(1234, 'foobar');
         $this->assertEquals(
-            $account,
+            $account = $this->prophesizeAccount(1234, 'foobar')->reveal(),
             (new Query(['foo', $account, 'bar']))->findAccountFromNumber(1234)
         );
     }
@@ -377,9 +406,8 @@ class QueryTest extends BaseTestCase
 
     public function testFindAccountFromName()
     {
-        $account = $this->getAccountMock(1234, 'foobar');
         $this->assertEquals(
-            $account,
+            $account = $this->prophesizeAccount(1234, 'foobar')->reveal(),
             (new Query([1, null, $account]))->findAccountFromDesc('foobar')
         );
     }

@@ -7,56 +7,94 @@ namespace byrokrat\accounting;
 use byrokrat\amount\Amount;
 use byrokrat\amount\Currency\SEK;
 
-/**
- * @covers \byrokrat\accounting\Verification
- */
-class VerificationTest extends BaseTestCase
+class VerificationTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetDescription()
+    use utils\InterfaceAssertionsTrait, utils\PropheciesTrait;
+
+    public function testAccessingTransactions()
     {
-        $this->assertEquals(
-            (new Verification('foobar'))->getDescription(),
-            'foobar'
+        $this->assertSame(
+            [
+                $transactionA = $this->prophesizeTransaction()->reveal(),
+                $transactionB = $this->prophesizeTransaction()->reveal()
+            ],
+            (new Verification)->addTransactions($transactionA, $transactionB)->getTransactions()
         );
     }
 
-    public function testGetDate()
+    public function testAttributable()
     {
-        $now = new \DateTimeImmutable();
+        $this->assertAttributable(new Verification);
+    }
 
-        $this->assertSame(
-            $now,
-            (new Verification('', $now))->getDate()
+    public function testDateable()
+    {
+        $date = new \DateTimeImmutable();
+
+        $this->assertDateable(
+            $date,
+            (new Verification)->setDate($date)
         );
 
         $this->assertTrue(
-            (new Verification(''))->getDate() >= $now
+            (new Verification)->getDate() >= $date
         );
     }
 
-    public function testGetTransactions()
+    public function testRegistrationDateable()
     {
-        $transactionA = $this->getTransactionMock();
-        $transactionB = $this->getTransactionMock();
-
-        $verification = new Verification('', null, $transactionA, $transactionB);
+        $date = new \DateTimeImmutable();
 
         $this->assertSame(
-            [$transactionA, $transactionB],
-            $verification->getTransactions()
+            $date,
+            (new Verification)->setRegistrationDate($date)->getRegistrationDate()
         );
 
-        return $verification;
+        $this->assertSame(
+            $date,
+            (new Verification)->setDate($date)->getRegistrationDate(),
+            'If registration date is not set the regular date should be returned'
+        );
     }
 
-    /**
-     * @depends testGetTransactions
-     */
-    public function testQuery(Verification $verification)
+    public function testDescribable()
+    {
+        $this->assertDescribable(
+            'foobar',
+            (new Verification)->setDescription('foobar')
+        );
+    }
+
+    public function testNumerable()
+    {
+        $this->assertFalse((new Verification)->hasNumber());
+
+        $this->assertSame(
+            10,
+            (new Verification)->setNumber(10)->getNumber()
+        );
+
+        $this->assertTrue((new Verification)->setNumber(1)->hasNumber());
+    }
+
+    public function testQueryable()
     {
         $this->assertCount(
             2,
-            $verification->query()->transactions()->toArray()
+            (new Verification)->addTransactions(
+                $this->prophesizeTransaction()->reveal(),
+                $this->prophesizeTransaction()->reveal()
+            )->query()->transactions()->toArray()
+        );
+    }
+
+    public function testSignable()
+    {
+        $this->assertSignableSignatureNotSet(new Verification);
+
+        $this->assertSignable(
+            $signature = 'signature',
+            (new Verification)->setSignature($signature)
         );
     }
 
@@ -85,7 +123,9 @@ class VerificationTest extends BaseTestCase
         $verification = new Verification;
 
         foreach ($amounts as $amount) {
-            $verification->addTransaction($this->getTransactionMock($amount));
+            $verification->addTransactions(
+                $this->prophesizeTransaction($amount)->reveal()
+            );
         }
 
         $this->assertSame($balanced, $verification->isBalanced());
@@ -99,12 +139,7 @@ class VerificationTest extends BaseTestCase
     {
         $this->setExpectedException(Exception\RuntimeException::CLASS);
         (new Verification)
-            ->addTransaction($this->getTransactionMock(new Amount('100')))
+            ->addTransactions($this->prophesizeTransaction(new Amount('100'))->reveal())
             ->getMagnitude();
-    }
-
-    public function testAttributes()
-    {
-        $this->assertAttributable(new Verification);
     }
 }

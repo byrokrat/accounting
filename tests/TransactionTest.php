@@ -4,31 +4,82 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
-/**
- * @covers \byrokrat\accounting\Transaction
- */
-class TransactionTest extends BaseTestCase
+class TransactionTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetters()
+    use utils\InterfaceAssertionsTrait, utils\PropheciesTrait;
+
+    private function createTransaction(&$account = null, &$amount = null, &$quantity = null)
     {
-        $account = $this->getAccountMock();
-        $amount = $this->getAmountMock();
+        return new Transaction(
+            $account = $this->prophesizeAccount()->reveal(),
+            $amount = $this->prophesizeAmount()->reveal(),
+            $quantity = 10
+        );
+    }
 
-        $transaction = new Transaction($account, $amount);
+    public function testAccessingContent()
+    {
+        $transaction = $this->createTransaction($account, $amount, $quantity);
 
-        $this->assertEquals($account, $transaction->getAccount());
-        $this->assertEquals($amount, $transaction->getAmount());
+        $this->assertSame($account, $transaction->getAccount());
+        $this->assertSame($amount, $transaction->getAmount());
+        $this->assertSame($quantity, $transaction->getQuantity());
+    }
 
-        $this->assertEquals(
+    public function testAttributable()
+    {
+        $this->assertAttributable($this->createTransaction());
+    }
+
+    public function testDateable()
+    {
+        $transaction = $this->createTransaction();
+
+        $this->assertDateableDateNotSet($transaction);
+
+        $this->assertDateable(
+            $date = new \DateTime,
+            $transaction->setDate($date)
+        );
+    }
+
+    public function testDescribable()
+    {
+        $this->assertDescribable(
+            '',
+            $this->createTransaction()
+        );
+    }
+
+    public function testIterable()
+    {
+        $transaction = $this->createTransaction($account, $amount);
+
+        $this->assertSame(
+            [$account, $amount],
+            iterator_to_array($transaction)
+        );
+    }
+
+    public function testQueryable()
+    {
+        $transaction = $this->createTransaction($account, $amount);
+
+        $this->assertSame(
             [$account, $amount],
             $transaction->query()->toArray()
         );
     }
 
-    public function testAttributes()
+    public function testSignable()
     {
-        $this->assertAttributable(
-            new Transaction($this->getAccountMock(), $this->getAmountMock())
+        $transaction = $this->createTransaction();
+
+        $this->assertSignableSignatureNotSet($transaction);
+
+        $this->assertSignable(
+            $signature = 'signature',
+            $transaction->setSignature($signature)
         );
     }
 }
