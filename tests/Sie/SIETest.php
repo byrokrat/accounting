@@ -4,7 +4,11 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie;
 
-use byrokrat\accounting\{Account, Exception, Transaction, Verification, Query};
+use byrokrat\accounting\Account;
+use byrokrat\accounting\Exception;
+use byrokrat\accounting\Transaction;
+use byrokrat\accounting\Verification;
+use byrokrat\accounting\Query;
 use byrokrat\amount\Amount;
 
 /**
