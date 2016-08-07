@@ -1,3 +1,5 @@
+# TODO
+
 ## Exceptions
 
 * Fundera igenom vilken struktur jag vill ha på undantagen...
@@ -15,17 +17,6 @@ Består av summeringar för varje konto:
 * poster (Transactions) som berör kontot (beräknas från verifikationer) (+ verifikationsbeskrivning)
 * utgående saldo
 * varje transaktion listas och behöver veta villket verifikat det tillhör..
-
-## Verifikationslista
-
-Verifikationer behöver kunna hålla koll på sina egna numreringar...
-
-```php
-(new Query($data))->verifications()->each(function (Verification $ver) {
-    echo $ver->getVerificationNumber(); // eller motsvarande
-    echo '...';
-});
-```
 
 ## Kontoplaner
 

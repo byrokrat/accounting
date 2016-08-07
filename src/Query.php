@@ -353,6 +353,14 @@ class Query implements \IteratorAggregate, \Countable
     }
 
     /**
+     * Get all items matched by query wrapped in a container
+     */
+    public function toContainer(): Container
+    {
+        return new Container(...$this->toArray());
+    }
+
+    /**
      * Filter that returns only Queryable objects
      */
     public function queryables(): Query

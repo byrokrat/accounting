@@ -24,6 +24,14 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testToContainer()
+    {
+        $this->assertEquals(
+            new Container(1, 2, 3),
+            (new Query([1, 2, 3]))->toContainer()
+        );
+    }
+
     /**
      * @depends testToArray
      */
