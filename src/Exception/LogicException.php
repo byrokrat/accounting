@@ -21,9 +21,8 @@
 namespace byrokrat\accounting\Exception;
 
 /**
- * Exception thrown to indicate range errors during program execution.
- * Normally this means there was an arithmetic error other than under/overflow.
+ * Exception thrown when a logic error occurs
  */
-class RangeException extends \RangeException implements \byrokrat\accounting\Exception
+class LogicException extends \LogicException implements \byrokrat\accounting\Exception
 {
 }

@@ -9,7 +9,7 @@
  *
  * byrokrat/accounting is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -18,10 +18,12 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-namespace byrokrat\accounting;
+namespace byrokrat\accounting\Interfaces;
+
+use byrokrat\accounting\Exception\LogicException;
 
 /**
- * Defines setAttribute and getAttribute
+ * Defines methods for reading and writing attributes
  */
 interface Attributable
 {
@@ -30,17 +32,23 @@ interface Attributable
      *
      * @param  string $name  Case-insensitive name of attribute
      * @param  mixed  $value Value to register
-     * @return void
      */
-    public function setAttribute(string $name, $value);
+    public function setAttribute(string $name, $value): self;
+
+    /**
+     * Check if attribute has been set
+     *
+     * @param  string  $name Case-insensitive name of attribute
+     * @return boolean
+     */
+    public function hasAttribute(string $name): bool;
 
     /**
      * Read registered attribute
      *
-     * If attribute does not exist the empty string is returned.
-     *
      * @param  string $name Case-insensitive name of attribute
      * @return mixed
+     * @throws LogicException if attriute is not set
      */
     public function getAttribute(string $name);
 

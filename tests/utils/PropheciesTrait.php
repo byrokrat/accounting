@@ -2,23 +2,27 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting;
+namespace byrokrat\accounting\utils;
 
-use Prophecy\Argument;
+use byrokrat\accounting\Account;
+use byrokrat\accounting\Interfaces;
+use byrokrat\accounting\Query;
+use byrokrat\accounting\Transaction;
+use byrokrat\accounting\Verification;
 use byrokrat\amount\Amount;
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 
-/**
- * @deprecated
- */
-class BaseTestCase extends \PHPUnit_Framework_TestCase
+trait PropheciesTrait
 {
+    abstract public function prophesize($classOrInterface = null);
+
     /**
      * Create an AccountFactory prophecy
      *
      * @param  array &$accounts Store of created account prophecies
-     * @return \Prophecy\ObjectProphecy
      */
-    public function prophesizeAccountFactory(array &$accounts = [])
+    public function prophesizeAccountFactory(array &$accounts = []): ObjectProphecy
     {
         $factory = $this->prophesize(AccountFactory::CLASS);
 
@@ -38,12 +42,13 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
      * @param  string  $desc   Will be returned by getDescription()
      * @param  bool    $equals Will be returned by equals()
      * @param  array   $attr   Will be returned by getAttributes()
-     * @return \Prophecy\ObjectProphecy
      */
-    public function prophesizeAccount(int $number = 0, string $desc = '', bool $equals = false, array $attr = [])
-    {
-        // TODO this method could replace getAccountMock()..
-
+    public function prophesizeAccount(
+        int $number = 0,
+        string $desc = '',
+        bool $equals = false,
+        array $attr = []
+    ): ObjectProphecy {
         $account = $this->prophesize(Account::CLASS);
         $account->getNumber()->willReturn($number);
         $account->getDescription()->willReturn($desc);
@@ -53,44 +58,53 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
         return $account;
     }
 
-    protected function getAccountMock(int $number = 0, string $description = '', bool $equals = false): Account
+    /**
+     * Create amount prophecy
+     */
+    public function prophesizeAmount(): ObjectProphecy
     {
-        $account = $this->prophesize(Account::CLASS);
-        $account->getNumber()->willReturn($number);
-        $account->getDescription()->willReturn($description);
-        $account->equals(Argument::any())->willReturn($equals);
-
-        return $account->reveal();
+        return $this->prophesize(Amount::CLASS);
     }
 
-    protected function getAmountMock(): Amount
-    {
-        return $this->prophesize(Amount::CLASS)->reveal();
-    }
-
-    protected function getQueryableMock(array $content = []): Interfaces\Queryable
+    /**
+     * Create queryable prophecy
+     *
+     * @param array $content Will be returned as query content by query()
+     */
+    public function prophesizeQueryable(array $content = []): ObjectProphecy
     {
         $queryable = $this->prophesize(Interfaces\Queryable::CLASS);
         $queryable->query()->will(function () use ($content) {
             return new Query($content);
         });
 
-        return $queryable->reveal();
+        return $queryable;
     }
 
-    protected function getTransactionMock(Amount $amount = null, Account $account = null): Transaction
+    /**
+     * Create transaction prophecy
+     *
+     * @param  Amount  $amount  Will be returned by getAmount()
+     * @param  Account $account Will be returned by getAccount()
+     */
+    public function prophesizeTransaction(Amount $amount = null, Account $account = null): ObjectProphecy
     {
         $transaction = $this->prophesize(Transaction::CLASS);
         $transaction->getAmount()->willReturn($amount ?: new Amount('0'));
-        $transaction->getAccount()->willReturn($account ?: $this->getAccountMock());
+        $transaction->getAccount()->willReturn($account ?: $this->prophesizeAccount()->reveal());
         $transaction->query()->will(function () use ($amount, $account) {
             return new Query([$amount, $account]);
         });
 
-        return $transaction->reveal();
+        return $transaction;
     }
 
-    protected function getVerificationMock(array $accounts = [], array $transactions = []): Verification
+    /**
+     * Create verification prophecy
+     *
+     * @param  array $transactions Will be returned by getTransactions() and as query() content
+     */
+    public function prophesizeVerification(array $transactions = []): ObjectProphecy
     {
         $verification = $this->prophesize(Verification::CLASS);
         $verification->isBalanced()->willReturn(true);
@@ -99,6 +113,6 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase
             return new Query($transactions);
         });
 
-        return $verification->reveal();
+        return $verification;
     }
 }

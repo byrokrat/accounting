@@ -44,15 +44,11 @@ $accounts = new Query([
 // Create some verifications
 
 $verifications = new Query([
-    new Verification(
-        'Verification text',
-        new \DateTimeImmutable,
+    (new Verification)->setDescription('Verification text')->addTransactions(
         new Transaction($accounts->findAccountFromNumber(1920), new SEK('100')),
         new Transaction($accounts->findAccountFromNumber(3000), new SEK('-100'))
     ),
-    new Verification(
-        'Verification using account 1921',
-        new \DateTimeImmutable,
+    (new Verification)->setDescription('Verification using account 1921')->addTransactions(
         new Transaction($accounts->findAccountFromNumber(1921), new SEK('200')),
         new Transaction($accounts->findAccountFromNumber(3000), new SEK('-200'))
     )
@@ -64,8 +60,8 @@ $summaries = [];
 
 $verifications->transactions()->each(function ($transaction) use (&$summaries) {
     $key = $transaction->getAccount()->getNumber();
-    $summaries[$key] = $summaries[$key] ?? new Summary;
-    $summaries[$key]->addTransaction($transaction);
+    $summaries[$key] = $summaries[$key] ?? new TransactionSummary;
+    $summaries[$key]->addToSummary($transaction);
 });
 
 // Outputs -300
@@ -93,7 +89,7 @@ use byrokrat\amount\Amount;
 echo (new Sie\Writer)->generate(
     (new Sie\Settings)->setTargetCompany('my-company'),
     new Query([
-        (new Verification('Ver A'))->addTransaction(
+        (new Verification)->addTransactions(
             new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100')),
             new Transaction(new Account\Earning(3000, 'Intänk'), new Amount('-100'))
         )

@@ -9,7 +9,7 @@
  *
  * byrokrat/accounting is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -22,7 +22,11 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie;
 
-use byrokrat\accounting\{Account, Exception, Transaction, Verification, Query};
+use byrokrat\accounting\Account;
+use byrokrat\accounting\Exception;
+use byrokrat\accounting\Transaction;
+use byrokrat\accounting\Verification;
+use byrokrat\accounting\Query;
 
 /**
  * SIE 4I file format implementation.

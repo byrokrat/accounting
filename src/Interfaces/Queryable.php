@@ -18,12 +18,17 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-namespace byrokrat\accounting\Exception;
+namespace byrokrat\accounting\Interfaces;
+
+use byrokrat\accounting\Query;
 
 /**
- * Exception thrown to indicate range errors during program execution.
- * Normally this means there was an arithmetic error other than under/overflow.
+ * Defines an object with queryable content
  */
-class RangeException extends \RangeException implements \byrokrat\accounting\Exception
+interface Queryable
 {
+    /**
+     * Get a query object loaded with queryable content
+     */
+    public function query(): Query;
 }

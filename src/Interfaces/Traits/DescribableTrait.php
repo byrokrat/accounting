@@ -18,12 +18,29 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-namespace byrokrat\accounting\Exception;
+namespace byrokrat\accounting\Interfaces\Traits;
+
+use byrokrat\accounting\Interfaces\Describable;
 
 /**
- * Exception thrown to indicate range errors during program execution.
- * Normally this means there was an arithmetic error other than under/overflow.
+ * Basic implementation of the Describable interface
  */
-class RangeException extends \RangeException implements \byrokrat\accounting\Exception
+trait DescribableTrait
 {
+    /**
+     * @var string
+     */
+    private $description = '';
+
+    public function setDescription(string $description): Describable
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
 }

@@ -18,12 +18,39 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-namespace byrokrat\accounting\Exception;
+namespace byrokrat\accounting\Interfaces\Traits;
+
+use byrokrat\accounting\Interfaces\Signable;
+use byrokrat\accounting\Exception\LogicException;
 
 /**
- * Exception thrown to indicate range errors during program execution.
- * Normally this means there was an arithmetic error other than under/overflow.
+ * Basic implementation of the Signable interface
  */
-class RangeException extends \RangeException implements \byrokrat\accounting\Exception
+trait SignableTrait
 {
+    /**
+     * @var string
+     */
+    private $signature;
+
+    public function setSignature(string $signature): Signable
+    {
+        $this->signature = $signature;
+
+        return $this;
+    }
+
+    public function hasSignature(): bool
+    {
+        return isset($this->signature);
+    }
+
+    public function getSignature(): string
+    {
+        if (!$this->hasSignature()) {
+            throw new LogicException('Trying to get signature when signature is not set');
+        }
+
+        return $this->signature;
+    }
 }

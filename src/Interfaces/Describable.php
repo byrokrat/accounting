@@ -18,12 +18,20 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-namespace byrokrat\accounting\Exception;
+namespace byrokrat\accounting\Interfaces;
 
 /**
- * Exception thrown to indicate range errors during program execution.
- * Normally this means there was an arithmetic error other than under/overflow.
+ * Defines methods for reading and writing object descriptions
  */
-class RangeException extends \RangeException implements \byrokrat\accounting\Exception
+interface Describable
 {
+    /**
+     * Set object description
+     */
+    public function setDescription(string $description): self;
+
+    /**
+     * Get object description
+     */
+    public function getDescription(): string;
 }
