@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\utils;
 
 use byrokrat\accounting\Account;
+use byrokrat\accounting\AccountFactory;
 use byrokrat\accounting\Interfaces;
 use byrokrat\accounting\Query;
 use byrokrat\accounting\Transaction;
