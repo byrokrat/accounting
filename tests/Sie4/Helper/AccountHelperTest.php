@@ -4,14 +4,16 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Helper;
 
-use byrokrat\accounting\BaseTestCase;
+use byrokrat\accounting\utils\PropheciesTrait;
 use byrokrat\accounting\Account;
 
 /**
  * @covers byrokrat\accounting\Sie4\Helper\AccountHelper
  */
-class AccountHelperTest extends BaseTestCase
+class AccountHelperTest extends \PHPUnit_Framework_TestCase
 {
+    use PropheciesTrait;
+
     /**
      * @var ObjectProphecy Created in setup()
      */
@@ -60,17 +62,17 @@ class AccountHelperTest extends BaseTestCase
     public function testEnhet()
     {
         $accountSpie = $this->prophesize(Account::CLASS);
+        $accountSpie->setAttribute('unit', 'sek')->willReturn($accountSpie)->shouldBeCalled();
         $this->accountFactoryProphecy->createAccount(1234, 'UNSPECIFIED')->willReturn($accountSpie->reveal());
         $this->accountHelper->onEnhet(1234, 'sek');
-        $accountSpie->setAttribute('unit', 'sek')->shouldHaveBeenCalled();
     }
 
     public function testSru()
     {
         $accountSpie = $this->prophesize(Account::CLASS);
+        $accountSpie->setAttribute('sru', 5678)->willReturn($accountSpie)->shouldBeCalled();
         $this->accountFactoryProphecy->createAccount(1234, 'UNSPECIFIED')->willReturn($accountSpie->reveal());
         $this->accountHelper->onSru(1234, 5678);
-        $accountSpie->setAttribute('sru', 5678)->shouldHaveBeenCalled();
     }
 
     public function testSetAccountType()

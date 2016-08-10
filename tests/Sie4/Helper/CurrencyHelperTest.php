@@ -4,14 +4,16 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Helper;
 
-use byrokrat\accounting\BaseTestCase;
+use byrokrat\accounting\utils\PropheciesTrait;
 use byrokrat\amount\Currency;
 
 /**
  * @covers byrokrat\accounting\Sie4\Helper\CurrencyHelper
  */
-class CurrencyHelperTest extends BaseTestCase
+class CurrencyHelperTest extends \PHPUnit_Framework_TestCase
 {
+    use PropheciesTrait;
+
     public function testCreatingMoney()
     {
         $currencyHelper = $this->getMockForTrait(CurrencyHelper::CLASS);
