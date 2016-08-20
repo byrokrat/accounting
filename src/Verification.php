@@ -116,14 +116,12 @@ class Verification implements Attributable, Dateable, Describable, Queryable, Si
     }
 
     /**
-     * Add one ore more new transactions
+     * Add transaction to verifications
      */
-    public function addTransactions(Transaction ...$transactions): self
+    public function addTransaction(Transaction $transaction): self
     {
-        foreach ($transactions as $transaction) {
-            $this->transactions[] = $transaction;
-            $this->summary->addToSummary($transaction);
-        }
+        $this->transactions[] = $transaction;
+        $this->summary->addToSummary($transaction);
 
         return $this;
     }

@@ -40,31 +40,31 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                (new Verification)->addTransactions(
+                (new Verification)->addTransaction(
                     new Transaction(new Account\Earning(3000, 'Incomes'), new Amount('-400'))
                 ),
                 [['{in}', '-400']],
             ],
             [
-                (new Verification)->addTransactions(
+                (new Verification)->addTransaction(
                     new Transaction(new Account\Asset(1920, 'Bank'), new Amount('400'), 0)
                 ),
                 [['1920', '{amount}']],
             ],
             [
-                (new Verification)->addTransactions(
+                (new Verification)->addTransaction(
                     new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100'), 10)
                 ),
                 [['1920', '100', '{quantity}']],
             ],
             [
-                (new Verification)->addTransactions(
+                (new Verification)->addTransaction(
                     new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100'), 1, new Dimension(1, ''), new Dimension(2, ''))
                 ),
                 [['1920', '100', '1', ['1', '2']]],
             ],
             [
-                (new Verification)->addTransactions(
+                (new Verification)->addTransaction(
                     new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100'), 1, new Dimension(1, ''))
                 ),
                 [['1920', '100', '1', ['{dim}']]],

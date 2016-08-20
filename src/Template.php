@@ -102,7 +102,7 @@ class Template implements Attributable, Describable
                 $dimensions
             );
 
-            $ver->addTransactions(
+            $ver->addTransaction(
                 new Transaction(
                     $container->findAccountFromNumber(intval($filter($number))),
                     new Amount($filter($amount)),

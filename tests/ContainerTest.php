@@ -20,13 +20,10 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
             $b = 'bar'
         );
 
-        $container->addItems(
-            $c = 'baz',
-            $d = 'qux'
-        );
+        $container->addItem($c = 'baz');
 
         $this->assertSame(
-            [$a, $b, $c, $d],
+            [$a, $b, $c],
             $container->getItems()
         );
     }
@@ -39,7 +36,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
                 $b = 'bar'
             ],
             iterator_to_array(
-                (new Container)->addItems($a, $b)
+                new Container($a, $b)
             )
         );
     }
