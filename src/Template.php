@@ -53,8 +53,8 @@ class Template implements Attributable, Describable
     {
         $this->templateId = $templateId;
         $this->setDescription($description);
-        foreach ($transactions as $transaction) {
-            $this->addTransaction(...$transaction);
+        foreach ($transactions as $transactionData) {
+            $this->addTransaction(...$transactionData);
         }
     }
 
@@ -88,6 +88,7 @@ class Template implements Attributable, Describable
      */
     public function build(array $translationMap, Queryable $container): Verification
     {
+        $container = $container->query();
         $filter = $this->createTranslationFilter($translationMap);
 
         $ver = (new Verification)->setDescription(

@@ -228,6 +228,14 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testQueryIsQueryable()
+    {
+        $this->assertSame(
+            $query = new Query,
+            $query->query()
+        );
+    }
+
     /**
      * @depends testFilter
      */

@@ -59,7 +59,13 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 (new Verification)->addTransaction(
-                    new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100'), 1, new Dimension(1, ''), new Dimension(2, ''))
+                    new Transaction(
+                        new Account\Asset(1920, 'Bank'),
+                        new Amount('100'),
+                        1,
+                        new Dimension(1, ''),
+                        new Dimension(2, '')
+                    )
                 ),
                 [['1920', '100', '1', ['1', '2']]],
             ],
