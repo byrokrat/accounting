@@ -12,7 +12,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidConstructorArgument()
     {
-        $this->setExpectedException(Exception\InvalidArgumentException::CLASS);
+        $this->setExpectedException(Exception\LogicException::CLASS);
         (new Query(0))->exec();
     }
 
@@ -450,7 +450,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
 
     public function testExceptionOnLoadingUnvalidData()
     {
-        $this->setExpectedException(Exception\InvalidArgumentException::CLASS);
+        $this->setExpectedException(Exception\LogicException::CLASS);
         (new Query)->load(null);
     }
 }

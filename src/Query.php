@@ -289,7 +289,7 @@ class Query implements Queryable, \IteratorAggregate, \Countable
      * Create a new Query including addtional data
      *
      * @param  array|\Traversable $data Items to include
-     * @throws Exception\InvalidArgumentException if $data is not traversable
+     * @throws Exception\LogicException if $data is not traversable
      */
     public function load($data): Query
     {
@@ -463,12 +463,12 @@ class Query implements Queryable, \IteratorAggregate, \Countable
      *
      * @param  mixed $data
      * @return void
-     * @throws Exception\InvalidArgumentException if $data is not traversable
+     * @throws Exception\LogicException if $data is not traversable
      */
     private function validateTraversability($data)
     {
         if (!is_array($data) && !$data instanceof \Traversable) {
-            throw new Exception\InvalidArgumentException(
+            throw new Exception\LogicException(
                 "Unexpected query source (" . gettype($data) . '), expecting array or Traversable.'
             );
         }
