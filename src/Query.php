@@ -22,12 +22,13 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\accounting\Interfaces\Queryable;
 use byrokrat\amount\Amount;
 
 /**
  * Filter and iterate over collections of accounting objects
  */
-class Query implements \IteratorAggregate, \Countable
+class Query implements Queryable, \IteratorAggregate, \Countable
 {
     /**
      * @var callable Internal factory for creating the query iterator
@@ -132,6 +133,16 @@ class Query implements \IteratorAggregate, \Countable
     }
 
     /**
+     * Filter that returns only Dimension objects
+     */
+    public function dimensions(): Query
+    {
+        return $this->filter(function ($item) {
+            return $item instanceof Dimension;
+        });
+    }
+
+    /**
      * Immediately execute callback for all items in query
      *
      * @param callable $callback Executed for all items matching query
@@ -184,38 +195,29 @@ class Query implements \IteratorAggregate, \Countable
     /**
      * Find account object from number
      *
-     * @throws Exception\OutOfBoundsException If account does not exist
+     * @throws Exception\RuntimeException If account does not exist
      */
     public function findAccountFromNumber(int $number): Account
     {
-        $account = $this->accounts()->find(function ($account) use ($number) {
-            return $account->getNumber() == $number;
-        });
-
-        if ($account) {
-            return $account;
-        }
-
-        throw new Exception\OutOfBoundsException("Account number $number does not exist");
+        return $this->accounts()->findDimensionFromNumber($number);
     }
 
     /**
-     * Find account object from description
+     * Find first Dimension object with $number
      *
-     * @throws Exception\OutOfBoundsException If account does not exist
+     * @throws Exception\RuntimeException If dimension does not exist
      */
-    public function findAccountFromDesc(string $description): Account
+    public function findDimensionFromNumber(int $number): Dimension
     {
-        $account = $this->accounts()->find(function ($account) use ($description) {
-            // TODO perform some kind of regular expression match here (or at least case insensitive)
-            return $account->getDescription() == $description;
+        $dimension = $this->dimensions()->find(function ($dimension) use ($number) {
+            return $dimension->getNumber() == $number;
         });
 
-        if ($account) {
-            return $account;
+        if ($dimension) {
+            return $dimension;
         }
 
-        throw new Exception\OutOfBoundsException("Account $description does not exist");
+        throw new Exception\RuntimeException("Dimension number $number does not exist");
     }
 
     /**
@@ -358,6 +360,14 @@ class Query implements \IteratorAggregate, \Countable
     public function toContainer(): Container
     {
         return new Container(...$this->toArray());
+    }
+
+    /**
+     * Implements the Queryable interface
+     */
+    public function query(): Query
+    {
+        return $this;
     }
 
     /**

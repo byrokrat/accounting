@@ -220,6 +220,17 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     /**
      * @depends testFilter
      */
+    public function testDimensions()
+    {
+        $this->assertSame(
+            [$dimension = $this->prophesizeDimension()->reveal()],
+            (new Query([1, $dimension, 3]))->dimensions()->toArray()
+        );
+    }
+
+    /**
+     * @depends testFilter
+     */
     public function testQueryables()
     {
         $this->assertSame(
@@ -401,29 +412,29 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     public function testFindAccountFromNumber()
     {
         $this->assertEquals(
-            $account = $this->prophesizeAccount(1234, 'foobar')->reveal(),
+            $account = $this->prophesizeAccount(1234, '')->reveal(),
             (new Query(['foo', $account, 'bar']))->findAccountFromNumber(1234)
         );
     }
 
     public function testExceptionOnUnknownAccountNumber()
     {
-        $this->setExpectedException(Exception\OutOfBoundsException::CLASS);
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         (new Query)->findAccountFromNumber(1234);
     }
 
-    public function testFindAccountFromName()
+    public function testFindDimensionFromNumber()
     {
         $this->assertEquals(
-            $account = $this->prophesizeAccount(1234, 'foobar')->reveal(),
-            (new Query([1, null, $account]))->findAccountFromDesc('foobar')
+            $dimension = $this->prophesizeDimension(1234)->reveal(),
+            (new Query(['foo', $dimension, 'bar']))->findDimensionFromNumber(1234)
         );
     }
 
-    public function testExceptionOnUnknownAccountDescription()
+    public function testExceptionOnUnknownDimensionNumber()
     {
-        $this->setExpectedException(Exception\OutOfBoundsException::CLASS);
-        (new Query)->findAccountFromDesc('foobar');
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        (new Query)->findDimensionFromNumber(1234);
     }
 
     /**

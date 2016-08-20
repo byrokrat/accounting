@@ -97,10 +97,6 @@ echo (new Sie\Writer)->generate(
 );
 ```
 
-Todo
-----
-See TODO comments spread out in source.
-
 Credits
 -------
 @author Hannes Forsgård (hannes.forsgard@fripost.org)

@@ -36,7 +36,7 @@ use byrokrat\amount\Amount;
 /**
  * A transaction is a simple value object containing an account and an amount
  */
-class Transaction implements Attributable, Dateable, Describable, Signable, Queryable, \IteratorAggregate
+class Transaction implements Attributable, Dateable, Describable, Queryable, Signable, \IteratorAggregate
 {
     use AttributableTrait, DateableTrait, DescribableTrait, SignableTrait;
 
@@ -56,13 +56,19 @@ class Transaction implements Attributable, Dateable, Describable, Signable, Quer
     private $quantity;
 
     /**
+     * @var Dimension[] List of registered dimensions
+     */
+    private $dimensions;
+
+    /**
      * Set transaction values
      */
-    public function __construct(Account $account, Amount $amount, int $quantity = 0)
+    public function __construct(Account $account, Amount $amount, int $quantity = 0, Dimension ...$dimensions)
     {
         $this->account = $account;
         $this->amount = $amount;
         $this->quantity = $quantity;
+        $this->dimensions = $dimensions;
     }
 
     /**
@@ -90,6 +96,16 @@ class Transaction implements Attributable, Dateable, Describable, Signable, Quer
     }
 
     /**
+     * Get registered dimensions
+     *
+     * @return Dimension[]
+     */
+    public function getDimensions(): array
+    {
+        return $this->dimensions;
+    }
+
+    /**
      * Implements the Queryable interface
      */
     public function query(): Query
@@ -104,5 +120,8 @@ class Transaction implements Attributable, Dateable, Describable, Signable, Quer
     {
         yield $this->getAccount();
         yield $this->getAmount();
+        foreach ($this->getDimensions() as $dim) {
+            yield $dim;
+        }
     }
 }

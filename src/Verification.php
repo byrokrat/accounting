@@ -36,7 +36,7 @@ use byrokrat\amount\Amount;
 /**
  * Simple verification value object wrapping a list of transactions
  */
-class Verification implements Attributable, Dateable, Describable, Signable, Queryable, \IteratorAggregate
+class Verification implements Attributable, Dateable, Describable, Queryable, Signable, \IteratorAggregate
 {
     use AttributableTrait, DateableTrait, DescribableTrait, SignableTrait;
 

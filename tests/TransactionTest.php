@@ -8,22 +8,27 @@ class TransactionTest extends \PHPUnit_Framework_TestCase
 {
     use utils\InterfaceAssertionsTrait, utils\PropheciesTrait;
 
-    private function createTransaction(&$account = null, &$amount = null, &$quantity = null)
+    private function createTransaction(&$account = null, &$amount = null, &$quantity = null, &$dimensions = null)
     {
         return new Transaction(
             $account = $this->prophesizeAccount()->reveal(),
             $amount = $this->prophesizeAmount()->reveal(),
-            $quantity = 10
+            $quantity = 10,
+            ...$dimensions = [
+                $this->prophesizeDimension()->reveal(),
+                $this->prophesizeDimension()->reveal()
+            ]
         );
     }
 
     public function testAccessingContent()
     {
-        $transaction = $this->createTransaction($account, $amount, $quantity);
+        $transaction = $this->createTransaction($account, $amount, $quantity, $dimensions);
 
         $this->assertSame($account, $transaction->getAccount());
         $this->assertSame($amount, $transaction->getAmount());
         $this->assertSame($quantity, $transaction->getQuantity());
+        $this->assertSame($dimensions, $transaction->getDimensions());
     }
 
     public function testAttributable()
@@ -53,20 +58,20 @@ class TransactionTest extends \PHPUnit_Framework_TestCase
 
     public function testIterable()
     {
-        $transaction = $this->createTransaction($account, $amount);
+        $transaction = $this->createTransaction($account, $amount, $void, $dimensions);
 
         $this->assertSame(
-            [$account, $amount],
+            array_merge([$account, $amount], $dimensions),
             iterator_to_array($transaction)
         );
     }
 
     public function testQueryable()
     {
-        $transaction = $this->createTransaction($account, $amount);
+        $transaction = $this->createTransaction($account, $amount, $void, $dimensions);
 
         $this->assertSame(
-            [$account, $amount],
+            array_merge([$account, $amount], $dimensions),
             $transaction->query()->toArray()
         );
     }
