@@ -32,8 +32,6 @@ class AccountFactory
      *
      * @param int    $number      Account number
      * @param string $description Description of account
-     *
-     * TODO write tests for this class
      */
     public function createAccount(int $number, string $description): Account
     {

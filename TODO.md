@@ -1,9 +1,5 @@
 # TODO
 
-## Exceptions
-
-* Fundera igenom vilken struktur jag vill ha på undantagen...
-
 ## Transaktioner
 
 * En transaction ska kunna vara struken, och ska i så fall inte räknas i arithmetiken...

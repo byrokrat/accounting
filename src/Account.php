@@ -22,68 +22,33 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
-use byrokrat\accounting\Interfaces\Attributable;
-use byrokrat\accounting\Interfaces\Describable;
-use byrokrat\accounting\Interfaces\Traits\AttributableTrait;
-use byrokrat\accounting\Interfaces\Traits\DescribableTrait;
-
 /**
  * Account value object containing a number and a description
  */
-abstract class Account implements Attributable, Describable
+abstract class Account extends Dimension
 {
-    use AttributableTrait, DescribableTrait;
-
     /**
-     * @var int 4 digit account number
-     */
-    private $number;
-
-    /**
-     * Set account values
+     * Load account values at construct
      *
      * @param int    $number      4 digit number identifying account
      * @param string $description Free text description of account
-     * @param array  $attributes  Optional attributes to load at construct
+     * @param array  $attributes  Optional list of attributes
      *
-     * @throws Exception\InvalidArgumentException If $number is < 1000 or > 9999
+     * @throws Exception\RuntimeException If $number is < 1000 or > 9999
      */
     public function __construct(int $number, string $description, array $attributes = [])
     {
         if ($number < 1000 || $number > 9999) {
-            throw new Exception\InvalidArgumentException(
+            throw new Exception\RuntimeException(
                 'Account number must be greater than 999 and lesser than 10000'
             );
         }
 
-        $this->number = $number;
-        $this->setDescription($description);
+        parent::__construct($number, $description);
 
         foreach ($attributes as $name => $value) {
             $this->setAttribute($name, $value);
         }
-    }
-
-    /**
-     * Get 4 digit account number
-     */
-    public function getNumber(): int
-    {
-        return $this->number;
-    }
-
-    /**
-     * Check if $account is equal to this instance
-     *
-     * @param Account $account Account to compare with current instance
-     */
-    public function equals(Account $account): bool
-    {
-        return (
-            $this->getType() == $account->getType()
-            && $this->getNumber() == $account->getNumber()
-            && $this->getDescription() == $account->getDescription()
-        );
     }
 
     /**
@@ -116,13 +81,5 @@ abstract class Account implements Attributable, Describable
     public function isEarning(): bool
     {
         return false;
-    }
-
-    /**
-     * Get account type identifier
-     */
-    public function getType(): string
-    {
-        return get_class($this);
     }
 }

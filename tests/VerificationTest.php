@@ -18,7 +18,7 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
                 $transactionA = $this->prophesizeTransaction()->reveal(),
                 $transactionB = $this->prophesizeTransaction()->reveal()
             ],
-            (new Verification)->addTransactions($transactionA, $transactionB)->getTransactions()
+            (new Verification)->addTransaction($transactionA)->addTransaction($transactionB)->getTransactions()
         );
     }
 
@@ -81,10 +81,10 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertCount(
             2,
-            (new Verification)->addTransactions(
-                $this->prophesizeTransaction()->reveal(),
-                $this->prophesizeTransaction()->reveal()
-            )->query()->transactions()->toArray()
+            (new Verification)
+                ->addTransaction($this->prophesizeTransaction()->reveal())
+                ->addTransaction($this->prophesizeTransaction()->reveal())
+                ->query()->transactions()->toArray()
         );
     }
 
@@ -123,7 +123,7 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
         $verification = new Verification;
 
         foreach ($amounts as $amount) {
-            $verification->addTransactions(
+            $verification->addTransaction(
                 $this->prophesizeTransaction($amount)->reveal()
             );
         }
@@ -139,7 +139,7 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(Exception\RuntimeException::CLASS);
         (new Verification)
-            ->addTransactions($this->prophesizeTransaction(new Amount('100'))->reveal())
+            ->addTransaction($this->prophesizeTransaction(new Amount('100'))->reveal())
             ->getMagnitude();
     }
 }

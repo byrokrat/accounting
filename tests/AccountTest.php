@@ -6,17 +6,15 @@ namespace byrokrat\accounting;
 
 class AccountTest extends \PHPUnit_Framework_TestCase
 {
-    use utils\InterfaceAssertionsTrait;
-
     public function testExceptionOnToSmallAccountNumber()
     {
-        $this->setExpectedException(Exception\InvalidArgumentException::CLASS);
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         new Account\Asset(999, '');
     }
 
     public function testExceptionOnToLargeAccountNumber()
     {
-        $this->setExpectedException(Exception\InvalidArgumentException::CLASS);
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         new Account\Asset(10000, '');
     }
 
@@ -68,67 +66,11 @@ class AccountTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function equalProvider()
-    {
-        return [
-            [new Account\Asset(1234, 'foo')],
-            [new Account\Debt(1234, 'foo')],
-            [new Account\Earning(1234, 'foo')],
-            [new Account\Cost(1234, 'foo')],
-        ];
-    }
-
-    /**
-     * @dataProvider equalProvider
-     */
-    public function testEquals(Account $account)
-    {
-        $this->assertTrue(
-            $account->equals(clone $account),
-            'Cloned accounts should be equal'
-        );
-    }
-
-    public function notEqualProvider()
-    {
-        return [
-            [new Account\Asset(1234, 'foo'), new Account\Asset(1235, 'foo')],
-            [new Account\Asset(1234, 'foo'), new Account\Asset(1234, 'bar')],
-            [new Account\Asset(1234, 'foo'), new Account\Debt(1234, 'foo')],
-            [new Account\Asset(1234, 'foo'), new Account\Earning(1234, 'foo')],
-            [new Account\Asset(1234, 'foo'), new Account\Cost(1234, 'foo')],
-        ];
-    }
-
-    /**
-     * @dataProvider notEqualProvider
-     */
-    public function testNotEquals(Account $left, Account $right)
-    {
-        $this->assertFalse(
-            $left->equals($right),
-            'Accounts should not be equal'
-        );
-    }
-
-    public function testAttributable()
-    {
-        $this->assertAttributable(new Account\Asset(1234, ''));
-    }
-
     public function testSetAttributesAtConstruct()
     {
         $this->assertSame(
             'bar',
             (new Account\Asset(1234, '', ['foo' => 'bar']))->getAttribute('foo')
-        );
-    }
-
-    public function testDescribable()
-    {
-        $this->assertDescribable(
-            '',
-            new Account\Debt(1234, '')
         );
     }
 }

@@ -36,7 +36,7 @@ use byrokrat\amount\Amount;
 /**
  * Simple verification value object wrapping a list of transactions
  */
-class Verification implements Attributable, Dateable, Describable, Signable, Queryable, \IteratorAggregate
+class Verification implements Attributable, Dateable, Describable, Queryable, Signable, \IteratorAggregate
 {
     use AttributableTrait, DateableTrait, DescribableTrait, SignableTrait;
 
@@ -116,14 +116,12 @@ class Verification implements Attributable, Dateable, Describable, Signable, Que
     }
 
     /**
-     * Add one ore more new transactions
+     * Add transaction to verifications
      */
-    public function addTransactions(Transaction ...$transactions): self
+    public function addTransaction(Transaction $transaction): self
     {
-        foreach ($transactions as $transaction) {
-            $this->transactions[] = $transaction;
-            $this->summary->addToSummary($transaction);
-        }
+        $this->transactions[] = $transaction;
+        $this->summary->addToSummary($transaction);
 
         return $this;
     }

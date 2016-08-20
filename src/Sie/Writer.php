@@ -47,7 +47,7 @@ class Writer
         $verification->getDate() < $settings->getAccountingYearFirstDay()
         || $verification->getDate() > $settings->getAccountingYearLastDay()
     ) {
-        throw new Exception\OutOfBoundsException("Verification date is outside of accounting year");
+        throw new Exception\RuntimeException("Verification date is outside of accounting year");
     }
      */
 

@@ -177,14 +177,14 @@ class SIE
     /**
      * Add verification to SIE, verification MUST be balanced
      *
-     * @throws Exception\UnexpectedValueException If $ver is unbalanced
-     * @throws Exception\OutOfBoundsException     If $ver date is out of bounds
+     * @throws Exception\RuntimeException If $ver is unbalanced
+     * @throws Exception\RuntimeException If $ver date is out of bounds
      */
     public function addVerification(Verification $ver): self
     {
         // Verify that verification is balanced
         if (!$ver->isBalanced()) {
-            throw new Exception\UnexpectedValueException("Verification {$ver->getDescription()} is not balanced");
+            throw new Exception\RuntimeException("Verification {$ver->getDescription()} is not balanced");
         }
 
         // Verify that verification date matches accounting year
@@ -192,7 +192,7 @@ class SIE
             $verdate = $ver->getDate();
             if ($verdate < $this->yearStart || $verdate > $this->yearStop) {
                 $date = $verdate->format('Y-m-d');
-                throw new Exception\OutOfBoundsException("Verification date $date is out of bounds");
+                throw new Exception\RuntimeException("Verification date $date is out of bounds");
             }
         }
 
@@ -338,7 +338,7 @@ class SIE
     /**
      * Create accounts from SIE string (in charset CP437)
      *
-     * @throws Exception\RangeException If $sie is not valid
+     * @throws Exception\RuntimeException If $sie is not valid
      * @return Account[] Array with the created acount objects
      */
     public function importChart(string $sie): array
@@ -354,7 +354,7 @@ class SIE
             switch ($data[0]) {
                 case '#KPTYP':
                     if (!isset($data[1])) {
-                        throw new Exception\RangeException("Invalid chart type at line $nr");
+                        throw new Exception\RuntimeException("Invalid chart type at line $nr");
                     }
                     // TODO not supported at the moment
                     // $accounts->setChartType($data[1]);
@@ -362,18 +362,18 @@ class SIE
                 case '#KONTO':
                     // Account must have form #KONTO number name
                     if (!isset($data[2])) {
-                        throw new Exception\RangeException("Invalid account values at line $nr");
+                        throw new Exception\RuntimeException("Invalid account values at line $nr");
                     }
                     $current = array($data[1], $data[2]);
                     break;
                 case '#KTYP':
                     // Account type must have form #KTYP number type
                     if (!isset($data[2])) {
-                        throw new Exception\RangeException("Invalid account values at line $nr");
+                        throw new Exception\RuntimeException("Invalid account values at line $nr");
                     }
                     // Type must referer to current account
                     if ($data[1] != $current[0]) {
-                        throw new Exception\RangeException("Unexpected account type at line $nr");
+                        throw new Exception\RuntimeException("Unexpected account type at line $nr");
                     }
 
                     switch ($data[2]) {
@@ -399,7 +399,7 @@ class SIE
 
         // There should be no half way processed accounts
         if (!empty($current)) {
-            throw new Exception\RangeException("Account type missing for '{$current[0]}'");
+            throw new Exception\RuntimeException("Account type missing for '{$current[0]}'");
         }
 
         return $accounts;

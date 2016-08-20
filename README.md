@@ -44,14 +44,15 @@ $accounts = new Query([
 // Create some verifications
 
 $verifications = new Query([
-    (new Verification)->setDescription('Verification text')->addTransactions(
-        new Transaction($accounts->findAccountFromNumber(1920), new SEK('100')),
-        new Transaction($accounts->findAccountFromNumber(3000), new SEK('-100'))
-    ),
-    (new Verification)->setDescription('Verification using account 1921')->addTransactions(
-        new Transaction($accounts->findAccountFromNumber(1921), new SEK('200')),
-        new Transaction($accounts->findAccountFromNumber(3000), new SEK('-200'))
-    )
+    (new Verification)
+        ->setDescription('Verification text')
+        ->addTransaction(new Transaction($accounts->findAccountFromNumber(1920), new SEK('100')))
+        ->addTransaction(new Transaction($accounts->findAccountFromNumber(3000), new SEK('-100')))
+    ,
+    (new Verification)
+        ->setDescription('Verification using account 1921')
+        ->addTransaction(new Transaction($accounts->findAccountFromNumber(1921), new SEK('200')))
+        ->addTransaction(new Transaction($accounts->findAccountFromNumber(3000), new SEK('-200')))
 ]);
 
 // Calculate account balances
@@ -89,17 +90,12 @@ use byrokrat\amount\Amount;
 echo (new Sie\Writer)->generate(
     (new Sie\Settings)->setTargetCompany('my-company'),
     new Query([
-        (new Verification)->addTransactions(
-            new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100')),
-            new Transaction(new Account\Earning(3000, 'Intänk'), new Amount('-100'))
-        )
+        (new Verification)
+            ->addTransaction(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100')))
+            ->addTransaction(new Transaction(new Account\Earning(3000, 'Intänk'), new Amount('-100')))
     ])
 );
 ```
-
-Todo
-----
-See TODO comments spread out in source.
 
 Credits
 -------

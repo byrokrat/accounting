@@ -6,6 +6,7 @@ namespace byrokrat\accounting\utils;
 
 use byrokrat\accounting\Account;
 use byrokrat\accounting\AccountFactory;
+use byrokrat\accounting\Dimension;
 use byrokrat\accounting\Interfaces;
 use byrokrat\accounting\Query;
 use byrokrat\accounting\Transaction;
@@ -39,22 +40,20 @@ trait PropheciesTrait
     /**
      * Create an Account prophecy
      *
-     * @param  integer $number Will be returned by getNumber()
-     * @param  string  $desc   Will be returned by getDescription()
-     * @param  bool    $equals Will be returned by equals()
-     * @param  array   $attr   Will be returned by getAttributes()
+     * @param integer $number Will be returned by getNumber()
+     * @param string  $desc   Will be returned by getDescription()
+     * @param array   $attr   Will be returned by getAttributes()
      */
     public function prophesizeAccount(
         int $number = 0,
         string $desc = '',
-        bool $equals = false,
         array $attr = []
     ): ObjectProphecy {
         $account = $this->prophesize(Account::CLASS);
         $account->getNumber()->willReturn($number);
         $account->getDescription()->willReturn($desc);
-        $account->equals(Argument::any())->willReturn($equals);
         $account->getAttributes()->willReturn($attr);
+        $account->query()->willReturn(new Query);
 
         return $account;
     }
@@ -65,6 +64,20 @@ trait PropheciesTrait
     public function prophesizeAmount(): ObjectProphecy
     {
         return $this->prophesize(Amount::CLASS);
+    }
+
+    /**
+     * Create dimension prophecy
+     *
+     * @param integer $number Will be returned by getNumber()
+     */
+    public function prophesizeDimension(int $number = 0): ObjectProphecy
+    {
+        $dim = $this->prophesize(Dimension::CLASS);
+        $dim->getNumber()->willReturn($number);
+        $dim->query()->willReturn(new Query);
+
+        return $dim;
     }
 
     /**

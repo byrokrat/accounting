@@ -24,6 +24,7 @@ namespace byrokrat\accounting;
 
 use byrokrat\accounting\Interfaces\Attributable;
 use byrokrat\accounting\Interfaces\Describable;
+use byrokrat\accounting\Interfaces\Queryable;
 use byrokrat\accounting\Interfaces\Traits\AttributableTrait;
 use byrokrat\accounting\Interfaces\Traits\DescribableTrait;
 use byrokrat\amount\Amount;
@@ -48,10 +49,13 @@ class Template implements Attributable, Describable
     /**
      * Set template values
      */
-    public function __construct(string $templateId, string $description)
+    public function __construct(string $templateId, string $description, array ...$transactions)
     {
         $this->templateId = $templateId;
         $this->setDescription($description);
+        foreach ($transactions as $transactionData) {
+            $this->addTransaction(...$transactionData);
+        }
     }
 
     /**
@@ -67,97 +71,105 @@ class Template implements Attributable, Describable
      *
      * Substitution variables with the form {var} can be used
      */
-    public function addRawTransaction(string $number, string $amount)
+    public function addTransaction(string $number, string $amount, string $quantity = '', array $dimensions = []): self
     {
-        $this->transactions[] = [$number, $amount];
+        $this->transactions[] = [$number, $amount, $quantity, $dimensions];
+
+        return $this;
     }
 
     /**
-     * Get loaded transaction data
+     * Create verification from template data
      *
-     * @return array
+     * @param string[]  $translationMap Substitution key-value-pairs
+     * @param Queryable $container      Queryable object containing account data
+     *
+     * @throws Exception\RuntimeException If any key is NOT translated
      */
-    public function getRawTransactions(): array
+    public function build(array $translationMap, Queryable $container): Verification
     {
-        return $this->transactions;
-    }
+        $container = $container->query();
+        $filter = $this->createTranslationFilter($translationMap);
 
-    /**
-     * Substitute template variables in verification description and transactions
-     *
-     * @param string[] $values Substitution key-value-pairs
-     */
-    public function substitute(array $values)
-    {
-        // Create map of substitution keys
-        $keys = array_map(
-            function ($val) {
-                return '{' . $val . '}';
-            },
-            array_keys($values)
+        $ver = (new Verification)->setDescription(
+            $filter($this->getDescription())
         );
 
-        // Substitute terms in verification description
-        $this->setDescription(trim(str_replace($keys, $values, $this->getDescription())));
-
-        // Substitue terms in transactions
-        $this->transactions = array_map(
-            function ($data) use ($keys, $values) {
-                $data[0] = trim(str_replace($keys, $values, $data[0]));
-                $data[1] = trim(str_replace($keys, $values, $data[1]));
-                return $data;
-            },
-            $this->transactions
-        );
-    }
-
-    /**
-     * Get an array of all unsubstituted template keys
-     */
-    public function getUnsubstitutedKeys(): array
-    {
-        $keys = [];
-
-        foreach ($this->getRawTransactions() as $transactionData) {
-            foreach ($transactionData as $key) {
-                if (preg_match("/\{[^}]*\}/", $key)) {
-                    $keys[] = $key;
-                }
-            }
-        }
-
-        return $keys;
-    }
-
-    /**
-     * Create verification from template
-     *
-     * @param  Query $accounts Query object containing account data
-     * @throws Exception\UnexpectedValueException If any key is NOT substituted
-     */
-    public function buildVerification(Query $accounts): Verification
-    {
-        if ($keys = $this->getUnsubstitutedKeys()) {
-            throw new Exception\UnexpectedValueException(
-                'Unable to substitute template key(s): ' . implode(', ', $keys)
+        foreach ($this->transactions as list($number, $amount, $quantity, $dimensions)) {
+            $dimensions = array_map(
+                function ($number) use ($container, $filter) {
+                    return $container->findDimensionFromNumber(intval($filter($number)));
+                },
+                $dimensions
             );
-        }
 
-        $ver = (new Verification)->setDescription($this->getDescription());
-
-        foreach ($this->getRawTransactions() as list($number, $amount)) {
-            $ver->addTransactions(
+            $ver->addTransaction(
                 new Transaction(
-                    $accounts->findAccountFromNumber(intval($number)),
-                    new Amount($amount)
+                    $container->findAccountFromNumber(intval($filter($number))),
+                    new Amount($filter($amount)),
+                    intval($filter($quantity)),
+                    ...$dimensions
                 )
             );
         }
 
         foreach ($this->getAttributes() as $name => $value) {
-            $ver->setAttribute($name, $value);
+            $ver->setAttribute(
+                $filter($name),
+                $filter($value)
+            );
         }
 
         return $ver;
+    }
+
+    /**
+     * Create translation callable for values in $map
+     */
+    private function createTranslationFilter(array $map): callable
+    {
+        return new class($map) {
+            private $map;
+
+            public function __construct(array $map)
+            {
+                $this->map = array_combine(
+                    array_map(
+                        function ($key) {
+                            return '{' . $key . '}';
+                        },
+                        array_keys($map)
+                    ),
+                    $map
+                );
+            }
+
+            public function __invoke(string $value): string
+            {
+                return $this->validate(
+                    $this->translate($value)
+                );
+            }
+
+            private function translate(string $value): string
+            {
+                return trim(
+                    str_replace(
+                        array_keys($this->map),
+                        $this->map,
+                        $value
+                    )
+                );
+            }
+
+            private function validate(string $value): string
+            {
+                if (preg_match("/\{[^}]*\}/", $value)) {
+                    throw new Exception\RuntimeException("Unable to substitute template key: $value");
+                }
+
+                return $value;
+            }
+        };
     }
 }

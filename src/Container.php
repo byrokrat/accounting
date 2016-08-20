@@ -47,11 +47,11 @@ class Container implements Attributable, Queryable, \IteratorAggregate
     }
 
     /**
-     * Add additional items
+     * Add additional item
      */
-    public function addItems(...$items): self
+    public function addItem($item): self
     {
-        $this->items = array_merge($this->items, $items);
+        $this->items[] = $item;
 
         return $this;
     }
