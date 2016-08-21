@@ -9,7 +9,7 @@
  *
  * byrokrat/accounting is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -19,6 +19,9 @@
  */
 
 namespace byrokrat\accounting\Sie4;
+
+use byrokrat\accounting\Verification;
+use byrokrat\accounting\Transaction;
 
 /**
  * Grammar for generating a SIE version 4 compliant parser using scato/phpeg
@@ -87,21 +90,22 @@ grammar Grammar
         $this->onSru($account, $sru);
     };
 
-    DIM_POST = ROW_START 'DIM' dim:INTEGER name:STRING ROW_END {
-        // TODO implement #DIM
+    DIM_POST = ROW_START 'DIM' dim:INTEGER desc:STRING ROW_END {
+        $this->onDim($dim, $desc);
     };
 
-    UNDERDIM_POST = ROW_START 'UNDERDIM' dim:INTEGER name:STRING superdim:INTEGER ROW_END {
-        // TODO implement #UNDERDIM
+    UNDERDIM_POST = ROW_START 'UNDERDIM' dim:INTEGER desc:STRING superdim:INTEGER ROW_END {
+        $this->onUnderdim($dim, $desc, $superdim);
     };
 
-    OBJEKT_POST = ROW_START 'OBJEKT' dim:INTEGER obj:INTEGER name:STRING ROW_END {
-        // TODO implement #OBJEKT
+    OBJEKT_POST = ROW_START 'OBJEKT' dim:INTEGER obj:INTEGER desc:STRING ROW_END {
+        $this->onObjekt($dim, $obj, $desc);
     };
 
     // Posts defining balances and verifications
 
     BALANCE_POST = IB_POST
+        / OIB_POST
         / VER_POST
         / IGNORED_ROW;
 
@@ -109,21 +113,76 @@ grammar Grammar
         $this->onIb($year, $account, $balance, $quantity ?: 0);
     };
 
-    TRANS_POST = ROW_START 'TRANS' ROW_END {
-        // TODO implement #TRANS kontonr {objektlista} belopp transdat transtext kvantitet sign (some optional...)
-        // TODO also implement #RTRANS and #BTRANS
-        // TODO create transaction object
+    OIB_POST = ROW_START 'OIB' year:INTEGER account:ACCOUNT objects:OBJECT_LIST balance:AMOUNT quantity:INTEGER? ROW_END {
+        $this->onOib($year, $account, $objects, $balance, $quantity ?: 0);
+    };
+
+    /*
+        TODO http://www.sie.se/?page_id=125
+            klicka på programnamnen för att komma till vyer där jag kan ladda ner filer från andra godkända program
+            dessa filer borde jag kunna parsa, samt även kunna skriva i liknande lydelse...
+     */
+
+    // TODO also implement #RTRANS and #BTRANS
+    TRANS_POST = ROW_START 'TRANS' account:ACCOUNT objects:OBJECT_LIST amount:AMOUNT date:DATE? desc:STRING? quantity:INTEGER? signature:STRING? ROW_END {
+        // TODO lyft ut till helper $this->createTransaction(...), eller onTrans ?
+
+        $transaction = new Transaction($account, $amount, $quantity ?: 0, ...$objects);
+
+        if ($date) {
+            $transaction->setDate($date);
+        }
+
+        if ($desc) {
+            $transaction->setDescription($desc);
+        }
+
+        if ($signature) {
+            $transaction->setSignature($signature);
+        }
+
+        return $transaction;
     };
 
     VER_POST = ver:VER_ROW SUBENTRY_START trans:(TRANS_POST / IGNORED_ROW)* SUBENTRY_END {
-        // TODO hur säkerställa att IGNORED_ROW inte returnerar någonting??
-            // returnerar void så det borde gå att trimma alla void från arrayen $trans
+        // TODO lyft ut till helper $this->onVer(...)
+
+        foreach ($trans as $transaction) {
+            if (!$transaction instanceof Transaction) {
+                continue;
+            }
+
+            if (!$transaction->hasDate()) {
+                $transaction->setDate($ver->getDate());
+            }
+
+            $ver->addTransaction($transaction);
+        }
+
         $ver->addTransaction(...$trans);
+
+        // TODO kontrolera att verifikation är balanserad...
     };
 
-    VER_ROW = ROW_START 'VER' ROW_END {
-        // TODO implement #VER serie vernr verdatum vertext regdatum sign (some optional...)
-        // TODO create verification object
+    VER_ROW = ROW_START 'VER' series:STRING number:INTEGER date:DATE desc:STRING? regdate:DATE? sign:STRING? ROW_END {
+        // TODO Ver ska inte hålla koll på serie
+            // om jag flyttar upp allt detta till VER_POST så kan jag i helper hålla koll på om där finns olika serier...
+
+        $verification = (new Verification)->setNumber($number)->setDate($date);
+
+        if ($desc) {
+            $verification->setDescription($desc);
+        }
+
+        if ($regdate) {
+            $verification->setRegistrationDate($regdate);
+        }
+
+        if ($sign) {
+            $verification->setSignature($sign);
+        }
+
+        return $verification;
     };
 
     //
@@ -199,7 +258,7 @@ grammar Grammar
     };
 
     RAW_DATE = year:([0-9] [0-9] [0-9] [0-9]) month:([0-9] [0-9])? day:([0-9] [0-9])? {
-        return new \DateTime(
+        return new \DateTimeImmutable(
             implode($year)
             . (implode((array)$month) ?: '01')
             . (implode((array)$day) ?: '01')
@@ -224,6 +283,16 @@ grammar Grammar
 
     ACCOUNT = number:INTEGER {
         return $this->getAccount($number);
+    };
+
+    // Object
+
+    OBJECT = super:INTEGER number:INTEGER {
+        return $this->getObject($super, $number);
+    };
+
+    OBJECT_LIST = _ '{' objects:OBJECT* '}' _ {
+        return $objects;
     };
 
     // Integer

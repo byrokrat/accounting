@@ -8,7 +8,7 @@ use byrokrat\accounting\utils\PropheciesTrait;
 use byrokrat\amount\Currency;
 
 /**
- * @covers byrokrat\accounting\Sie4\Helper\CurrencyHelper
+ * @covers \byrokrat\accounting\Sie4\Helper\CurrencyHelper
  */
 class CurrencyHelperTest extends \PHPUnit_Framework_TestCase
 {

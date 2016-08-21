@@ -9,7 +9,7 @@
  *
  * byrokrat/accounting is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -24,6 +24,7 @@ namespace byrokrat\accounting\Sie4;
 
 use byrokrat\accounting\Account;
 use byrokrat\accounting\AccountFactory;
+use byrokrat\accounting\Dimension;
 use byrokrat\amount\Currency;
 
 /**
@@ -31,7 +32,7 @@ use byrokrat\amount\Currency;
  */
 class Parser extends Grammar
 {
-    use Helper\AccountHelper, Helper\CurrencyHelper, Helper\ErrorHelper;
+    use Helper\AccountHelper, Helper\CurrencyHelper, Helper\DimensionHelper, Helper\ErrorHelper;
 
     /**
      * Set factory to use when creating account objects
@@ -55,7 +56,7 @@ class Parser extends Grammar
     }
 
     /**
-     * Called when an #FLAGGA row is encountered
+     * Called when a #FLAGGA row is encountered
      *
      * @param  boolean $flag
      * @return void
@@ -83,14 +84,14 @@ class Parser extends Grammar
      * @param  DateTime $date
      * @return void
      */
-    public function onOmfattn(\DateTime $date)
+    public function onOmfattn(\DateTimeImmutable $date)
     {
     }
 
     /**
-     * Called when an #SIETYP row is encountered
+     * Called when a #SIETYP row is encountered
      *
-     * @param  int   $ver The SIE version the parsed file targets
+     * @param  int $ver The SIE version the parsed file targets
      * @return void
      */
     public function onSietyp(int $ver)
@@ -102,11 +103,25 @@ class Parser extends Grammar
      *
      * @param  int      $year     0 means current year, -1 preavious, and so on..
      * @param  Account  $account  Account balance is specified for
-     * @param  Currency $balance  Te incoming balance
+     * @param  Currency $balance  The incoming balance
      * @param  integer  $quantity Quantity if registered for account
      * @return void
      */
     public function onIb(int $year, Account $account, Currency $balance, int $quantity = 0)
+    {
+    }
+
+    /**
+     * Called when an #OIB row is encountered
+     *
+     * @param  int         $year     0 means current year, -1 preavious, and so on..
+     * @param  Account     $account  Account balance is specified for
+     * @param  Dimension[] $objects  Accounting objects balance is specified for
+     * @param  Currency    $balance  The incoming balance
+     * @param  integer     $quantity Quantity if registered for account
+     * @return void
+     */
+    public function onOib(int $year, Account $account, array $objects, Currency $balance, int $quantity = 0)
     {
     }
 }

@@ -9,7 +9,7 @@
  *
  * byrokrat/accounting is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -33,7 +33,7 @@ trait AccountHelper
     /**
      * @var string[] Map of account type identifier to class name
      */
-    private $accountTypeMap = [
+    private static $accountTypeMap = [
         'T' => Account\Asset::CLASS,
         'S' => Account\Debt::CLASS,
         'K' => Account\Cost::CLASS,
@@ -52,9 +52,6 @@ trait AccountHelper
 
     /**
      * Called when a recoverable runtime error occurs
-     *
-     * @param  string $message A message describing the error
-     * @return void
      */
     abstract public function registerError(string $message);
 
@@ -67,7 +64,7 @@ trait AccountHelper
     }
 
     /**
-     * Called when an #KONTO post is encountered
+     * Called when a #KONTO post is encountered
      *
      * @param  integer $number      Number of account
      * @param  string  $description Free text description of account
@@ -79,7 +76,7 @@ trait AccountHelper
     }
 
     /**
-     * Called when an #KTYP post is encountered
+     * Called when a #KTYP post is encountered
      *
      * @param  integer $number  Number of account
      * @param  string  $type    Type of account (T, S, I or K)
@@ -87,12 +84,12 @@ trait AccountHelper
      */
     public function onKtyp(int $number, string $type): Account
     {
-        if (!isset($this->accountTypeMap[$type])) {
+        if (!isset(self::$accountTypeMap[$type])) {
             $this->registerError("Unknown type $type for account number $number");
             return $this->getAccount($number);
         }
 
-        return $this->accounts[$number] = new $this->accountTypeMap[$type](
+        return $this->accounts[$number] = new self::$accountTypeMap[$type](
             $number,
             $this->getAccount($number)->getDescription(),
             $this->getAccount($number)->getAttributes()
@@ -100,7 +97,7 @@ trait AccountHelper
     }
 
     /**
-     * Called when an #ENHET post is encountered
+     * Called when a #ENHET post is encountered
      */
     public function onEnhet(int $account, string $unit)
     {
@@ -108,7 +105,7 @@ trait AccountHelper
     }
 
     /**
-     * Called when an #SRU post is encountered
+     * Called when a #SRU post is encountered
      */
     public function onSru(int $account, int $sru)
     {
@@ -120,10 +117,12 @@ trait AccountHelper
      */
     public function getAccount(int $number): Account
     {
-        if (!isset($this->accounts[$number])) {
-            $this->onKonto($number, 'UNSPECIFIED');
+        if (isset($this->accounts[$number])) {
+            return $this->accounts[$number];
         }
 
-        return $this->accounts[$number];
+        $this->registerError("Account number $number not defined");
+
+        return $this->onKonto($number, 'UNSPECIFIED');
     }
 }

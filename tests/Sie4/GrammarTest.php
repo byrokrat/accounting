@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\Sie4;
 
 use byrokrat\accounting\Account;
+use byrokrat\accounting\Dimension;
 use byrokrat\amount\Currency\SEK;
 
 /**
@@ -12,7 +13,7 @@ use byrokrat\amount\Currency\SEK;
  *
  * Referenced rules are from the SIE specs dated 2008-09-30
  *
- * @covers byrokrat\accounting\Sie4\Grammar
+ * @covers \byrokrat\accounting\Sie4\Grammar
  */
 class GrammarTest extends \PHPUnit_Framework_TestCase
 {
@@ -336,6 +337,33 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testOnDim()
+    {
+        $this->assertParser(
+            'onDim',
+            [10, 'description'],
+            $this->buildContent('#DIM 10 "description"')
+        );
+    }
+
+    public function testOnUnderdim()
+    {
+        $this->assertParser(
+            'onUnderdim',
+            [10, 'description', 20],
+            $this->buildContent('#UNDERDIM 10 "description" 20')
+        );
+    }
+
+    public function testOnObjekt()
+    {
+        $this->assertParser(
+            'onObjekt',
+            [10, 20, 'description'],
+            $this->buildContent('#OBJEKT 10 20 "description"')
+        );
+    }
+
     /**
      * @dataProvider validMoneyProvider
      */
@@ -361,4 +389,72 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     }
 
     // TODO test for rule 7.3 is missing
+
+    /**
+     * Valid object list representations according to rule 8.21
+     */
+    public function validObjectListProvider()
+    {
+        return [
+            ['{}', []],
+            [
+                '{20 30}',
+                [new Dimension(30, 'UNSPECIFIED', new Dimension(20, 'UNSPECIFIED'))]
+            ],
+            [
+                '{20 "30"}',
+                [new Dimension(30, 'UNSPECIFIED', new Dimension(20, 'UNSPECIFIED'))]
+            ],
+            [
+                '{"20" "30"}',
+                [new Dimension(30, 'UNSPECIFIED', new Dimension(20, 'UNSPECIFIED'))]
+            ],
+            [
+                '{20 "30" 20 "40"}',
+                [
+                    new Dimension(30, 'UNSPECIFIED', new Dimension(20, 'UNSPECIFIED')),
+                    new Dimension(40, 'UNSPECIFIED', new Dimension(20, 'UNSPECIFIED'))
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider validObjectListProvider
+     */
+    public function testOnOib(string $raw, array $objects)
+    {
+        $this->assertParser(
+            'onOib',
+            [0, new Account\Asset(1920, 'UNSPECIFIED'), $objects, new SEK('0'), 0],
+            $this->buildContent("#OIB 0 1920 $raw 0 0")
+        );
+    }
+
+    public function testCreateAndReadDimension()
+    {
+        $expectedDim = new Dimension(
+            22,
+            'object',
+            new Dimension(
+                21,
+                'child',
+                new Dimension(
+                    20,
+                    'parent'
+                )
+            )
+        );
+
+        $this->assertParser(
+            'onOib',
+            [0, new Account\Asset(1920, 'UNSPECIFIED'), [$expectedDim], new SEK('0'), 0],
+            $this->buildContent(
+                '#DIM 20 "parent"',
+                '#UNDERDIM 21 "child" 20',
+                '#OBJEKT 21 22 "object"',
+                '#OIB 0 1920 {21 22} 0 0'
+            )
+        );
+    }
 }

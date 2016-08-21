@@ -9,7 +9,7 @@
  *
  * byrokrat/accounting is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -36,9 +36,6 @@ trait CurrencyHelper
 
     /**
      * Called when a recoverable runtime error occurs
-     *
-     * @param  string $message A message describing the error
-     * @return void
      */
     abstract public function registerError(string $message);
 

@@ -8,7 +8,7 @@ use byrokrat\accounting\utils\PropheciesTrait;
 use byrokrat\accounting\Account;
 
 /**
- * @covers byrokrat\accounting\Sie4\Helper\AccountHelper
+ * @covers \byrokrat\accounting\Sie4\Helper\AccountHelper
  */
 class AccountHelperTest extends \PHPUnit_Framework_TestCase
 {
@@ -120,9 +120,9 @@ class AccountHelperTest extends \PHPUnit_Framework_TestCase
 
     public function testSetUnvalidAccountType()
     {
-        $this->accountHelper->expects($this->once())
+        $this->accountHelper->expects($this->exactly(2))
             ->method('registerError')
-            ->with($this->equalTo('Unknown type not-a-valid-account-type-identifier for account number 1234'));
+            ->with($this->anything());
 
         $originalAccount = $this->accountHelper->getAccount(1234);
         $newAccount = $this->accountHelper->onKtyp(1234, 'not-a-valid-account-type-identifier');
