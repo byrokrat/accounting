@@ -121,7 +121,7 @@ class AccountHelperTest extends \PHPUnit_Framework_TestCase
     public function testSetUnvalidAccountType()
     {
         $this->accountHelper->expects($this->exactly(2))
-            ->method('registerError')
+            ->method('registerWarning')
             ->with($this->anything());
 
         $originalAccount = $this->accountHelper->getAccount(1234);

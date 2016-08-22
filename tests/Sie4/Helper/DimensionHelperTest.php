@@ -65,7 +65,7 @@ class DimensionHelperTest extends \PHPUnit_Framework_TestCase
     public function testGetUnspecifiedObject()
     {
         $this->dimensionHelper->expects($this->atLeastOnce())
-            ->method('registerError')
+            ->method('registerWarning')
             ->with($this->anything());
 
         $this->assertSame(
@@ -77,7 +77,7 @@ class DimensionHelperTest extends \PHPUnit_Framework_TestCase
     public function testGetUnspecifiedDimension()
     {
         $this->dimensionHelper->expects($this->atLeastOnce())
-            ->method('registerError')
+            ->method('registerWarning')
             ->with($this->anything());
 
         $this->assertSame(
@@ -89,7 +89,7 @@ class DimensionHelperTest extends \PHPUnit_Framework_TestCase
     public function testGetUnspecifiedReservedDimension()
     {
         $this->dimensionHelper->expects($this->atLeastOnce())
-            ->method('registerError')
+            ->method('registerWarning')
             ->with($this->anything());
 
         $this->assertSame(
@@ -101,7 +101,7 @@ class DimensionHelperTest extends \PHPUnit_Framework_TestCase
     public function testGetUnspecifiedReservedCostDimension()
     {
         $this->dimensionHelper->expects($this->atLeastOnce())
-            ->method('registerError')
+            ->method('registerWarning')
             ->with($this->anything());
 
         $dim = $this->dimensionHelper->getDimension(2);

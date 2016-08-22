@@ -35,9 +35,9 @@ trait CurrencyHelper
     private $currencyClassname = 'byrokrat\\amount\\Currency\\SEK';
 
     /**
-     * Called when a recoverable runtime error occurs
+     * Called when a recoverable runtime warning occurs
      */
-    abstract public function registerError(string $message);
+    abstract public function registerWarning(string $message);
 
     /**
      * Called when a currency is definied using #VALUTA
@@ -50,7 +50,7 @@ trait CurrencyHelper
         $currencyClassname = "byrokrat\\amount\\Currency\\$currency";
 
         if (!class_exists($currencyClassname)) {
-            return $this->registerError("Unknown currency $currency");
+            return $this->registerWarning("Unknown currency $currency");
         }
 
         $this->currencyClassname = $currencyClassname;

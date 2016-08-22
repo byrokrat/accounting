@@ -47,9 +47,9 @@ trait DimensionHelper
     private $dims = [];
 
     /**
-     * Called when a recoverable runtime error occurs
+     * Called when a recoverable runtime warning occurs
      */
-    abstract public function registerError(string $message);
+    abstract public function registerWarning(string $message);
 
     /**
      * Called when a #DIM post is encountered
@@ -87,7 +87,7 @@ trait DimensionHelper
             return $this->dims[$number];
         }
 
-        $this->registerError("Dimension number $number not defined");
+        $this->registerWarning("Dimension number $number not defined");
 
         if (2 === $number) {
             return $this->dims[2] = new Dimension(2, 'Kostnadsbärare', $this->getDimension(1));
@@ -108,7 +108,7 @@ trait DimensionHelper
             return $this->dims["$super.$number"];
         }
 
-        $this->registerError("Object number $super.$number not defined");
+        $this->registerWarning("Object number $super.$number not defined");
 
         return $this->onObjekt($super, $number, 'UNSPECIFIED');
     }

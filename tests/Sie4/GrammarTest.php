@@ -6,6 +6,7 @@ namespace byrokrat\accounting\Sie4;
 
 use byrokrat\accounting\Account;
 use byrokrat\accounting\Dimension;
+use byrokrat\accounting\Exception;
 use byrokrat\amount\Currency\SEK;
 
 /**
@@ -30,6 +31,8 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
             ->method($method)
             ->with(...$args);
 
+        $parser->setErrorLevel(E_ERROR);
+
         $parser->parse($source);
     }
 
@@ -46,7 +49,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
      */
     public function testLabelRequired()
     {
-        $this->setExpectedException(\InvalidArgumentException::CLASS);
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         (new Parser)->parse(
             $this->buildContent("this is not a label")
         );
@@ -168,7 +171,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidCharacters($char)
     {
-        $this->setExpectedException(\InvalidArgumentException::CLASS);
+        $this->setExpectedException(Exception\RuntimeException::CLASS);
         (new Parser)->parse(
             $this->buildContent("#FOO \"bar{$char}baz\"")
         );

@@ -43,7 +43,9 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
         try {
             self::$parser->parse($content);
         } catch (\Exception $e) {
-            $this->fail("Parsing >$filename< failed with exception >{$e->getMessage()}<");
+            $this->fail("[$filename] {$e->getMessage()}");
         }
+
+        $this->assertEmpty(self::$parser->getErrors());
     }
 }

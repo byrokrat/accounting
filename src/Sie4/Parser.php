@@ -43,16 +43,23 @@ class Parser extends Grammar
     }
 
     /**
-     * Called when an unknown row is encountered
+     * Parse SIE content
      *
-     * @param  string   $label Row label
-     * @param  string[] $vars  Row variables
+     * @param  string $content Raw SIE content to parse
      * @return void
+     * @api    This is the main access point for parsing Sie4 data
      */
-    public function onUnknown(string $label, array $vars)
+    public function parse($content)
     {
-        // TODO Move to ErrorHelper?
-        $this->registerError("Encountered unknown statement $label " . implode(' ', $vars));
+        $this->resetErrorState();
+
+        try {
+            parent::parse($content);
+        } catch (\Exception $e) {
+            $this->registerError($e->getMessage());
+        }
+
+        $this->validateErrorState();
     }
 
     /**

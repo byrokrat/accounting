@@ -181,7 +181,7 @@ grammar Grammar
 
     IGNORED_ROW = UNKNOWN_POST / EMPTY_LINE;
 
-    UNKNOWN_POST = ROW_START !VALID_LABEL label:VALID_CHARS vars:STRING+ EOL {
+    UNKNOWN_POST = ROW_START !VALID_LABEL label:VALID_CHARS ^ vars:STRING* EOL {
         $this->onUnknown($label, $vars);
     };
 

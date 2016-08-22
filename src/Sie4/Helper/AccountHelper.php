@@ -51,9 +51,9 @@ trait AccountHelper
     private $factory;
 
     /**
-     * Called when a recoverable runtime error occurs
+     * Called when a recoverable runtime warning occurs
      */
-    abstract public function registerError(string $message);
+    abstract public function registerWarning(string $message);
 
     /**
      * Set factory to use when creating account objects
@@ -85,7 +85,7 @@ trait AccountHelper
     public function onKtyp(int $number, string $type): Account
     {
         if (!isset(self::$accountTypeMap[$type])) {
-            $this->registerError("Unknown type $type for account number $number");
+            $this->registerWarning("Unknown type $type for account number $number");
             return $this->getAccount($number);
         }
 
@@ -121,7 +121,7 @@ trait AccountHelper
             return $this->accounts[$number];
         }
 
-        $this->registerError("Account number $number not defined");
+        $this->registerWarning("Account number $number not defined");
 
         return $this->onKonto($number, 'UNSPECIFIED');
     }

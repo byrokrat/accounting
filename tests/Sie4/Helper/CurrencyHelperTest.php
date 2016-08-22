@@ -38,7 +38,7 @@ class CurrencyHelperTest extends \PHPUnit_Framework_TestCase
         $currencyHelper = $this->getMockForTrait(CurrencyHelper::CLASS);
 
         $currencyHelper->expects($this->once())
-            ->method('registerError')
+            ->method('registerWarning')
             ->with($this->equalTo('Unknown currency not-a-valid-currency'));
 
         $currencyHelper->onValuta('not-a-valid-currency');
