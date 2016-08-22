@@ -31,11 +31,9 @@ use byrokrat\accounting\Transaction;
  */
 grammar Grammar
 {
-    // TODO check out the phpeg documentation on error reporting!
-
     start FILE = EMPTY_LINE* FLAGGA_POST IDENTIFICATION_POST* ACCOUNT_PLAN_POST* BALANCE_POST*;
 
-    FLAGGA_POST = ROW_START 'FLAGGA' flag:BOOLEAN ROW_END {
+    FLAGGA_POST = ROW_START 'FLAGGA' ^ flag:BOOLEAN ROW_END {
         $this->onFlagga($flag);
     };
 
@@ -47,19 +45,19 @@ grammar Grammar
         / VALUTA_POST
         / IGNORED_ROW;
 
-    ADRESS_POST = ROW_START 'ADRESS' contact:STRING address:STRING location:STRING phone:STRING ROW_END {
+    ADRESS_POST = ROW_START 'ADRESS' ^ contact:STRING address:STRING location:STRING phone:STRING ROW_END {
         $this->onAdress((string)$contact, (string)$address, (string)$location, (string)$phone);
     };
 
-    OMFATTN_POST = ROW_START 'OMFATTN' date:DATE ROW_END {
+    OMFATTN_POST = ROW_START 'OMFATTN' ^ date:DATE ROW_END {
         $this->onOmfattn($date);
     };
 
-    SIETYP_POST = ROW_START 'SIETYP' ver:INTEGER ROW_END {
+    SIETYP_POST = ROW_START 'SIETYP' ^ ver:INTEGER ROW_END {
         $this->onSietyp($ver);
     };
 
-    VALUTA_POST = ROW_START 'VALUTA' currency:STRING ROW_END {
+    VALUTA_POST = ROW_START 'VALUTA' ^ currency:STRING ROW_END {
         $this->onValuta($currency);
     };
 
@@ -74,31 +72,31 @@ grammar Grammar
         / OBJEKT_POST
         / IGNORED_ROW;
 
-    KONTO_POST = ROW_START 'KONTO' number:INTEGER description:STRING ROW_END {
+    KONTO_POST = ROW_START 'KONTO' ^ number:INTEGER description:STRING ROW_END {
         $this->onKonto($number, $description);
     };
 
-    KTYP_POST = ROW_START 'KTYP' number:INTEGER type:STRING ROW_END {
+    KTYP_POST = ROW_START 'KTYP' ^ number:INTEGER type:STRING ROW_END {
         $this->onKtyp($number, $type);
     };
 
-    ENHET_POST = ROW_START 'ENHET' account:INTEGER unit:STRING ROW_END {
+    ENHET_POST = ROW_START 'ENHET' ^ account:INTEGER unit:STRING ROW_END {
         $this->onEnhet($account, $unit);
     };
 
-    SRU_POST = ROW_START 'SRU' account:INTEGER sru:INTEGER ROW_END {
+    SRU_POST = ROW_START 'SRU' ^ account:INTEGER sru:INTEGER ROW_END {
         $this->onSru($account, $sru);
     };
 
-    DIM_POST = ROW_START 'DIM' dim:INTEGER desc:STRING ROW_END {
+    DIM_POST = ROW_START 'DIM' ^ dim:INTEGER desc:STRING ROW_END {
         $this->onDim($dim, $desc);
     };
 
-    UNDERDIM_POST = ROW_START 'UNDERDIM' dim:INTEGER desc:STRING superdim:INTEGER ROW_END {
+    UNDERDIM_POST = ROW_START 'UNDERDIM' ^ dim:INTEGER desc:STRING superdim:INTEGER ROW_END {
         $this->onUnderdim($dim, $desc, $superdim);
     };
 
-    OBJEKT_POST = ROW_START 'OBJEKT' dim:INTEGER obj:INTEGER desc:STRING ROW_END {
+    OBJEKT_POST = ROW_START 'OBJEKT' ^ dim:INTEGER obj:INTEGER desc:STRING ROW_END {
         $this->onObjekt($dim, $obj, $desc);
     };
 
@@ -109,11 +107,11 @@ grammar Grammar
         / VER_POST
         / IGNORED_ROW;
 
-    IB_POST = ROW_START 'IB' year:INTEGER account:ACCOUNT balance:AMOUNT quantity:INTEGER? ROW_END {
+    IB_POST = ROW_START 'IB' ^ year:INTEGER account:ACCOUNT balance:AMOUNT quantity:INTEGER? ROW_END {
         $this->onIb($year, $account, $balance, $quantity ?: 0);
     };
 
-    OIB_POST = ROW_START 'OIB' year:INTEGER account:ACCOUNT objects:OBJECT_LIST balance:AMOUNT quantity:INTEGER? ROW_END {
+    OIB_POST = ROW_START 'OIB' ^ year:INTEGER account:ACCOUNT objects:OBJECT_LIST balance:AMOUNT quantity:INTEGER? ROW_END {
         $this->onOib($year, $account, $objects, $balance, $quantity ?: 0);
     };
 
@@ -124,7 +122,7 @@ grammar Grammar
      */
 
     // TODO also implement #RTRANS and #BTRANS
-    TRANS_POST = ROW_START 'TRANS' account:ACCOUNT objects:OBJECT_LIST amount:AMOUNT date:DATE? desc:STRING? quantity:INTEGER? signature:STRING? ROW_END {
+    TRANS_POST = ROW_START 'TRANS' ^ account:ACCOUNT objects:OBJECT_LIST amount:AMOUNT date:DATE? desc:STRING? quantity:INTEGER? signature:STRING? ROW_END {
         // TODO lyft ut till helper $this->createTransaction(...), eller onTrans ?
 
         $transaction = new Transaction($account, $amount, $quantity ?: 0, ...$objects);
@@ -159,12 +157,10 @@ grammar Grammar
             $ver->addTransaction($transaction);
         }
 
-        $ver->addTransaction(...$trans);
-
         // TODO kontrolera att verifikation är balanserad...
     };
 
-    VER_ROW = ROW_START 'VER' series:STRING number:INTEGER date:DATE desc:STRING? regdate:DATE? sign:STRING? ROW_END {
+    VER_ROW = ROW_START 'VER' ^ series:STRING number:INTEGER date:DATE desc:STRING? regdate:DATE? sign:STRING? ROW_END {
         // TODO Ver ska inte hålla koll på serie
             // om jag flyttar upp allt detta till VER_POST så kan jag i helper hålla koll på om där finns olika serier...
 
