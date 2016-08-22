@@ -27,7 +27,7 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
     public function filesProvider()
     {
         foreach (new \DirectoryIterator(__DIR__ . '/files') as $fileInfo) {
-            if($fileInfo->isDot()) {
+            if ($fileInfo->isDot()) {
                 continue;
             }
 
