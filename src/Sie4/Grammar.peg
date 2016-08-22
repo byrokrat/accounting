@@ -115,12 +115,6 @@ grammar Grammar
         $this->onOib($year, $account, $objects, $balance, $quantity ?: 0);
     };
 
-    /*
-        TODO http://www.sie.se/?page_id=125
-            klicka på programnamnen för att komma till vyer där jag kan ladda ner filer från andra godkända program
-            dessa filer borde jag kunna parsa, samt även kunna skriva i liknande lydelse...
-     */
-
     // TODO also implement #RTRANS and #BTRANS
     TRANS_POST = ROW_START 'TRANS' ^ account:ACCOUNT objects:OBJECT_LIST amount:AMOUNT date:DATE? desc:STRING? quantity:INTEGER? signature:STRING? ROW_END {
         // TODO lyft ut till helper $this->createTransaction(...), eller onTrans ?
