@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\Sie4;
 
 use byrokrat\accounting\Account;
+use byrokrat\accounting\Container;
 use byrokrat\accounting\Dimension;
 use byrokrat\accounting\Exception;
 use byrokrat\amount\Currency\SEK;
@@ -14,9 +15,9 @@ use byrokrat\amount\Currency\SEK;
  *
  * Referenced rules are from the SIE specs dated 2008-09-30
  *
- * @covers \byrokrat\accounting\Sie4\Grammar
+ * @covers \byrokrat\accounting\Sie4\SieGrammar
  */
-class GrammarTest extends \PHPUnit_Framework_TestCase
+class SieGrammarTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Assert that a parser callback method was called when parsing source
@@ -213,11 +214,11 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     public function validDatesProvider()
     {
         return [
-            ['20160722', new \DateTime('20160722')],
-            ['"20160722"', new \DateTime('20160722')],
-            ['201607', new \DateTime('20160701')],
-            ['2016', new \DateTime('20160101')],
-            ['20160722', new \DateTime('20160722')],
+            ['20160722', new \DateTimeImmutable('20160722')],
+            ['"20160722"', new \DateTimeImmutable('20160722')],
+            ['201607', new \DateTimeImmutable('20160701')],
+            ['2016', new \DateTimeImmutable('20160101')],
+            ['20160722', new \DateTimeImmutable('20160722')],
         ];
     }
 
@@ -272,17 +273,47 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider validDatesProvider
+     * Assert that attributes are set on parser
+     *
+     * @param array  $requiredAttr List of attributes that must be set on container
+     * @param string $content      The raw content to parse
      */
-    public function testOnOmfattn(string $raw, \DateTime $date)
+    private function assertParserAttributes(array $requiredAttr, string $content)
     {
-        $this->assertParser(
-            'onOmfattn',
-            [$date],
-            $this->buildContent("#OMFATTN $raw")
+        // TODO flytta upp denna metod högst upp i filen och ta bort de andra buildContent osv...
+            // som inte borde behövs längre...
+
+        $container = $this->prophesize(Container::CLASS);
+
+        foreach ($requiredAttr as $key => $value) {
+            $container->setAttribute($key, $value)->will(function () {
+                return $this;
+            })->shouldBeCalled();
+        }
+
+        $parser = new SieParser(
+            $container->reveal(),
+            $this->prophesize(Logger::class)->reveal()
         );
+
+        $parser->parse($content);
     }
 
+    /**
+     * @dataProvider validDatesProvider
+     */
+    public function testOnOmfattn(string $raw, \DateTimeImmutable $date)
+    {
+        // TODO: såhär tycker jag att jag ska skriva alla dessa test!
+            // arbeta om alla andra delar av SieGrammar....
+
+            // Fortsätt här, det går kanske lite långsamt, men blir väldigt bra...
+
+        $this->assertParserAttributes(['FLAGGA' => true, 'OMFATTN' => $date], "
+            #FLAGGA 1
+            #OMFATTN $raw
+        ");
+    }
     /**
      * @dataProvider validIntegersProvider
      */

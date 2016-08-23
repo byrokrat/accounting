@@ -20,7 +20,6 @@ install:
     - composer require hanneskod/readme-tester:dev-master $COMPOSER_FLAGS --no-interaction
 
 script:
-    - vendor/bin/phpeg generate src/Sie4/Grammar.peg
     - if [[ $COVERAGE = yes ]]; then phpunit --verbose --coverage-clover=coverage.clover; fi
     - if [[ $COVERAGE != yes ]]; then phpunit --verbose; fi
 

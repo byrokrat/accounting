@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -e
+cd `dirname $0`/..
+
+if [ ! -d "vendor/bin" ]; then
+  composer install
+fi
+
+printf "Generating SIE parser"
+
+vendor/bin/phpeg generate src/Sie4/SieGrammar.peg
+
+printf " [done]\n"

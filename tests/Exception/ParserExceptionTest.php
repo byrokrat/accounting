@@ -9,18 +9,20 @@ class ParserExceptionTest extends \PHPUnit_Framework_TestCase
     public function testErrorsAndWarnings()
     {
         $exception = new ParserException(
-            $errors = ['A', 'B'],
-            $warnings = ['C', 'D']
+            $log = [
+                'error' => ['A', 'B'],
+                'warning' => ['C', 'D']
+            ]
         );
 
         $this->assertSame(
-            $errors,
-            $exception->getErrors()
+            $log,
+            $exception->getLog()
         );
 
-        $this->assertSame(
-            $warnings,
-            $exception->getWarnings()
+        $this->assertInternalType(
+            'string',
+            $exception->getMessage()
         );
     }
 }

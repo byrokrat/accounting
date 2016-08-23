@@ -78,7 +78,7 @@ trait ErrorHelper
     public function validateErrorState()
     {
         if ($this->level & E_ERROR && $this->getErrors() || $this->level & E_WARNING && $this->getWarnings()) {
-            throw new Exception\ParserException($this->getErrors(), $this->getWarnings());
+            throw new Exception\ParserException(['error' => ['foo']], $this->getErrors(), $this->getWarnings());
         }
     }
 

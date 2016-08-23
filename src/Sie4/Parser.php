@@ -24,7 +24,13 @@ namespace byrokrat\accounting\Sie4;
 
 use byrokrat\accounting\Account;
 use byrokrat\accounting\AccountFactory;
+use byrokrat\accounting\Container;
 use byrokrat\accounting\Dimension;
+use byrokrat\accounting\Sie4\Helper\AccountHelper;
+use byrokrat\accounting\Sie4\Helper\CurrencyHelper;
+use byrokrat\accounting\Sie4\Helper\DimensionHelper;
+use byrokrat\accounting\Sie4\Helper\ErrorHelper;
+use byrokrat\accounting\Sie4\Helper\VerificationHelper;
 use byrokrat\amount\Currency;
 
 /**
@@ -32,7 +38,12 @@ use byrokrat\amount\Currency;
  */
 class Parser extends Grammar
 {
-    use Helper\AccountHelper, Helper\CurrencyHelper, Helper\DimensionHelper, Helper\ErrorHelper;
+    use AccountHelper, CurrencyHelper, DimensionHelper, ErrorHelper, VerificationHelper;
+
+    /**
+     * @var Container Parsed data
+     */
+    private $container;
 
     /**
      * Set factory to use when creating account objects
@@ -40,13 +51,14 @@ class Parser extends Grammar
     public function __construct(AccountFactory $factory = null)
     {
         $this->setAccountFactory($factory ?: new AccountFactory);
+        $this->container = new Container;
     }
 
     /**
      * Parse SIE content
      *
      * @param  string $content Raw SIE content to parse
-     * @return void
+     * @return Container
      * @api    This is the main access point for parsing Sie4 data
      */
     public function parse($content)
@@ -60,6 +72,16 @@ class Parser extends Grammar
         }
 
         $this->validateErrorState();
+
+        return $this->getContainer();
+    }
+
+    /**
+     * Get container with parsed data
+     */
+    protected function getContainer(): Container
+    {
+        return $this->container;
     }
 
     /**

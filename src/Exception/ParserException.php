@@ -26,66 +26,45 @@ namespace byrokrat\accounting\Exception;
 class ParserException extends RuntimeException
 {
     /**
-     * @var string[] Registered error messages
+     * @var string[] Registered log messages
      */
-    private $errors = [];
+    private $log = [];
 
     /**
-     * @var string[] Registered warning messages
-     */
-    private $warnings = [];
-
-    /**
-     * Load error and warning messages at construct
+     * Load log messages at construct
      *
-     * @param string[] $errors
-     * @param string[] $warnings
+     * @param string[] $log
      */
-    public function __construct(array $errors, array $warnings)
+    public function __construct(array $log)
     {
-        $this->errors = $errors;
-        $this->warnings = $warnings;
+        $this->log = $log;
+
+        array_walk(
+            $log,
+            function (array &$messages, string $level) {
+                array_walk(
+                    $messages,
+                    function (&$msg) use ($level) {
+                        $msg = "[" . strtoupper($level) . "] $msg";
+                    }
+                );
+            }
+        );
+
+        $log = array_merge(...array_values($log));
 
         parent::__construct(
-            sprintf(
-                "Parsing failed due to the following issues: %s %s",
-                $this->stringify('ERROR', $this->getErrors()),
-                $this->stringify('WARNING', $this->getWarnings())
-            )
+            "Parsing failed due to the following issues:\n * " . implode("\n * ", $log)
         );
     }
 
     /**
-     * Get registered errors
+     * Get registered messages
      *
      * @return string[]
      */
-    public function getErrors(): array
+    public function getLog(): array
     {
-        return $this->errors;
-    }
-
-    /**
-     * Get registered warnings
-     *
-     * @return string[]
-     */
-    public function getWarnings(): array
-    {
-        return $this->warnings;
-    }
-
-    /**
-     * Create a nice string representation of list of messages
-     */
-    private function stringify(string $level, array $messages): string
-    {
-        return array_reduce(
-            $messages,
-            function (string $carry, string $message) use ($level) {
-                return "$carry\n * [$level] $message";
-            },
-            ''
-        );
+        return $this->log;
     }
 }
