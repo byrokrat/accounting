@@ -20,14 +20,15 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Sie4\Helper;
+namespace byrokrat\accounting\Sie4;
 
 use byrokrat\amount\Currency;
+use Psr\Log\LoggerInterface;
 
 /**
- * Helper that keeps track of the defined currency and creates monetary objects
+ * Builder that keeps track of the defined currency and creates monetary objects
  */
-trait CurrencyHelper
+class CurrencyBuilder
 {
     /**
      * @var string Name of class to represent parsed amounts
@@ -35,22 +36,30 @@ trait CurrencyHelper
     private $currencyClassname = 'byrokrat\\amount\\Currency\\SEK';
 
     /**
-     * Called when a recoverable runtime warning occurs
+     * @var LoggerInterface
      */
-    abstract public function registerWarning(string $message);
+    private $logger;
 
     /**
-     * Called when a currency is definied using #VALUTA
+     * Inject logger at construct
+     */
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * Set the currency classname
      *
      * @param  string $currency The iso-4217 currency code
      * @return void
      */
-    public function onValuta(string $currency)
+    public function setCurrencyClass(string $currency)
     {
         $currencyClassname = "byrokrat\\amount\\Currency\\$currency";
 
         if (!class_exists($currencyClassname)) {
-            return $this->registerWarning("Unknown currency $currency");
+            return $this->logger->warning("Unknown currency $currency");
         }
 
         $this->currencyClassname = $currencyClassname;

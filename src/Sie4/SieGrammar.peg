@@ -27,39 +27,131 @@ namespace byrokrat\accounting\Sie4;
  */
 grammar SieGrammar extends SieDependencyManager
 {
-    start FILE = EMPTY_LINE* FLAGGA_POST IDENTIFICATION_POST* ACCOUNT_PLAN_POST* BALANCE_POST*;
+    start FILE =
+        EMPTY_LINE*
+        FLAGGA_POST
+        EMPTY_LINE*
+        (CHECKSUMED_SIE_CONTENT / SIE_CONTENT)
+        EMPTY_LINE*
+        _;
+
+    CHECKSUMED_SIE_CONTENT =
+        KSUMMA_START_POST
+        SIE_CONTENT
+        KSUMMA_END_POST;
+
+    SIE_CONTENT =
+        IDENTIFICATION_POST*
+        (ACCOUNT_PLAN_POST / MISPLACED_IDENTIFICATION_POST)*
+        (BALANCE_POST / MISPLACED_IDENTIFICATION_POST / MISPLACED_ACCOUNT_PLAN_POST)*;
+
+    // Flag and checksum posts
 
     FLAGGA_POST = ROW_START 'FLAGGA' ^ flag:BOOLEAN ROW_END {
         $this->getContainer()->setAttribute('FLAGGA', $flag);
     };
 
+    KSUMMA_START_POST = ROW_START 'KSUMMA' ROW_END;
+
+    KSUMMA_END_POST = ROW_START 'KSUMMA' checksum:INT ROW_END {
+        $this->getContainer()->setAttribute('KSUMMA', $checksum);
+        $this->getLogger()->notice('Checksum detected but currently not handled');
+    };
+
     // Posts for identification and meta-data
 
-    // TODO Släng till alla poster som finns här så att jag kan få bättre resolv på integration tests...
-        // ska ta en main container och skriva alla attribute till den
-        // Parser::getContainer()->addAttribute('bkod', 1234566) osv...
-        // samma kontainer ska sedan användas även i VerificationHelper ...
+    MISPLACED_IDENTIFICATION_POST = IDENTIFICATION_POST {
+        $this->getLogger()->warning('Misplaced identification post');
+    };
+
+    MISPLACED_ACCOUNT_PLAN_POST = ACCOUNT_PLAN_POST {
+        $this->getLogger()->warning('Misplaced account plan post');
+    };
 
     IDENTIFICATION_POST = ADRESS_POST
+        / BKOD_POST
+        / FNAMN_POST
+        / FNR_POST
+        / FORMAT_POST
+        / FTYP_POST
+        / GEN_POST
+        / KPTYP_POST
         / OMFATTN_POST
+        / ORGNR_POST
+        / PROGRAM_POST
+        / PROSA_POST
+        / RAR_POST
         / SIETYP_POST
+        / TAXAR_POST
         / VALUTA_POST
         / VOID_ROW;
 
-    ADRESS_POST = ROW_START 'ADRESS' ^ contact:STRING address:STRING location:STRING phone:STRING ROW_END {
-        $this->onAdress((string)$contact, (string)$address, (string)$location, (string)$phone);
+    ADRESS_POST = ROW_START 'ADRESS' ^ contact:STRING? address:STRING? location:STRING? phone:STRING? ROW_END {
+        $this->getContainer()->setAttribute('ADRESS', [(string)$contact, (string)$address, (string)$location, (string)$phone]);
+    };
+
+    BKOD_POST = ROW_START 'BKOD' ^ sni:INT ROW_END {
+        $this->getContainer()->setAttribute('BKOD', $sni);
+    };
+
+    FNAMN_POST = ROW_START 'FNAMN' ^ name:STRING ROW_END {
+        $this->getContainer()->setAttribute('FNAMN', $name);
+    };
+
+    FNR_POST = ROW_START 'FNR' ^ id:STRING ROW_END {
+        $this->getContainer()->setAttribute('FNR', $id);
+    };
+
+    FORMAT_POST = ROW_START 'FORMAT' ^ charset:STRING ROW_END {
+        if ($charset != 'PC8') {
+            $this->getLogger()->warning("Unknown charset $charset defined using #FORMAT");
+        }
+        $this->getContainer()->setAttribute('FORMAT', $charset);
+    };
+
+    FTYP_POST = ROW_START 'FTYP' ^ type:STRING ROW_END {
+        $this->getContainer()->setAttribute('FTYP', $type);
+    };
+
+    GEN_POST = ROW_START 'GEN' ^ date:DATE sign:STRING? ROW_END {
+        $this->getContainer()->setAttribute('GEN', [$date, strval($sign)]);
+    };
+
+    KPTYP_POST = ROW_START 'KPTYP' ^ type:STRING ROW_END {
+        $this->getContainer()->setAttribute('KPTYP', $type);
     };
 
     OMFATTN_POST = ROW_START 'OMFATTN' ^ date:DATE ROW_END {
         $this->getContainer()->setAttribute('OMFATTN', $date);
     };
 
+    ORGNR_POST = ROW_START 'ORGNR' ^ number:STRING? acquisition:INT? operation:INT? ROW_END {
+        $this->getContainer()->setAttribute('ORGNR', [(string)$number, intval($acquisition), intval($operation)]);
+    };
+
+    PROGRAM_POST = ROW_START 'PROGRAM' ^ name:STRING version:STRING ROW_END {
+        $this->getContainer()->setAttribute('PROGRAM', [$name, $version]);
+    };
+
+    PROSA_POST = ROW_START 'PROSA' ^ text:STRING ROW_END {
+        $this->getContainer()->setAttribute('PROSA', $text);
+    };
+
+    RAR_POST = ROW_START 'RAR' ^ year:INT startDate:DATE endDate:DATE ROW_END {
+        $this->getContainer()->setAttribute("RAR $year", [$startDate, $endDate]);
+    };
+
     SIETYP_POST = ROW_START 'SIETYP' ^ ver:INT ROW_END {
-        $this->onSietyp($ver);
+        $this->getContainer()->setAttribute('SIETYP', $ver);
+    };
+
+    TAXAR_POST = ROW_START 'TAXAR' ^ year:INT ROW_END {
+        $this->getContainer()->setAttribute("TAXAR", $year);
     };
 
     VALUTA_POST = ROW_START 'VALUTA' ^ currency:STRING ROW_END {
-        $this->onValuta($currency);
+        $this->getContainer()->setAttribute('VALUTA', $currency);
+        $this->getCurrencyBuilder()->setCurrencyClass($currency);
     };
 
     // Posts defining the account plan
@@ -74,67 +166,118 @@ grammar SieGrammar extends SieDependencyManager
         / VOID_ROW;
 
     KONTO_POST = ROW_START 'KONTO' ^ number:INT description:STRING ROW_END {
-        $this->onKonto($number, $description);
+        $this->getAccountBuilder()->addAccount($number, $description);
     };
 
     KTYP_POST = ROW_START 'KTYP' ^ number:INT type:STRING ROW_END {
-        $this->onKtyp($number, $type);
+        $this->getAccountBuilder()->setAccountType($number, $type);
     };
 
     ENHET_POST = ROW_START 'ENHET' ^ account:INT unit:STRING ROW_END {
-        $this->onEnhet($account, $unit);
+        $this->getAccountBuilder()->getAccount($account)->setAttribute('unit', $unit);
     };
 
     SRU_POST = ROW_START 'SRU' ^ account:INT sru:INT ROW_END {
-        $this->onSru($account, $sru);
+        $this->getAccountBuilder()->getAccount($account)->setAttribute('sru', $sru);
     };
 
     DIM_POST = ROW_START 'DIM' ^ dim:INT desc:STRING ROW_END {
-        $this->onDim($dim, $desc);
+        $this->getDimensionBuilder()->addDimension($dim, $desc);
     };
 
     UNDERDIM_POST = ROW_START 'UNDERDIM' ^ dim:INT desc:STRING superdim:INT ROW_END {
-        $this->onUnderdim($dim, $desc, $superdim);
+        $this->getDimensionBuilder()->addDimension($dim, $desc, $superdim);
     };
 
-    OBJEKT_POST = ROW_START 'OBJEKT' ^ dim:INT obj:INT desc:STRING ROW_END {
-        $this->onObjekt($dim, $obj, $desc);
+    OBJEKT_POST = ROW_START 'OBJEKT' ^ dim:INT obj:int desc:STRING ROW_END {
+        $this->getDimensionBuilder()->addObject($dim, $obj, $desc);
     };
 
     // Posts defining balances and verifications
 
     BALANCE_POST = IB_POST
+        / UB_POST
         / OIB_POST
+        / OUB_POST
+        / PBUDGET_POST
+        / PSALDO_POST
+        / RES_POST
         / VER_POST
         / VOID_ROW;
 
     IB_POST = ROW_START 'IB' ^ year:INT account:ACCOUNT balance:AMOUNT quantity:INT? ROW_END {
-        $this->onIb($year, $account, $balance, $quantity ?: 0);
+        $account->setAttribute("IB $year", [$balance, $quantity ?: 0]);
+    };
+
+    UB_POST = ROW_START 'UB' ^ year:INT account:ACCOUNT balance:AMOUNT quantity:INT? ROW_END {
+        $account->setAttribute("UB $year", [$balance, $quantity ?: 0]);
     };
 
     OIB_POST = ROW_START 'OIB' ^ year:INT account:ACCOUNT objects:OBJECT_LIST balance:AMOUNT quantity:INT? ROW_END {
-        $this->onOib($year, $account, $objects, $balance, $quantity ?: 0);
+        foreach ($objects as $object) {
+            $object->setAttribute("IB $year", [$balance, $quantity ?: 0]);
+        }
+    };
+
+    OUB_POST = ROW_START 'OUB' ^ year:INT account:ACCOUNT objects:OBJECT_LIST balance:AMOUNT quantity:INT? ROW_END {
+        foreach ($objects as $object) {
+            $object->setAttribute("UB $year", [$balance, $quantity ?: 0]);
+        }
+    };
+
+    PBUDGET_POST = ROW_START 'PBUDGET' ^ ROW_END {
+        // TODO implement PBUDGET
+        // sid 28. Samma uppbyggnad som PSALDO. Samma frågeställning...
+
+        // TODO när jag har implementerat allt och allt funkar så gör en sista
+            // genomläsning av specifikationerna och ta mig en sista funderare
+            // är ju gött om jag kan undvika så många fel som möjligt....
+    };
+
+    PSALDO_POST = ROW_START 'PSALDO' ^ ROW_END {
+        // TODO implement PSALDO
+        // sid 29 i doc. Jag fattar inte riktigt om det är period för objekt eller konto...
+    };
+
+    RES_POST = ROW_START 'RES' ^ year:INT account:ACCOUNT balance:AMOUNT quantity:INT? ROW_END {
+        $account->setAttribute("RES $year", [$balance, $quantity ?: 0]);
     };
 
     // TODO also implement #RTRANS and #BTRANS
     TRANS_POST = ROW_START 'TRANS' ^ account:ACCOUNT objects:OBJECT_LIST amount:AMOUNT date:DATE? desc:STRING? quantity:INT? signature:STRING? ROW_END {
+        return;
         // TODO hur fungerar det egentligen med optional arguments här??
         return $this->onTrans($account, $objects, $amount, $date, $desc, $quantity, $signature);
     };
 
-    VER_POST = ROW_START 'VER' ^ series:STRING number:INT date:DATE desc:STRING? regdate:DATE? sign:STRING? ROW_END SUBROW_START trans:(TRANS_POST / VOID_ROW)* SUBROW_END {
+    VER_POST = ROW_START 'VER' ^ series:STRING number:INT date:DATE desc:STRING? regdate:DATE? sign:STRING? ROW_END SUBROW_START trans:(TRANS_POST / UNKNOWN_POST / EMPTY_LINE)* SUBROW_END {
+        // TODO Dags att implementera detta med VerificationBuilder !!
+        // sedan börjar det bli...
+        return;
         // TODO hur fungerar det egentligen med optional arguments här??
         return $this->onVer($series, $number, $date, $desc, $regdate, $sign, $trans);
     };
 
     //
-    // Unknown posts
+    // Unknown rows and lines
     //
 
-    VOID_ROW = UNKNOWN_POST / EMPTY_LINE;
+    VOID_ROW = UNKNOWN_POST / EMPTY_LINE / INVALID_LINE;
+
+    INVALID_LINE = _ !'#' fields:STRING* EOL {
+        $this->getLogger()->warning('Ignored invalid line "' . implode(' ', $fields) . '"');
+    };
 
     UNKNOWN_POST = ROW_START !VALID_LABEL label:VALID_CHARS ^ vars:STRING* EOL {
-        $this->onUnknown($label, $vars);
+        $this->getLogger()->notice(
+            array_reduce(
+                $vars,
+                function ($carry, $var) {
+                    return "$carry \"$var\"";
+                },
+                "Ignored unknown statement: #$label"
+            )
+        );
     };
 
     VALID_LABEL = 'ADRESS'
@@ -150,6 +293,7 @@ grammar SieGrammar extends SieDependencyManager
         / 'IB'
         / 'KONTO'
         / 'KPTYP'
+        / 'KSUMMA'
         / 'KTYP'
         / 'OBJEKT'
         / 'OIB'
@@ -183,7 +327,11 @@ grammar SieGrammar extends SieDependencyManager
 
     ROW_START = _ '#';
 
-    ROW_END = STRING* EOL;
+    ROW_END = fields:STRING* _ EOL {
+        foreach ($fields as $field) {
+            $this->getLogger()->notice("Ignored unknown field $field at end of line");
+        }
+    };
 
     //
     // The type system
@@ -218,19 +366,19 @@ grammar SieGrammar extends SieDependencyManager
     };
 
     RAW_AMOUNT = negation:"-"? units:[0-9]+ "."? subunits:([0-9]? [0-9]?) {
-        return $this->createMoney($negation.implode($units).'.'.implode($subunits));
+        return $this->getCurrencyBuilder()->createMoney($negation.implode($units).'.'.implode($subunits));
     };
 
     // Account
 
     ACCOUNT = number:INT {
-        return $this->getAccount($number);
+        return $this->getAccountBuilder()->getAccount($number);
     };
 
     // Object
 
     OBJECT = super:INT number:INT {
-        return $this->getObject($super, $number);
+        return $this->getDimensionBuilder()->getObject($super, $number);
     };
 
     OBJECT_LIST = _ '{' objects:OBJECT* '}' _ {
@@ -271,11 +419,11 @@ grammar SieGrammar extends SieDependencyManager
         return $string;
     };
 
-    QUOTED_STRING = '"' string:(ESCAPED_QUOTE / ' ' / VALID_CHARS)+ '"' {
+    QUOTED_STRING = '"' string:(ESCAPED_QUOTE / ' ' / VALID_CHARS)* '"' {
         return implode($string);
     };
 
-    VALID_CHARS = chars:[a-zA-Z0-9!#$%&'()*+,-.\/:;<=>?@\[\\\]^_`{|}~]+ {
+    VALID_CHARS = chars:[a-zA-ZåäöÅÄÖ0-9!#$%&'()*+,-.\/:;<=>?@\[\\\]^_`{|}~]+ {
         return implode($chars);
     };
 
@@ -289,7 +437,9 @@ grammar SieGrammar extends SieDependencyManager
 
     EMPTY_LINE = _ EOL;
 
-    EOL = "\r"? "\n";
+    EOL = "\r"? "\n" {
+        $this->getLogger()->incrementLineCount();
+    };
 
     _ = (" " / "\t")*;
 }

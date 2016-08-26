@@ -22,10 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4;
 
-use byrokrat\accounting\Account;
-use byrokrat\accounting\AccountFactory;
-use byrokrat\accounting\Dimension;
-use byrokrat\amount\Currency;
+use byrokrat\accounting\Query;
+use byrokrat\accounting\Exception;
 
 /**
  * Callbacks for parsing expressions found in Grammar
@@ -35,42 +33,37 @@ class SieParser extends SieGrammar
     /**
      * Parse SIE content
      *
-     * @param  string $content Raw SIE content to parse
-     * @return Container The parsed content
+     * Please note that content should be passed in the PC8 charset (code page 437)
+     *
+     * @param  string $content Raw SIE content to parse (code page 437)
+     * @return Container The parsed content (utf 8)
+     * @throws Exception\ParserException If parsing fails
      */
     public function parse($content)
     {
-        $this->getLogger()->resetLog();
+        // TODO eller hur nu conversion ska ske...
+        if (!$content = iconv('CP437', 'UTF-8', $content)) {
+            throw new Exception\RuntimeException('Unable to convert content from PC8 to UTF8');
+        }
+
+        $this->resetContainer();
+        $this->getLogger()->resetLog($content);
 
         try {
             parent::parse($content);
         } catch (\Exception $e) {
+            $this->getLogger()->incrementLineCount();
             $this->getLogger()->error($e->getMessage());
         }
 
-        $this->getLogger()->validateState();
+        $this->getContainer()
+            ->addItem(new Query($this->getAccountBuilder()->getAccounts()))
+            ->addItem(new Query($this->getDimensionBuilder()->getDimensions()));
+
+        if ($this->getLogger()->getLog()) {
+            throw new Exception\ParserException($this->getLogger()->getLog());
+        }
 
         return $this->getContainer();
-    }
-
-    /**
-     * Called when an unknown row is encountered
-     *
-     * @param  string   $label Row label
-     * @param  string[] $vars  Row variables
-     * @return void
-     */
-    public function onUnknown(string $label, array $vars)
-    {
-        // TODO ska flyttas någon annan stans...
-        $this->registerWarning(
-            array_reduce(
-                $vars,
-                function ($carry, $var) {
-                    return "$carry \"$var\"";
-                },
-                "Encountered unknown statement: #$label"
-            )
-        );
     }
 }

@@ -7,6 +7,9 @@
         <testsuite name="docs">
             <file>./tests/DocumentationExamples.php</file>
         </testsuite>
+        <testsuite name="integration">
+            <directory>./tests/Sie4/integration</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist>

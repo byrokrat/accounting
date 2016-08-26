@@ -4,9 +4,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4;
 
-use byrokrat\accounting\Account;
 use byrokrat\accounting\Container;
-use byrokrat\accounting\Dimension;
 use byrokrat\accounting\Exception;
 use byrokrat\amount\Currency\SEK;
 
@@ -19,30 +17,14 @@ use byrokrat\amount\Currency\SEK;
  */
 class SieGrammarTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Assert that a parser callback method was called when parsing source
-     */
-    private function assertParser(string $method, array $args, string $source)
-    {
-        $parser = $this->getMockBuilder(Parser::CLASS)
-            ->setMethods([$method])
-            ->getMock();
-
-        $parser->expects($this->once())
-            ->method($method)
-            ->with(...$args);
-
-        $parser->setErrorLevel(E_ERROR);
-
-        $parser->parse($source);
-    }
+    use \byrokrat\accounting\utils\InterfaceAssertionsTrait, TypeProviderTrait;
 
     /**
-     * Helper that prepends a #FLAGGA post and add line breaks between posts
+     * Parse content and get resulting container
      */
-    private function buildContent(...$posts)
+    private function parse(string $content, string $logLevel = SieParserFactory::FAIL_ON_ERROR): Container
     {
-        return "#FLAGGA 1\n" . implode("\n", $posts) . "\n";
+        return (new SieParserFactory)->createParser($logLevel)->parse($content);
     }
 
     /**
@@ -50,23 +32,24 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
      */
     public function testLabelRequired()
     {
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
-        (new Parser)->parse(
-            $this->buildContent("this is not a label")
+        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->parse(
+            "
+                #FLAGGA 1
+                this-is-not-a-label
+            ",
+            SieParserFactory::FAIL_ON_WARNING
         );
     }
-
-    // TODO Tests for rule 5.4 are missing
 
     /**
      * An optional \\r line ending char should be allowed according to rule 5.5
      */
     public function testEndOfLineCharacters()
     {
-        $this->assertParser(
-            'onUnknown',
-            ['FOO', ['bar']],
-            $this->buildContent("#FOO bar\r\n")
+        $this->assertEquals(
+            $this->parse("#FLAGGA 1\n"),
+            $this->parse("#FLAGGA 1\r\n")
         );
     }
 
@@ -75,10 +58,25 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptyLines()
     {
-        $this->assertParser(
-            'onUnknown',
-            ['FOO', ['bar']],
-            $this->buildContent(" ", "\t", " \t ", "#FOO bar", " ", "\t", " \t ")
+        $this->assertEquals(
+            $this->parse("#FLAGGA 1\n#KSUMMA\n#KSUMMA 1234\n"),
+            $this->parse("
+                \t
+                \t \t
+
+                #FLAGGA 1
+                \t
+                \t \t
+
+                #KSUMMA
+                \t
+                \t \t
+
+                #KSUMMA 1234
+
+                \t
+                \t \t
+            ")
         );
     }
 
@@ -87,10 +85,9 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
      */
     public function testFieldDelimiters()
     {
-        $this->assertParser(
-            'onUnknown',
-            ['FOO', ['foo', 'bar', 'baz']],
-            $this->buildContent("#FOO foo\t \tbar\tbaz")
+        $this->assertEquals(
+            $this->parse("#FLAGGA\t1\n"),
+            $this->parse("#FLAGGA\t \t1\n")
         );
     }
 
@@ -99,10 +96,9 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
      */
     public function testSpaceAtStartOfLine()
     {
-        $this->assertParser(
-            'onUnknown',
-            ['FOO', ['bar']],
-            $this->buildContent(" \t #FOO bar")
+        $this->assertEquals(
+            $this->parse("#FLAGGA 1\n"),
+            $this->parse(" \t #FLAGGA 1\n")
         );
     }
 
@@ -111,302 +107,21 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
      */
     public function testSpaceAtEndOfLine()
     {
-        $this->assertParser(
-            'onUnknown',
-            ['FOO', ['bar']],
-            $this->buildContent("#FOO bar\t \t")
+        $this->assertEquals(
+            $this->parse("#FLAGGA 1\n"),
+            $this->parse("#FLAGGA 1 \t \t \n")
         );
     }
 
     /**
-     * Quoted fields should be allowed according to rule 5.7
+     * Unknown fields at end of line should not trigger errors according to rule 7.3
      */
-    public function testQuotedFields()
+    public function testUnknownFieldsAtEndOfLine()
     {
-        $this->assertParser(
-            'onUnknown',
-            ['FOO', ['bar']],
-            $this->buildContent("#FOO \"bar\"")
-        );
-    }
-
-    /**
-     * Spaces should be allowed within quoted fields according to rule 5.7
-     */
-    public function testSpaceInsideQuotedFields()
-    {
-        $this->assertParser(
-            'onUnknown',
-            ['FOO', ['bar baz']],
-            $this->buildContent("#FOO \"bar baz\"")
-        );
-    }
-
-    /**
-     * Escaped quotes should be allowed within quoted fields according to rule 5.7
-     */
-    public function testEscapedQuotesInsideQuotedFields()
-    {
-        $this->assertParser(
-            'onUnknown',
-            ['FOO', ['bar " baz']],
-            $this->buildContent("#FOO \"bar \\\" baz\"")
-        );
-    }
-
-    /**
-     * Creates an iterator of all characters NOT allowed in fields according to rule 5.7
-     */
-    public function invalidCharactersProvider()
-    {
-        foreach (range(0, 31) as $ascii) {
-            yield [chr($ascii)];
-        }
-        yield [chr(127)];
-    }
-
-    /**
-     * Test characters not allowed in a field according to rule 5.7
-     *
-     * @dataProvider invalidCharactersProvider
-     */
-    public function testInvalidCharacters($char)
-    {
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
-        (new Parser)->parse(
-            $this->buildContent("#FOO \"bar{$char}baz\"")
-        );
-    }
-
-    /**
-     * Test characters allowed according to rule 5.7
-     *
-     * Note that the quote (chr(34)) and space characters (chr(32)) are left out
-     * as they are special cases.
-     */
-    public function testValidCharacters()
-    {
-        foreach (array_merge([33], range(35, 126)) as $ascii) {
-            $this->assertParser(
-                'onUnknown',
-                ['FOO', [chr($ascii)]],
-                $this->buildContent("#FOO " . chr($ascii))
-            );
-        }
-    }
-
-    /**
-     * Valid boolean representations
-     */
-    public function validBooleansProvider()
-    {
-        return [
-            ['0', false],
-            ['1', true],
-            ['"0"', false],
-            ['"1"', true],
-        ];
-    }
-
-    /**
-     * Valid dates (see rule 5.10)
-     */
-    public function validDatesProvider()
-    {
-        return [
-            ['20160722', new \DateTimeImmutable('20160722')],
-            ['"20160722"', new \DateTimeImmutable('20160722')],
-            ['201607', new \DateTimeImmutable('20160701')],
-            ['2016', new \DateTimeImmutable('20160101')],
-            ['20160722', new \DateTimeImmutable('20160722')],
-        ];
-    }
-
-    /**
-     * Valid integer representations
-     */
-    public function validIntegersProvider()
-    {
-        return [
-            ['1', 1],
-            ['0', 0],
-            ['-1', -1],
-            ['1234', 1234],
-            ['"1234"', 1234],
-            ['"-1"', -1],
-        ];
-    }
-
-    /**
-     * Valid money representations according to rule 5.9
-     */
-    public function validMoneyProvider()
-    {
-        return [
-            ['1', new SEK('1')],
-            ['10.11', new SEK('10.11')],
-            ['10.1', new SEK('10.10')],
-            ['-1', new SEK('-1')],
-            ['"1.00"', new SEK('1')],
-        ];
-    }
-
-    /**
-     * @dataProvider validBooleansProvider
-     */
-    public function testOnFlagga(string $flag, bool $boolval)
-    {
-        $this->assertParser(
-            'onFlagga',
-            [$boolval],
-            "#FLAGGA $flag\n"
-        );
-    }
-
-    public function testOnAdress()
-    {
-        $this->assertParser(
-            'onAdress',
-            ['A', 'B', 'C', 'D'],
-            $this->buildContent("#ADRESS A B C D")
-        );
-    }
-
-    /**
-     * Assert that attributes are set on parser
-     *
-     * @param array  $requiredAttr List of attributes that must be set on container
-     * @param string $content      The raw content to parse
-     */
-    private function assertParserAttributes(array $requiredAttr, string $content)
-    {
-        // TODO flytta upp denna metod högst upp i filen och ta bort de andra buildContent osv...
-            // som inte borde behövs längre...
-
-        $container = $this->prophesize(Container::CLASS);
-
-        foreach ($requiredAttr as $key => $value) {
-            $container->setAttribute($key, $value)->will(function () {
-                return $this;
-            })->shouldBeCalled();
-        }
-
-        $parser = new SieParser(
-            $container->reveal(),
-            $this->prophesize(Logger::class)->reveal()
-        );
-
-        $parser->parse($content);
-    }
-
-    /**
-     * @dataProvider validDatesProvider
-     */
-    public function testOnOmfattn(string $raw, \DateTimeImmutable $date)
-    {
-        // TODO: såhär tycker jag att jag ska skriva alla dessa test!
-            // arbeta om alla andra delar av SieGrammar....
-
-            // Fortsätt här, det går kanske lite långsamt, men blir väldigt bra...
-
-        $this->assertParserAttributes(['FLAGGA' => true, 'OMFATTN' => $date], "
-            #FLAGGA 1
-            #OMFATTN $raw
-        ");
-    }
-    /**
-     * @dataProvider validIntegersProvider
-     */
-    public function testOnSietyp(string $raw, int $intval)
-    {
-        $this->assertParser(
-            'onSietyp',
-            [$intval],
-            $this->buildContent("#SIETYP $raw")
-        );
-    }
-
-    public function testOnValuta()
-    {
-        $this->assertParser(
-            'onValuta',
-            ['EUR'],
-            $this->buildContent("#VALUTA EUR")
-        );
-    }
-
-    public function testOnKonto()
-    {
-        $this->assertParser(
-            'onKonto',
-            [1920, 'bank'],
-            $this->buildContent("#KONTO 1920 bank")
-        );
-    }
-
-    public function testOnKtyp()
-    {
-        $this->assertParser(
-            'onKtyp',
-            [1920, 'S'],
-            $this->buildContent("#KTYP 1920 S")
-        );
-    }
-
-    public function testOnEnhet()
-    {
-        $this->assertParser(
-            'onEnhet',
-            [1920, 'kr'],
-            $this->buildContent("#ENHET 1920 kr")
-        );
-    }
-
-    public function testOnSru()
-    {
-        $this->assertParser(
-            'onSru',
-            [1920, '2000'],
-            $this->buildContent("#SRU 1920 2000")
-        );
-    }
-
-    public function testOnDim()
-    {
-        $this->assertParser(
-            'onDim',
-            [10, 'description'],
-            $this->buildContent('#DIM 10 "description"')
-        );
-    }
-
-    public function testOnUnderdim()
-    {
-        $this->assertParser(
-            'onUnderdim',
-            [10, 'description', 20],
-            $this->buildContent('#UNDERDIM 10 "description" 20')
-        );
-    }
-
-    public function testOnObjekt()
-    {
-        $this->assertParser(
-            'onObjekt',
-            [10, 20, 'description'],
-            $this->buildContent('#OBJEKT 10 20 "description"')
-        );
-    }
-
-    /**
-     * @dataProvider validMoneyProvider
-     */
-    public function testOnIb(string $raw, SEK $momey)
-    {
-        $this->assertParser(
-            'onIb',
-            [0, new Account\Asset(1920, 'UNSPECIFIED'), $momey, 0],
-            $this->buildContent("#IB 0 1920 $raw 0")
+        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->parse(
+            "#FLAGGA 1 unknown-field-at-end-of-line\n",
+            SieParserFactory::FAIL_ON_NOTICE
         );
     }
 
@@ -415,80 +130,304 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
      */
     public function testUnknownLabels()
     {
-        $this->assertParser(
-            'onUnknown',
-            ['UNKNOWN', ['foo']],
-            $this->buildContent("#UNKNOWN foo")
+        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->parse(
+            "
+                #FLAGGA 1
+                #UNKNOWN foo bar
+            ",
+            SieParserFactory::FAIL_ON_NOTICE
         );
-    }
-
-    // TODO test for rule 7.3 is missing
-
-    /**
-     * Valid object list representations according to rule 8.21
-     */
-    public function validObjectListProvider()
-    {
-        return [
-            ['{}', []],
-            [
-                '{20 30}',
-                [new Dimension(30, 'UNSPECIFIED', new Dimension(20, 'UNSPECIFIED'))]
-            ],
-            [
-                '{20 "30"}',
-                [new Dimension(30, 'UNSPECIFIED', new Dimension(20, 'UNSPECIFIED'))]
-            ],
-            [
-                '{"20" "30"}',
-                [new Dimension(30, 'UNSPECIFIED', new Dimension(20, 'UNSPECIFIED'))]
-            ],
-            [
-                '{20 "30" 20 "40"}',
-                [
-                    new Dimension(30, 'UNSPECIFIED', new Dimension(20, 'UNSPECIFIED')),
-                    new Dimension(40, 'UNSPECIFIED', new Dimension(20, 'UNSPECIFIED'))
-                ]
-            ],
-        ];
     }
 
     /**
-     * @dataProvider validObjectListProvider
+     * @dataProvider booleanTypeProvider
      */
-    public function testOnOib(string $raw, array $objects)
+    public function testBooleanType(string $raw, bool $boolval)
     {
-        $this->assertParser(
-            'onOib',
-            [0, new Account\Asset(1920, 'UNSPECIFIED'), $objects, new SEK('0'), 0],
-            $this->buildContent("#OIB 0 1920 $raw 0 0")
+        $this->assertAttributes(
+            [
+                'FLAGGA' => $boolval
+            ],
+            $this->parse("
+                #FLAGGA $raw
+            ")
         );
     }
 
-    public function testCreateAndReadDimension()
+    /**
+     * @dataProvider dateTypeProvider
+     */
+    public function testDateType(string $raw, \DateTimeImmutable $date)
     {
-        $expectedDim = new Dimension(
-            22,
-            'object',
-            new Dimension(
-                21,
-                'child',
-                new Dimension(
-                    20,
-                    'parent'
-                )
-            )
+        $this->assertAttributes(
+            [
+                'OMFATTN' => $date
+            ],
+            $this->parse("
+                #FLAGGA 1
+                #OMFATTN $raw
+            ")
+        );
+    }
+
+    /**
+     * @dataProvider intTypeProvider
+     */
+    public function testIntegerType(string $raw, int $intval)
+    {
+        $this->assertAttributes(
+            [
+                'SIETYP' => $intval
+            ],
+            $this->parse("
+                #FLAGGA 1
+                #SIETYP $raw
+            ")
+        );
+    }
+
+    /**
+     * @dataProvider stringTypeProvider
+     */
+    public function testStringType(string $raw, string $parsed)
+    {
+        $this->assertAttributes(
+            [
+                'FNAMN' => $parsed
+            ],
+            $this->parse("
+                #FLAGGA 1
+                #FNAMN $raw
+            ")
+        );
+    }
+
+    /**
+     * Test characters not allowed in a field according to rule 5.7
+     *
+     * @dataProvider stringTypeInvalidCharsProvider
+     */
+    public function testStringTypeInvalidChars(string $char)
+    {
+        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->parse("
+            #FLAGGA 1
+            #VALUTA \"bar{$char}baz\"
+        ");
+    }
+
+    public function testNoticeOnKsumma()
+    {
+        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->parse(
+            "
+                #FLAGGA 1
+                #KSUMMA
+                #KSUMMA 1234
+            ",
+            SieParserFactory::FAIL_ON_NOTICE
+        );
+    }
+
+    public function testKsumm()
+    {
+        $this->assertAttributes(
+            [
+                'KSUMMA' => 1234
+            ],
+            $this->parse("
+                #FLAGGA 1
+                #KSUMMA
+                #KSUMMA 1234
+            ")
+        );
+    }
+
+    public function testIdentificationRows()
+    {
+        $this->assertAttributes(
+            [
+                'BKOD' => 1234,
+                'ADRESS' => ['A', 'B', 'C', 'D'],
+                'FNAMN' => 'name',
+                'FNR' => 'X',
+                'FORMAT' => 'PC8',
+                'FTYP' => 'AB',
+                'GEN' => [new \DateTimeImmutable('20160824'), 'HF'],
+                'KPTYP' => 'BAS95',
+                'OMFATTN' => new \DateTimeImmutable('20160101'),
+                'ORGNR' => ['123456-1234', 0, 0],
+                'PROGRAM' => ['byrokrat', '1.0'],
+                'PROSA' => 'foobar',
+                'RAR 0' =>[new \DateTimeImmutable('20160101'), new \DateTimeImmutable('20161231')],
+                'RAR -1' =>[new \DateTimeImmutable('20150101'), new \DateTimeImmutable('20151231')],
+                'SIETYP' => 4,
+                'TAXAR' => 2016,
+                'VALUTA' => 'EUR',
+            ],
+            $this->parse("
+                #FLAGGA 1
+                #ADRESS A B C D
+                #BKOD 1234
+                #FNAMN name
+                #FNR X
+                #FORMAT PC8
+                #FTYP AB
+                #GEN 20160824 HF
+                #KPTYP BAS95
+                #OMFATTN 20160101
+                #ORGNR 123456-1234
+                #PROGRAM byrokrat 1.0
+                #PROSA foobar
+                #RAR 0 20160101 20161231
+                #RAR -1 20150101 20151231
+                #SIETYP 4
+                #TAXAR 2016
+                #VALUTA EUR
+            ")
+        );
+    }
+
+    /**
+     * Only charset PC8 is supported
+     */
+    public function testExceptionOnInvalidCharset()
+    {
+        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->parse(
+            "
+                #FLAGGA 1
+                #FORMAT not-PC8
+            ",
+            SieParserFactory::FAIL_ON_WARNING
+        );
+    }
+
+    /**
+     * @dataProvider accountTypeProvider
+     */
+    public function testAccountType(string $raw, int $expectedNr, string $expectedDesc, string $expectedClass)
+    {
+        $account = $this->parse("#FLAGGA 1\n$raw\n")->query()->findAccountFromNumber($expectedNr);
+
+        $this->assertSame(
+            $expectedDesc,
+            $account->getDescription()
         );
 
-        $this->assertParser(
-            'onOib',
-            [0, new Account\Asset(1920, 'UNSPECIFIED'), [$expectedDim], new SEK('0'), 0],
-            $this->buildContent(
-                '#DIM 20 "parent"',
-                '#UNDERDIM 21 "child" 20',
-                '#OBJEKT 21 22 "object"',
-                '#OIB 0 1920 {21 22} 0 0'
-            )
+        $this->assertInstanceOf(
+            $expectedClass,
+            $account
+        );
+    }
+
+    public function testEnhet()
+    {
+        $content = $this->parse("
+            #FLAGGA 1
+            #ENHET 1920 kr
+        ");
+
+        $this->assertSame(
+            'kr',
+            $content->query()->findAccountFromNumber(1920)->getAttribute('unit')
+        );
+    }
+
+    public function testSru()
+    {
+        $content = $this->parse("
+            #FLAGGA 1
+            #SRU 1920 2000
+        ");
+
+        $this->assertSame(
+            2000,
+            $content->query()->findAccountFromNumber(1920)->getAttribute('sru')
+        );
+    }
+
+    public function testObjectType()
+    {
+        $object = $this->parse("
+            #FLAGGA 1
+            #DIM 10 parent
+            #UNDERDIM 20 child 10
+            #OBJEKT 20 30 obj
+        ")->query()->findDimensionFromNumber(30);
+
+        $this->assertSame(
+            'obj',
+            $object->getDescription()
+        );
+
+        $this->assertSame(
+            'child',
+            $object->getParent()->getDescription()
+        );
+
+        $this->assertSame(
+            'parent',
+            $object->getParent()->getParent()->getDescription()
+        );
+    }
+
+    /**
+     * @dataProvider currencyTypeProvider
+     */
+    public function testIb(string $raw, SEK $money)
+    {
+        $account = $this->parse("
+            #FLAGGA 1
+            #IB 0 1920 $raw 0
+            #IB -1 1920 $raw 100
+        ")->query()->findAccountFromNumber(1920);
+
+        $this->assertEquals(
+            $money,
+            $account->getAttribute('IB 0')[0]
+        );
+
+        $this->assertEquals(
+            100,
+            $account->getAttribute('IB -1')[1]
+        );
+    }
+
+    public function testOib()
+    {
+        $content = $this->parse("
+            #FLAGGA 1
+            #DIM 10 parent
+            #OBJEKT 10 20 objA
+            #OBJEKT 10 30 objB
+            #OIB 0 1920 {10 20 10 30} 100 0
+            #OIB -1 1920 {10 20} 200 1
+        ");
+
+        $objB = $content->query()->findDimensionFromNumber(30);
+
+        $this->assertEquals(
+            new SEK('100'),
+            $objB->getAttribute('IB 0')[0]
+        );
+
+        $objA = $content->query()->findDimensionFromNumber(20);
+
+        $this->assertEquals(
+            new SEK('100'),
+            $objA->getAttribute('IB 0')[0]
+        );
+
+        $this->assertEquals(
+            new SEK('200'),
+            $objA->getAttribute('IB -1')[0]
+        );
+
+        $this->assertEquals(
+            1,
+            $objA->getAttribute('IB -1')[1]
         );
     }
 }

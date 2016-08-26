@@ -20,15 +20,17 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Sie4\Helper;
+namespace byrokrat\accounting\Sie4;
 
 use byrokrat\accounting\Account;
 use byrokrat\accounting\AccountFactory;
+use byrokrat\accounting\Exception;
+use Psr\Log\LoggerInterface;
 
 /**
- * Helper that keeps track of account objects
+ * Builder that creates and keeps track of account objects
  */
-trait AccountHelper
+class AccountBuilder
 {
     /**
      * @var string[] Map of account type identifier to class name
@@ -51,45 +53,50 @@ trait AccountHelper
     private $factory;
 
     /**
-     * Called when a recoverable runtime warning occurs
+     * @var LoggerInterface
      */
-    abstract public function registerWarning(string $message);
+    private $logger;
 
     /**
-     * Set factory to use when creating account objects
+     * Inject account factory and logger att construct
      */
-    public function setAccountFactory(AccountFactory $factory)
+    public function __construct(AccountFactory $factory, LoggerInterface $logger)
     {
         $this->factory = $factory;
+        $this->logger = $logger;
     }
 
     /**
-     * Called when a #KONTO post is encountered
+     * Create a new account object
      *
      * @param  integer $number      Number of account
      * @param  string  $description Free text description of account
-     * @return Account The generated account object
+     * @return void
      */
-    public function onKonto(int $number, string $description): Account
+    public function addAccount(int $number, string $description)
     {
-        return $this->accounts[$number] = $this->factory->createAccount($number, $description);
+        try {
+            $this->accounts[$number] = $this->factory->createAccount($number, $description);
+        } catch (Exception\RuntimeException $e) {
+            $this->logger->warning("Unable to create account $number ($description): {$e->getMessage()}");
+        }
     }
 
     /**
-     * Called when a #KTYP post is encountered
+     * Set a new type of account
      *
      * @param  integer $number  Number of account
      * @param  string  $type    Type of account (T, S, I or K)
-     * @return Account The generated account object
+     * @return void
      */
-    public function onKtyp(int $number, string $type): Account
+    public function setAccountType(int $number, string $type)
     {
         if (!isset(self::$accountTypeMap[$type])) {
-            $this->registerWarning("Unknown type $type for account number $number");
-            return $this->getAccount($number);
+            $this->logger->warning("Unknown type $type for account number $number");
+            return;
         }
 
-        return $this->accounts[$number] = new self::$accountTypeMap[$type](
+        $this->accounts[$number] = new self::$accountTypeMap[$type](
             $number,
             $this->getAccount($number)->getDescription(),
             $this->getAccount($number)->getAttributes()
@@ -97,32 +104,31 @@ trait AccountHelper
     }
 
     /**
-     * Called when a #ENHET post is encountered
-     */
-    public function onEnhet(int $account, string $unit)
-    {
-        $this->getAccount($account)->setAttribute('unit', $unit);
-    }
-
-    /**
-     * Called when a #SRU post is encountered
-     */
-    public function onSru(int $account, int $sru)
-    {
-        $this->getAccount($account)->setAttribute('sru', $sru);
-    }
-
-    /**
      * Get account from internal store using account number as key
+     *
+     * @throws Exception\RuntimeException If account does not exist and can not be created
      */
     public function getAccount(int $number): Account
     {
-        if (isset($this->accounts[$number])) {
-            return $this->accounts[$number];
+        if (!isset($this->accounts[$number])) {
+            $this->logger->warning("Account number $number not defined");
+            $this->addAccount($number, 'UNSPECIFIED');
         }
 
-        $this->registerWarning("Account number $number not defined");
+        if (!isset($this->accounts[$number])) {
+            throw new Exception\RuntimeException("Unable to get account $number");
+        }
 
-        return $this->onKonto($number, 'UNSPECIFIED');
+        return $this->accounts[$number];
+    }
+
+    /**
+     * Get creaated accounts
+     *
+     * @return Account[]
+     */
+    public function getAccounts(): array
+    {
+        return $this->accounts;
     }
 }

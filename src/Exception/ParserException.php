@@ -38,23 +38,8 @@ class ParserException extends RuntimeException
     public function __construct(array $log)
     {
         $this->log = $log;
-
-        array_walk(
-            $log,
-            function (array &$messages, string $level) {
-                array_walk(
-                    $messages,
-                    function (&$msg) use ($level) {
-                        $msg = "[" . strtoupper($level) . "] $msg";
-                    }
-                );
-            }
-        );
-
-        $log = array_merge(...array_values($log));
-
         parent::__construct(
-            "Parsing failed due to the following issues:\n * " . implode("\n * ", $log)
+            "Parsing failed due to the following issues:\n" . implode("\n", $this->getLog())
         );
     }
 

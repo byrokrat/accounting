@@ -1,0 +1,17 @@
+<?php
+
+use byrokrat\accounting\Container;
+
+return function (Container $container) {
+    $account = $container->query()->findAccountFromNumber(1512);
+
+    $this->assertSame(
+        "Belånade fordringar",
+        $account->getDescription()
+    );
+
+    $this->assertSame(
+        0,
+        $account->getAttribute('SRU')
+    );
+};

@@ -30,6 +30,11 @@ use byrokrat\accounting\Container;
 class SieDependencyManager
 {
     /**
+     * @var AccountBuilder Builder for account objects
+     */
+    private $accountBuilder;
+
+    /**
      * @var Container Container for parsed data
      */
     private $container;
@@ -40,20 +45,69 @@ class SieDependencyManager
     private $logger;
 
     /**
+     * @var CurrencyBuilder Builder for monetary objects
+     */
+    private $currencyBuilder;
+
+    /**
+     * @var DimensionBuilder Builder for dimension objects
+     */
+    private $dimensionBuilder;
+
+    /**
      * Inject dependencies at construct
      */
-    public function __construct(Container $container, Logger $logger)
-    {
-        $this->container = $container;
+    public function __construct(
+        Logger $logger,
+        AccountBuilder $accountBuilder,
+        CurrencyBuilder $currencyBuilder,
+        DimensionBuilder $dimensionBuilder
+    ) {
         $this->logger = $logger;
+        $this->accountBuilder = $accountBuilder;
+        $this->currencyBuilder = $currencyBuilder;
+        $this->dimensionBuilder = $dimensionBuilder;
+        $this->resetContainer();
     }
 
     /**
-     * Get container for parsed data
+     * Reset container to empty state
      */
-    protected function getContainer(): Container
+    public function resetContainer()
+    {
+        $this->container = new Container;
+    }
+
+    /**
+     * Get container with parsed data
+     */
+    public function getContainer(): Container
     {
         return $this->container;
+    }
+
+    /**
+     * Get builder of account objects
+     */
+    protected function getAccountBuilder(): AccountBuilder
+    {
+        return $this->accountBuilder;
+    }
+
+    /**
+     * Get builder of monetary objects
+     */
+    protected function getCurrencyBuilder(): CurrencyBuilder
+    {
+        return $this->currencyBuilder;
+    }
+
+    /**
+     * Get builder of dimension objects
+     */
+    protected function getDimensionBuilder(): DimensionBuilder
+    {
+        return $this->dimensionBuilder;
     }
 
     /**

@@ -12,12 +12,6 @@ use byrokrat\accounting\Exception\LogicException;
 
 trait InterfaceAssertionsTrait
 {
-    abstract public function assertSame($expected, $actual, $message = '');
-
-    abstract public function assertTrue($expected, $message = '');
-
-    abstract public function assertFalse($expected, $message = '');
-
     /**
      * Assert the behaviour of the Attributable implementation
      */
@@ -62,6 +56,20 @@ trait InterfaceAssertionsTrait
             $exceptionThrown,
             'Reading a non-existing attribute should throw a LogicException'
         );
+    }
+
+    /**
+     * Assert that attributes are set on attributable
+     */
+    public function assertAttributes(array $expectedAttr, Attributable $attributable)
+    {
+        foreach ($expectedAttr as $key => $value) {
+            $this->assertEquals(
+                $value,
+                $attributable->getAttribute($key),
+                "Failed asserting that attributable contains attribute $key equal to " . var_export($value, true)
+            );
+        }
     }
 
     /**

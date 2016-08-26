@@ -23,17 +23,47 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
         $logger->warning('foo');
         $logger->warning('bar');
 
-        $this->assertSame(
-            [
-                'error' => ['foo', 'bar'],
-                'warning' => ['foo', 'bar'],
-            ],
-            $logger->getLog()
-        );
+        $this->assertCount(4, $logger->getLog());
 
         $logger->resetLog();
 
         $this->assertEmpty($logger->getLog());
+    }
+
+    public function testLineCount()
+    {
+        $logger = new Logger;
+
+        $logger->resetLog("line A\nline B\nline C");
+
+        $logger->incrementLineCount();
+
+        $logger->error('foo');
+
+        $logger->incrementLineCount();
+
+        $logger->error('bar');
+
+        $this->assertRegExp(
+            "/(1: line A)/",
+            $logger->getLog()[0]
+        );
+
+        $this->assertRegExp(
+            "/(2: line B)/",
+            $logger->getLog()[1]
+        );
+
+        $logger->resetLog("line D");
+
+        $logger->incrementLineCount();
+
+        $logger->error('bar');
+
+        $this->assertRegExp(
+            "/(1: line D)/",
+            $logger->getLog()[0]
+        );
     }
 
     public function testIgnoreEvents()
@@ -42,33 +72,25 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
 
         $logger->setLogLevel(LogLevel::ERROR);
         $logger->warning('foobar');
-        $this->assertNull($logger->validateState());
+        $this->assertEmpty($logger->getLog());
 
         $logger->resetLog();
 
         $logger->setLogLevel(LogLevel::WARNING);
         $logger->notice('bar');
-        $this->assertNull($logger->validateState());
+        $this->assertEmpty($logger->getLog());
 
         $logger->resetLog();
 
         $logger->setLogLevel(LogLevel::NOTICE);
         $logger->debug('bar');
-        $this->assertNull($logger->validateState());
+        $this->assertEmpty($logger->getLog());
 
         $logger->resetLog();
 
         $logger->setLogLevel('');
         $logger->error('foo');
         $logger->warning('bar');
-        $this->assertNull($logger->validateState());
-    }
-
-    public function testErrorReporting()
-    {
-        $logger = new Logger;
-        $logger->error('bar');
-        $this->setExpectedException(Exception\ParserException::CLASS);
-        $logger->validateState();
+        $this->assertEmpty($logger->getLog());
     }
 }

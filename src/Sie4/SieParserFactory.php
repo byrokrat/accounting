@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4;
 
-use byrokrat\accounting\Container;
+use byrokrat\accounting\AccountFactory;
 use Psr\Log\LogLevel;
 
 /**
@@ -62,8 +62,10 @@ class SieParserFactory
         $logger->setLogLevel($logLevel);
 
         return new SieParser(
-            new Container,
-            $logger
+            $logger,
+            new AccountBuilder(new AccountFactory, $logger),
+            new CurrencyBuilder($logger),
+            new DimensionBuilder($logger)
         );
     }
 }

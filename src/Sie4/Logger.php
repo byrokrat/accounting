@@ -36,29 +36,29 @@ class Logger extends AbstractLogger
      */
     private static $logLevelsMap = [
         LogLevel::EMERGENCY => [
-            LogLevel::DEBUG,     LogLevel::INFO,     LogLevel::NOTICE,
-            LogLevel::WARNING,   LogLevel::ERROR,    LogLevel::CRITICAL,
+            LogLevel::DEBUG,     LogLevel::INFO,      LogLevel::NOTICE,
+            LogLevel::WARNING,   LogLevel::ERROR,     LogLevel::CRITICAL,
             LogLevel::ALERT,     LogLevel::EMERGENCY
         ],
         LogLevel::ALERT => [
-            LogLevel::DEBUG,     LogLevel::INFO,     LogLevel::NOTICE,
-            LogLevel::WARNING,   LogLevel::ERROR,    LogLevel::CRITICAL,
+            LogLevel::DEBUG,     LogLevel::INFO,      LogLevel::NOTICE,
+            LogLevel::WARNING,   LogLevel::ERROR,     LogLevel::CRITICAL,
             LogLevel::ALERT
         ],
         LogLevel::CRITICAL => [
-            LogLevel::DEBUG,     LogLevel::INFO,     LogLevel::NOTICE,
-            LogLevel::WARNING,   LogLevel::ERROR,    LogLevel::CRITICAL
+            LogLevel::DEBUG,     LogLevel::INFO,      LogLevel::NOTICE,
+            LogLevel::WARNING,   LogLevel::ERROR,     LogLevel::CRITICAL
         ],
         LogLevel::ERROR => [
-            LogLevel::DEBUG,     LogLevel::INFO,     LogLevel::NOTICE,
+            LogLevel::DEBUG,     LogLevel::INFO,      LogLevel::NOTICE,
             LogLevel::WARNING,   LogLevel::ERROR
         ],
         LogLevel::WARNING => [
-            LogLevel::DEBUG,     LogLevel::INFO,     LogLevel::NOTICE,
+            LogLevel::DEBUG,     LogLevel::INFO,      LogLevel::NOTICE,
             LogLevel::WARNING
         ],
         LogLevel::NOTICE => [
-            LogLevel::DEBUG,     LogLevel::INFO,     LogLevel::NOTICE
+            LogLevel::DEBUG,     LogLevel::INFO,      LogLevel::NOTICE
         ],
         LogLevel::INFO => [
             LogLevel::DEBUG,     LogLevel::INFO
@@ -79,35 +79,24 @@ class Logger extends AbstractLogger
     private $level = LogLevel::WARNING;
 
     /**
-     * Logs with an arbitrary level.
-     *
-     * @param mixed $level
-     * @param string $message
-     * @param array $context
-     * @return null
+     * @var integer Count lines for better error reporting
      */
-    public function log($level, $message, array $context = [])
-    {
-        if (in_array($this->level, self::$logLevelsMap[$level])) {
-            $this->log[$level] = $this->log[$level] ?? [];
-            $this->log[$level][] = $message;
-        }
-    }
+    private $lineCount = 0;
 
     /**
-     * Get logged messages
+     * [$lines description]
+     * @var string[] The loaded lines of content logged events are related to
      */
-    public function getLog(): array
-    {
-        return $this->log;
-    }
+    private $lines = [];
 
     /**
      * Clear log
      */
-    public function resetLog()
+    public function resetLog(string $content = '')
     {
         $this->log = [];
+        $this->lineCount = 0;
+        $this->lines = explode("\n", $content);
     }
 
     /**
@@ -125,15 +114,48 @@ class Logger extends AbstractLogger
     }
 
     /**
-     * Check log and throw exception if applicable
-     *
-     * @return void
-     * @throws Exception\ParserException If parsing fails and error reporting is set
+     * Increment current line count
      */
-    public function validateState()
+    public function incrementLineCount()
     {
-        if (!empty($this->log)) {
-            throw new Exception\ParserException($this->getLog());
+        $this->lineCount++;
+    }
+
+    /**
+     * Logs with an arbitrary level.
+     *
+     * @param mixed $level
+     * @param string $message
+     * @param array $context
+     * @return null
+     */
+    public function log($level, $message, array $context = [])
+    {
+        if (in_array($this->level, self::$logLevelsMap[$level])) {
+            $this->log[] = $this->format($level, $message, $context);
         }
+    }
+
+    /**
+     * Get logged messages
+     */
+    public function getLog(): array
+    {
+        return $this->log;
+    }
+
+    /**
+     * Format a logged event
+     */
+    private function format(string $level, string $msg, array $context): string
+    {
+        return sprintf(
+            '[%s] %s (%s: %s) %s',
+            strtoupper($level),
+            $msg,
+            $this->lineCount,
+            trim($this->lines[$this->lineCount - 1] ?? ''),
+            json_encode((object)$context)
+        );
     }
 }

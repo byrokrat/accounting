@@ -4,7 +4,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\integration;
 
-use byrokrat\accounting\Sie4\Parser;
+use byrokrat\accounting\Sie4\SieParserFactory;
+use byrokrat\accounting\Exception;
 
 /**
  * Validate that all example files in integration/files can be parsed
@@ -21,31 +22,45 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        self::$parser = new Parser;
+        self::$parser = (new SieParserFactory)->createParser();
     }
 
     public function filesProvider()
     {
         foreach (new \DirectoryIterator(__DIR__ . '/files') as $fileInfo) {
-            if ($fileInfo->isDot()) {
+            if (!in_array(strtoupper($fileInfo->getExtension()), ['SE', 'SI'])) {
                 continue;
             }
 
-            yield [$fileInfo->getFilename(), file_get_contents($fileInfo->getRealPath())];
+            $fname = $fileInfo->getRealPath();
+
+            yield [
+                $fileInfo->getFilename(),
+                file_get_contents($fileInfo->getRealPath()),
+                is_readable("$fname.errors") ? file("$fname.errors", FILE_IGNORE_NEW_LINES) : [],
+                is_readable("$fname.assertions") ? include "$fname.assertions" : null
+            ];
         }
     }
 
     /**
      * @dataProvider filesProvider
+     * @group slow
      */
-    public function testFiles(string $filename, string $content)
+    public function testFiles(string $filename, string $content, array $expectedErrors, \Closure $assertions = null)
     {
         try {
             self::$parser->parse($content);
+        } catch (Exception\ParserException $e) {
+            if ($unexpectedErrors = array_diff($e->getLog(), $expectedErrors)) {
+                return $this->fail("[$filename] Parsing failed due to\n" . implode("\n", $unexpectedErrors));
+            }
         } catch (\Exception $e) {
-            $this->fail("[$filename] {$e->getMessage()}");
+            return $this->fail("[$filename] {$e->getMessage()}");
         }
 
-        $this->assertEmpty(self::$parser->getErrors());
+        if ($assertions instanceof \Closure) {
+            $assertions->call($this, self::$parser->getContainer());
+        }
     }
 }

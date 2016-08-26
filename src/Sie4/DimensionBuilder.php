@@ -20,14 +20,15 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Sie4\Helper;
+namespace byrokrat\accounting\Sie4;
 
 use byrokrat\accounting\Dimension;
+use Psr\Log\LoggerInterface;
 
 /**
- * Helper that creates and manages accounting dimensions
+ * Builder that creates and manages accounting dimensions
  */
-trait DimensionHelper
+class DimensionBuilder
 {
     /**
      * @var array Map of reserved dimension numbers to descriptions
@@ -47,32 +48,40 @@ trait DimensionHelper
     private $dims = [];
 
     /**
-     * Called when a recoverable runtime warning occurs
+     * @var LoggerInterface
      */
-    abstract public function registerWarning(string $message);
+    private $logger;
 
     /**
-     * Called when a #DIM post is encountered
+     * Inject logger att construct
      */
-    public function onDim(int $number, string $desc): Dimension
+    public function __construct(LoggerInterface $logger)
     {
-        return $this->dims[$number] = new Dimension($number, $desc);
+        $this->logger = $logger;
     }
 
     /**
-     * Called when a #UNDERDIM post is encountered
+     * Create a new accounting dimension
+     *
+     * @return void
      */
-    public function onUnderdim(int $number, string $desc, int $super): Dimension
+    public function addDimension(int $number, string $desc, int $super = 0)
     {
-        return $this->dims[$number] = new Dimension($number, $desc, $this->getDimension($super));
+        $this->dims[$number] = new Dimension(
+            $number,
+            $desc,
+            $super ? $this->getDimension($super) : null
+        );
     }
 
     /**
-     * Called when a #OBJEKT post is encountered
+     * Create a new accounting object
+     *
+     * @return void
      */
-    public function onObjekt(int $super, int $number, string $desc): Dimension
+    public function addObject(int $super, int $number, string $desc)
     {
-        return $this->dims["$super.$number"] = new Dimension($number, $desc, $this->getDimension($super));
+        $this->dims["$super.$number"] = new Dimension($number, $desc, $this->getDimension($super));
     }
 
     /**
@@ -87,20 +96,22 @@ trait DimensionHelper
             return $this->dims[$number];
         }
 
-        $this->registerWarning("Dimension number $number not defined");
+        $this->logger->warning("Dimension number $number not defined");
 
         if (2 === $number) {
             return $this->dims[2] = new Dimension(2, 'Kostnadsbärare', $this->getDimension(1));
         }
 
-        return $this->onDim(
+        $this->addDimension(
             $number,
             self::$reservedDimsMap[$number] ?? 'UNSPECIFIED'
         );
+
+        return $this->getDimension($number);
     }
 
     /**
-     * Get dimension from internal store using number and super as key
+     * Get accounting object from internal store using number and super as key
      */
     public function getObject(int $super, int $number): Dimension
     {
@@ -108,8 +119,20 @@ trait DimensionHelper
             return $this->dims["$super.$number"];
         }
 
-        $this->registerWarning("Object number $super.$number not defined");
+        $this->logger->warning("Object number $super.$number not defined");
 
-        return $this->onObjekt($super, $number, 'UNSPECIFIED');
+        $this->addObject($super, $number, 'UNSPECIFIED');
+
+        return $this->getObject($super, $number);
+    }
+
+    /**
+     * Get created dimensions
+     *
+     * @return Dimension[]
+     */
+    public function getDimensions(): array
+    {
+        return $this->dims;
     }
 }
