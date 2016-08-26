@@ -7,6 +7,8 @@
 /.travis.yml export-ignore
 /CHANGES.md export-ignore
 /CONTRIBUTING.md export-ignore
+/nitpick.json export-ignore
+/phpcs.xml.dist export-ignore
 /phpunit.xml.dist export-ignore
 /README.md export-ignore
 /TODO.md export-ignore
