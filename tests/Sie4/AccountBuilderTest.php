@@ -24,8 +24,8 @@ class AccountBuilderTest extends \PHPUnit_Framework_TestCase
             $this->createMock(LoggerInterface::CLASS)
         );
 
-        $accountBuilder->addAccount(1234, 'foobar');
-        $accountFactoryProphecy->createAccount(1234, 'foobar')->shouldHaveBeenCalled();
+        $accountBuilder->addAccount('1234', 'foobar');
+        $accountFactoryProphecy->createAccount('1234', 'foobar')->shouldHaveBeenCalled();
 
         $this->assertCount(1, $accountBuilder->getAccounts());
     }
@@ -34,7 +34,7 @@ class AccountBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $accountFactoryProphecy = $this->prophesizeAccountFactory();
 
-        $accountFactoryProphecy->createAccount(1234, 'foobar')->willThrow(new Exception\RuntimeException);
+        $accountFactoryProphecy->createAccount('1234', 'foobar')->willThrow(new Exception\RuntimeException);
 
         $logger = $this->prophesize(LoggerInterface::CLASS);
 
@@ -43,7 +43,7 @@ class AccountBuilderTest extends \PHPUnit_Framework_TestCase
             $logger->reveal()
         );
 
-        $accountBuilder->addAccount(1234, 'foobar');
+        $accountBuilder->addAccount('1234', 'foobar');
 
         $logger->warning(\Prophecy\Argument::type('string'))->shouldHaveBeenCalled();
     }
@@ -52,7 +52,7 @@ class AccountBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $accountFactoryProphecy = $this->prophesizeAccountFactory();
 
-        $accountFactoryProphecy->createAccount(1234, 'UNSPECIFIED')->willThrow(new Exception\RuntimeException);
+        $accountFactoryProphecy->createAccount('1234', 'UNSPECIFIED')->willThrow(new Exception\RuntimeException);
 
         $accountBuilder = new AccountBuilder(
             $accountFactoryProphecy->reveal(),
@@ -60,7 +60,7 @@ class AccountBuilderTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->setExpectedException(Exception\RuntimeException::CLASS);
-        $accountBuilder->getAccount(1234);
+        $accountBuilder->getAccount('1234');
     }
 
     public function testGetAccount()
@@ -70,11 +70,11 @@ class AccountBuilderTest extends \PHPUnit_Framework_TestCase
             $this->createMock(LoggerInterface::CLASS)
         );
 
-        $accountBuilder->addAccount(1234, 'foobar');
+        $accountBuilder->addAccount('1234', 'foobar');
 
         $this->assertSame(
-            $accountBuilder->getAccount(1234),
-            $accountBuilder->getAccount(1234)
+            $accountBuilder->getAccount('1234'),
+            $accountBuilder->getAccount('1234')
         );
     }
 
@@ -87,7 +87,7 @@ class AccountBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(
             'UNSPECIFIED',
-            $accountBuilder->getAccount(1234)->getDescription()
+            $accountBuilder->getAccount('1234')->getDescription()
         );
     }
 
@@ -100,11 +100,11 @@ class AccountBuilderTest extends \PHPUnit_Framework_TestCase
             $this->createMock(LoggerInterface::CLASS)
         );
 
-        $originalAccount = $accountBuilder->getAccount(1234);
+        $originalAccount = $accountBuilder->getAccount('1234');
 
-        $accountBuilder->setAccountType(1234, 'S');
+        $accountBuilder->setAccountType('1234', 'S');
 
-        $newAccount = $accountBuilder->getAccount(1234);
+        $newAccount = $accountBuilder->getAccount('1234');
 
         $this->assertNotSame(
             $originalAccount,
@@ -131,7 +131,7 @@ class AccountBuilderTest extends \PHPUnit_Framework_TestCase
             $newAccount->getDescription()
         );
 
-        $accountProphecies[1234]->getAttributes()->shouldHaveBeenCalled();
+        $accountProphecies['1234']->getAttributes()->shouldHaveBeenCalled();
 
         $this->assertSame(
             $originalAccount->getAttributes(),
@@ -140,7 +140,7 @@ class AccountBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(
             $newAccount,
-            $accountBuilder->getAccount(1234)
+            $accountBuilder->getAccount('1234')
         );
     }
 
@@ -153,9 +153,9 @@ class AccountBuilderTest extends \PHPUnit_Framework_TestCase
             $logger->reveal()
         );
 
-        $originalAccount = $accountBuilder->getAccount(1234);
-        $accountBuilder->setAccountType(1234, 'not-a-valid-account-type-identifier');
-        $newAccount = $accountBuilder->getAccount(1234);
+        $originalAccount = $accountBuilder->getAccount('1234');
+        $accountBuilder->setAccountType('1234', 'not-a-valid-account-type-identifier');
+        $newAccount = $accountBuilder->getAccount('1234');
 
         $logger->warning('Account number 1234 not defined')->shouldHaveBeenCalled();
 

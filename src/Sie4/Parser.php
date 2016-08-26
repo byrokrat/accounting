@@ -28,7 +28,7 @@ use byrokrat\accounting\Exception;
 /**
  * Callbacks for parsing expressions found in Grammar
  */
-class SieParser extends SieGrammar
+class Parser extends Grammar
 {
     /**
      * Parse SIE content
@@ -41,10 +41,11 @@ class SieParser extends SieGrammar
      */
     public function parse($content)
     {
-        // TODO eller hur nu conversion ska ske...
-        if (!$content = iconv('CP437', 'UTF-8', $content)) {
-            throw new Exception\RuntimeException('Unable to convert content from PC8 to UTF8');
-        }
+        $content = preg_replace(
+            '/[\xFF]/',
+            ' ',
+            iconv('CP437', 'UTF-8//IGNORE', $content)
+        );
 
         $this->resetContainer();
         $this->getLogger()->resetLog($content);

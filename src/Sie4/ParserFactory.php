@@ -28,7 +28,7 @@ use Psr\Log\LogLevel;
 /**
  * Simplifies the creation of parser objects
  */
-class SieParserFactory
+class ParserFactory
 {
     /**
      * Flag implying that all log events should be ignored
@@ -55,17 +55,18 @@ class SieParserFactory
      *
      * @param string $logLevel Set when parsing should fail using one of the logging constants
      */
-    public function createParser(string $logLevel = self::FAIL_ON_WARNING): SieParser
+    public function createParser(string $logLevel = self::FAIL_ON_WARNING): Parser
     {
         $logger = new Logger;
 
         $logger->setLogLevel($logLevel);
 
-        return new SieParser(
+        return new Parser(
             $logger,
             new AccountBuilder(new AccountFactory, $logger),
             new CurrencyBuilder($logger),
-            new DimensionBuilder($logger)
+            new DimensionBuilder($logger),
+            new VerificationBuilder($logger)
         );
     }
 }

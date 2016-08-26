@@ -459,6 +459,19 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
+     * Filter attributable objects with a specific attribute set
+     *
+     * @param  string $name  Case-insensitive name of attribute
+     * @param  mixed  $value If specified attribute must be set to value for filter to pass
+     */
+    public function withAttribute(string $name, $value = null): Query
+    {
+        return $this->attributables()->filter(function ($item) use ($name, $value) {
+            return $item->hasAttribute($name) && (is_null($value) || $item->getAttribute($name) == $value);
+        });
+    }
+
+    /**
      * Validate that data can be traversed using a foreach loop
      *
      * @param  mixed $data

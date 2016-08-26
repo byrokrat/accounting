@@ -3,6 +3,7 @@
 ## Transaktioner
 
 * En transaction ska kunna vara struken, och ska i så fall inte räknas i arithmetiken...
+* Här ingår även stöd för BTRANS och RTRANS till sie4
 
 ## Huvudbok
 

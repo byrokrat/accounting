@@ -18,11 +18,11 @@ class DimensionBuilderTest extends \PHPUnit_Framework_TestCase
             $this->createMock(LoggerInterface::CLASS)
         );
 
-        $dimensionBuilder->addDimension(1, 'foobar');
+        $dimensionBuilder->addDimension('1', 'foobar');
 
         $this->assertSame(
-            $dimensionBuilder->getDimension(1),
-            $dimensionBuilder->getDimension(1)
+            $dimensionBuilder->getDimension('1'),
+            $dimensionBuilder->getDimension('1')
         );
 
         $this->assertCount(1, $dimensionBuilder->getDimensions());
@@ -34,12 +34,12 @@ class DimensionBuilderTest extends \PHPUnit_Framework_TestCase
             $this->createMock(LoggerInterface::CLASS)
         );
 
-        $dimensionBuilder->addDimension(1, 'parent');
-        $dimensionBuilder->addDimension(2, 'child', 1);
+        $dimensionBuilder->addDimension('1', 'parent');
+        $dimensionBuilder->addDimension('2', 'child', '1');
 
         $this->assertSame(
-            $dimensionBuilder->getDimension(1),
-            $dimensionBuilder->getDimension(2)->getParent()
+            $dimensionBuilder->getDimension('1'),
+            $dimensionBuilder->getDimension('2')->getParent()
         );
     }
 
@@ -49,12 +49,12 @@ class DimensionBuilderTest extends \PHPUnit_Framework_TestCase
             $this->createMock(LoggerInterface::CLASS)
         );
 
-        $dimensionBuilder->addDimension(1, 'parent');
-        $dimensionBuilder->addObject(1, 2, 'object');
+        $dimensionBuilder->addDimension('1', 'parent');
+        $dimensionBuilder->addObject('1', '2', 'object');
 
         $this->assertSame(
-            $dimensionBuilder->getDimension(1),
-            $dimensionBuilder->getObject(1, 2)->getParent()
+            $dimensionBuilder->getDimension('1'),
+            $dimensionBuilder->getObject('1', '2')->getParent()
         );
 
         $this->assertCount(2, $dimensionBuilder->getDimensions());
@@ -70,7 +70,7 @@ class DimensionBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(
             'UNSPECIFIED',
-            $dimensionBuilder->getObject(1, 2)->getDescription()
+            $dimensionBuilder->getObject('1', '2')->getDescription()
         );
 
         $logger->warning('Object number 1.2 not defined')->shouldHaveBeenCalled();
@@ -86,7 +86,7 @@ class DimensionBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(
             'UNSPECIFIED',
-            $dimensionBuilder->getDimension(100)->getDescription()
+            $dimensionBuilder->getDimension('100')->getDescription()
         );
 
         $logger->warning('Dimension number 100 not defined')->shouldHaveBeenCalled();
@@ -100,7 +100,7 @@ class DimensionBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(
             'Anställd',
-            $dimensionBuilder->getDimension(7)->getDescription()
+            $dimensionBuilder->getDimension('7')->getDescription()
         );
     }
 
@@ -110,7 +110,7 @@ class DimensionBuilderTest extends \PHPUnit_Framework_TestCase
             $this->createMock(LoggerInterface::CLASS)
         );
 
-        $dim = $dimensionBuilder->getDimension(2);
+        $dim = $dimensionBuilder->getDimension('2');
 
         $this->assertSame(
             'Kostnadsbärare',
@@ -118,7 +118,7 @@ class DimensionBuilderTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertSame(
-            $dimensionBuilder->getDimension(1),
+            $dimensionBuilder->getDimension('1'),
             $dim->getParent()
         );
     }

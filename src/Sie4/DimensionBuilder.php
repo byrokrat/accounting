@@ -34,12 +34,12 @@ class DimensionBuilder
      * @var array Map of reserved dimension numbers to descriptions
      */
     private static $reservedDimsMap = [
-        1 => 'Kostnadsställe/resultatenhet',
-        6 => 'Projekt',
-        7 => 'Anställd',
-        8 => 'Kund',
-        9 => 'Leverantör',
-        10 => 'Faktura'
+        '1' => 'Kostnadsställe/resultatenhet',
+        '6' => 'Projekt',
+        '7' => 'Anställd',
+        '8' => 'Kund',
+        '9' => 'Leverantör',
+        '10' => 'Faktura'
     ];
 
     /**
@@ -65,10 +65,10 @@ class DimensionBuilder
      *
      * @return void
      */
-    public function addDimension(int $number, string $desc, int $super = 0)
+    public function addDimension(string $dimId, string $desc, string $super = '')
     {
-        $this->dims[$number] = new Dimension(
-            $number,
+        $this->dims[$dimId] = new Dimension(
+            $dimId,
             $desc,
             $super ? $this->getDimension($super) : null
         );
@@ -79,9 +79,9 @@ class DimensionBuilder
      *
      * @return void
      */
-    public function addObject(int $super, int $number, string $desc)
+    public function addObject(string $super, string $objectId, string $desc)
     {
-        $this->dims["$super.$number"] = new Dimension($number, $desc, $this->getDimension($super));
+        $this->dims["$super.$objectId"] = new Dimension($objectId, $desc, $this->getDimension($super));
     }
 
     /**
@@ -90,40 +90,40 @@ class DimensionBuilder
      * If dimension is not defined a new dimension is created, using one of the
      * reserved sie dimension description if applicable.
      */
-    public function getDimension(int $number): Dimension
+    public function getDimension(string $dimId): Dimension
     {
-        if (isset($this->dims[$number])) {
-            return $this->dims[$number];
+        if (isset($this->dims[$dimId])) {
+            return $this->dims[$dimId];
         }
 
-        $this->logger->warning("Dimension number $number not defined");
+        $this->logger->warning("Dimension number $dimId not defined");
 
-        if (2 === $number) {
-            return $this->dims[2] = new Dimension(2, 'Kostnadsbärare', $this->getDimension(1));
+        if ('2' === $dimId) {
+            return $this->dims['2'] = new Dimension('2', 'Kostnadsbärare', $this->getDimension('1'));
         }
 
         $this->addDimension(
-            $number,
-            self::$reservedDimsMap[$number] ?? 'UNSPECIFIED'
+            $dimId,
+            self::$reservedDimsMap[$dimId] ?? 'UNSPECIFIED'
         );
 
-        return $this->getDimension($number);
+        return $this->getDimension($dimId);
     }
 
     /**
      * Get accounting object from internal store using number and super as key
      */
-    public function getObject(int $super, int $number): Dimension
+    public function getObject(string $super, string $objectId): Dimension
     {
-        if (isset($this->dims["$super.$number"])) {
-            return $this->dims["$super.$number"];
+        if (isset($this->dims["$super.$objectId"])) {
+            return $this->dims["$super.$objectId"];
         }
 
-        $this->logger->warning("Object number $super.$number not defined");
+        $this->logger->warning("Object number $super.$objectId not defined");
 
-        $this->addObject($super, $number, 'UNSPECIFIED');
+        $this->addObject($super, $objectId, 'UNSPECIFIED');
 
-        return $this->getObject($super, $number);
+        return $this->getObject($super, $objectId);
     }
 
     /**

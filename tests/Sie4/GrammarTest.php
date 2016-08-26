@@ -13,18 +13,20 @@ use byrokrat\amount\Currency\SEK;
  *
  * Referenced rules are from the SIE specs dated 2008-09-30
  *
- * @covers \byrokrat\accounting\Sie4\SieGrammar
+ * @covers \byrokrat\accounting\Sie4\DependencyManager
+ * @covers \byrokrat\accounting\Sie4\Grammar
+ * @covers \byrokrat\accounting\Sie4\Parser
  */
-class SieGrammarTest extends \PHPUnit_Framework_TestCase
+class GrammarTest extends \PHPUnit_Framework_TestCase
 {
     use \byrokrat\accounting\utils\InterfaceAssertionsTrait, TypeProviderTrait;
 
     /**
      * Parse content and get resulting container
      */
-    private function parse(string $content, string $logLevel = SieParserFactory::FAIL_ON_ERROR): Container
+    private function parse(string $content, string $logLevel = ParserFactory::FAIL_ON_ERROR): Container
     {
-        return (new SieParserFactory)->createParser($logLevel)->parse($content);
+        return (new ParserFactory)->createParser($logLevel)->parse($content);
     }
 
     /**
@@ -38,7 +40,7 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
                 #FLAGGA 1
                 this-is-not-a-label
             ",
-            SieParserFactory::FAIL_ON_WARNING
+            ParserFactory::FAIL_ON_WARNING
         );
     }
 
@@ -121,7 +123,7 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(Exception\ParserException::CLASS);
         $this->parse(
             "#FLAGGA 1 unknown-field-at-end-of-line\n",
-            SieParserFactory::FAIL_ON_NOTICE
+            ParserFactory::FAIL_ON_NOTICE
         );
     }
 
@@ -136,7 +138,7 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
                 #FLAGGA 1
                 #UNKNOWN foo bar
             ",
-            SieParserFactory::FAIL_ON_NOTICE
+            ParserFactory::FAIL_ON_NOTICE
         );
     }
 
@@ -226,7 +228,7 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
                 #KSUMMA
                 #KSUMMA 1234
             ",
-            SieParserFactory::FAIL_ON_NOTICE
+            ParserFactory::FAIL_ON_NOTICE
         );
     }
 
@@ -300,16 +302,16 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
                 #FLAGGA 1
                 #FORMAT not-PC8
             ",
-            SieParserFactory::FAIL_ON_WARNING
+            ParserFactory::FAIL_ON_WARNING
         );
     }
 
     /**
      * @dataProvider accountTypeProvider
      */
-    public function testAccountType(string $raw, int $expectedNr, string $expectedDesc, string $expectedClass)
+    public function testAccountType(string $raw, string $expectedNr, string $expectedDesc, string $expectedClass)
     {
-        $account = $this->parse("#FLAGGA 1\n$raw\n")->query()->findAccountFromNumber($expectedNr);
+        $account = $this->parse("#FLAGGA 1\n$raw\n")->query()->findAccount($expectedNr);
 
         $this->assertSame(
             $expectedDesc,
@@ -331,7 +333,7 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(
             'kr',
-            $content->query()->findAccountFromNumber(1920)->getAttribute('unit')
+            $content->query()->findAccount('1920')->getAttribute('unit')
         );
     }
 
@@ -344,7 +346,7 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(
             2000,
-            $content->query()->findAccountFromNumber(1920)->getAttribute('sru')
+            $content->query()->findAccount('1920')->getAttribute('sru')
         );
     }
 
@@ -355,7 +357,7 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
             #DIM 10 parent
             #UNDERDIM 20 child 10
             #OBJEKT 20 30 obj
-        ")->query()->findDimensionFromNumber(30);
+        ")->query()->findDimension('30');
 
         $this->assertSame(
             'obj',
@@ -382,7 +384,7 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
             #FLAGGA 1
             #IB 0 1920 $raw 0
             #IB -1 1920 $raw 100
-        ")->query()->findAccountFromNumber(1920);
+        ")->query()->findAccount('1920');
 
         $this->assertEquals(
             $money,
@@ -402,18 +404,18 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
             #DIM 10 parent
             #OBJEKT 10 20 objA
             #OBJEKT 10 30 objB
-            #OIB 0 1920 {10 20 10 30} 100 0
-            #OIB -1 1920 {10 20} 200 1
+            #OIB 0 1920 {10 \"20\" 10 \"30\"} 100 0
+            #OIB -1 1920 {10 \"20\"} 200 1
         ");
 
-        $objB = $content->query()->findDimensionFromNumber(30);
+        $objB = $content->query()->findDimension('30');
 
         $this->assertEquals(
             new SEK('100'),
             $objB->getAttribute('IB 0')[0]
         );
 
-        $objA = $content->query()->findDimensionFromNumber(20);
+        $objA = $content->query()->findDimension('20');
 
         $this->assertEquals(
             new SEK('100'),
@@ -429,5 +431,65 @@ class SieGrammarTest extends \PHPUnit_Framework_TestCase
             1,
             $objA->getAttribute('IB -1')[1]
         );
+    }
+
+    public function testCreateVerifications()
+    {
+        $verifications = $this->parse("
+            #FLAGGA 1
+            #VER \"\" \"\" 20110104 \"Ver A\"
+            {
+                #TRANS  3010 {} -100.00
+                #TRANS  1920 {} 100.00
+            }
+            #VER \"\" \"\" 20110104 \"Ver B\"
+            {
+                #TRANS  3010 {} -100.00
+                #TRANS  1920 {} 100.00
+            }
+        ")->query()->verifications()->toArray();
+
+        $this->assertCount(2, $verifications);
+
+        $this->assertSame(
+            'Ver B',
+            $verifications[1]->getDescription()
+        );
+    }
+
+    public function testCreateVerificationSeries()
+    {
+        $seriesA = $this->parse("
+            #FLAGGA 1
+            #VER \"A\" \"\" 20110104 \"Ver A\"
+            {
+                #TRANS  3010 {} -100.00
+                #TRANS  1920 {} 100.00
+            }
+            #VER \"B\" \"\" 20110104 \"Ver B\"
+            {
+                #TRANS  3010 {} -100.00
+                #TRANS  1920 {} 100.00
+            }
+        ")->query()->verifications()->withAttribute('series', 'B')->toArray();
+
+        $this->assertCount(1, $seriesA);
+
+        $this->assertSame(
+            'Ver B',
+            $seriesA[0]->getDescription()
+        );
+    }
+
+    public function testExceptionOnUnbalancedVerification()
+    {
+        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->parse("
+            #FLAGGA 1
+            #VER \"\" \"\" 20110104
+            {
+                #TRANS  3010 {} -100.00
+            }
+        ");
     }
 }

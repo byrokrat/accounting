@@ -9,7 +9,7 @@ use byrokrat\accounting\Dimension;
 use byrokrat\amount\Currency\SEK;
 
 /**
- * Phpunit data providers for the SIE types defined in SieGrammar
+ * Phpunit data providers for the SIE types defined in Grammar
  */
 trait TypeProviderTrait
 {
@@ -113,11 +113,11 @@ trait TypeProviderTrait
     public function accountTypeProvider()
     {
         return [
-            ["#KONTO 1920 bank",               1920, 'bank',    Account\Asset::CLASS],
-            ["#KONTO 1920 bank\n#KTYP 1920 S", 1920, 'bank',    Account\Debt::CLASS],
-            ["#KONTO 2000 debt",               2000, 'debt',    Account\Debt::CLASS],
-            ["#KONTO 3000 earning",            3000, 'earning', Account\Earning::CLASS],
-            ["#KONTO 4000 cost",               4000, 'cost',    Account\Cost::CLASS],
+            ["#KONTO 1920 bank",               '1920', 'bank',    Account\Asset::CLASS],
+            ["#KONTO 1920 bank\n#KTYP 1920 S", '1920', 'bank',    Account\Debt::CLASS],
+            ["#KONTO 2000 debt",               '2000', 'debt',    Account\Debt::CLASS],
+            ["#KONTO 3000 earning",            '3000', 'earning', Account\Earning::CLASS],
+            ["#KONTO 4000 cost",               '4000', 'cost',    Account\Cost::CLASS],
         ];
     }
 }

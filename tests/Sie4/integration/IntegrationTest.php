@@ -4,14 +4,15 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\integration;
 
-use byrokrat\accounting\Sie4\SieParserFactory;
+use byrokrat\accounting\Sie4\ParserFactory;
 use byrokrat\accounting\Exception;
 
 /**
  * Validate that all example files in integration/files can be parsed
  *
  * @see http://www.sie.se/?page_id=125 Example files downloaded 2016-08-22
- * @coversNothing
+ *
+ * @covers \byrokrat\accounting\Sie4\Grammar
  */
 class IntegrationTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,45 +23,66 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        self::$parser = (new SieParserFactory)->createParser();
+        self::$parser = (new ParserFactory)->createParser();
     }
 
-    public function filesProvider()
+    public function fileInfoProvider()
     {
         foreach (new \DirectoryIterator(__DIR__ . '/files') as $fileInfo) {
             if (!in_array(strtoupper($fileInfo->getExtension()), ['SE', 'SI'])) {
                 continue;
             }
 
-            $fname = $fileInfo->getRealPath();
-
-            yield [
-                $fileInfo->getFilename(),
-                file_get_contents($fileInfo->getRealPath()),
-                is_readable("$fname.errors") ? file("$fname.errors", FILE_IGNORE_NEW_LINES) : [],
-                is_readable("$fname.assertions") ? include "$fname.assertions" : null
-            ];
+            yield [$fileInfo->getRealPath()];
         }
     }
 
     /**
-     * @dataProvider filesProvider
+     * @dataProvider fileInfoProvider
      * @group slow
      */
-    public function testFiles(string $filename, string $content, array $expectedErrors, \Closure $assertions = null)
+    public function testFiles(string $fname)
     {
-        try {
-            self::$parser->parse($content);
-        } catch (Exception\ParserException $e) {
-            if ($unexpectedErrors = array_diff($e->getLog(), $expectedErrors)) {
-                return $this->fail("[$filename] Parsing failed due to\n" . implode("\n", $unexpectedErrors));
-            }
-        } catch (\Exception $e) {
-            return $this->fail("[$filename] {$e->getMessage()}");
+        $content = file_get_contents($fname);
+
+        $transformationsFname = "$fname.transformations";
+
+        if (is_readable($transformationsFname)) {
+            $transformations = include $transformationsFname;
+            $content = $transformations->call($this, $content);
         }
 
-        if ($assertions instanceof \Closure) {
+        try {
+            self::$parser->parse($content);
+
+        } catch (Exception\ParserException $e) {
+            $errorsFname = "$fname.errors";
+            $allowedErrors = is_readable($errorsFname) ? file($errorsFname, FILE_IGNORE_NEW_LINES) : [];
+            if ($unexpectedErrors = array_diff($e->getLog(), $allowedErrors)) {
+                return $this->failure($fname, "Parsing failed due to\n" . implode("\n", $unexpectedErrors));
+            }
+
+        } catch (\Exception $e) {
+            return $this->failure($fname, $e->getMessage());
+        }
+
+        $assertionsFname = "$fname.assertions";
+
+        if (is_readable($assertionsFname)) {
+            $assertions = include $assertionsFname;
             $assertions->call($this, self::$parser->getContainer());
         }
+    }
+
+    private function failure(string $fname, string $msg)
+    {
+        $this->fail(
+            sprintf(
+                "[%s] %s \n\nFor more information try\nbin/check_sie_file \"%s\"",
+                basename($fname),
+                $msg,
+                $fname
+            )
+        );
     }
 }

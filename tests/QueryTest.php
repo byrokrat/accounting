@@ -196,6 +196,40 @@ class QueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @depends testAttributables
+     */
+    public function testWithAttribute()
+    {
+        $attributableProphecy = $this->prophesize(Interfaces\Attributable::CLASS);
+
+        $attributableProphecy->hasAttribute('A')->willReturn(true);
+        $attributableProphecy->getAttribute('A')->willReturn('foobar');
+        $attributableProphecy->hasAttribute('B')->willReturn(false);
+
+        $attributable = $attributableProphecy->reveal();
+
+        $this->assertSame(
+            [$attributable],
+            (new Query([1, $attributable, 3]))->withAttribute('A')->toArray()
+        );
+
+        $this->assertSame(
+            [],
+            (new Query([1, $attributable, 3]))->withAttribute('B')->toArray()
+        );
+
+        $this->assertSame(
+            [$attributable],
+            (new Query([1, $attributable, 3]))->withAttribute('A', 'foobar')->toArray()
+        );
+
+        $this->assertSame(
+            [],
+            (new Query([1, $attributable, 3]))->withAttribute('A', 'not-foobar')->toArray()
+        );
+    }
+
+    /**
      * @depends testFilter
      */
     public function testDateables()

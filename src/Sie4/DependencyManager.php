@@ -27,7 +27,7 @@ use byrokrat\accounting\Container;
 /**
  * Manage parser dependencies
  */
-class SieDependencyManager
+class DependencyManager
 {
     /**
      * @var AccountBuilder Builder for account objects
@@ -55,27 +55,26 @@ class SieDependencyManager
     private $dimensionBuilder;
 
     /**
+     * @var VerificationBuilder Builder for verificationi objects
+     */
+    private $verificationBuilder;
+
+    /**
      * Inject dependencies at construct
      */
     public function __construct(
         Logger $logger,
         AccountBuilder $accountBuilder,
         CurrencyBuilder $currencyBuilder,
-        DimensionBuilder $dimensionBuilder
+        DimensionBuilder $dimensionBuilder,
+        VerificationBuilder $verificationBuilder
     ) {
         $this->logger = $logger;
         $this->accountBuilder = $accountBuilder;
         $this->currencyBuilder = $currencyBuilder;
         $this->dimensionBuilder = $dimensionBuilder;
+        $this->verificationBuilder = $verificationBuilder;
         $this->resetContainer();
-    }
-
-    /**
-     * Reset container to empty state
-     */
-    public function resetContainer()
-    {
-        $this->container = new Container;
     }
 
     /**
@@ -84,6 +83,14 @@ class SieDependencyManager
     public function getContainer(): Container
     {
         return $this->container;
+    }
+
+    /**
+     * Reset container to empty state
+     */
+    protected function resetContainer()
+    {
+        $this->container = new Container;
     }
 
     /**
@@ -116,5 +123,13 @@ class SieDependencyManager
     protected function getLogger(): Logger
     {
         return $this->logger;
+    }
+
+    /**
+     * Get builder of verification objects
+     */
+    protected function getVerificationBuilder(): VerificationBuilder
+    {
+        return $this->verificationBuilder;
     }
 }

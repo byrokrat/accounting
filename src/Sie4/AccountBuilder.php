@@ -69,11 +69,11 @@ class AccountBuilder
     /**
      * Create a new account object
      *
-     * @param  integer $number      Number of account
-     * @param  string  $description Free text description of account
+     * @param  string $number      Number of account
+     * @param  string $description Free text description of account
      * @return void
      */
-    public function addAccount(int $number, string $description)
+    public function addAccount(string $number, string $description)
     {
         try {
             $this->accounts[$number] = $this->factory->createAccount($number, $description);
@@ -85,11 +85,11 @@ class AccountBuilder
     /**
      * Set a new type of account
      *
-     * @param  integer $number  Number of account
-     * @param  string  $type    Type of account (T, S, I or K)
+     * @param  string $number  Number of account
+     * @param  string $type    Type of account (T, S, I or K)
      * @return void
      */
-    public function setAccountType(int $number, string $type)
+    public function setAccountType(string $number, string $type)
     {
         if (!isset(self::$accountTypeMap[$type])) {
             $this->logger->warning("Unknown type $type for account number $number");
@@ -108,7 +108,7 @@ class AccountBuilder
      *
      * @throws Exception\RuntimeException If account does not exist and can not be created
      */
-    public function getAccount(int $number): Account
+    public function getAccount(string $number): Account
     {
         if (!isset($this->accounts[$number])) {
             $this->logger->warning("Account number $number not defined");

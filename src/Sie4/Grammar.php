@@ -2,7 +2,9 @@
 
 namespace byrokrat\accounting\Sie4;
 
-class SieGrammar extends SieDependencyManager
+use byrokrat\accounting\Transaction;
+
+class Grammar extends DependencyManager
 {
     protected function parseFILE()
     {
@@ -16,92 +18,36 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value12 = array();
+        $_value6 = array();
 
-        $_value2 = array();
-        $_cut3 = $this->cut;
+        $_success = $this->parseFLAGGA_POST();
 
-        while (true) {
+        if ($_success) {
+            $_value6[] = $this->value;
+
             $_position1 = $this->position;
-
-            $this->cut = false;
-            $_success = $this->parseEMPTY_LINE();
-
-            if (!$_success) {
-                break;
-            }
-
-            $_value2[] = $this->value;
-        }
-
-        if (!$this->cut) {
-            $_success = true;
-            $this->position = $_position1;
-            $this->value = $_value2;
-        }
-
-        $this->cut = $_cut3;
-
-        if ($_success) {
-            $_value12[] = $this->value;
-
-            $_success = $this->parseFLAGGA_POST();
-        }
-
-        if ($_success) {
-            $_value12[] = $this->value;
-
-            $_value5 = array();
-            $_cut6 = $this->cut;
-
-            while (true) {
-                $_position4 = $this->position;
-
-                $this->cut = false;
-                $_success = $this->parseEMPTY_LINE();
-
-                if (!$_success) {
-                    break;
-                }
-
-                $_value5[] = $this->value;
-            }
-
-            if (!$this->cut) {
-                $_success = true;
-                $this->position = $_position4;
-                $this->value = $_value5;
-            }
-
-            $this->cut = $_cut6;
-        }
-
-        if ($_success) {
-            $_value12[] = $this->value;
-
-            $_position7 = $this->position;
-            $_cut8 = $this->cut;
+            $_cut2 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseCHECKSUMED_SIE_CONTENT();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position7;
+                $this->position = $_position1;
 
                 $_success = $this->parseSIE_CONTENT();
             }
 
-            $this->cut = $_cut8;
+            $this->cut = $_cut2;
         }
 
         if ($_success) {
-            $_value12[] = $this->value;
+            $_value6[] = $this->value;
 
-            $_value10 = array();
-            $_cut11 = $this->cut;
+            $_value4 = array();
+            $_cut5 = $this->cut;
 
             while (true) {
-                $_position9 = $this->position;
+                $_position3 = $this->position;
 
                 $this->cut = false;
                 $_success = $this->parseEMPTY_LINE();
@@ -110,28 +56,28 @@ class SieGrammar extends SieDependencyManager
                     break;
                 }
 
-                $_value10[] = $this->value;
+                $_value4[] = $this->value;
             }
 
             if (!$this->cut) {
                 $_success = true;
-                $this->position = $_position9;
-                $this->value = $_value10;
+                $this->position = $_position3;
+                $this->value = $_value4;
             }
 
-            $this->cut = $_cut11;
+            $this->cut = $_cut5;
         }
 
         if ($_success) {
-            $_value12[] = $this->value;
+            $_value6[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value12[] = $this->value;
+            $_value6[] = $this->value;
 
-            $this->value = $_value12;
+            $this->value = $_value6;
         }
 
         $this->cache['FILE'][$_position] = array(
@@ -159,26 +105,26 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value13 = array();
+        $_value7 = array();
 
         $_success = $this->parseKSUMMA_START_POST();
 
         if ($_success) {
-            $_value13[] = $this->value;
+            $_value7[] = $this->value;
 
             $_success = $this->parseSIE_CONTENT();
         }
 
         if ($_success) {
-            $_value13[] = $this->value;
+            $_value7[] = $this->value;
 
             $_success = $this->parseKSUMMA_END_POST();
         }
 
         if ($_success) {
-            $_value13[] = $this->value;
+            $_value7[] = $this->value;
 
-            $this->value = $_value13;
+            $this->value = $_value7;
         }
 
         $this->cache['CHECKSUMED_SIE_CONTENT'][$_position] = array(
@@ -206,13 +152,13 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value27 = array();
+        $_value21 = array();
 
-        $_value15 = array();
-        $_cut16 = $this->cut;
+        $_value9 = array();
+        $_cut10 = $this->cut;
 
         while (true) {
-            $_position14 = $this->position;
+            $_position8 = $this->position;
 
             $this->cut = false;
             $_success = $this->parseIDENTIFICATION_POST();
@@ -221,107 +167,107 @@ class SieGrammar extends SieDependencyManager
                 break;
             }
 
-            $_value15[] = $this->value;
+            $_value9[] = $this->value;
         }
 
         if (!$this->cut) {
             $_success = true;
-            $this->position = $_position14;
-            $this->value = $_value15;
+            $this->position = $_position8;
+            $this->value = $_value9;
         }
 
-        $this->cut = $_cut16;
+        $this->cut = $_cut10;
 
         if ($_success) {
-            $_value27[] = $this->value;
+            $_value21[] = $this->value;
 
-            $_value20 = array();
-            $_cut21 = $this->cut;
+            $_value14 = array();
+            $_cut15 = $this->cut;
 
             while (true) {
-                $_position19 = $this->position;
+                $_position13 = $this->position;
 
                 $this->cut = false;
-                $_position17 = $this->position;
-                $_cut18 = $this->cut;
+                $_position11 = $this->position;
+                $_cut12 = $this->cut;
 
                 $this->cut = false;
                 $_success = $this->parseACCOUNT_PLAN_POST();
 
                 if (!$_success && !$this->cut) {
-                    $this->position = $_position17;
+                    $this->position = $_position11;
 
                     $_success = $this->parseMISPLACED_IDENTIFICATION_POST();
                 }
 
-                $this->cut = $_cut18;
+                $this->cut = $_cut12;
 
                 if (!$_success) {
                     break;
                 }
 
-                $_value20[] = $this->value;
+                $_value14[] = $this->value;
             }
 
             if (!$this->cut) {
                 $_success = true;
-                $this->position = $_position19;
-                $this->value = $_value20;
+                $this->position = $_position13;
+                $this->value = $_value14;
             }
 
-            $this->cut = $_cut21;
+            $this->cut = $_cut15;
         }
 
         if ($_success) {
-            $_value27[] = $this->value;
+            $_value21[] = $this->value;
 
-            $_value25 = array();
-            $_cut26 = $this->cut;
+            $_value19 = array();
+            $_cut20 = $this->cut;
 
             while (true) {
-                $_position24 = $this->position;
+                $_position18 = $this->position;
 
                 $this->cut = false;
-                $_position22 = $this->position;
-                $_cut23 = $this->cut;
+                $_position16 = $this->position;
+                $_cut17 = $this->cut;
 
                 $this->cut = false;
                 $_success = $this->parseBALANCE_POST();
 
                 if (!$_success && !$this->cut) {
-                    $this->position = $_position22;
+                    $this->position = $_position16;
 
                     $_success = $this->parseMISPLACED_IDENTIFICATION_POST();
                 }
 
                 if (!$_success && !$this->cut) {
-                    $this->position = $_position22;
+                    $this->position = $_position16;
 
                     $_success = $this->parseMISPLACED_ACCOUNT_PLAN_POST();
                 }
 
-                $this->cut = $_cut23;
+                $this->cut = $_cut17;
 
                 if (!$_success) {
                     break;
                 }
 
-                $_value25[] = $this->value;
+                $_value19[] = $this->value;
             }
 
             if (!$this->cut) {
                 $_success = true;
-                $this->position = $_position24;
-                $this->value = $_value25;
+                $this->position = $_position18;
+                $this->value = $_value19;
             }
 
-            $this->cut = $_cut26;
+            $this->cut = $_cut20;
         }
 
         if ($_success) {
-            $_value27[] = $this->value;
+            $_value21[] = $this->value;
 
-            $this->value = $_value27;
+            $this->value = $_value21;
         }
 
         $this->cache['SIE_CONTENT'][$_position] = array(
@@ -349,12 +295,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value28 = array();
+        $_value22 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value28[] = $this->value;
+            $_value22[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('FLAGGA')) === 'FLAGGA') {
                 $_success = true;
@@ -368,7 +314,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value28[] = $this->value;
+            $_value22[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -377,7 +323,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value28[] = $this->value;
+            $_value22[] = $this->value;
 
             $_success = $this->parseBOOLEAN();
 
@@ -387,15 +333,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value28[] = $this->value;
+            $_value22[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value28[] = $this->value;
+            $_value22[] = $this->value;
 
-            $this->value = $_value28;
+            $this->value = $_value22;
         }
 
         if ($_success) {
@@ -429,12 +375,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value29 = array();
+        $_value23 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value29[] = $this->value;
+            $_value23[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('KSUMMA')) === 'KSUMMA') {
                 $_success = true;
@@ -448,15 +394,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value29[] = $this->value;
+            $_value23[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value29[] = $this->value;
+            $_value23[] = $this->value;
 
-            $this->value = $_value29;
+            $this->value = $_value23;
         }
 
         $this->cache['KSUMMA_START_POST'][$_position] = array(
@@ -484,12 +430,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value30 = array();
+        $_value24 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value30[] = $this->value;
+            $_value24[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('KSUMMA')) === 'KSUMMA') {
                 $_success = true;
@@ -503,7 +449,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value30[] = $this->value;
+            $_value24[] = $this->value;
 
             $_success = $this->parseINT();
 
@@ -513,15 +459,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value30[] = $this->value;
+            $_value24[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value30[] = $this->value;
+            $_value24[] = $this->value;
 
-            $this->value = $_value30;
+            $this->value = $_value24;
         }
 
         if ($_success) {
@@ -622,109 +568,109 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_position31 = $this->position;
-        $_cut32 = $this->cut;
+        $_position25 = $this->position;
+        $_cut26 = $this->cut;
 
         $this->cut = false;
         $_success = $this->parseADRESS_POST();
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position31;
+            $this->position = $_position25;
 
             $_success = $this->parseBKOD_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position31;
+            $this->position = $_position25;
 
             $_success = $this->parseFNAMN_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position31;
+            $this->position = $_position25;
 
             $_success = $this->parseFNR_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position31;
+            $this->position = $_position25;
 
             $_success = $this->parseFORMAT_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position31;
+            $this->position = $_position25;
 
             $_success = $this->parseFTYP_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position31;
+            $this->position = $_position25;
 
             $_success = $this->parseGEN_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position31;
+            $this->position = $_position25;
 
             $_success = $this->parseKPTYP_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position31;
+            $this->position = $_position25;
 
             $_success = $this->parseOMFATTN_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position31;
+            $this->position = $_position25;
 
             $_success = $this->parseORGNR_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position31;
+            $this->position = $_position25;
 
             $_success = $this->parsePROGRAM_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position31;
+            $this->position = $_position25;
 
             $_success = $this->parsePROSA_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position31;
+            $this->position = $_position25;
 
             $_success = $this->parseRAR_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position31;
+            $this->position = $_position25;
 
             $_success = $this->parseSIETYP_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position31;
+            $this->position = $_position25;
 
             $_success = $this->parseTAXAR_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position31;
+            $this->position = $_position25;
 
             $_success = $this->parseVALUTA_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position31;
+            $this->position = $_position25;
 
             $_success = $this->parseVOID_ROW();
         }
 
-        $this->cut = $_cut32;
+        $this->cut = $_cut26;
 
         $this->cache['IDENTIFICATION_POST'][$_position] = array(
             'success' => $_success,
@@ -751,12 +697,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value41 = array();
+        $_value35 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value41[] = $this->value;
+            $_value35[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('ADRESS')) === 'ADRESS') {
                 $_success = true;
@@ -770,7 +716,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value41[] = $this->value;
+            $_value35[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -779,7 +725,73 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value41[] = $this->value;
+            $_value35[] = $this->value;
+
+            $_position27 = $this->position;
+            $_cut28 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position27;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut28;
+
+            if ($_success) {
+                $contact = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value35[] = $this->value;
+
+            $_position29 = $this->position;
+            $_cut30 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position29;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut30;
+
+            if ($_success) {
+                $address = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value35[] = $this->value;
+
+            $_position31 = $this->position;
+            $_cut32 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position31;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut32;
+
+            if ($_success) {
+                $location = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value35[] = $this->value;
 
             $_position33 = $this->position;
             $_cut34 = $this->cut;
@@ -796,86 +808,20 @@ class SieGrammar extends SieDependencyManager
             $this->cut = $_cut34;
 
             if ($_success) {
-                $contact = $this->value;
-            }
-        }
-
-        if ($_success) {
-            $_value41[] = $this->value;
-
-            $_position35 = $this->position;
-            $_cut36 = $this->cut;
-
-            $this->cut = false;
-            $_success = $this->parseSTRING();
-
-            if (!$_success && !$this->cut) {
-                $_success = true;
-                $this->position = $_position35;
-                $this->value = null;
-            }
-
-            $this->cut = $_cut36;
-
-            if ($_success) {
-                $address = $this->value;
-            }
-        }
-
-        if ($_success) {
-            $_value41[] = $this->value;
-
-            $_position37 = $this->position;
-            $_cut38 = $this->cut;
-
-            $this->cut = false;
-            $_success = $this->parseSTRING();
-
-            if (!$_success && !$this->cut) {
-                $_success = true;
-                $this->position = $_position37;
-                $this->value = null;
-            }
-
-            $this->cut = $_cut38;
-
-            if ($_success) {
-                $location = $this->value;
-            }
-        }
-
-        if ($_success) {
-            $_value41[] = $this->value;
-
-            $_position39 = $this->position;
-            $_cut40 = $this->cut;
-
-            $this->cut = false;
-            $_success = $this->parseSTRING();
-
-            if (!$_success && !$this->cut) {
-                $_success = true;
-                $this->position = $_position39;
-                $this->value = null;
-            }
-
-            $this->cut = $_cut40;
-
-            if ($_success) {
                 $phone = $this->value;
             }
         }
 
         if ($_success) {
-            $_value41[] = $this->value;
+            $_value35[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value41[] = $this->value;
+            $_value35[] = $this->value;
 
-            $this->value = $_value41;
+            $this->value = $_value35;
         }
 
         if ($_success) {
@@ -909,12 +855,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value42 = array();
+        $_value36 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value42[] = $this->value;
+            $_value36[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('BKOD')) === 'BKOD') {
                 $_success = true;
@@ -928,7 +874,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value42[] = $this->value;
+            $_value36[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -937,7 +883,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value42[] = $this->value;
+            $_value36[] = $this->value;
 
             $_success = $this->parseINT();
 
@@ -947,15 +893,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value42[] = $this->value;
+            $_value36[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value42[] = $this->value;
+            $_value36[] = $this->value;
 
-            $this->value = $_value42;
+            $this->value = $_value36;
         }
 
         if ($_success) {
@@ -989,12 +935,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value43 = array();
+        $_value37 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value43[] = $this->value;
+            $_value37[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('FNAMN')) === 'FNAMN') {
                 $_success = true;
@@ -1008,7 +954,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value43[] = $this->value;
+            $_value37[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1017,7 +963,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value43[] = $this->value;
+            $_value37[] = $this->value;
 
             $_success = $this->parseSTRING();
 
@@ -1027,15 +973,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value43[] = $this->value;
+            $_value37[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value43[] = $this->value;
+            $_value37[] = $this->value;
 
-            $this->value = $_value43;
+            $this->value = $_value37;
         }
 
         if ($_success) {
@@ -1069,12 +1015,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value44 = array();
+        $_value38 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value44[] = $this->value;
+            $_value38[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('FNR')) === 'FNR') {
                 $_success = true;
@@ -1088,7 +1034,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value44[] = $this->value;
+            $_value38[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1097,7 +1043,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value44[] = $this->value;
+            $_value38[] = $this->value;
 
             $_success = $this->parseSTRING();
 
@@ -1107,15 +1053,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value44[] = $this->value;
+            $_value38[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value44[] = $this->value;
+            $_value38[] = $this->value;
 
-            $this->value = $_value44;
+            $this->value = $_value38;
         }
 
         if ($_success) {
@@ -1149,12 +1095,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value45 = array();
+        $_value39 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value45[] = $this->value;
+            $_value39[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('FORMAT')) === 'FORMAT') {
                 $_success = true;
@@ -1168,7 +1114,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value45[] = $this->value;
+            $_value39[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1177,7 +1123,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value45[] = $this->value;
+            $_value39[] = $this->value;
 
             $_success = $this->parseSTRING();
 
@@ -1187,15 +1133,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value45[] = $this->value;
+            $_value39[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value45[] = $this->value;
+            $_value39[] = $this->value;
 
-            $this->value = $_value45;
+            $this->value = $_value39;
         }
 
         if ($_success) {
@@ -1232,12 +1178,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value46 = array();
+        $_value40 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value46[] = $this->value;
+            $_value40[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('FTYP')) === 'FTYP') {
                 $_success = true;
@@ -1251,7 +1197,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value46[] = $this->value;
+            $_value40[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1260,7 +1206,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value46[] = $this->value;
+            $_value40[] = $this->value;
 
             $_success = $this->parseSTRING();
 
@@ -1270,15 +1216,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value46[] = $this->value;
+            $_value40[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value46[] = $this->value;
+            $_value40[] = $this->value;
 
-            $this->value = $_value46;
+            $this->value = $_value40;
         }
 
         if ($_success) {
@@ -1312,12 +1258,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value49 = array();
+        $_value43 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value49[] = $this->value;
+            $_value43[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('GEN')) === 'GEN') {
                 $_success = true;
@@ -1331,7 +1277,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value49[] = $this->value;
+            $_value43[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1340,7 +1286,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value49[] = $this->value;
+            $_value43[] = $this->value;
 
             $_success = $this->parseDATE();
 
@@ -1350,21 +1296,21 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value49[] = $this->value;
+            $_value43[] = $this->value;
 
-            $_position47 = $this->position;
-            $_cut48 = $this->cut;
+            $_position41 = $this->position;
+            $_cut42 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position47;
+                $this->position = $_position41;
                 $this->value = null;
             }
 
-            $this->cut = $_cut48;
+            $this->cut = $_cut42;
 
             if ($_success) {
                 $sign = $this->value;
@@ -1372,15 +1318,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value49[] = $this->value;
+            $_value43[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value49[] = $this->value;
+            $_value43[] = $this->value;
 
-            $this->value = $_value49;
+            $this->value = $_value43;
         }
 
         if ($_success) {
@@ -1414,12 +1360,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value50 = array();
+        $_value44 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value50[] = $this->value;
+            $_value44[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('KPTYP')) === 'KPTYP') {
                 $_success = true;
@@ -1433,7 +1379,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value50[] = $this->value;
+            $_value44[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1442,7 +1388,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value50[] = $this->value;
+            $_value44[] = $this->value;
 
             $_success = $this->parseSTRING();
 
@@ -1452,15 +1398,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value50[] = $this->value;
+            $_value44[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value50[] = $this->value;
+            $_value44[] = $this->value;
 
-            $this->value = $_value50;
+            $this->value = $_value44;
         }
 
         if ($_success) {
@@ -1494,12 +1440,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value51 = array();
+        $_value45 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value51[] = $this->value;
+            $_value45[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('OMFATTN')) === 'OMFATTN') {
                 $_success = true;
@@ -1513,7 +1459,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value51[] = $this->value;
+            $_value45[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1522,7 +1468,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value51[] = $this->value;
+            $_value45[] = $this->value;
 
             $_success = $this->parseDATE();
 
@@ -1532,15 +1478,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value51[] = $this->value;
+            $_value45[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value51[] = $this->value;
+            $_value45[] = $this->value;
 
-            $this->value = $_value51;
+            $this->value = $_value45;
         }
 
         if ($_success) {
@@ -1574,12 +1520,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value58 = array();
+        $_value52 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value58[] = $this->value;
+            $_value52[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('ORGNR')) === 'ORGNR') {
                 $_success = true;
@@ -1593,7 +1539,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value58[] = $this->value;
+            $_value52[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1602,21 +1548,21 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value58[] = $this->value;
+            $_value52[] = $this->value;
 
-            $_position52 = $this->position;
-            $_cut53 = $this->cut;
+            $_position46 = $this->position;
+            $_cut47 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position52;
+                $this->position = $_position46;
                 $this->value = null;
             }
 
-            $this->cut = $_cut53;
+            $this->cut = $_cut47;
 
             if ($_success) {
                 $number = $this->value;
@@ -1624,21 +1570,21 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value58[] = $this->value;
+            $_value52[] = $this->value;
 
-            $_position54 = $this->position;
-            $_cut55 = $this->cut;
+            $_position48 = $this->position;
+            $_cut49 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position54;
+                $this->position = $_position48;
                 $this->value = null;
             }
 
-            $this->cut = $_cut55;
+            $this->cut = $_cut49;
 
             if ($_success) {
                 $acquisition = $this->value;
@@ -1646,21 +1592,21 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value58[] = $this->value;
+            $_value52[] = $this->value;
 
-            $_position56 = $this->position;
-            $_cut57 = $this->cut;
+            $_position50 = $this->position;
+            $_cut51 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position56;
+                $this->position = $_position50;
                 $this->value = null;
             }
 
-            $this->cut = $_cut57;
+            $this->cut = $_cut51;
 
             if ($_success) {
                 $operation = $this->value;
@@ -1668,15 +1614,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value58[] = $this->value;
+            $_value52[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value58[] = $this->value;
+            $_value52[] = $this->value;
 
-            $this->value = $_value58;
+            $this->value = $_value52;
         }
 
         if ($_success) {
@@ -1710,12 +1656,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value59 = array();
+        $_value53 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value59[] = $this->value;
+            $_value53[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('PROGRAM')) === 'PROGRAM') {
                 $_success = true;
@@ -1729,7 +1675,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value59[] = $this->value;
+            $_value53[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1738,7 +1684,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value59[] = $this->value;
+            $_value53[] = $this->value;
 
             $_success = $this->parseSTRING();
 
@@ -1748,7 +1694,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value59[] = $this->value;
+            $_value53[] = $this->value;
 
             $_success = $this->parseSTRING();
 
@@ -1758,15 +1704,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value59[] = $this->value;
+            $_value53[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value59[] = $this->value;
+            $_value53[] = $this->value;
 
-            $this->value = $_value59;
+            $this->value = $_value53;
         }
 
         if ($_success) {
@@ -1800,12 +1746,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value60 = array();
+        $_value54 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value60[] = $this->value;
+            $_value54[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('PROSA')) === 'PROSA') {
                 $_success = true;
@@ -1819,7 +1765,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value60[] = $this->value;
+            $_value54[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1828,7 +1774,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value60[] = $this->value;
+            $_value54[] = $this->value;
 
             $_success = $this->parseSTRING();
 
@@ -1838,15 +1784,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value60[] = $this->value;
+            $_value54[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value60[] = $this->value;
+            $_value54[] = $this->value;
 
-            $this->value = $_value60;
+            $this->value = $_value54;
         }
 
         if ($_success) {
@@ -1880,12 +1826,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value61 = array();
+        $_value59 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value61[] = $this->value;
+            $_value59[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('RAR')) === 'RAR') {
                 $_success = true;
@@ -1899,7 +1845,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value61[] = $this->value;
+            $_value59[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1908,7 +1854,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value61[] = $this->value;
+            $_value59[] = $this->value;
 
             $_success = $this->parseINT();
 
@@ -1918,9 +1864,21 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value61[] = $this->value;
+            $_value59[] = $this->value;
 
+            $_position55 = $this->position;
+            $_cut56 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseDATE();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position55;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut56;
 
             if ($_success) {
                 $startDate = $this->value;
@@ -1928,9 +1886,21 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value61[] = $this->value;
+            $_value59[] = $this->value;
 
+            $_position57 = $this->position;
+            $_cut58 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseDATE();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position57;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut58;
 
             if ($_success) {
                 $endDate = $this->value;
@@ -1938,19 +1908,27 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value61[] = $this->value;
+            $_value59[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value61[] = $this->value;
+            $_value59[] = $this->value;
 
-            $this->value = $_value61;
+            $this->value = $_value59;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$startDate, &$endDate) {
+                if (is_null($startDate)) {
+                    $this->getLogger()->warning("Accounting year start date not defined");
+                }
+
+                if (is_null($endDate)) {
+                    $this->getLogger()->warning("Accounting year end date not defined");
+                }
+
                 $this->getContainer()->setAttribute("RAR $year", [$startDate, $endDate]);
             });
         }
@@ -1980,12 +1958,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value62 = array();
+        $_value60 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value62[] = $this->value;
+            $_value60[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('SIETYP')) === 'SIETYP') {
                 $_success = true;
@@ -1999,7 +1977,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value62[] = $this->value;
+            $_value60[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2008,7 +1986,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value62[] = $this->value;
+            $_value60[] = $this->value;
 
             $_success = $this->parseINT();
 
@@ -2018,15 +1996,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value62[] = $this->value;
+            $_value60[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value62[] = $this->value;
+            $_value60[] = $this->value;
 
-            $this->value = $_value62;
+            $this->value = $_value60;
         }
 
         if ($_success) {
@@ -2060,12 +2038,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value63 = array();
+        $_value61 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value63[] = $this->value;
+            $_value61[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('TAXAR')) === 'TAXAR') {
                 $_success = true;
@@ -2079,7 +2057,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value63[] = $this->value;
+            $_value61[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2088,7 +2066,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value63[] = $this->value;
+            $_value61[] = $this->value;
 
             $_success = $this->parseINT();
 
@@ -2098,15 +2076,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value63[] = $this->value;
+            $_value61[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value63[] = $this->value;
+            $_value61[] = $this->value;
 
-            $this->value = $_value63;
+            $this->value = $_value61;
         }
 
         if ($_success) {
@@ -2140,12 +2118,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value64 = array();
+        $_value62 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value64[] = $this->value;
+            $_value62[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('VALUTA')) === 'VALUTA') {
                 $_success = true;
@@ -2159,7 +2137,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value64[] = $this->value;
+            $_value62[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2168,7 +2146,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value64[] = $this->value;
+            $_value62[] = $this->value;
 
             $_success = $this->parseSTRING();
 
@@ -2178,15 +2156,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value64[] = $this->value;
+            $_value62[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value64[] = $this->value;
+            $_value62[] = $this->value;
 
-            $this->value = $_value64;
+            $this->value = $_value62;
         }
 
         if ($_success) {
@@ -2221,55 +2199,55 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_position65 = $this->position;
-        $_cut66 = $this->cut;
+        $_position63 = $this->position;
+        $_cut64 = $this->cut;
 
         $this->cut = false;
         $_success = $this->parseKONTO_POST();
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position65;
+            $this->position = $_position63;
 
             $_success = $this->parseKTYP_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position65;
+            $this->position = $_position63;
 
             $_success = $this->parseENHET_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position65;
+            $this->position = $_position63;
 
             $_success = $this->parseSRU_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position65;
+            $this->position = $_position63;
 
             $_success = $this->parseDIM_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position65;
+            $this->position = $_position63;
 
             $_success = $this->parseUNDERDIM_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position65;
+            $this->position = $_position63;
 
             $_success = $this->parseOBJEKT_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position65;
+            $this->position = $_position63;
 
             $_success = $this->parseVOID_ROW();
         }
 
-        $this->cut = $_cut66;
+        $this->cut = $_cut64;
 
         $this->cache['ACCOUNT_PLAN_POST'][$_position] = array(
             'success' => $_success,
@@ -2296,12 +2274,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value67 = array();
+        $_value65 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value67[] = $this->value;
+            $_value65[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('KONTO')) === 'KONTO') {
                 $_success = true;
@@ -2315,7 +2293,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value67[] = $this->value;
+            $_value65[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2324,9 +2302,9 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value67[] = $this->value;
+            $_value65[] = $this->value;
 
-            $_success = $this->parseINT();
+            $_success = $this->parseSTRING();
 
             if ($_success) {
                 $number = $this->value;
@@ -2334,7 +2312,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value67[] = $this->value;
+            $_value65[] = $this->value;
 
             $_success = $this->parseSTRING();
 
@@ -2344,15 +2322,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value67[] = $this->value;
+            $_value65[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value67[] = $this->value;
+            $_value65[] = $this->value;
 
-            $this->value = $_value67;
+            $this->value = $_value65;
         }
 
         if ($_success) {
@@ -2386,12 +2364,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value68 = array();
+        $_value66 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value68[] = $this->value;
+            $_value66[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('KTYP')) === 'KTYP') {
                 $_success = true;
@@ -2405,7 +2383,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value68[] = $this->value;
+            $_value66[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2414,9 +2392,9 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value68[] = $this->value;
+            $_value66[] = $this->value;
 
-            $_success = $this->parseINT();
+            $_success = $this->parseSTRING();
 
             if ($_success) {
                 $number = $this->value;
@@ -2424,7 +2402,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value68[] = $this->value;
+            $_value66[] = $this->value;
 
             $_success = $this->parseSTRING();
 
@@ -2434,15 +2412,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value68[] = $this->value;
+            $_value66[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value68[] = $this->value;
+            $_value66[] = $this->value;
 
-            $this->value = $_value68;
+            $this->value = $_value66;
         }
 
         if ($_success) {
@@ -2476,12 +2454,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value69 = array();
+        $_value67 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value69[] = $this->value;
+            $_value67[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('ENHET')) === 'ENHET') {
                 $_success = true;
@@ -2495,7 +2473,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value69[] = $this->value;
+            $_value67[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2504,9 +2482,9 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value69[] = $this->value;
+            $_value67[] = $this->value;
 
-            $_success = $this->parseINT();
+            $_success = $this->parseSTRING();
 
             if ($_success) {
                 $account = $this->value;
@@ -2514,7 +2492,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value69[] = $this->value;
+            $_value67[] = $this->value;
 
             $_success = $this->parseSTRING();
 
@@ -2524,15 +2502,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value69[] = $this->value;
+            $_value67[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value69[] = $this->value;
+            $_value67[] = $this->value;
 
-            $this->value = $_value69;
+            $this->value = $_value67;
         }
 
         if ($_success) {
@@ -2596,7 +2574,7 @@ class SieGrammar extends SieDependencyManager
         if ($_success) {
             $_value70[] = $this->value;
 
-            $_success = $this->parseINT();
+            $_success = $this->parseSTRING();
 
             if ($_success) {
                 $account = $this->value;
@@ -2606,7 +2584,19 @@ class SieGrammar extends SieDependencyManager
         if ($_success) {
             $_value70[] = $this->value;
 
+            $_position68 = $this->position;
+            $_cut69 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position68;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut69;
 
             if ($_success) {
                 $sru = $this->value;
@@ -2627,7 +2617,11 @@ class SieGrammar extends SieDependencyManager
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$account, &$sru) {
-                $this->getAccountBuilder()->getAccount($account)->setAttribute('sru', $sru);
+                if (is_null($sru)) {
+                    $this->getLogger()->warning('Sru number not defined');
+                }
+
+                $this->getAccountBuilder()->getAccount($account)->setAttribute('sru', $sru ?: 0);
             });
         }
 
@@ -2717,7 +2711,7 @@ class SieGrammar extends SieDependencyManager
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$dim, &$desc) {
-                $this->getDimensionBuilder()->addDimension($dim, $desc);
+                $this->getDimensionBuilder()->addDimension((string)$dim, $desc);
             });
         }
 
@@ -2817,7 +2811,7 @@ class SieGrammar extends SieDependencyManager
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$dim, &$desc, &$superdim) {
-                $this->getDimensionBuilder()->addDimension($dim, $desc, $superdim);
+                $this->getDimensionBuilder()->addDimension((string)$dim, $desc, (string)$superdim);
             });
         }
 
@@ -2886,7 +2880,7 @@ class SieGrammar extends SieDependencyManager
         if ($_success) {
             $_value73[] = $this->value;
 
-            $_success = $this->parseint();
+            $_success = $this->parseSTRING();
 
             if ($_success) {
                 $obj = $this->value;
@@ -2917,7 +2911,7 @@ class SieGrammar extends SieDependencyManager
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$dim, &$obj, &$desc) {
-                $this->getDimensionBuilder()->addObject($dim, $obj, $desc);
+                $this->getDimensionBuilder()->addObject((string)$dim, $obj, $desc);
             });
         }
 
@@ -3539,12 +3533,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value88 = array();
+        $_value90 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value88[] = $this->value;
+            $_value90[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('PBUDGET')) === 'PBUDGET') {
                 $_success = true;
@@ -3558,7 +3552,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value88[] = $this->value;
+            $_value90[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3567,20 +3561,98 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value88[] = $this->value;
+            $_value90[] = $this->value;
+
+            $_success = $this->parseINT();
+
+            if ($_success) {
+                $year = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value90[] = $this->value;
+
+            $_success = $this->parseDATE();
+
+            if ($_success) {
+                $period = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value90[] = $this->value;
+
+            $_success = $this->parseACCOUNT();
+
+            if ($_success) {
+                $account = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value90[] = $this->value;
+
+            $_success = $this->parseOBJECT_LIST();
+
+            if ($_success) {
+                $objects = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value90[] = $this->value;
+
+            $_success = $this->parseAMOUNT();
+
+            if ($_success) {
+                $balance = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value90[] = $this->value;
+
+            $_position88 = $this->position;
+            $_cut89 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position88;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut89;
+
+            if ($_success) {
+                $quantity = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value90[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value88[] = $this->value;
+            $_value90[] = $this->value;
 
-            $this->value = $_value88;
+            $this->value = $_value90;
         }
 
         if ($_success) {
-            $this->value = call_user_func(function () {
-                // TODO implement PBUDGET
+            $this->value = call_user_func(function () use (&$year, &$period, &$account, &$objects, &$balance, &$quantity) {
+                $key = "PBUDGET $year " . $period->format('Ym');
+
+                $account->setAttribute($key, [$balance, $quantity ?: 0]);
+
+                foreach ($objects as $object) {
+                    $object->setAttribute($key, [$balance, $quantity ?: 0]);
+                }
             });
         }
 
@@ -3609,12 +3681,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value89 = array();
+        $_value93 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value89[] = $this->value;
+            $_value93[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('PSALDO')) === 'PSALDO') {
                 $_success = true;
@@ -3628,7 +3700,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value89[] = $this->value;
+            $_value93[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3637,20 +3709,98 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value89[] = $this->value;
+            $_value93[] = $this->value;
+
+            $_success = $this->parseINT();
+
+            if ($_success) {
+                $year = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value93[] = $this->value;
+
+            $_success = $this->parseDATE();
+
+            if ($_success) {
+                $period = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value93[] = $this->value;
+
+            $_success = $this->parseACCOUNT();
+
+            if ($_success) {
+                $account = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value93[] = $this->value;
+
+            $_success = $this->parseOBJECT_LIST();
+
+            if ($_success) {
+                $objects = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value93[] = $this->value;
+
+            $_success = $this->parseAMOUNT();
+
+            if ($_success) {
+                $balance = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value93[] = $this->value;
+
+            $_position91 = $this->position;
+            $_cut92 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position91;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut92;
+
+            if ($_success) {
+                $quantity = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value93[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value89[] = $this->value;
+            $_value93[] = $this->value;
 
-            $this->value = $_value89;
+            $this->value = $_value93;
         }
 
         if ($_success) {
-            $this->value = call_user_func(function () {
-                // TODO implement PSALDO
+            $this->value = call_user_func(function () use (&$year, &$period, &$account, &$objects, &$balance, &$quantity) {
+                $key = "PSALDO $year " . $period->format('Ym');
+
+                $account->setAttribute($key, [$balance, $quantity ?: 0]);
+
+                foreach ($objects as $object) {
+                    $object->setAttribute($key, [$balance, $quantity ?: 0]);
+                }
             });
         }
 
@@ -3679,12 +3829,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value92 = array();
+        $_value96 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value92[] = $this->value;
+            $_value96[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('RES')) === 'RES') {
                 $_success = true;
@@ -3698,7 +3848,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value92[] = $this->value;
+            $_value96[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3707,7 +3857,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value92[] = $this->value;
+            $_value96[] = $this->value;
 
             $_success = $this->parseINT();
 
@@ -3717,7 +3867,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value92[] = $this->value;
+            $_value96[] = $this->value;
 
             $_success = $this->parseACCOUNT();
 
@@ -3727,7 +3877,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value92[] = $this->value;
+            $_value96[] = $this->value;
 
             $_success = $this->parseAMOUNT();
 
@@ -3737,21 +3887,21 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value92[] = $this->value;
+            $_value96[] = $this->value;
 
-            $_position90 = $this->position;
-            $_cut91 = $this->cut;
+            $_position94 = $this->position;
+            $_cut95 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position90;
+                $this->position = $_position94;
                 $this->value = null;
             }
 
-            $this->cut = $_cut91;
+            $this->cut = $_cut95;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -3759,15 +3909,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value92[] = $this->value;
+            $_value96[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value92[] = $this->value;
+            $_value96[] = $this->value;
 
-            $this->value = $_value92;
+            $this->value = $_value96;
         }
 
         if ($_success) {
@@ -3789,6 +3939,292 @@ class SieGrammar extends SieDependencyManager
         return $_success;
     }
 
+    protected function parseVER_POST()
+    {
+        $_position = $this->position;
+
+        if (isset($this->cache['VER_POST'][$_position])) {
+            $_success = $this->cache['VER_POST'][$_position]['success'];
+            $this->position = $this->cache['VER_POST'][$_position]['position'];
+            $this->value = $this->cache['VER_POST'][$_position]['value'];
+
+            return $_success;
+        }
+
+        $_value103 = array();
+
+        $_success = $this->parseROW_START();
+
+        if ($_success) {
+            $_value103[] = $this->value;
+
+            if (substr($this->string, $this->position, strlen('VER')) === 'VER') {
+                $_success = true;
+                $this->value = substr($this->string, $this->position, strlen('VER'));
+                $this->position += strlen('VER');
+            } else {
+                $_success = false;
+
+                $this->report($this->position, '\'VER\'');
+            }
+        }
+
+        if ($_success) {
+            $_value103[] = $this->value;
+
+            $_success = true;
+            $this->value = null;
+
+            $this->cut = true;
+        }
+
+        if ($_success) {
+            $_value103[] = $this->value;
+
+            $_success = $this->parseSTRING();
+
+            if ($_success) {
+                $series = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value103[] = $this->value;
+
+            $_success = $this->parseSTRING();
+
+            if ($_success) {
+                $number = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value103[] = $this->value;
+
+            $_success = $this->parseDATE();
+
+            if ($_success) {
+                $date = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value103[] = $this->value;
+
+            $_position97 = $this->position;
+            $_cut98 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position97;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut98;
+
+            if ($_success) {
+                $desc = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value103[] = $this->value;
+
+            $_position99 = $this->position;
+            $_cut100 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseDATE();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position99;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut100;
+
+            if ($_success) {
+                $regdate = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value103[] = $this->value;
+
+            $_position101 = $this->position;
+            $_cut102 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position101;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut102;
+
+            if ($_success) {
+                $sign = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value103[] = $this->value;
+
+            $_success = $this->parseROW_END();
+        }
+
+        if ($_success) {
+            $_value103[] = $this->value;
+
+            $_success = $this->parseSUBROW_START();
+        }
+
+        if ($_success) {
+            $_value103[] = $this->value;
+
+            $_success = $this->parseTRANS_LIST();
+
+            if ($_success) {
+                $trans = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value103[] = $this->value;
+
+            $_success = $this->parseSUBROW_END();
+        }
+
+        if ($_success) {
+            $_value103[] = $this->value;
+
+            $this->value = $_value103;
+        }
+
+        if ($_success) {
+            $this->value = call_user_func(function () use (&$series, &$number, &$date, &$desc, &$regdate, &$sign, &$trans) {
+                $this->getContainer()->addItem(
+                    $this->getVerificationBuilder()->createVerification(
+                        $series,
+                        $number,
+                        $date,
+                        $desc ?: '',
+                        $regdate ?: null,
+                        $sign ?: '',
+                        $trans
+                    )
+                );
+            });
+        }
+
+        $this->cache['VER_POST'][$_position] = array(
+            'success' => $_success,
+            'position' => $this->position,
+            'value' => $this->value
+        );
+
+        if (!$_success) {
+            $this->report($_position, 'VER_POST');
+        }
+
+        return $_success;
+    }
+
+    protected function parseTRANS_LIST()
+    {
+        $_position = $this->position;
+
+        if (isset($this->cache['TRANS_LIST'][$_position])) {
+            $_success = $this->cache['TRANS_LIST'][$_position]['success'];
+            $this->position = $this->cache['TRANS_LIST'][$_position]['position'];
+            $this->value = $this->cache['TRANS_LIST'][$_position]['value'];
+
+            return $_success;
+        }
+
+        $_value107 = array();
+        $_cut108 = $this->cut;
+
+        while (true) {
+            $_position106 = $this->position;
+
+            $this->cut = false;
+            $_position104 = $this->position;
+            $_cut105 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseTRANS_POST();
+
+            if (!$_success && !$this->cut) {
+                $this->position = $_position104;
+
+                $_success = $this->parseBTRANS_POST();
+            }
+
+            if (!$_success && !$this->cut) {
+                $this->position = $_position104;
+
+                $_success = $this->parseRTRANS_POST();
+            }
+
+            if (!$_success && !$this->cut) {
+                $this->position = $_position104;
+
+                $_success = $this->parseUNKNOWN_POST();
+            }
+
+            $this->cut = $_cut105;
+
+            if (!$_success) {
+                break;
+            }
+
+            $_value107[] = $this->value;
+        }
+
+        if (!$this->cut) {
+            $_success = true;
+            $this->position = $_position106;
+            $this->value = $_value107;
+        }
+
+        $this->cut = $_cut108;
+
+        if ($_success) {
+            $trans = $this->value;
+        }
+
+        if ($_success) {
+            $this->value = call_user_func(function () use (&$trans) {
+                return array_filter(
+                    $trans,
+                    function ($item) {
+                        return $item instanceof Transaction;
+                    }
+                );
+            });
+        }
+
+        $this->cache['TRANS_LIST'][$_position] = array(
+            'success' => $_success,
+            'position' => $this->position,
+            'value' => $this->value
+        );
+
+        if (!$_success) {
+            $this->report($_position, 'TRANS_LIST');
+        }
+
+        return $_success;
+    }
+
     protected function parseTRANS_POST()
     {
         $_position = $this->position;
@@ -3801,12 +4237,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value101 = array();
+        $_value117 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value117[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('TRANS')) === 'TRANS') {
                 $_success = true;
@@ -3820,7 +4256,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value117[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3829,7 +4265,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value117[] = $this->value;
 
             $_success = $this->parseACCOUNT();
 
@@ -3839,7 +4275,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value117[] = $this->value;
 
             $_success = $this->parseOBJECT_LIST();
 
@@ -3849,7 +4285,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value117[] = $this->value;
 
             $_success = $this->parseAMOUNT();
 
@@ -3859,21 +4295,21 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value117[] = $this->value;
 
-            $_position93 = $this->position;
-            $_cut94 = $this->cut;
+            $_position109 = $this->position;
+            $_cut110 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseDATE();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position93;
+                $this->position = $_position109;
                 $this->value = null;
             }
 
-            $this->cut = $_cut94;
+            $this->cut = $_cut110;
 
             if ($_success) {
                 $date = $this->value;
@@ -3881,21 +4317,21 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value117[] = $this->value;
 
-            $_position95 = $this->position;
-            $_cut96 = $this->cut;
+            $_position111 = $this->position;
+            $_cut112 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position95;
+                $this->position = $_position111;
                 $this->value = null;
             }
 
-            $this->cut = $_cut96;
+            $this->cut = $_cut112;
 
             if ($_success) {
                 $desc = $this->value;
@@ -3903,21 +4339,21 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value117[] = $this->value;
 
-            $_position97 = $this->position;
-            $_cut98 = $this->cut;
+            $_position113 = $this->position;
+            $_cut114 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position97;
+                $this->position = $_position113;
                 $this->value = null;
             }
 
-            $this->cut = $_cut98;
+            $this->cut = $_cut114;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -3925,21 +4361,21 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value117[] = $this->value;
 
-            $_position99 = $this->position;
-            $_cut100 = $this->cut;
+            $_position115 = $this->position;
+            $_cut116 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position99;
+                $this->position = $_position115;
                 $this->value = null;
             }
 
-            $this->cut = $_cut100;
+            $this->cut = $_cut116;
 
             if ($_success) {
                 $signature = $this->value;
@@ -3947,22 +4383,28 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value117[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value117[] = $this->value;
 
-            $this->value = $_value101;
+            $this->value = $_value117;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$account, &$objects, &$amount, &$date, &$desc, &$quantity, &$signature) {
-                return;
-                // TODO hur fungerar det egentligen med optional arguments här??
-                return $this->onTrans($account, $objects, $amount, $date, $desc, $quantity, $signature);
+                return $this->getVerificationBuilder()->createTransaction(
+                    $account,
+                    $objects,
+                    $amount,
+                    $date ?: null,
+                    $desc ?: '',
+                    $quantity ?: 0,
+                    $signature ?: ''
+                );
             });
         }
 
@@ -3979,38 +4421,38 @@ class SieGrammar extends SieDependencyManager
         return $_success;
     }
 
-    protected function parseVER_POST()
+    protected function parseBTRANS_POST()
     {
         $_position = $this->position;
 
-        if (isset($this->cache['VER_POST'][$_position])) {
-            $_success = $this->cache['VER_POST'][$_position]['success'];
-            $this->position = $this->cache['VER_POST'][$_position]['position'];
-            $this->value = $this->cache['VER_POST'][$_position]['value'];
+        if (isset($this->cache['BTRANS_POST'][$_position])) {
+            $_success = $this->cache['BTRANS_POST'][$_position]['success'];
+            $this->position = $this->cache['BTRANS_POST'][$_position]['position'];
+            $this->value = $this->cache['BTRANS_POST'][$_position]['value'];
 
             return $_success;
         }
 
-        $_value113 = array();
+        $_value126 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value113[] = $this->value;
+            $_value126[] = $this->value;
 
-            if (substr($this->string, $this->position, strlen('VER')) === 'VER') {
+            if (substr($this->string, $this->position, strlen('BTRANS')) === 'BTRANS') {
                 $_success = true;
-                $this->value = substr($this->string, $this->position, strlen('VER'));
-                $this->position += strlen('VER');
+                $this->value = substr($this->string, $this->position, strlen('BTRANS'));
+                $this->position += strlen('BTRANS');
             } else {
                 $_success = false;
 
-                $this->report($this->position, '\'VER\'');
+                $this->report($this->position, '\'BTRANS\'');
             }
         }
 
         if ($_success) {
-            $_value113[] = $this->value;
+            $_value126[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -4019,29 +4461,51 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value113[] = $this->value;
+            $_value126[] = $this->value;
 
-            $_success = $this->parseSTRING();
+            $_success = $this->parseACCOUNT();
 
             if ($_success) {
-                $series = $this->value;
+                $account = $this->value;
             }
         }
 
         if ($_success) {
-            $_value113[] = $this->value;
+            $_value126[] = $this->value;
 
-            $_success = $this->parseINT();
+            $_success = $this->parseOBJECT_LIST();
 
             if ($_success) {
-                $number = $this->value;
+                $objects = $this->value;
             }
         }
 
         if ($_success) {
-            $_value113[] = $this->value;
+            $_value126[] = $this->value;
 
+            $_success = $this->parseAMOUNT();
+
+            if ($_success) {
+                $amount = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value126[] = $this->value;
+
+            $_position118 = $this->position;
+            $_cut119 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseDATE();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position118;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut119;
 
             if ($_success) {
                 $date = $this->value;
@@ -4049,21 +4513,21 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value113[] = $this->value;
+            $_value126[] = $this->value;
 
-            $_position102 = $this->position;
-            $_cut103 = $this->cut;
+            $_position120 = $this->position;
+            $_cut121 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position102;
+                $this->position = $_position120;
                 $this->value = null;
             }
 
-            $this->cut = $_cut103;
+            $this->cut = $_cut121;
 
             if ($_success) {
                 $desc = $this->value;
@@ -4071,139 +4535,263 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value113[] = $this->value;
+            $_value126[] = $this->value;
 
-            $_position104 = $this->position;
-            $_cut105 = $this->cut;
+            $_position122 = $this->position;
+            $_cut123 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseDATE();
+            $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position104;
+                $this->position = $_position122;
                 $this->value = null;
             }
 
-            $this->cut = $_cut105;
+            $this->cut = $_cut123;
 
             if ($_success) {
-                $regdate = $this->value;
+                $quantity = $this->value;
             }
         }
 
         if ($_success) {
-            $_value113[] = $this->value;
+            $_value126[] = $this->value;
 
-            $_position106 = $this->position;
-            $_cut107 = $this->cut;
+            $_position124 = $this->position;
+            $_cut125 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position106;
+                $this->position = $_position124;
                 $this->value = null;
             }
 
-            $this->cut = $_cut107;
+            $this->cut = $_cut125;
 
             if ($_success) {
-                $sign = $this->value;
+                $signature = $this->value;
             }
         }
 
         if ($_success) {
-            $_value113[] = $this->value;
+            $_value126[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value113[] = $this->value;
+            $_value126[] = $this->value;
 
-            $_success = $this->parseSUBROW_START();
+            $this->value = $_value126;
         }
 
         if ($_success) {
-            $_value113[] = $this->value;
-
-            $_value111 = array();
-            $_cut112 = $this->cut;
-
-            while (true) {
-                $_position110 = $this->position;
-
-                $this->cut = false;
-                $_position108 = $this->position;
-                $_cut109 = $this->cut;
-
-                $this->cut = false;
-                $_success = $this->parseTRANS_POST();
-
-                if (!$_success && !$this->cut) {
-                    $this->position = $_position108;
-
-                    $_success = $this->parseUNKNOWN_POST();
-                }
-
-                if (!$_success && !$this->cut) {
-                    $this->position = $_position108;
-
-                    $_success = $this->parseEMPTY_LINE();
-                }
-
-                $this->cut = $_cut109;
-
-                if (!$_success) {
-                    break;
-                }
-
-                $_value111[] = $this->value;
-            }
-
-            if (!$this->cut) {
-                $_success = true;
-                $this->position = $_position110;
-                $this->value = $_value111;
-            }
-
-            $this->cut = $_cut112;
-
-            if ($_success) {
-                $trans = $this->value;
-            }
-        }
-
-        if ($_success) {
-            $_value113[] = $this->value;
-
-            $_success = $this->parseSUBROW_END();
-        }
-
-        if ($_success) {
-            $_value113[] = $this->value;
-
-            $this->value = $_value113;
-        }
-
-        if ($_success) {
-            $this->value = call_user_func(function () use (&$series, &$number, &$date, &$desc, &$regdate, &$sign, &$trans) {
-                return;
-                // TODO hur fungerar det egentligen med optional arguments här??
-                return $this->onVer($series, $number, $date, $desc, $regdate, $sign, $trans);
+            $this->value = call_user_func(function () use (&$account, &$objects, &$amount, &$date, &$desc, &$quantity, &$signature) {
+                $this->getLogger()->notice('Detected a BTRANS post, removed transactions are not supported yet..');
             });
         }
 
-        $this->cache['VER_POST'][$_position] = array(
+        $this->cache['BTRANS_POST'][$_position] = array(
             'success' => $_success,
             'position' => $this->position,
             'value' => $this->value
         );
 
         if (!$_success) {
-            $this->report($_position, 'VER_POST');
+            $this->report($_position, 'BTRANS_POST');
+        }
+
+        return $_success;
+    }
+
+    protected function parseRTRANS_POST()
+    {
+        $_position = $this->position;
+
+        if (isset($this->cache['RTRANS_POST'][$_position])) {
+            $_success = $this->cache['RTRANS_POST'][$_position]['success'];
+            $this->position = $this->cache['RTRANS_POST'][$_position]['position'];
+            $this->value = $this->cache['RTRANS_POST'][$_position]['value'];
+
+            return $_success;
+        }
+
+        $_value135 = array();
+
+        $_success = $this->parseROW_START();
+
+        if ($_success) {
+            $_value135[] = $this->value;
+
+            if (substr($this->string, $this->position, strlen('RTRANS')) === 'RTRANS') {
+                $_success = true;
+                $this->value = substr($this->string, $this->position, strlen('RTRANS'));
+                $this->position += strlen('RTRANS');
+            } else {
+                $_success = false;
+
+                $this->report($this->position, '\'RTRANS\'');
+            }
+        }
+
+        if ($_success) {
+            $_value135[] = $this->value;
+
+            $_success = true;
+            $this->value = null;
+
+            $this->cut = true;
+        }
+
+        if ($_success) {
+            $_value135[] = $this->value;
+
+            $_success = $this->parseACCOUNT();
+
+            if ($_success) {
+                $account = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value135[] = $this->value;
+
+            $_success = $this->parseOBJECT_LIST();
+
+            if ($_success) {
+                $objects = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value135[] = $this->value;
+
+            $_success = $this->parseAMOUNT();
+
+            if ($_success) {
+                $amount = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value135[] = $this->value;
+
+            $_position127 = $this->position;
+            $_cut128 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseDATE();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position127;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut128;
+
+            if ($_success) {
+                $date = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value135[] = $this->value;
+
+            $_position129 = $this->position;
+            $_cut130 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position129;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut130;
+
+            if ($_success) {
+                $desc = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value135[] = $this->value;
+
+            $_position131 = $this->position;
+            $_cut132 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position131;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut132;
+
+            if ($_success) {
+                $quantity = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value135[] = $this->value;
+
+            $_position133 = $this->position;
+            $_cut134 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position133;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut134;
+
+            if ($_success) {
+                $signature = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value135[] = $this->value;
+
+            $_success = $this->parseROW_END();
+        }
+
+        if ($_success) {
+            $_value135[] = $this->value;
+
+            $this->value = $_value135;
+        }
+
+        if ($_success) {
+            $this->value = call_user_func(function () use (&$account, &$objects, &$amount, &$date, &$desc, &$quantity, &$signature) {
+                $this->getLogger()->notice('Detected a RTRANS post, added transactions are not supported yet..');
+            });
+        }
+
+        $this->cache['RTRANS_POST'][$_position] = array(
+            'success' => $_success,
+            'position' => $this->position,
+            'value' => $this->value
+        );
+
+        if (!$_success) {
+            $this->report($_position, 'RTRANS_POST');
         }
 
         return $_success;
@@ -4221,25 +4809,25 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_position114 = $this->position;
-        $_cut115 = $this->cut;
+        $_position136 = $this->position;
+        $_cut137 = $this->cut;
 
         $this->cut = false;
         $_success = $this->parseUNKNOWN_POST();
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position114;
-
-            $_success = $this->parseEMPTY_LINE();
-        }
-
-        if (!$_success && !$this->cut) {
-            $this->position = $_position114;
+            $this->position = $_position136;
 
             $_success = $this->parseINVALID_LINE();
         }
 
-        $this->cut = $_cut115;
+        if (!$_success && !$this->cut) {
+            $this->position = $_position136;
+
+            $_success = $this->parseEMPTY_LINE();
+        }
+
+        $this->cut = $_cut137;
 
         $this->cache['VOID_ROW'][$_position] = array(
             'success' => $_success,
@@ -4266,15 +4854,15 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value121 = array();
+        $_value143 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value121[] = $this->value;
+            $_value143[] = $this->value;
 
-            $_position116 = $this->position;
-            $_cut117 = $this->cut;
+            $_position138 = $this->position;
+            $_cut139 = $this->cut;
 
             $this->cut = false;
             if (substr($this->string, $this->position, strlen('#')) === '#') {
@@ -4294,36 +4882,40 @@ class SieGrammar extends SieDependencyManager
                 $_success = false;
             }
 
-            $this->position = $_position116;
-            $this->cut = $_cut117;
+            $this->position = $_position138;
+            $this->cut = $_cut139;
         }
 
         if ($_success) {
-            $_value121[] = $this->value;
+            $_value143[] = $this->value;
 
-            $_value119 = array();
-            $_cut120 = $this->cut;
+            $_success = $this->parseSTRING();
 
-            while (true) {
-                $_position118 = $this->position;
+            if ($_success) {
+                $_value141 = array($this->value);
+                $_cut142 = $this->cut;
 
-                $this->cut = false;
-                $_success = $this->parseSTRING();
+                while (true) {
+                    $_position140 = $this->position;
 
-                if (!$_success) {
-                    break;
+                    $this->cut = false;
+                    $_success = $this->parseSTRING();
+
+                    if (!$_success) {
+                        break;
+                    }
+
+                    $_value141[] = $this->value;
                 }
 
-                $_value119[] = $this->value;
-            }
+                if (!$this->cut) {
+                    $_success = true;
+                    $this->position = $_position140;
+                    $this->value = $_value141;
+                }
 
-            if (!$this->cut) {
-                $_success = true;
-                $this->position = $_position118;
-                $this->value = $_value119;
+                $this->cut = $_cut142;
             }
-
-            $this->cut = $_cut120;
 
             if ($_success) {
                 $fields = $this->value;
@@ -4331,15 +4923,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value121[] = $this->value;
+            $_value143[] = $this->value;
 
             $_success = $this->parseEOL();
         }
 
         if ($_success) {
-            $_value121[] = $this->value;
+            $_value143[] = $this->value;
 
-            $this->value = $_value121;
+            $this->value = $_value143;
         }
 
         if ($_success) {
@@ -4373,15 +4965,15 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value127 = array();
+        $_value149 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value127[] = $this->value;
+            $_value149[] = $this->value;
 
-            $_position122 = $this->position;
-            $_cut123 = $this->cut;
+            $_position144 = $this->position;
+            $_cut145 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseVALID_LABEL();
@@ -4393,12 +4985,12 @@ class SieGrammar extends SieDependencyManager
                 $_success = false;
             }
 
-            $this->position = $_position122;
-            $this->cut = $_cut123;
+            $this->position = $_position144;
+            $this->cut = $_cut145;
         }
 
         if ($_success) {
-            $_value127[] = $this->value;
+            $_value149[] = $this->value;
 
             $_success = $this->parseVALID_CHARS();
 
@@ -4408,7 +5000,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value127[] = $this->value;
+            $_value149[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -4417,13 +5009,13 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value127[] = $this->value;
+            $_value149[] = $this->value;
 
-            $_value125 = array();
-            $_cut126 = $this->cut;
+            $_value147 = array();
+            $_cut148 = $this->cut;
 
             while (true) {
-                $_position124 = $this->position;
+                $_position146 = $this->position;
 
                 $this->cut = false;
                 $_success = $this->parseSTRING();
@@ -4432,16 +5024,16 @@ class SieGrammar extends SieDependencyManager
                     break;
                 }
 
-                $_value125[] = $this->value;
+                $_value147[] = $this->value;
             }
 
             if (!$this->cut) {
                 $_success = true;
-                $this->position = $_position124;
-                $this->value = $_value125;
+                $this->position = $_position146;
+                $this->value = $_value147;
             }
 
-            $this->cut = $_cut126;
+            $this->cut = $_cut148;
 
             if ($_success) {
                 $vars = $this->value;
@@ -4449,15 +5041,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value127[] = $this->value;
+            $_value149[] = $this->value;
 
             $_success = $this->parseEOL();
         }
 
         if ($_success) {
-            $_value127[] = $this->value;
+            $_value149[] = $this->value;
 
-            $this->value = $_value127;
+            $this->value = $_value149;
         }
 
         if ($_success) {
@@ -4499,8 +5091,8 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_position128 = $this->position;
-        $_cut129 = $this->cut;
+        $_position150 = $this->position;
+        $_cut151 = $this->cut;
 
         $this->cut = false;
         if (substr($this->string, $this->position, strlen('ADRESS')) === 'ADRESS') {
@@ -4514,7 +5106,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('BKOD')) === 'BKOD') {
                 $_success = true;
@@ -4528,7 +5120,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('DIM')) === 'DIM') {
                 $_success = true;
@@ -4542,7 +5134,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('ENHET')) === 'ENHET') {
                 $_success = true;
@@ -4556,7 +5148,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('FLAGGA')) === 'FLAGGA') {
                 $_success = true;
@@ -4570,7 +5162,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('FNAMN')) === 'FNAMN') {
                 $_success = true;
@@ -4584,7 +5176,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('FNR')) === 'FNR') {
                 $_success = true;
@@ -4598,7 +5190,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('FORMAT')) === 'FORMAT') {
                 $_success = true;
@@ -4612,7 +5204,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('FTYP')) === 'FTYP') {
                 $_success = true;
@@ -4626,7 +5218,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('GEN')) === 'GEN') {
                 $_success = true;
@@ -4640,7 +5232,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('IB')) === 'IB') {
                 $_success = true;
@@ -4654,7 +5246,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('KONTO')) === 'KONTO') {
                 $_success = true;
@@ -4668,7 +5260,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('KPTYP')) === 'KPTYP') {
                 $_success = true;
@@ -4682,7 +5274,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('KSUMMA')) === 'KSUMMA') {
                 $_success = true;
@@ -4696,7 +5288,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('KTYP')) === 'KTYP') {
                 $_success = true;
@@ -4710,7 +5302,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('OBJEKT')) === 'OBJEKT') {
                 $_success = true;
@@ -4724,7 +5316,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('OIB')) === 'OIB') {
                 $_success = true;
@@ -4738,7 +5330,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('OMFATTN')) === 'OMFATTN') {
                 $_success = true;
@@ -4752,7 +5344,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('ORGNR')) === 'ORGNR') {
                 $_success = true;
@@ -4766,7 +5358,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('OUB')) === 'OUB') {
                 $_success = true;
@@ -4780,7 +5372,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('PBUDGET')) === 'PBUDGET') {
                 $_success = true;
@@ -4794,7 +5386,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('PROGRAM')) === 'PROGRAM') {
                 $_success = true;
@@ -4808,7 +5400,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('PROSA')) === 'PROSA') {
                 $_success = true;
@@ -4822,7 +5414,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('PSALDO')) === 'PSALDO') {
                 $_success = true;
@@ -4836,7 +5428,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('RAR')) === 'RAR') {
                 $_success = true;
@@ -4850,7 +5442,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('RES')) === 'RES') {
                 $_success = true;
@@ -4864,7 +5456,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('SIETYP')) === 'SIETYP') {
                 $_success = true;
@@ -4878,7 +5470,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('SRU')) === 'SRU') {
                 $_success = true;
@@ -4892,7 +5484,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('TAXAR')) === 'TAXAR') {
                 $_success = true;
@@ -4906,7 +5498,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('TRANS')) === 'TRANS') {
                 $_success = true;
@@ -4920,7 +5512,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('RTRANS')) === 'RTRANS') {
                 $_success = true;
@@ -4934,7 +5526,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('BTRANS')) === 'BTRANS') {
                 $_success = true;
@@ -4948,7 +5540,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('UB')) === 'UB') {
                 $_success = true;
@@ -4962,7 +5554,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('UNDERDIM')) === 'UNDERDIM') {
                 $_success = true;
@@ -4976,7 +5568,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('VALUTA')) === 'VALUTA') {
                 $_success = true;
@@ -4990,7 +5582,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position128;
+            $this->position = $_position150;
 
             if (substr($this->string, $this->position, strlen('VER')) === 'VER') {
                 $_success = true;
@@ -5003,7 +5595,7 @@ class SieGrammar extends SieDependencyManager
             }
         }
 
-        $this->cut = $_cut129;
+        $this->cut = $_cut151;
 
         $this->cache['VALID_LABEL'][$_position] = array(
             'success' => $_success,
@@ -5030,12 +5622,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value130 = array();
+        $_value152 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value130[] = $this->value;
+            $_value152[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('{')) === '{') {
                 $_success = true;
@@ -5049,21 +5641,21 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value130[] = $this->value;
+            $_value152[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value130[] = $this->value;
+            $_value152[] = $this->value;
 
             $_success = $this->parseEOL();
         }
 
         if ($_success) {
-            $_value130[] = $this->value;
+            $_value152[] = $this->value;
 
-            $this->value = $_value130;
+            $this->value = $_value152;
         }
 
         $this->cache['SUBROW_START'][$_position] = array(
@@ -5091,12 +5683,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value131 = array();
+        $_value155 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value131[] = $this->value;
+            $_value155[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('}')) === '}') {
                 $_success = true;
@@ -5110,21 +5702,33 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value131[] = $this->value;
+            $_value155[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value131[] = $this->value;
+            $_value155[] = $this->value;
 
+            $_position153 = $this->position;
+            $_cut154 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseEOL();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position153;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut154;
         }
 
         if ($_success) {
-            $_value131[] = $this->value;
+            $_value155[] = $this->value;
 
-            $this->value = $_value131;
+            $this->value = $_value155;
         }
 
         $this->cache['SUBROW_END'][$_position] = array(
@@ -5152,12 +5756,40 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value132 = array();
+        $_value159 = array();
 
-        $_success = $this->parse_();
+        $_value157 = array();
+        $_cut158 = $this->cut;
+
+        while (true) {
+            $_position156 = $this->position;
+
+            $this->cut = false;
+            $_success = $this->parseEMPTY_LINE();
+
+            if (!$_success) {
+                break;
+            }
+
+            $_value157[] = $this->value;
+        }
+
+        if (!$this->cut) {
+            $_success = true;
+            $this->position = $_position156;
+            $this->value = $_value157;
+        }
+
+        $this->cut = $_cut158;
 
         if ($_success) {
-            $_value132[] = $this->value;
+            $_value159[] = $this->value;
+
+            $_success = $this->parse_();
+        }
+
+        if ($_success) {
+            $_value159[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('#')) === '#') {
                 $_success = true;
@@ -5171,9 +5803,9 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value132[] = $this->value;
+            $_value159[] = $this->value;
 
-            $this->value = $_value132;
+            $this->value = $_value159;
         }
 
         $this->cache['ROW_START'][$_position] = array(
@@ -5201,13 +5833,13 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value136 = array();
+        $_value165 = array();
 
-        $_value134 = array();
-        $_cut135 = $this->cut;
+        $_value161 = array();
+        $_cut162 = $this->cut;
 
         while (true) {
-            $_position133 = $this->position;
+            $_position160 = $this->position;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
@@ -5216,37 +5848,49 @@ class SieGrammar extends SieDependencyManager
                 break;
             }
 
-            $_value134[] = $this->value;
+            $_value161[] = $this->value;
         }
 
         if (!$this->cut) {
             $_success = true;
-            $this->position = $_position133;
-            $this->value = $_value134;
+            $this->position = $_position160;
+            $this->value = $_value161;
         }
 
-        $this->cut = $_cut135;
+        $this->cut = $_cut162;
 
         if ($_success) {
             $fields = $this->value;
         }
 
         if ($_success) {
-            $_value136[] = $this->value;
+            $_value165[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value136[] = $this->value;
+            $_value165[] = $this->value;
 
+            $_position163 = $this->position;
+            $_cut164 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseEOL();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position163;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut164;
         }
 
         if ($_success) {
-            $_value136[] = $this->value;
+            $_value165[] = $this->value;
 
-            $this->value = $_value136;
+            $this->value = $_value165;
         }
 
         if ($_success) {
@@ -5282,26 +5926,26 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value139 = array();
+        $_value168 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value139[] = $this->value;
+            $_value168[] = $this->value;
 
-            $_position137 = $this->position;
-            $_cut138 = $this->cut;
+            $_position166 = $this->position;
+            $_cut167 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseRAW_DATE();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position137;
+                $this->position = $_position166;
 
                 $_success = $this->parseQUOTED_DATE();
             }
 
-            $this->cut = $_cut138;
+            $this->cut = $_cut167;
 
             if ($_success) {
                 $date = $this->value;
@@ -5309,15 +5953,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value139[] = $this->value;
+            $_value168[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value139[] = $this->value;
+            $_value168[] = $this->value;
 
-            $this->value = $_value139;
+            $this->value = $_value168;
         }
 
         if ($_success) {
@@ -5351,7 +5995,7 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value140 = array();
+        $_value169 = array();
 
         if (substr($this->string, $this->position, strlen('"')) === '"') {
             $_success = true;
@@ -5364,7 +6008,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value140[] = $this->value;
+            $_value169[] = $this->value;
 
             $_success = $this->parseRAW_DATE();
 
@@ -5374,7 +6018,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value140[] = $this->value;
+            $_value169[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('"')) === '"') {
                 $_success = true;
@@ -5388,9 +6032,9 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value140[] = $this->value;
+            $_value169[] = $this->value;
 
-            $this->value = $_value140;
+            $this->value = $_value169;
         }
 
         if ($_success) {
@@ -5424,9 +6068,9 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value148 = array();
+        $_value177 = array();
 
-        $_value141 = array();
+        $_value170 = array();
 
         if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
             $_success = true;
@@ -5437,7 +6081,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value141[] = $this->value;
+            $_value170[] = $this->value;
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -5449,7 +6093,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value141[] = $this->value;
+            $_value170[] = $this->value;
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -5461,7 +6105,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value141[] = $this->value;
+            $_value170[] = $this->value;
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -5473,9 +6117,9 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value141[] = $this->value;
+            $_value170[] = $this->value;
 
-            $this->value = $_value141;
+            $this->value = $_value170;
         }
 
         if ($_success) {
@@ -5483,13 +6127,13 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value148[] = $this->value;
+            $_value177[] = $this->value;
 
-            $_position143 = $this->position;
-            $_cut144 = $this->cut;
+            $_position172 = $this->position;
+            $_cut173 = $this->cut;
 
             $this->cut = false;
-            $_value142 = array();
+            $_value171 = array();
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -5500,7 +6144,7 @@ class SieGrammar extends SieDependencyManager
             }
 
             if ($_success) {
-                $_value142[] = $this->value;
+                $_value171[] = $this->value;
 
                 if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                     $_success = true;
@@ -5512,18 +6156,18 @@ class SieGrammar extends SieDependencyManager
             }
 
             if ($_success) {
-                $_value142[] = $this->value;
+                $_value171[] = $this->value;
 
-                $this->value = $_value142;
+                $this->value = $_value171;
             }
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position143;
+                $this->position = $_position172;
                 $this->value = null;
             }
 
-            $this->cut = $_cut144;
+            $this->cut = $_cut173;
 
             if ($_success) {
                 $month = $this->value;
@@ -5531,13 +6175,13 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value148[] = $this->value;
+            $_value177[] = $this->value;
 
-            $_position146 = $this->position;
-            $_cut147 = $this->cut;
+            $_position175 = $this->position;
+            $_cut176 = $this->cut;
 
             $this->cut = false;
-            $_value145 = array();
+            $_value174 = array();
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -5548,7 +6192,7 @@ class SieGrammar extends SieDependencyManager
             }
 
             if ($_success) {
-                $_value145[] = $this->value;
+                $_value174[] = $this->value;
 
                 if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                     $_success = true;
@@ -5560,18 +6204,18 @@ class SieGrammar extends SieDependencyManager
             }
 
             if ($_success) {
-                $_value145[] = $this->value;
+                $_value174[] = $this->value;
 
-                $this->value = $_value145;
+                $this->value = $_value174;
             }
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position146;
+                $this->position = $_position175;
                 $this->value = null;
             }
 
-            $this->cut = $_cut147;
+            $this->cut = $_cut176;
 
             if ($_success) {
                 $day = $this->value;
@@ -5579,9 +6223,9 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value148[] = $this->value;
+            $_value177[] = $this->value;
 
-            $this->value = $_value148;
+            $this->value = $_value177;
         }
 
         if ($_success) {
@@ -5619,26 +6263,26 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value151 = array();
+        $_value180 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value151[] = $this->value;
+            $_value180[] = $this->value;
 
-            $_position149 = $this->position;
-            $_cut150 = $this->cut;
+            $_position178 = $this->position;
+            $_cut179 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseRAW_AMOUNT();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position149;
+                $this->position = $_position178;
 
                 $_success = $this->parseQUOTED_AMOUNT();
             }
 
-            $this->cut = $_cut150;
+            $this->cut = $_cut179;
 
             if ($_success) {
                 $amount = $this->value;
@@ -5646,15 +6290,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value151[] = $this->value;
+            $_value180[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value151[] = $this->value;
+            $_value180[] = $this->value;
 
-            $this->value = $_value151;
+            $this->value = $_value180;
         }
 
         if ($_success) {
@@ -5688,7 +6332,7 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value152 = array();
+        $_value181 = array();
 
         if (substr($this->string, $this->position, strlen('"')) === '"') {
             $_success = true;
@@ -5701,7 +6345,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value152[] = $this->value;
+            $_value181[] = $this->value;
 
             $_success = $this->parseRAW_AMOUNT();
 
@@ -5711,7 +6355,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value152[] = $this->value;
+            $_value181[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('"')) === '"') {
                 $_success = true;
@@ -5725,9 +6369,9 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value152[] = $this->value;
+            $_value181[] = $this->value;
 
-            $this->value = $_value152;
+            $this->value = $_value181;
         }
 
         if ($_success) {
@@ -5761,10 +6405,10 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value165 = array();
+        $_value194 = array();
 
-        $_position153 = $this->position;
-        $_cut154 = $this->cut;
+        $_position182 = $this->position;
+        $_cut183 = $this->cut;
 
         $this->cut = false;
         if (substr($this->string, $this->position, strlen("-")) === "-") {
@@ -5779,18 +6423,18 @@ class SieGrammar extends SieDependencyManager
 
         if (!$_success && !$this->cut) {
             $_success = true;
-            $this->position = $_position153;
+            $this->position = $_position182;
             $this->value = null;
         }
 
-        $this->cut = $_cut154;
+        $this->cut = $_cut183;
 
         if ($_success) {
             $negation = $this->value;
         }
 
         if ($_success) {
-            $_value165[] = $this->value;
+            $_value194[] = $this->value;
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -5801,11 +6445,11 @@ class SieGrammar extends SieDependencyManager
             }
 
             if ($_success) {
-                $_value156 = array($this->value);
-                $_cut157 = $this->cut;
+                $_value185 = array($this->value);
+                $_cut186 = $this->cut;
 
                 while (true) {
-                    $_position155 = $this->position;
+                    $_position184 = $this->position;
 
                     $this->cut = false;
                     if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
@@ -5820,16 +6464,16 @@ class SieGrammar extends SieDependencyManager
                         break;
                     }
 
-                    $_value156[] = $this->value;
+                    $_value185[] = $this->value;
                 }
 
                 if (!$this->cut) {
                     $_success = true;
-                    $this->position = $_position155;
-                    $this->value = $_value156;
+                    $this->position = $_position184;
+                    $this->value = $_value185;
                 }
 
-                $this->cut = $_cut157;
+                $this->cut = $_cut186;
             }
 
             if ($_success) {
@@ -5838,10 +6482,10 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value165[] = $this->value;
+            $_value194[] = $this->value;
 
-            $_position158 = $this->position;
-            $_cut159 = $this->cut;
+            $_position187 = $this->position;
+            $_cut188 = $this->cut;
 
             $this->cut = false;
             if (substr($this->string, $this->position, strlen(".")) === ".") {
@@ -5856,20 +6500,20 @@ class SieGrammar extends SieDependencyManager
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position158;
+                $this->position = $_position187;
                 $this->value = null;
             }
 
-            $this->cut = $_cut159;
+            $this->cut = $_cut188;
         }
 
         if ($_success) {
-            $_value165[] = $this->value;
+            $_value194[] = $this->value;
 
-            $_value164 = array();
+            $_value193 = array();
 
-            $_position160 = $this->position;
-            $_cut161 = $this->cut;
+            $_position189 = $this->position;
+            $_cut190 = $this->cut;
 
             $this->cut = false;
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
@@ -5882,17 +6526,17 @@ class SieGrammar extends SieDependencyManager
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position160;
+                $this->position = $_position189;
                 $this->value = null;
             }
 
-            $this->cut = $_cut161;
+            $this->cut = $_cut190;
 
             if ($_success) {
-                $_value164[] = $this->value;
+                $_value193[] = $this->value;
 
-                $_position162 = $this->position;
-                $_cut163 = $this->cut;
+                $_position191 = $this->position;
+                $_cut192 = $this->cut;
 
                 $this->cut = false;
                 if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
@@ -5905,17 +6549,17 @@ class SieGrammar extends SieDependencyManager
 
                 if (!$_success && !$this->cut) {
                     $_success = true;
-                    $this->position = $_position162;
+                    $this->position = $_position191;
                     $this->value = null;
                 }
 
-                $this->cut = $_cut163;
+                $this->cut = $_cut192;
             }
 
             if ($_success) {
-                $_value164[] = $this->value;
+                $_value193[] = $this->value;
 
-                $this->value = $_value164;
+                $this->value = $_value193;
             }
 
             if ($_success) {
@@ -5924,9 +6568,9 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value165[] = $this->value;
+            $_value194[] = $this->value;
 
-            $this->value = $_value165;
+            $this->value = $_value194;
         }
 
         if ($_success) {
@@ -5960,7 +6604,7 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_success = $this->parseINT();
+        $_success = $this->parseSTRING();
 
         if ($_success) {
             $number = $this->value;
@@ -5997,7 +6641,7 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value166 = array();
+        $_value195 = array();
 
         $_success = $this->parseINT();
 
@@ -6006,24 +6650,24 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value166[] = $this->value;
+            $_value195[] = $this->value;
 
-            $_success = $this->parseINT();
+            $_success = $this->parseSTRING();
 
             if ($_success) {
-                $number = $this->value;
+                $obj = $this->value;
             }
         }
 
         if ($_success) {
-            $_value166[] = $this->value;
+            $_value195[] = $this->value;
 
-            $this->value = $_value166;
+            $this->value = $_value195;
         }
 
         if ($_success) {
-            $this->value = call_user_func(function () use (&$super, &$number) {
-                return $this->getDimensionBuilder()->getObject($super, $number);
+            $this->value = call_user_func(function () use (&$super, &$obj) {
+                return $this->getDimensionBuilder()->getObject((string)$super, $obj);
             });
         }
 
@@ -6052,12 +6696,12 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value170 = array();
+        $_value199 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value170[] = $this->value;
+            $_value199[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('{')) === '{') {
                 $_success = true;
@@ -6071,13 +6715,13 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value170[] = $this->value;
+            $_value199[] = $this->value;
 
-            $_value168 = array();
-            $_cut169 = $this->cut;
+            $_value197 = array();
+            $_cut198 = $this->cut;
 
             while (true) {
-                $_position167 = $this->position;
+                $_position196 = $this->position;
 
                 $this->cut = false;
                 $_success = $this->parseOBJECT();
@@ -6086,16 +6730,16 @@ class SieGrammar extends SieDependencyManager
                     break;
                 }
 
-                $_value168[] = $this->value;
+                $_value197[] = $this->value;
             }
 
             if (!$this->cut) {
                 $_success = true;
-                $this->position = $_position167;
-                $this->value = $_value168;
+                $this->position = $_position196;
+                $this->value = $_value197;
             }
 
-            $this->cut = $_cut169;
+            $this->cut = $_cut198;
 
             if ($_success) {
                 $objects = $this->value;
@@ -6103,7 +6747,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value170[] = $this->value;
+            $_value199[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('}')) === '}') {
                 $_success = true;
@@ -6117,15 +6761,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value170[] = $this->value;
+            $_value199[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value170[] = $this->value;
+            $_value199[] = $this->value;
 
-            $this->value = $_value170;
+            $this->value = $_value199;
         }
 
         if ($_success) {
@@ -6159,26 +6803,26 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value173 = array();
+        $_value202 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value173[] = $this->value;
+            $_value202[] = $this->value;
 
-            $_position171 = $this->position;
-            $_cut172 = $this->cut;
+            $_position200 = $this->position;
+            $_cut201 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseRAW_INT();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position171;
+                $this->position = $_position200;
 
                 $_success = $this->parseQUOTED_INT();
             }
 
-            $this->cut = $_cut172;
+            $this->cut = $_cut201;
 
             if ($_success) {
                 $int = $this->value;
@@ -6186,15 +6830,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value173[] = $this->value;
+            $_value202[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value173[] = $this->value;
+            $_value202[] = $this->value;
 
-            $this->value = $_value173;
+            $this->value = $_value202;
         }
 
         if ($_success) {
@@ -6228,7 +6872,7 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value174 = array();
+        $_value203 = array();
 
         if (substr($this->string, $this->position, strlen('"')) === '"') {
             $_success = true;
@@ -6241,7 +6885,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value174[] = $this->value;
+            $_value203[] = $this->value;
 
             $_success = $this->parseRAW_INT();
 
@@ -6251,7 +6895,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value174[] = $this->value;
+            $_value203[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('"')) === '"') {
                 $_success = true;
@@ -6265,9 +6909,9 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value174[] = $this->value;
+            $_value203[] = $this->value;
 
-            $this->value = $_value174;
+            $this->value = $_value203;
         }
 
         if ($_success) {
@@ -6301,10 +6945,10 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value180 = array();
+        $_value209 = array();
 
-        $_position175 = $this->position;
-        $_cut176 = $this->cut;
+        $_position204 = $this->position;
+        $_cut205 = $this->cut;
 
         $this->cut = false;
         if (substr($this->string, $this->position, strlen("-")) === "-") {
@@ -6319,18 +6963,18 @@ class SieGrammar extends SieDependencyManager
 
         if (!$_success && !$this->cut) {
             $_success = true;
-            $this->position = $_position175;
+            $this->position = $_position204;
             $this->value = null;
         }
 
-        $this->cut = $_cut176;
+        $this->cut = $_cut205;
 
         if ($_success) {
             $negation = $this->value;
         }
 
         if ($_success) {
-            $_value180[] = $this->value;
+            $_value209[] = $this->value;
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -6341,11 +6985,11 @@ class SieGrammar extends SieDependencyManager
             }
 
             if ($_success) {
-                $_value178 = array($this->value);
-                $_cut179 = $this->cut;
+                $_value207 = array($this->value);
+                $_cut208 = $this->cut;
 
                 while (true) {
-                    $_position177 = $this->position;
+                    $_position206 = $this->position;
 
                     $this->cut = false;
                     if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
@@ -6360,16 +7004,16 @@ class SieGrammar extends SieDependencyManager
                         break;
                     }
 
-                    $_value178[] = $this->value;
+                    $_value207[] = $this->value;
                 }
 
                 if (!$this->cut) {
                     $_success = true;
-                    $this->position = $_position177;
-                    $this->value = $_value178;
+                    $this->position = $_position206;
+                    $this->value = $_value207;
                 }
 
-                $this->cut = $_cut179;
+                $this->cut = $_cut208;
             }
 
             if ($_success) {
@@ -6378,9 +7022,9 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value180[] = $this->value;
+            $_value209[] = $this->value;
 
-            $this->value = $_value180;
+            $this->value = $_value209;
         }
 
         if ($_success) {
@@ -6414,26 +7058,26 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value183 = array();
+        $_value212 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value183[] = $this->value;
+            $_value212[] = $this->value;
 
-            $_position181 = $this->position;
-            $_cut182 = $this->cut;
+            $_position210 = $this->position;
+            $_cut211 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseRAW_BOOLEAN();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position181;
+                $this->position = $_position210;
 
                 $_success = $this->parseQUOTED_BOOLEAN();
             }
 
-            $this->cut = $_cut182;
+            $this->cut = $_cut211;
 
             if ($_success) {
                 $bool = $this->value;
@@ -6441,15 +7085,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value183[] = $this->value;
+            $_value212[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value183[] = $this->value;
+            $_value212[] = $this->value;
 
-            $this->value = $_value183;
+            $this->value = $_value212;
         }
 
         if ($_success) {
@@ -6483,7 +7127,7 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value184 = array();
+        $_value213 = array();
 
         if (substr($this->string, $this->position, strlen('"')) === '"') {
             $_success = true;
@@ -6496,7 +7140,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value184[] = $this->value;
+            $_value213[] = $this->value;
 
             $_success = $this->parseRAW_BOOLEAN();
 
@@ -6506,7 +7150,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value184[] = $this->value;
+            $_value213[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('"')) === '"') {
                 $_success = true;
@@ -6520,9 +7164,9 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value184[] = $this->value;
+            $_value213[] = $this->value;
 
-            $this->value = $_value184;
+            $this->value = $_value213;
         }
 
         if ($_success) {
@@ -6599,26 +7243,26 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value187 = array();
+        $_value216 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value187[] = $this->value;
+            $_value216[] = $this->value;
 
-            $_position185 = $this->position;
-            $_cut186 = $this->cut;
+            $_position214 = $this->position;
+            $_cut215 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseVALID_CHARS();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position185;
+                $this->position = $_position214;
 
                 $_success = $this->parseQUOTED_STRING();
             }
 
-            $this->cut = $_cut186;
+            $this->cut = $_cut215;
 
             if ($_success) {
                 $string = $this->value;
@@ -6626,15 +7270,15 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value187[] = $this->value;
+            $_value216[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value187[] = $this->value;
+            $_value216[] = $this->value;
 
-            $this->value = $_value187;
+            $this->value = $_value216;
         }
 
         if ($_success) {
@@ -6668,7 +7312,7 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value193 = array();
+        $_value222 = array();
 
         if (substr($this->string, $this->position, strlen('"')) === '"') {
             $_success = true;
@@ -6681,23 +7325,23 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value193[] = $this->value;
+            $_value222[] = $this->value;
 
-            $_value191 = array();
-            $_cut192 = $this->cut;
+            $_value220 = array();
+            $_cut221 = $this->cut;
 
             while (true) {
-                $_position190 = $this->position;
+                $_position219 = $this->position;
 
                 $this->cut = false;
-                $_position188 = $this->position;
-                $_cut189 = $this->cut;
+                $_position217 = $this->position;
+                $_cut218 = $this->cut;
 
                 $this->cut = false;
                 $_success = $this->parseESCAPED_QUOTE();
 
                 if (!$_success && !$this->cut) {
-                    $this->position = $_position188;
+                    $this->position = $_position217;
 
                     if (substr($this->string, $this->position, strlen(' ')) === ' ') {
                         $_success = true;
@@ -6711,27 +7355,27 @@ class SieGrammar extends SieDependencyManager
                 }
 
                 if (!$_success && !$this->cut) {
-                    $this->position = $_position188;
+                    $this->position = $_position217;
 
                     $_success = $this->parseVALID_CHARS();
                 }
 
-                $this->cut = $_cut189;
+                $this->cut = $_cut218;
 
                 if (!$_success) {
                     break;
                 }
 
-                $_value191[] = $this->value;
+                $_value220[] = $this->value;
             }
 
             if (!$this->cut) {
                 $_success = true;
-                $this->position = $_position190;
-                $this->value = $_value191;
+                $this->position = $_position219;
+                $this->value = $_value220;
             }
 
-            $this->cut = $_cut192;
+            $this->cut = $_cut221;
 
             if ($_success) {
                 $string = $this->value;
@@ -6739,7 +7383,7 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value193[] = $this->value;
+            $_value222[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('"')) === '"') {
                 $_success = true;
@@ -6753,9 +7397,9 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value193[] = $this->value;
+            $_value222[] = $this->value;
 
-            $this->value = $_value193;
+            $this->value = $_value222;
         }
 
         if ($_success) {
@@ -6789,7 +7433,7 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        if (preg_match('/^[a-zA-ZåäöÅÄÖ0-9!#$%&\'()*+,-.\\/:;<=>?@\\[\\\\\\]^_`{|}~]$/', substr($this->string, $this->position, 1))) {
+        if (preg_match('/^[a-zA-Z0-9!#$%&\'()*+,-.\\/:;<=>?@\\[\\\\\\]^_`{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■]$/', substr($this->string, $this->position, 1))) {
             $_success = true;
             $this->value = substr($this->string, $this->position, 1);
             $this->position += 1;
@@ -6798,14 +7442,14 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value195 = array($this->value);
-            $_cut196 = $this->cut;
+            $_value224 = array($this->value);
+            $_cut225 = $this->cut;
 
             while (true) {
-                $_position194 = $this->position;
+                $_position223 = $this->position;
 
                 $this->cut = false;
-                if (preg_match('/^[a-zA-ZåäöÅÄÖ0-9!#$%&\'()*+,-.\\/:;<=>?@\\[\\\\\\]^_`{|}~]$/', substr($this->string, $this->position, 1))) {
+                if (preg_match('/^[a-zA-Z0-9!#$%&\'()*+,-.\\/:;<=>?@\\[\\\\\\]^_`{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■]$/', substr($this->string, $this->position, 1))) {
                     $_success = true;
                     $this->value = substr($this->string, $this->position, 1);
                     $this->position += 1;
@@ -6817,16 +7461,16 @@ class SieGrammar extends SieDependencyManager
                     break;
                 }
 
-                $_value195[] = $this->value;
+                $_value224[] = $this->value;
             }
 
             if (!$this->cut) {
                 $_success = true;
-                $this->position = $_position194;
-                $this->value = $_value195;
+                $this->position = $_position223;
+                $this->value = $_value224;
             }
 
-            $this->cut = $_cut196;
+            $this->cut = $_cut225;
         }
 
         if ($_success) {
@@ -6905,20 +7549,20 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value197 = array();
+        $_value226 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value197[] = $this->value;
+            $_value226[] = $this->value;
 
             $_success = $this->parseEOL();
         }
 
         if ($_success) {
-            $_value197[] = $this->value;
+            $_value226[] = $this->value;
 
-            $this->value = $_value197;
+            $this->value = $_value226;
         }
 
         $this->cache['EMPTY_LINE'][$_position] = array(
@@ -6946,10 +7590,10 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value200 = array();
+        $_value229 = array();
 
-        $_position198 = $this->position;
-        $_cut199 = $this->cut;
+        $_position227 = $this->position;
+        $_cut228 = $this->cut;
 
         $this->cut = false;
         if (substr($this->string, $this->position, strlen("\r")) === "\r") {
@@ -6964,14 +7608,14 @@ class SieGrammar extends SieDependencyManager
 
         if (!$_success && !$this->cut) {
             $_success = true;
-            $this->position = $_position198;
+            $this->position = $_position227;
             $this->value = null;
         }
 
-        $this->cut = $_cut199;
+        $this->cut = $_cut228;
 
         if ($_success) {
-            $_value200[] = $this->value;
+            $_value229[] = $this->value;
 
             if (substr($this->string, $this->position, strlen("\n")) === "\n") {
                 $_success = true;
@@ -6985,9 +7629,9 @@ class SieGrammar extends SieDependencyManager
         }
 
         if ($_success) {
-            $_value200[] = $this->value;
+            $_value229[] = $this->value;
 
-            $this->value = $_value200;
+            $this->value = $_value229;
         }
 
         if ($_success) {
@@ -7021,15 +7665,15 @@ class SieGrammar extends SieDependencyManager
             return $_success;
         }
 
-        $_value204 = array();
-        $_cut205 = $this->cut;
+        $_value233 = array();
+        $_cut234 = $this->cut;
 
         while (true) {
-            $_position203 = $this->position;
+            $_position232 = $this->position;
 
             $this->cut = false;
-            $_position201 = $this->position;
-            $_cut202 = $this->cut;
+            $_position230 = $this->position;
+            $_cut231 = $this->cut;
 
             $this->cut = false;
             if (substr($this->string, $this->position, strlen(" ")) === " ") {
@@ -7043,7 +7687,7 @@ class SieGrammar extends SieDependencyManager
             }
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position201;
+                $this->position = $_position230;
 
                 if (substr($this->string, $this->position, strlen("\t")) === "\t") {
                     $_success = true;
@@ -7056,22 +7700,22 @@ class SieGrammar extends SieDependencyManager
                 }
             }
 
-            $this->cut = $_cut202;
+            $this->cut = $_cut231;
 
             if (!$_success) {
                 break;
             }
 
-            $_value204[] = $this->value;
+            $_value233[] = $this->value;
         }
 
         if (!$this->cut) {
             $_success = true;
-            $this->position = $_position203;
-            $this->value = $_value204;
+            $this->position = $_position232;
+            $this->value = $_value233;
         }
 
-        $this->cut = $_cut205;
+        $this->cut = $_cut234;
 
         $this->cache['_'][$_position] = array(
             'success' => $_success,

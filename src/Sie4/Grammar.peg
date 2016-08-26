@@ -20,17 +20,19 @@
 
 namespace byrokrat\accounting\Sie4;
 
+use byrokrat\accounting\Transaction;
+
 /**
  * Grammar for generating a SIE version 4 compliant parser using scato/phpeg
  *
  * @see "bin/build_sie_parser" To rebuild the parser
+ *
+ * @TODO The usage of attribut keys concerning year identifiers and intervalls
  */
-grammar SieGrammar extends SieDependencyManager
+grammar Grammar extends DependencyManager
 {
     start FILE =
-        EMPTY_LINE*
         FLAGGA_POST
-        EMPTY_LINE*
         (CHECKSUMED_SIE_CONTENT / SIE_CONTENT)
         EMPTY_LINE*
         _;
@@ -137,7 +139,15 @@ grammar SieGrammar extends SieDependencyManager
         $this->getContainer()->setAttribute('PROSA', $text);
     };
 
-    RAR_POST = ROW_START 'RAR' ^ year:INT startDate:DATE endDate:DATE ROW_END {
+    RAR_POST = ROW_START 'RAR' ^ year:INT startDate:DATE? endDate:DATE? ROW_END {
+        if (is_null($startDate)) {
+            $this->getLogger()->warning("Accounting year start date not defined");
+        }
+
+        if (is_null($endDate)) {
+            $this->getLogger()->warning("Accounting year end date not defined");
+        }
+
         $this->getContainer()->setAttribute("RAR $year", [$startDate, $endDate]);
     };
 
@@ -165,32 +175,36 @@ grammar SieGrammar extends SieDependencyManager
         / OBJEKT_POST
         / VOID_ROW;
 
-    KONTO_POST = ROW_START 'KONTO' ^ number:INT description:STRING ROW_END {
+    KONTO_POST = ROW_START 'KONTO' ^ number:STRING description:STRING ROW_END {
         $this->getAccountBuilder()->addAccount($number, $description);
     };
 
-    KTYP_POST = ROW_START 'KTYP' ^ number:INT type:STRING ROW_END {
+    KTYP_POST = ROW_START 'KTYP' ^ number:STRING type:STRING ROW_END {
         $this->getAccountBuilder()->setAccountType($number, $type);
     };
 
-    ENHET_POST = ROW_START 'ENHET' ^ account:INT unit:STRING ROW_END {
+    ENHET_POST = ROW_START 'ENHET' ^ account:STRING unit:STRING ROW_END {
         $this->getAccountBuilder()->getAccount($account)->setAttribute('unit', $unit);
     };
 
-    SRU_POST = ROW_START 'SRU' ^ account:INT sru:INT ROW_END {
-        $this->getAccountBuilder()->getAccount($account)->setAttribute('sru', $sru);
+    SRU_POST = ROW_START 'SRU' ^ account:STRING sru:INT? ROW_END {
+        if (is_null($sru)) {
+            $this->getLogger()->warning('Sru number not defined');
+        }
+
+        $this->getAccountBuilder()->getAccount($account)->setAttribute('sru', $sru ?: 0);
     };
 
     DIM_POST = ROW_START 'DIM' ^ dim:INT desc:STRING ROW_END {
-        $this->getDimensionBuilder()->addDimension($dim, $desc);
+        $this->getDimensionBuilder()->addDimension((string)$dim, $desc);
     };
 
     UNDERDIM_POST = ROW_START 'UNDERDIM' ^ dim:INT desc:STRING superdim:INT ROW_END {
-        $this->getDimensionBuilder()->addDimension($dim, $desc, $superdim);
+        $this->getDimensionBuilder()->addDimension((string)$dim, $desc, (string)$superdim);
     };
 
-    OBJEKT_POST = ROW_START 'OBJEKT' ^ dim:INT obj:int desc:STRING ROW_END {
-        $this->getDimensionBuilder()->addObject($dim, $obj, $desc);
+    OBJEKT_POST = ROW_START 'OBJEKT' ^ dim:INT obj:STRING desc:STRING ROW_END {
+        $this->getDimensionBuilder()->addObject((string)$dim, $obj, $desc);
     };
 
     // Posts defining balances and verifications
@@ -225,46 +239,80 @@ grammar SieGrammar extends SieDependencyManager
         }
     };
 
-    PBUDGET_POST = ROW_START 'PBUDGET' ^ ROW_END {
-        // TODO implement PBUDGET
-        // sid 28. Samma uppbyggnad som PSALDO. Samma frågeställning...
+    PBUDGET_POST = ROW_START 'PBUDGET' ^ year:INT period:DATE account:ACCOUNT objects:OBJECT_LIST balance:AMOUNT quantity:INT? ROW_END {
+        $key = "PBUDGET $year " . $period->format('Ym');
 
-        // TODO när jag har implementerat allt och allt funkar så gör en sista
-            // genomläsning av specifikationerna och ta mig en sista funderare
-            // är ju gött om jag kan undvika så många fel som möjligt....
+        $account->setAttribute($key, [$balance, $quantity ?: 0]);
+
+        foreach ($objects as $object) {
+            $object->setAttribute($key, [$balance, $quantity ?: 0]);
+        }
     };
 
-    PSALDO_POST = ROW_START 'PSALDO' ^ ROW_END {
-        // TODO implement PSALDO
-        // sid 29 i doc. Jag fattar inte riktigt om det är period för objekt eller konto...
+    PSALDO_POST = ROW_START 'PSALDO' ^ year:INT period:DATE account:ACCOUNT objects:OBJECT_LIST balance:AMOUNT quantity:INT? ROW_END {
+        $key = "PSALDO $year " . $period->format('Ym');
+
+        $account->setAttribute($key, [$balance, $quantity ?: 0]);
+
+        foreach ($objects as $object) {
+            $object->setAttribute($key, [$balance, $quantity ?: 0]);
+        }
     };
 
     RES_POST = ROW_START 'RES' ^ year:INT account:ACCOUNT balance:AMOUNT quantity:INT? ROW_END {
         $account->setAttribute("RES $year", [$balance, $quantity ?: 0]);
     };
 
-    // TODO also implement #RTRANS and #BTRANS
-    TRANS_POST = ROW_START 'TRANS' ^ account:ACCOUNT objects:OBJECT_LIST amount:AMOUNT date:DATE? desc:STRING? quantity:INT? signature:STRING? ROW_END {
-        return;
-        // TODO hur fungerar det egentligen med optional arguments här??
-        return $this->onTrans($account, $objects, $amount, $date, $desc, $quantity, $signature);
+    VER_POST = ROW_START 'VER' ^ series:STRING number:STRING date:DATE desc:STRING? regdate:DATE? sign:STRING? ROW_END SUBROW_START trans:TRANS_LIST SUBROW_END {
+        $this->getContainer()->addItem(
+            $this->getVerificationBuilder()->createVerification(
+                $series,
+                $number,
+                $date,
+                $desc ?: '',
+                $regdate ?: null,
+                $sign ?: '',
+                $trans
+            )
+        );
     };
 
-    VER_POST = ROW_START 'VER' ^ series:STRING number:INT date:DATE desc:STRING? regdate:DATE? sign:STRING? ROW_END SUBROW_START trans:(TRANS_POST / UNKNOWN_POST / EMPTY_LINE)* SUBROW_END {
-        // TODO Dags att implementera detta med VerificationBuilder !!
-        // sedan börjar det bli...
-        return;
-        // TODO hur fungerar det egentligen med optional arguments här??
-        return $this->onVer($series, $number, $date, $desc, $regdate, $sign, $trans);
+    TRANS_LIST = trans:(TRANS_POST / BTRANS_POST / RTRANS_POST / UNKNOWN_POST)* {
+        return array_filter(
+            $trans,
+            function ($item) {
+                return $item instanceof Transaction;
+            }
+        );
+    };
+
+    TRANS_POST = ROW_START 'TRANS' ^ account:ACCOUNT objects:OBJECT_LIST amount:AMOUNT date:DATE? desc:STRING? quantity:INT? signature:STRING? ROW_END {
+        return $this->getVerificationBuilder()->createTransaction(
+            $account,
+            $objects,
+            $amount,
+            $date ?: null,
+            $desc ?: '',
+            $quantity ?: 0,
+            $signature ?: ''
+        );
+    };
+
+    BTRANS_POST = ROW_START 'BTRANS' ^ account:ACCOUNT objects:OBJECT_LIST amount:AMOUNT date:DATE? desc:STRING? quantity:INT? signature:STRING? ROW_END {
+        $this->getLogger()->notice('Detected a BTRANS post, removed transactions are not supported yet..');
+    };
+
+    RTRANS_POST = ROW_START 'RTRANS' ^ account:ACCOUNT objects:OBJECT_LIST amount:AMOUNT date:DATE? desc:STRING? quantity:INT? signature:STRING? ROW_END {
+        $this->getLogger()->notice('Detected a RTRANS post, added transactions are not supported yet..');
     };
 
     //
     // Unknown rows and lines
     //
 
-    VOID_ROW = UNKNOWN_POST / EMPTY_LINE / INVALID_LINE;
+    VOID_ROW = UNKNOWN_POST / INVALID_LINE / EMPTY_LINE;
 
-    INVALID_LINE = _ !'#' fields:STRING* EOL {
+    INVALID_LINE = _ !'#' fields:STRING+ EOL {
         $this->getLogger()->warning('Ignored invalid line "' . implode(' ', $fields) . '"');
     };
 
@@ -323,11 +371,11 @@ grammar SieGrammar extends SieDependencyManager
 
     SUBROW_START = _ '{' _ EOL;
 
-    SUBROW_END = _ '}' _ EOL;
+    SUBROW_END = _ '}' _ EOL?;
 
-    ROW_START = _ '#';
+    ROW_START = EMPTY_LINE* _ '#';
 
-    ROW_END = fields:STRING* _ EOL {
+    ROW_END = fields:STRING* _ EOL? {
         foreach ($fields as $field) {
             $this->getLogger()->notice("Ignored unknown field $field at end of line");
         }
@@ -371,14 +419,22 @@ grammar SieGrammar extends SieDependencyManager
 
     // Account
 
-    ACCOUNT = number:INT {
+    ACCOUNT = number:STRING {
         return $this->getAccountBuilder()->getAccount($number);
     };
 
     // Object
 
-    OBJECT = super:INT number:INT {
-        return $this->getDimensionBuilder()->getObject($super, $number);
+    OBJECT = super:INT obj:STRING {
+        // TODO när någon glömmer att skriva quotes runt $obj så blir '}' som kommer
+            // efter en del av namn istället för en avgränsare
+            // jag skrev någon .transformations om detta...
+            // det är egentligen ett brott mot specen..
+            // Men så pass vanligt att jag borde försöka att lösa det
+            // $obj ska alltså inte vara STRING utan något annat som är
+                // DIMENSION_ID_SAFE_STRING
+            // det borde inte vara alltför svårt att skriva eftersom QUOTED_STRING är samma...
+        return $this->getDimensionBuilder()->getObject((string)$super, $obj);
     };
 
     OBJECT_LIST = _ '{' objects:OBJECT* '}' _ {
@@ -423,7 +479,7 @@ grammar SieGrammar extends SieDependencyManager
         return implode($string);
     };
 
-    VALID_CHARS = chars:[a-zA-ZåäöÅÄÖ0-9!#$%&'()*+,-.\/:;<=>?@\[\\\]^_`{|}~]+ {
+    VALID_CHARS = chars:[a-zA-Z0-9!#$%&'()*+,-.\/:;<=>?@\[\\\]^_`{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■]+ {
         return implode($chars);
     };
 
