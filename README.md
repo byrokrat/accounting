@@ -36,9 +36,9 @@ use byrokrat\amount\Currency\SEK;
 $accountFactory = new AccountFactory;
 
 $accounts = new Query([
-    $accountFactory->createAccount(1920, 'Bank'),
-    $accountFactory->createAccount(1921, 'Cash'),
-    $accountFactory->createAccount(3000, 'Income'),
+    $accountFactory->createAccount('1920', 'Bank'),
+    $accountFactory->createAccount('1921', 'Cash'),
+    $accountFactory->createAccount('3000', 'Income'),
 ]);
 
 // Create some verifications
@@ -46,13 +46,13 @@ $accounts = new Query([
 $verifications = new Query([
     (new Verification)
         ->setDescription('Verification text')
-        ->addTransaction(new Transaction($accounts->findAccountFromNumber(1920), new SEK('100')))
-        ->addTransaction(new Transaction($accounts->findAccountFromNumber(3000), new SEK('-100')))
+        ->addTransaction(new Transaction($accounts->findAccount('1920'), new SEK('100')))
+        ->addTransaction(new Transaction($accounts->findAccount('3000'), new SEK('-100')))
     ,
     (new Verification)
         ->setDescription('Verification using account 1921')
-        ->addTransaction(new Transaction($accounts->findAccountFromNumber(1921), new SEK('200')))
-        ->addTransaction(new Transaction($accounts->findAccountFromNumber(3000), new SEK('-200')))
+        ->addTransaction(new Transaction($accounts->findAccount('1921'), new SEK('200')))
+        ->addTransaction(new Transaction($accounts->findAccount('3000'), new SEK('-200')))
 ]);
 
 // Calculate account balances
@@ -60,7 +60,7 @@ $verifications = new Query([
 $summaries = [];
 
 $verifications->transactions()->each(function ($transaction) use (&$summaries) {
-    $key = $transaction->getAccount()->getNumber();
+    $key = $transaction->getAccount()->getId();
     $summaries[$key] = $summaries[$key] ?? new TransactionSummary;
     $summaries[$key]->addToSummary($transaction);
 });
@@ -71,7 +71,7 @@ echo $summaries[3000]->getOutgoingBalance();
 // Iterate over verifications concerning a specific account
 
 $verificationsUsingAccount1921 = $verifications->verifications()->where(function ($item) {
-    return $item instanceof Account && $item->getNumber() == 1921;
+    return $item instanceof Account && $item->getId() == '1921';
 })->toArray();
 
 // Outputs 'Verification using account 1921'
@@ -91,8 +91,8 @@ echo (new Sie\Writer)->generate(
     (new Sie\Settings)->setTargetCompany('my-company'),
     new Query([
         (new Verification)
-            ->addTransaction(new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100')))
-            ->addTransaction(new Transaction(new Account\Earning(3000, 'Intänk'), new Amount('-100')))
+            ->addTransaction(new Transaction(new Account\Asset('1920', 'Bank'), new Amount('100')))
+            ->addTransaction(new Transaction(new Account\Earning('3000', 'Intänk'), new Amount('-100')))
     ])
 );
 ```

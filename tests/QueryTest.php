@@ -417,32 +417,32 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testFindAccountFromNumber()
+    public function testFindAccount()
     {
         $this->assertEquals(
-            $account = $this->prophesizeAccount(1234, '')->reveal(),
-            (new Query(['foo', $account, 'bar']))->findAccountFromNumber(1234)
+            $account = $this->prophesizeAccount('1234', '')->reveal(),
+            (new Query(['foo', $account, 'bar']))->findAccount('1234')
         );
     }
 
     public function testExceptionOnUnknownAccountNumber()
     {
         $this->setExpectedException(Exception\RuntimeException::CLASS);
-        (new Query)->findAccountFromNumber(1234);
+        (new Query)->findAccount('1234');
     }
 
-    public function testFindDimensionFromNumber()
+    public function testFindDimension()
     {
         $this->assertEquals(
-            $dimension = $this->prophesizeDimension(1234)->reveal(),
-            (new Query(['foo', $dimension, 'bar']))->findDimensionFromNumber(1234)
+            $dimension = $this->prophesizeDimension('1234')->reveal(),
+            (new Query(['foo', $dimension, 'bar']))->findDimension('1234')
         );
     }
 
     public function testExceptionOnUnknownDimensionNumber()
     {
         $this->setExpectedException(Exception\RuntimeException::CLASS);
-        (new Query)->findDimensionFromNumber(1234);
+        (new Query)->findDimension('1234');
     }
 
     /**

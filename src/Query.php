@@ -193,31 +193,31 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
-     * Find account object from number
+     * Find account object with id
      *
      * @throws Exception\RuntimeException If account does not exist
      */
-    public function findAccountFromNumber(int $number): Account
+    public function findAccount(string $accountId): Account
     {
-        return $this->accounts()->findDimensionFromNumber($number);
+        return $this->accounts()->findDimension($accountId);
     }
 
     /**
-     * Find first Dimension object with $number
+     * Find first Dimension with id $dimensionId
      *
      * @throws Exception\RuntimeException If dimension does not exist
      */
-    public function findDimensionFromNumber(int $number): Dimension
+    public function findDimension(string $dimensionId): Dimension
     {
-        $dimension = $this->dimensions()->find(function ($dimension) use ($number) {
-            return $dimension->getNumber() == $number;
+        $dimension = $this->dimensions()->find(function ($dimension) use ($dimensionId) {
+            return $dimension->getId() == $dimensionId;
         });
 
         if ($dimension) {
             return $dimension;
         }
 
-        throw new Exception\RuntimeException("Dimension number $number does not exist");
+        throw new Exception\RuntimeException("Dimension $dimensionId does not exist");
     }
 
     /**

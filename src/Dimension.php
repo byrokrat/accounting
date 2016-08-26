@@ -36,9 +36,9 @@ class Dimension implements Attributable, Describable, Queryable
     use AttributableTrait, DescribableTrait;
 
     /**
-     * @var int Dimension id number
+     * @var string Dimension identification
      */
-    private $number;
+    private $dimensionId;
 
     /**
      * @var Dimension Parent dimension
@@ -48,23 +48,23 @@ class Dimension implements Attributable, Describable, Queryable
     /**
      * Load values at construct
      *
-     * @param int       $number      Dimension id number
+     * @param string    $dimensionId Dimension identification
      * @param string    $description Free text description
      * @param Dimension $parent      Optional parent dimension
      */
-    public function __construct(int $number, string $description, Dimension $parent = null)
+    public function __construct(string $dimensionId, string $description = '', Dimension $parent = null)
     {
-        $this->number = $number;
+        $this->dimensionId = $dimensionId;
         $this->setDescription($description);
         $this->parent = $parent;
     }
 
     /**
-     * Get dimension id number
+     * Get dimension identification
      */
-    public function getNumber(): int
+    public function getId(): string
     {
-        return $this->number;
+        return $this->dimensionId;
     }
 
     /**
@@ -94,17 +94,17 @@ class Dimension implements Attributable, Describable, Queryable
     /**
      * Check if this dimension is contained in $dimension
      *
-     * @param  Dimension|int $dimension
+     * @param  Dimension|string $dimension
      */
     public function inDimension($dimension): bool
     {
         if ($dimension instanceof Dimension) {
-            $dimension = $dimension->getNumber();
+            $dimension = $dimension->getId();
         }
 
-        if (!is_int($dimension)) {
+        if (!is_string($dimension)) {
             throw new Exception\LogicException(
-                '$dimension must be an integer or a Dimension object, found: ' . gettype($dimension)
+                '$dimension must be a string or a Dimension object, found: ' . gettype($dimension)
             );
         }
 
@@ -112,7 +112,7 @@ class Dimension implements Attributable, Describable, Queryable
             return false;
         }
 
-        if ($this->getParent()->getNumber() === $dimension) {
+        if ($this->getParent()->getId() === $dimension) {
             return true;
         }
 

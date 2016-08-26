@@ -246,7 +246,7 @@ class SIE
 
         // Generate accounts
         $query->accounts()->each(function ($account) use (&$sie) {
-            $number = self::quote((string)$account->getNumber());
+            $number = self::quote($account->getId());
             $name = self::quote($account->getDescription());
             $type = self::quote($this->translateAccountType($account));
             $sie .= "#KONTO $number $name" . self::EOL;
@@ -262,7 +262,7 @@ class SIE
 
             (new Query($ver))->transactions()->each(function ($trans) use (&$sie) {
                 $sie .=
-                    "\t#TRANS {$trans->getAccount()->getNumber()} {} "
+                    "\t#TRANS {$trans->getAccount()->getId()} {} "
                     . $trans->getAmount()
                     . self::EOL;
             });
@@ -302,7 +302,7 @@ class SIE
 
         // Generate accounts
         $query->accounts()->each(function ($account) use (&$sie) {
-            $number = self::quote((string)$account->getNumber());
+            $number = self::quote($account->getId());
             $name = self::quote($account->getDescription());
             $type = self::quote($this->translateAccountType($account));
             $sie .= "#KONTO $number $name" . self::EOL;
@@ -378,16 +378,16 @@ class SIE
 
                     switch ($data[2]) {
                         case 'T':
-                            $account = new Account\Asset(intval($data[1]), $current[1]);
+                            $account = new Account\Asset($data[1], $current[1]);
                             break;
                         case 'I':
-                            $account = new Account\Earning(intval($data[1]), $current[1]);
+                            $account = new Account\Earning($data[1], $current[1]);
                             break;
                         case 'S':
-                            $account = new Account\Debt(intval($data[1]), $current[1]);
+                            $account = new Account\Debt($data[1], $current[1]);
                             break;
                         case 'K':
-                            $account = new Account\Cost(intval($data[1]), $current[1]);
+                            $account = new Account\Cost($data[1], $current[1]);
                             break;
                     }
 
