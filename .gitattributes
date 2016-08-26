@@ -1,4 +1,4 @@
-/bin
+/bin export-ignore
 /docs export-ignore
 /res export-ignore
 /tests export-ignore
