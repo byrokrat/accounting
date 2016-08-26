@@ -30,18 +30,14 @@ abstract class Account extends Dimension
     /**
      * Load account values at construct
      *
-     * @param int    $number      4 digit number identifying account
+     * @param string $number      Numerical string identifying account
      * @param string $description Free text description of account
      * @param array  $attributes  Optional list of attributes
-     *
-     * @throws Exception\RuntimeException If $number is < 1000 or > 9999
      */
-    public function __construct(int $number, string $description, array $attributes = [])
+    public function __construct(string $number, string $description = '', array $attributes = [])
     {
-        if ($number < 1000 || $number > 9999) {
-            throw new Exception\RuntimeException(
-                'Account number must be greater than 999 and lesser than 10000'
-            );
+        if (!is_numeric($number)) {
+            throw new Exception\RuntimeException('Account number must be a numeric string');
         }
 
         parent::__construct($number, $description);
@@ -49,6 +45,14 @@ abstract class Account extends Dimension
         foreach ($attributes as $name => $value) {
             $this->setAttribute($name, $value);
         }
+    }
+
+    /**
+     * Get account id cast to integer
+     */
+    public function getNumber(): int
+    {
+        return intval($this->getId());
     }
 
     /**

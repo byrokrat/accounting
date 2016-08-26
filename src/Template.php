@@ -98,14 +98,14 @@ class Template implements Attributable, Describable
         foreach ($this->transactions as list($number, $amount, $quantity, $dimensions)) {
             $dimensions = array_map(
                 function ($number) use ($container, $filter) {
-                    return $container->findDimensionFromNumber(intval($filter($number)));
+                    return $container->findDimension($filter($number));
                 },
                 $dimensions
             );
 
             $ver->addTransaction(
                 new Transaction(
-                    $container->findAccountFromNumber(intval($filter($number))),
+                    $container->findAccount($filter($number)),
                     new Amount($filter($amount)),
                     intval($filter($quantity)),
                     ...$dimensions

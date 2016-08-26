@@ -104,12 +104,12 @@ class Writer
     {
         $output->writeln(
             '#KONTO %s %s',
-            (string)$account->getNumber(),
+            $account->getId(),
             $account->getDescription()
         );
         $output->writeln(
             '#KTYP %s %s',
-            (string)$account->getNumber(),
+            $account->getId(),
             $this->translateAccountType($account)
         );
     }
@@ -121,7 +121,7 @@ class Writer
     {
         $output->writeln(
             "\t#TRANS %s {} %s",
-            (string)$transaction->getAccount()->getNumber(),
+            $transaction->getAccount()->getId(),
             (string)$transaction->getAmount()
         );
     }
@@ -207,7 +207,7 @@ class Writer
 
         // Generate accounts
         foreach ($accounts as $account) {
-            $number = self::quote((string)$account->getNumber());
+            $number = self::quote($account->getId());
             $name = self::quote($account->getDescription());
             $type = self::quote($this->translateAccountType($account));
             $sie .= "#KONTO $number $name" . self::EOL;

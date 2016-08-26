@@ -29,10 +29,10 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
         ];
 
         self::$container = new Query([
-            new Account\Asset(1920, 'Bank'),
-            new Account\Earning(3000, 'Incomes'),
-            new Dimension(1, ''),
-            new Dimension(2, '')
+            new Account\Asset('1920', 'Bank'),
+            new Account\Earning('3000', 'Incomes'),
+            new Dimension('1'),
+            new Dimension('2')
         ]);
     }
 
@@ -41,37 +41,37 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 (new Verification)->addTransaction(
-                    new Transaction(new Account\Earning(3000, 'Incomes'), new Amount('-400'))
+                    new Transaction(new Account\Earning('3000', 'Incomes'), new Amount('-400'))
                 ),
                 [['{in}', '-400']],
             ],
             [
                 (new Verification)->addTransaction(
-                    new Transaction(new Account\Asset(1920, 'Bank'), new Amount('400'), 0)
+                    new Transaction(new Account\Asset('1920', 'Bank'), new Amount('400'), 0)
                 ),
                 [['1920', '{amount}']],
             ],
             [
                 (new Verification)->addTransaction(
-                    new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100'), 10)
+                    new Transaction(new Account\Asset('1920', 'Bank'), new Amount('100'), 10)
                 ),
                 [['1920', '100', '{quantity}']],
             ],
             [
                 (new Verification)->addTransaction(
                     new Transaction(
-                        new Account\Asset(1920, 'Bank'),
+                        new Account\Asset('1920', 'Bank'),
                         new Amount('100'),
                         1,
-                        new Dimension(1, ''),
-                        new Dimension(2, '')
+                        new Dimension('1'),
+                        new Dimension('2')
                     )
                 ),
                 [['1920', '100', '1', ['1', '2']]],
             ],
             [
                 (new Verification)->addTransaction(
-                    new Transaction(new Account\Asset(1920, 'Bank'), new Amount('100'), 1, new Dimension(1, ''))
+                    new Transaction(new Account\Asset('1920', 'Bank'), new Amount('100'), 1, new Dimension('1'))
                 ),
                 [['1920', '100', '1', ['{dim}']]],
             ],

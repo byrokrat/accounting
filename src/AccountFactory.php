@@ -30,20 +30,22 @@ class AccountFactory
     /**
      * Create a new account object
      *
-     * @param int    $number      Account number
+     * @param string $number      Account number
      * @param string $description Description of account
      */
-    public function createAccount(int $number, string $description): Account
+    public function createAccount(string $number, string $description = ''): Account
     {
-        if ($number < 2000) {
+        $iNumber = intval($number);
+
+        if ($iNumber < 2000) {
             return new Account\Asset($number, $description);
         }
 
-        if ($number < 3000) {
+        if ($iNumber < 3000) {
             return new Account\Debt($number, $description);
         }
 
-        if ($number < 4000) {
+        if ($iNumber < 4000) {
             return new Account\Earning($number, $description);
         }
 
