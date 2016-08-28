@@ -45,14 +45,12 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
     {
         try {
             self::$parser->parse(file_get_contents($fname));
-
         } catch (Exception\ParserException $e) {
             $errorsFname = "$fname.errors";
             $allowedErrors = is_readable($errorsFname) ? file($errorsFname, FILE_IGNORE_NEW_LINES) : [];
             if ($unexpectedErrors = array_diff($e->getLog(), $allowedErrors)) {
                 return $this->failure($fname, "Parsing failed due to\n" . implode("\n", $unexpectedErrors));
             }
-
         } catch (\Exception $e) {
             return $this->failure($fname, $e->getMessage());
         }
