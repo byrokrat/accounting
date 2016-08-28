@@ -51,7 +51,7 @@ class Transaction implements Attributable, Dateable, Describable, Queryable, Sig
     private $amount;
 
     /**
-     * @var integer The quantity of stuff moved to or from account
+     * @var Amount The quantity of stuff moved to or from account
      */
     private $quantity;
 
@@ -63,11 +63,11 @@ class Transaction implements Attributable, Dateable, Describable, Queryable, Sig
     /**
      * Set transaction values
      */
-    public function __construct(Account $account, Amount $amount, int $quantity = 0, Dimension ...$dimensions)
+    public function __construct(Account $account, Amount $amount, Amount $quantity = null, Dimension ...$dimensions)
     {
         $this->account = $account;
         $this->amount = $amount;
-        $this->quantity = $quantity;
+        $this->quantity = $quantity ?: new Amount('0');
         $this->dimensions = $dimensions;
     }
 
@@ -90,7 +90,7 @@ class Transaction implements Attributable, Dateable, Describable, Queryable, Sig
     /**
      * Get quantity of stuff moved to or from account
      */
-    public function getQuantity(): int
+    public function getQuantity(): Amount
     {
         return $this->quantity;
     }

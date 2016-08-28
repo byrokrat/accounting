@@ -5,7 +5,9 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\Sie4;
 
 use byrokrat\accounting\Container;
+use byrokrat\accounting\Dimension;
 use byrokrat\accounting\Exception;
+use byrokrat\amount\Amount;
 use byrokrat\amount\Currency\SEK;
 
 /**
@@ -35,6 +37,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     public function testLabelRequired()
     {
         $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectExceptionMessageRegExp("/invalid line/");
         $this->parse(
             "
                 #FLAGGA 1
@@ -121,6 +124,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     public function testUnknownFieldsAtEndOfLine()
     {
         $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectExceptionMessageRegExp("/unknown field/");
         $this->parse(
             "#FLAGGA 1 unknown-field-at-end-of-line\n",
             ParserFactory::FAIL_ON_NOTICE
@@ -133,6 +137,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     public function testUnknownLabels()
     {
         $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectExceptionMessageRegExp("/unknown statement/");
         $this->parse(
             "
                 #FLAGGA 1
@@ -222,6 +227,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     public function testNoticeOnKsumma()
     {
         $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectExceptionMessageRegExp("/Checksum detected but currently not handled/");
         $this->parse(
             "
                 #FLAGGA 1
@@ -297,6 +303,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     public function testExceptionOnInvalidCharset()
     {
         $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectExceptionMessageRegExp("/Unknown charset/");
         $this->parse(
             "
                 #FLAGGA 1
@@ -350,6 +357,32 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testWarningOnMissingSruAccount()
+    {
+        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectExceptionMessageRegExp("/Expected account/");
+        $this->parse(
+            "
+                #FLAGGA 1
+                #SRU
+            ",
+            ParserFactory::FAIL_ON_WARNING
+        );
+    }
+
+    public function testWarningOnMissingSruNumber()
+    {
+        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectExceptionMessageRegExp("/Expected SRU code/");
+        $this->parse(
+            "
+                #FLAGGA 1
+                #SRU 1920
+            ",
+            ParserFactory::FAIL_ON_WARNING
+        );
+    }
+
     public function testObjectType()
     {
         $object = $this->parse("
@@ -376,24 +409,32 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider objectListTypeProvider
+     */
+    public function testObjectListType(string $list, string $objId)
+    {
+        $this->assertInstanceOf(
+            Dimension::CLASS,
+            $this->parse("
+                #FLAGGA 1
+                #OIB 0 0 $list 0 0
+            ")->query()->findDimension($objId)
+        );
+    }
+
+    /**
      * @dataProvider currencyTypeProvider
      */
-    public function testIb(string $raw, SEK $money)
+    public function testCurrencyType(string $raw, SEK $money)
     {
         $account = $this->parse("
             #FLAGGA 1
-            #IB 0 1920 $raw 0
-            #IB -1 1920 $raw 100
+            #IB 0 1920 $raw
         ")->query()->findAccount('1920');
 
         $this->assertEquals(
             $money,
             $account->getAttribute('IB 0')[0]
-        );
-
-        $this->assertEquals(
-            100,
-            $account->getAttribute('IB -1')[1]
         );
     }
 
@@ -428,7 +469,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(
-            1,
+            new Amount('1'),
             $objA->getAttribute('IB -1')[1]
         );
     }
@@ -484,6 +525,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
     public function testExceptionOnUnbalancedVerification()
     {
         $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectExceptionMessageRegExp("/Trying to add an unbalanced verification/");
         $this->parse("
             #FLAGGA 1
             #VER \"\" \"\" 20110104
@@ -491,5 +533,42 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
                 #TRANS  3010 {} -100.00
             }
         ");
+    }
+
+    public function testWarningOnMissingTransactionAmont()
+    {
+        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectExceptionMessageRegExp("/Expected monetary amount/");
+        $this->parse(
+            "
+                #FLAGGA 1
+                #VER \"A\" \"\" 20110104
+                {
+                    #TRANS  1920 {}
+                }
+            ",
+            ParserFactory::FAIL_ON_WARNING
+        );
+    }
+
+    public function testSkippingOverOptionalArguments()
+    {
+        $transactions = $this->parse(
+            "
+                #FLAGGA 1
+                #KONTO 1920 in
+                #VER \"A\" \"\" 20110104
+                {
+                    #TRANS  1920 {} 100 \"\" \"\" 2.5
+                    #TRANS  1920 {} -100
+                }
+            ",
+            ParserFactory::FAIL_ON_NOTICE
+        )->query()->transactions()->toArray();
+
+        $this->assertEquals(
+            new Amount('2.5'),
+            $transactions[0]->getQuantity()
+        );
     }
 }

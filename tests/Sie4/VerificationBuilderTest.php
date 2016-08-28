@@ -149,9 +149,30 @@ class VerificationBuilderTest extends \PHPUnit_Framework_TestCase
             '',
             null,
             '',
-            $transactions = [$transA->reveal()]
+            [$transA->reveal()]
         );
 
         $logger->error(\Prophecy\Argument::type('string'))->shouldHaveBeenCalled();
+    }
+
+    public function testErrorOnNoTransactionsInVerification()
+    {
+        $logger = $this->prophesize(LoggerInterface::CLASS);
+
+        $verificationBuilder = new VerificationBuilder(
+            $logger->reveal()
+        );
+
+        $verification = $verificationBuilder->createVerification(
+            '',
+            '',
+            new \DateTime,
+            '',
+            null,
+            '',
+            []
+        );
+
+        $logger->warning(\Prophecy\Argument::type('string'))->shouldHaveBeenCalled();
     }
 }

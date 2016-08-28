@@ -43,17 +43,8 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
      */
     public function testFiles(string $fname)
     {
-        $content = file_get_contents($fname);
-
-        $transformationsFname = "$fname.transformations";
-
-        if (is_readable($transformationsFname)) {
-            $transformations = include $transformationsFname;
-            $content = $transformations->call($this, $content);
-        }
-
         try {
-            self::$parser->parse($content);
+            self::$parser->parse(file_get_contents($fname));
 
         } catch (Exception\ParserException $e) {
             $errorsFname = "$fname.errors";

@@ -21,6 +21,7 @@
 namespace byrokrat\accounting\Sie4;
 
 use byrokrat\accounting\Transaction;
+use byrokrat\amount\Amount;
 
 /**
  * Grammar for generating a SIE version 4 compliant parser using scato/phpeg
@@ -28,8 +29,10 @@ use byrokrat\accounting\Transaction;
  * @see "bin/build_sie_parser" To rebuild the parser
  *
  * @TODO The usage of attribut keys concerning year identifiers and intervalls
+ *     $this->extendAttribute($attributable, [$key = 'PSALDO', $subkey = '0', ...], $value);
+ *     eller någonting liknande. Skriv även bättre tester för detta på något sätt...
  */
-grammar Grammar extends DependencyManager
+grammar Grammar extends AbstractParser
 {
     start FILE =
         FLAGGA_POST
@@ -49,15 +52,19 @@ grammar Grammar extends DependencyManager
 
     // Flag and checksum posts
 
-    FLAGGA_POST = ROW_START 'FLAGGA' ^ flag:BOOLEAN ROW_END {
-        $this->getContainer()->setAttribute('FLAGGA', $flag);
+    FLAGGA_POST = ROW_START 'FLAGGA' ^ flag:BOOLEAN? ROW_END {
+        if ($this->assertBool($flag)) {
+            $this->getContainer()->setAttribute('FLAGGA', $flag);
+        }
     };
 
     KSUMMA_START_POST = ROW_START 'KSUMMA' ROW_END;
 
-    KSUMMA_END_POST = ROW_START 'KSUMMA' checksum:INT ROW_END {
-        $this->getContainer()->setAttribute('KSUMMA', $checksum);
-        $this->getLogger()->notice('Checksum detected but currently not handled');
+    KSUMMA_END_POST = ROW_START 'KSUMMA' checksum:INT? ROW_END {
+        if ($this->assertInt($checksum, 'Expected checksum')) {
+            $this->getContainer()->setAttribute('KSUMMA', $checksum);
+            $this->getLogger()->notice('Checksum detected but currently not handled');
+        }
     };
 
     // Posts for identification and meta-data
@@ -92,76 +99,114 @@ grammar Grammar extends DependencyManager
         $this->getContainer()->setAttribute('ADRESS', [(string)$contact, (string)$address, (string)$location, (string)$phone]);
     };
 
-    BKOD_POST = ROW_START 'BKOD' ^ sni:INT ROW_END {
-        $this->getContainer()->setAttribute('BKOD', $sni);
-    };
-
-    FNAMN_POST = ROW_START 'FNAMN' ^ name:STRING ROW_END {
-        $this->getContainer()->setAttribute('FNAMN', $name);
-    };
-
-    FNR_POST = ROW_START 'FNR' ^ id:STRING ROW_END {
-        $this->getContainer()->setAttribute('FNR', $id);
-    };
-
-    FORMAT_POST = ROW_START 'FORMAT' ^ charset:STRING ROW_END {
-        if ($charset != 'PC8') {
-            $this->getLogger()->warning("Unknown charset $charset defined using #FORMAT");
+    BKOD_POST = ROW_START 'BKOD' ^ sni:INT? ROW_END {
+        if ($this->assertInt($sni, 'Expected SNI code')) {
+            $this->getContainer()->setAttribute('BKOD', $sni);
         }
-        $this->getContainer()->setAttribute('FORMAT', $charset);
     };
 
-    FTYP_POST = ROW_START 'FTYP' ^ type:STRING ROW_END {
-        $this->getContainer()->setAttribute('FTYP', $type);
+    FNAMN_POST = ROW_START 'FNAMN' ^ name:STRING? ROW_END {
+        if ($this->assertString($name, 'Expected company name')) {
+            $this->getContainer()->setAttribute('FNAMN', $name);
+        }
     };
 
-    GEN_POST = ROW_START 'GEN' ^ date:DATE sign:STRING? ROW_END {
-        $this->getContainer()->setAttribute('GEN', [$date, strval($sign)]);
+    FNR_POST = ROW_START 'FNR' ^ id:STRING? ROW_END {
+        if ($this->assertString($id, 'Expected company identifier')) {
+            $this->getContainer()->setAttribute('FNR', $id);
+        }
     };
 
-    KPTYP_POST = ROW_START 'KPTYP' ^ type:STRING ROW_END {
-        $this->getContainer()->setAttribute('KPTYP', $type);
+    FORMAT_POST = ROW_START 'FORMAT' ^ charset:STRING? ROW_END {
+        if ($this->assertString($charset, 'Expected charset identifier')) {
+            if ($charset != 'PC8') {
+                $this->getLogger()->warning("Unknown charset $charset defined using #FORMAT");
+            }
+
+            $this->getContainer()->setAttribute('FORMAT', $charset);
+        }
     };
 
-    OMFATTN_POST = ROW_START 'OMFATTN' ^ date:DATE ROW_END {
-        $this->getContainer()->setAttribute('OMFATTN', $date);
+    FTYP_POST = ROW_START 'FTYP' ^ type:STRING? ROW_END {
+        if ($this->assertString($type, 'Expected company type identifier')) {
+            $this->getContainer()->setAttribute('FTYP', $type);
+        }
+    };
+
+    GEN_POST = ROW_START 'GEN' ^ date:DATE? sign:STRING? ROW_END {
+        if ($this->assertDate($date)) {
+            $this->getContainer()->setAttribute('GEN', [$date, strval($sign)]);
+        }
+    };
+
+    KPTYP_POST = ROW_START 'KPTYP' ^ type:STRING? ROW_END {
+        if ($this->assertString($type, 'Expected account plan type identifier')) {
+            $this->getContainer()->setAttribute('KPTYP', $type);
+        }
+    };
+
+    OMFATTN_POST = ROW_START 'OMFATTN' ^ date:DATE? ROW_END {
+        if ($this->assertDate($date)) {
+            $this->getContainer()->setAttribute('OMFATTN', $date);
+        }
     };
 
     ORGNR_POST = ROW_START 'ORGNR' ^ number:STRING? acquisition:INT? operation:INT? ROW_END {
-        $this->getContainer()->setAttribute('ORGNR', [(string)$number, intval($acquisition), intval($operation)]);
-    };
-
-    PROGRAM_POST = ROW_START 'PROGRAM' ^ name:STRING version:STRING ROW_END {
-        $this->getContainer()->setAttribute('PROGRAM', [$name, $version]);
-    };
-
-    PROSA_POST = ROW_START 'PROSA' ^ text:STRING ROW_END {
-        $this->getContainer()->setAttribute('PROSA', $text);
-    };
-
-    RAR_POST = ROW_START 'RAR' ^ year:INT startDate:DATE? endDate:DATE? ROW_END {
-        if (is_null($startDate)) {
-            $this->getLogger()->warning("Accounting year start date not defined");
+        if ($this->assertString($number, 'Expected organisation number')) {
+            $this->getContainer()->setAttribute('ORGNR', [$number, intval($acquisition), intval($operation)]);
         }
-
-        if (is_null($endDate)) {
-            $this->getLogger()->warning("Accounting year end date not defined");
-        }
-
-        $this->getContainer()->setAttribute("RAR $year", [$startDate, $endDate]);
     };
 
-    SIETYP_POST = ROW_START 'SIETYP' ^ ver:INT ROW_END {
-        $this->getContainer()->setAttribute('SIETYP', $ver);
+    PROGRAM_POST = ROW_START 'PROGRAM' ^ name:STRING? version:STRING? ROW_END {
+        if ($this->assertString($name, 'Expected name') && $this->assertString($version, 'Expected version')) {
+            $this->getContainer()->setAttribute('PROGRAM', [$name, $version]);
+        }
+    };
+
+    PROSA_POST = ROW_START 'PROSA' ^ text:STRING? ROW_END {
+        if ($this->assertString($text, 'Expected free text content')) {
+            $this->getContainer()->setAttribute('PROSA', $text);
+        }
+    };
+
+    RAR_POST = ROW_START 'RAR' ^ year:INT? startDate:DATE? endDate:DATE? ROW_END {
+
+        // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
+        /*
+            Skulle kunna använda \DatePeriod för detta..
+            Men vad betyder det? Ska vi använda period istället för årsnummer?
+
+            $this->getContainer()->setAttribute('RAR', [$year, $datePeriod]);
+
+            $account->setAttribute("IB", [$year, $datePeriod, $balance, $quantity ?: 0]);
+
+            Hm, det här behöver jag fundera mer över...
+
+
+         */
+
+        if ($this->assertInt($year) && $this->assertDate($startDate) && $this->assertDate($endDate)) {
+            $this->getContainer()->setAttribute("RAR $year", [$startDate, $endDate]);
+        }
+    };
+
+    SIETYP_POST = ROW_START 'SIETYP' ^ ver:INT? ROW_END {
+        if ($this->assertInt($ver, 'Expected SIE version')) {
+            $this->getContainer()->setAttribute('SIETYP', $ver);
+        }
     };
 
     TAXAR_POST = ROW_START 'TAXAR' ^ year:INT ROW_END {
-        $this->getContainer()->setAttribute("TAXAR", $year);
+        if ($this->assertInt($year)) {
+            $this->getContainer()->setAttribute("TAXAR", $year);
+        }
     };
 
-    VALUTA_POST = ROW_START 'VALUTA' ^ currency:STRING ROW_END {
-        $this->getContainer()->setAttribute('VALUTA', $currency);
-        $this->getCurrencyBuilder()->setCurrencyClass($currency);
+    VALUTA_POST = ROW_START 'VALUTA' ^ currency:STRING? ROW_END {
+        if ($this->assertString($currency, 'Expected currency name')) {
+            $this->getContainer()->setAttribute('VALUTA', $currency);
+            $this->getCurrencyBuilder()->setCurrencyClass($currency);
+        }
     };
 
     // Posts defining the account plan
@@ -175,36 +220,46 @@ grammar Grammar extends DependencyManager
         / OBJEKT_POST
         / VOID_ROW;
 
-    KONTO_POST = ROW_START 'KONTO' ^ number:STRING description:STRING ROW_END {
-        $this->getAccountBuilder()->addAccount($number, $description);
-    };
-
-    KTYP_POST = ROW_START 'KTYP' ^ number:STRING type:STRING ROW_END {
-        $this->getAccountBuilder()->setAccountType($number, $type);
-    };
-
-    ENHET_POST = ROW_START 'ENHET' ^ account:STRING unit:STRING ROW_END {
-        $this->getAccountBuilder()->getAccount($account)->setAttribute('unit', $unit);
-    };
-
-    SRU_POST = ROW_START 'SRU' ^ account:STRING sru:INT? ROW_END {
-        if (is_null($sru)) {
-            $this->getLogger()->warning('Sru number not defined');
+    KONTO_POST = ROW_START 'KONTO' ^ number:STRING? desc:STRING? ROW_END {
+        if ($this->assertString($number, 'Expected account number') && $this->assertString($desc, 'Expected account description')) {
+            $this->getAccountBuilder()->addAccount($number, $desc);
         }
-
-        $this->getAccountBuilder()->getAccount($account)->setAttribute('sru', $sru ?: 0);
     };
 
-    DIM_POST = ROW_START 'DIM' ^ dim:INT desc:STRING ROW_END {
-        $this->getDimensionBuilder()->addDimension((string)$dim, $desc);
+    KTYP_POST = ROW_START 'KTYP' ^ number:STRING? type:STRING? ROW_END {
+        if ($this->assertString($number, 'Expected account number') && $this->assertString($type, 'Expected account type identifier')) {
+            $this->getAccountBuilder()->setAccountType($number, $type);
+        }
     };
 
-    UNDERDIM_POST = ROW_START 'UNDERDIM' ^ dim:INT desc:STRING superdim:INT ROW_END {
-        $this->getDimensionBuilder()->addDimension((string)$dim, $desc, (string)$superdim);
+    ENHET_POST = ROW_START 'ENHET' ^ account:ACCOUNT? unit:STRING? ROW_END {
+        if ($this->assertAccount($account) && $this->assertString($unit, 'Expected unit')) {
+            $account->setAttribute('unit', $unit);
+        }
     };
 
-    OBJEKT_POST = ROW_START 'OBJEKT' ^ dim:INT obj:STRING desc:STRING ROW_END {
-        $this->getDimensionBuilder()->addObject((string)$dim, $obj, $desc);
+    SRU_POST = ROW_START 'SRU' ^ account:ACCOUNT? sru:INT? ROW_END {
+        if ($this->assertAccount($account) && $this->assertInt($sru, 'Expected SRU code')) {
+            $account->setAttribute('sru', $sru);
+        }
+    };
+
+    DIM_POST = ROW_START 'DIM' ^ dim:INT? desc:STRING? ROW_END {
+        if ($this->assertInt($dim) && $this->assertString($desc)) {
+            $this->getDimensionBuilder()->addDimension((string)$dim, $desc);
+        }
+    };
+
+    UNDERDIM_POST = ROW_START 'UNDERDIM' ^ dim:INT? desc:STRING? super:INT? ROW_END {
+        if ($this->assertInt($dim) && $this->assertString($desc) && $this->assertInt($super)) {
+            $this->getDimensionBuilder()->addDimension((string)$dim, $desc, (string)$super);
+        }
+    };
+
+    OBJEKT_POST = ROW_START 'OBJEKT' ^ dim:INT? obj:STRING? desc:STRING? ROW_END {
+        if ($this->assertInt($dim) && $this->assertString($obj) && $this->assertString($desc)) {
+            $this->getDimensionBuilder()->addObject((string)$dim, $obj, $desc);
+        }
     };
 
     // Posts defining balances and verifications
@@ -219,62 +274,85 @@ grammar Grammar extends DependencyManager
         / VER_POST
         / VOID_ROW;
 
-    IB_POST = ROW_START 'IB' ^ year:INT account:ACCOUNT balance:AMOUNT quantity:INT? ROW_END {
-        $account->setAttribute("IB $year", [$balance, $quantity ?: 0]);
-    };
-
-    UB_POST = ROW_START 'UB' ^ year:INT account:ACCOUNT balance:AMOUNT quantity:INT? ROW_END {
-        $account->setAttribute("UB $year", [$balance, $quantity ?: 0]);
-    };
-
-    OIB_POST = ROW_START 'OIB' ^ year:INT account:ACCOUNT objects:OBJECT_LIST balance:AMOUNT quantity:INT? ROW_END {
-        foreach ($objects as $object) {
-            $object->setAttribute("IB $year", [$balance, $quantity ?: 0]);
+    IB_POST = ROW_START 'IB' ^ year:INT? account:ACCOUNT? balance:AMOUNT? quantity:FLOAT? ROW_END {
+        if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
+            // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
+            $account->setAttribute("IB $year", [$balance, $quantity ?: null]);
         }
     };
 
-    OUB_POST = ROW_START 'OUB' ^ year:INT account:ACCOUNT objects:OBJECT_LIST balance:AMOUNT quantity:INT? ROW_END {
-        foreach ($objects as $object) {
-            $object->setAttribute("UB $year", [$balance, $quantity ?: 0]);
+    UB_POST = ROW_START 'UB' ^ year:INT? account:ACCOUNT? balance:AMOUNT? quantity:FLOAT? ROW_END {
+        if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
+            // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
+            $account->setAttribute("UB $year", [$balance, $quantity ?: null]);
         }
     };
 
-    PBUDGET_POST = ROW_START 'PBUDGET' ^ year:INT period:DATE account:ACCOUNT objects:OBJECT_LIST balance:AMOUNT quantity:INT? ROW_END {
-        $key = "PBUDGET $year " . $period->format('Ym');
-
-        $account->setAttribute($key, [$balance, $quantity ?: 0]);
-
-        foreach ($objects as $object) {
-            $object->setAttribute($key, [$balance, $quantity ?: 0]);
+    OIB_POST = ROW_START 'OIB' ^ year:INT? account:ACCOUNT? objects:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
+        if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+            // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
+            foreach ($objects as $object) {
+                $object->setAttribute("IB $year", [$balance, $quantity ?: null]);
+            }
         }
     };
 
-    PSALDO_POST = ROW_START 'PSALDO' ^ year:INT period:DATE account:ACCOUNT objects:OBJECT_LIST balance:AMOUNT quantity:INT? ROW_END {
-        $key = "PSALDO $year " . $period->format('Ym');
-
-        $account->setAttribute($key, [$balance, $quantity ?: 0]);
-
-        foreach ($objects as $object) {
-            $object->setAttribute($key, [$balance, $quantity ?: 0]);
+    OUB_POST = ROW_START 'OUB' ^ year:INT? account:ACCOUNT? objects:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
+        if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+            // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
+            foreach ($objects as $object) {
+                $object->setAttribute("UB $year", [$balance, $quantity ?: null]);
+            }
         }
     };
 
-    RES_POST = ROW_START 'RES' ^ year:INT account:ACCOUNT balance:AMOUNT quantity:INT? ROW_END {
-        $account->setAttribute("RES $year", [$balance, $quantity ?: 0]);
+    PBUDGET_POST = ROW_START 'PBUDGET' ^ year:INT? period:DATE? account:ACCOUNT? objects:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
+        if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+            // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
+            $key = "PBUDGET $year " . $period->format('Ym');
+
+            $account->setAttribute($key, [$balance, $quantity ?: null]);
+
+            foreach ($objects as $object) {
+                $object->setAttribute($key, [$balance, $quantity ?: null]);
+            }
+        }
     };
 
-    VER_POST = ROW_START 'VER' ^ series:STRING number:STRING date:DATE desc:STRING? regdate:DATE? sign:STRING? ROW_END SUBROW_START trans:TRANS_LIST SUBROW_END {
-        $this->getContainer()->addItem(
-            $this->getVerificationBuilder()->createVerification(
-                $series,
-                $number,
-                $date,
-                $desc ?: '',
-                $regdate ?: null,
-                $sign ?: '',
-                $trans
-            )
-        );
+    PSALDO_POST = ROW_START 'PSALDO' ^ year:INT? period:DATE? account:ACCOUNT? objects:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
+        if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+            $key = "PSALDO $year " . $period->format('Ym');
+            // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
+
+            $account->setAttribute($key, [$balance, $quantity ?: null]);
+
+            foreach ($objects as $object) {
+                $object->setAttribute($key, [$balance, $quantity ?: null]);
+            }
+        }
+    };
+
+    RES_POST = ROW_START 'RES' ^ year:INT? account:ACCOUNT? balance:AMOUNT? quantity:FLOAT? ROW_END {
+        if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
+            // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
+            $account->setAttribute("RES $year", [$balance, $quantity ?: null]);
+        }
+    };
+
+    VER_POST = ROW_START 'VER' ^ series:STRING? number:STRING? date:DATE? desc:STRING? regdate:DATE? sign:STRING? ROW_END SUBROW_START trans:TRANS_LIST SUBROW_END {
+        if ($this->assertString($series) && $this->assertString($number) && $this->assertDate($date)) {
+            $this->getContainer()->addItem(
+                $this->getVerificationBuilder()->createVerification(
+                    $series,
+                    $number,
+                    $date,
+                    $desc ?: '',
+                    $regdate ?: null,
+                    $sign ?: '',
+                    $trans
+                )
+            );
+        }
     };
 
     TRANS_LIST = trans:(TRANS_POST / BTRANS_POST / RTRANS_POST / UNKNOWN_POST)* {
@@ -286,24 +364,30 @@ grammar Grammar extends DependencyManager
         );
     };
 
-    TRANS_POST = ROW_START 'TRANS' ^ account:ACCOUNT objects:OBJECT_LIST amount:AMOUNT date:DATE? desc:STRING? quantity:INT? signature:STRING? ROW_END {
-        return $this->getVerificationBuilder()->createTransaction(
-            $account,
-            $objects,
-            $amount,
-            $date ?: null,
-            $desc ?: '',
-            $quantity ?: 0,
-            $signature ?: ''
-        );
+    TRANS_POST = ROW_START 'TRANS' ^ account:ACCOUNT? objects:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END {
+        if ($this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($amount)) {
+            return $this->getVerificationBuilder()->createTransaction(
+                $account,
+                $objects,
+                $amount,
+                $date ?: null,
+                $desc ?: '',
+                $quantity ?: null,
+                $sign ?: ''
+            );
+        }
     };
 
-    BTRANS_POST = ROW_START 'BTRANS' ^ account:ACCOUNT objects:OBJECT_LIST amount:AMOUNT date:DATE? desc:STRING? quantity:INT? signature:STRING? ROW_END {
-        $this->getLogger()->notice('Detected a BTRANS post, removed transactions are not supported yet..');
+    BTRANS_POST = ROW_START 'BTRANS' ^ account:ACCOUNT? objects:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END {
+        if ($this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($amount)) {
+            $this->getLogger()->notice('Detected a BTRANS post, removed transactions are not supported yet..');
+        }
     };
 
-    RTRANS_POST = ROW_START 'RTRANS' ^ account:ACCOUNT objects:OBJECT_LIST amount:AMOUNT date:DATE? desc:STRING? quantity:INT? signature:STRING? ROW_END {
-        $this->getLogger()->notice('Detected a RTRANS post, added transactions are not supported yet..');
+    RTRANS_POST = ROW_START 'RTRANS' ^ account:ACCOUNT? objects:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END {
+        if ($this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($amount)) {
+            $this->getLogger()->notice('Detected a RTRANS post, added transactions are not supported yet..');
+        }
     };
 
     //
@@ -387,6 +471,10 @@ grammar Grammar extends DependencyManager
 
     // Date
 
+    OPTIONAL_DATE = date:(DATE / EMPTY_STRING) {
+        return $date;
+    };
+
     DATE = _ date:(RAW_DATE / QUOTED_DATE) _ {
         return $date;
     };
@@ -425,20 +513,34 @@ grammar Grammar extends DependencyManager
 
     // Object
 
-    OBJECT = super:INT obj:STRING {
-        // TODO när någon glömmer att skriva quotes runt $obj så blir '}' som kommer
-            // efter en del av namn istället för en avgränsare
-            // jag skrev någon .transformations om detta...
-            // det är egentligen ett brott mot specen..
-            // Men så pass vanligt att jag borde försöka att lösa det
-            // $obj ska alltså inte vara STRING utan något annat som är
-                // DIMENSION_ID_SAFE_STRING
-            // det borde inte vara alltför svårt att skriva eftersom QUOTED_STRING är samma...
+    OBJECT = super:INT obj:OBJECT_LIST_SAFE_STRING {
         return $this->getDimensionBuilder()->getObject((string)$super, $obj);
+    };
+
+    OBJECT_LIST_SAFE_STRING = _ string:(OBJECT_ID_SAFE_CHARS / QUOTED_STRING) _ {
+        return $string;
+    };
+
+    OBJECT_ID_SAFE_CHARS = chars:[a-zA-Z0-9!#$%&'()*+,-.\/:;<=>?@\[\\\]^_`|~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■]+ {
+        return implode($chars);
     };
 
     OBJECT_LIST = _ '{' objects:OBJECT* '}' _ {
         return $objects;
+    };
+
+    // Float
+
+    FLOAT = _ float:(RAW_FLOAT / QUOTED_FLOAT) _ {
+        return new Amount($float);
+    };
+
+    QUOTED_FLOAT = '"' float:RAW_FLOAT '"' {
+        return $float;
+    };
+
+    RAW_FLOAT = int:RAW_INT '.'? trailing:[0-9]* {
+        return $int.'.'.implode($trailing);
     };
 
     // Integer
@@ -471,20 +573,24 @@ grammar Grammar extends DependencyManager
 
     // String
 
-    STRING = _ string:(VALID_CHARS / QUOTED_STRING) _ {
+    STRING = _ string:(VALID_CHARS / QUOTED_STRING / EMPTY_STRING) _ {
         return $string;
+    };
+
+    EMPTY_STRING = '""' {
+        return '';
     };
 
     QUOTED_STRING = '"' string:(ESCAPED_QUOTE / ' ' / VALID_CHARS)* '"' {
         return implode($string);
     };
 
-    VALID_CHARS = chars:[a-zA-Z0-9!#$%&'()*+,-.\/:;<=>?@\[\\\]^_`{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■]+ {
-        return implode($chars);
-    };
-
     ESCAPED_QUOTE = '\"' {
         return '"';
+    };
+
+    VALID_CHARS = chars:[a-zA-Z0-9!#$%&'()*+,-.\/:;<=>?@\[\\\]^_`{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■]+ {
+        return implode($chars);
     };
 
     //

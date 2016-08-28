@@ -1,5 +1,4 @@
-[WARNING] Sru number not defined (76: #SRU 2010) {}
-[WARNING] Sru number not defined (79: #SRU 2013) {}
-[WARNING] Sru number not defined (82: #SRU 2014) {}
-[WARNING] Sru number not defined (85: #SRU 2017) {}
-
+[WARNING] Expected SRU code (76: #SRU 2010) {}
+[WARNING] Expected SRU code (79: #SRU 2013) {}
+[WARNING] Expected SRU code (82: #SRU 2014) {}
+[WARNING] Expected SRU code (85: #SRU 2017) {}

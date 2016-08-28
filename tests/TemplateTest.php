@@ -47,13 +47,13 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 (new Verification)->addTransaction(
-                    new Transaction(new Account\Asset('1920', 'Bank'), new Amount('400'), 0)
+                    new Transaction(new Account\Asset('1920', 'Bank'), new Amount('400'))
                 ),
                 [['1920', '{amount}']],
             ],
             [
                 (new Verification)->addTransaction(
-                    new Transaction(new Account\Asset('1920', 'Bank'), new Amount('100'), 10)
+                    new Transaction(new Account\Asset('1920', 'Bank'), new Amount('100'), new Amount('10'))
                 ),
                 [['1920', '100', '{quantity}']],
             ],
@@ -62,7 +62,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
                     new Transaction(
                         new Account\Asset('1920', 'Bank'),
                         new Amount('100'),
-                        1,
+                        new Amount('1'),
                         new Dimension('1'),
                         new Dimension('2')
                     )
@@ -71,7 +71,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 (new Verification)->addTransaction(
-                    new Transaction(new Account\Asset('1920', 'Bank'), new Amount('100'), 1, new Dimension('1'))
+                    new Transaction(new Account\Asset('1920', 'Bank'), new Amount('100'), new Amount('1'), new Dimension('1'))
                 ),
                 [['1920', '100', '1', ['{dim}']]],
             ],

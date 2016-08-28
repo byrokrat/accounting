@@ -157,7 +157,7 @@ class AccountBuilderTest extends \PHPUnit_Framework_TestCase
         $accountBuilder->setAccountType('1234', 'not-a-valid-account-type-identifier');
         $newAccount = $accountBuilder->getAccount('1234');
 
-        $logger->warning('Account number 1234 not defined')->shouldHaveBeenCalled();
+        $logger->warning('Account number 1234 not defined', ["_addToLineCount" => 1])->shouldHaveBeenCalled();
 
         $this->assertSame(
             $originalAccount,

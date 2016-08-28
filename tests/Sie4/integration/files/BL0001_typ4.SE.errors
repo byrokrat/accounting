@@ -1,0 +1,16 @@
+[WARNING] Object number 1.1010 not defined (624: #TRANS 9999  { "1" "1010"} -4675 20100122 "") {}
+[WARNING] Object number 1.1100 not defined (625: #TRANS 9999  { "1" "1100" "6" "1118"} 5367 20100122 "") {}
+[WARNING] Object number 6.1118 not defined (625: #TRANS 9999  { "1" "1100" "6" "1118"} 5367 20100122 "") {}
+[WARNING] Object number 1.1300 not defined (626: #TRANS 9999  { "1" "1300" "2" "399"} -2200 20100122 "") {}
+[WARNING] Object number 2.399 not defined (626: #TRANS 9999  { "1" "1300" "2" "399"} -2200 20100122 "") {}
+[WARNING] Object number 1.1012 not defined (628: #TRANS 9999  { "1" "1012"} -692 20100122 "") {}
+[WARNING] Object number 1.1200 not defined (632: #TRANS 9999  { "1" "1200" "2" "201"} -4300 20100122 "") {}
+[WARNING] Object number 2.201 not defined (632: #TRANS 9999  { "1" "1200" "2" "201"} -4300 20100122 "") {}
+[WARNING] Object number 6.1129 not defined (633: #TRANS 9999  { "1" "1100" "6" "1129"} 4300 20100122 "") {}
+[WARNING] Object number 1.1011 not defined (641: #TRANS 3117  { "1" "1011"} -11120 20100122 "") {}
+[WARNING] Object number 6.1131 not defined (647: #TRANS 9999  { "1" "1100" "6" "1131"} 3150 20100122 "") {}
+[WARNING] Object number 6.1160 not defined (654: #TRANS 9999  { "1" "1100" "6" "1160"} 9705.25 20100122 "") {}
+[WARNING] Object number 2.301 not defined (655: #TRANS 9999  { "1" "1300" "2" "301"} -11384.5 20100122 "") {}
+[WARNING] Object number 6.1161 not defined (663: #TRANS 9999  { "1" "1100" "6" "1161"} 5704 20100122 "") {}
+[WARNING] Object number 6.1162 not defined (670: #TRANS 9999  { "1" "1100" "6" "1162"} 5704 20100122 "") {}
+[WARNING] Object number 6.1010 not defined (819: #TRANS 3010  { "1" "1" "6" "1010"} -1000 20100131 "") {}

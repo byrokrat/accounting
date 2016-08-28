@@ -716,4 +716,110 @@
 [WARNING] Misplaced account plan post (1747: #SRU 8910 0) {}
 [WARNING] Misplaced account plan post (1750: #KONTO 8999 "Redovisat resultat") {}
 [WARNING] Misplaced account plan post (1751: #SRU 8999 0) {}
-
+[WARNING] Object number 10.12 not defined (1756: #TRANS	3051	{1 "2"	10 "12"}	-301050.00	20100107	"30083 Svenska Mässan i Göteborg, 12"	"") {}
+[WARNING] Object number 10.13 not defined (1763: #TRANS	3051	{1 "2"	10 "13"}	-55474.80	20100107	"30082 Mora Stadshotell, 13"	"") {}
+[WARNING] Object number 10.14 not defined (1770: #TRANS	3051	{1 "2"	10 "14"}	-49185.00	20100107	"30076 MANGO Internetcafe, 14"	"") {}
+[WARNING] Object number 8.30076 not defined (1772: #TRANS	1510	{8 "30076"	1 "2"	10 "14"}	61481.25	20100107	"30076 MANGO Internetcafe, 14"	"") {}
+[WARNING] Object number 10.15 not defined (1776: #TRANS	3051	{1 "2"	10 "15"}	-8000.00	20100119	"30046 Holmenkollmagasinet AS, 15"	"") {}
+[WARNING] Object number 10.16 not defined (1782: #TRANS	3051	{1 "2"	10 "16"}	-233000.00	20100119	"30044 TankShip HB, 16"	"") {}
+[WARNING] Object number 10.17 not defined (1788: #TRANS	3051	{1 "2"	10 "17"}	-32500.00	20100119	"30040 Fastighetsbevakning Väst, 17"	"") {}
+[WARNING] Object number 10.18 not defined (1794: #TRANS	3051	{1 "2"	10 "18"}	-186608.91	20100119	"30040 Fastighetsbevakning Väst, 18"	"") {}
+[WARNING] Object number 10.19 not defined (1800: #TRANS	3051	{1 "2"	10 "19"}	-14000.00	20100119	"30031 Möbelbutiken, 19"	"") {}
+[WARNING] Object number 10.20 not defined (1806: #TRANS	3051	{1 "2"	10 "20"}	-11931.00	20100119	"30029 KEBO AB, 20"	"") {}
+[WARNING] Object number 10.21 not defined (1812: #TRANS	3051	{1 "2"	10 "21"}	-224895.00	20100212	"30027 Decko AB, 21"	"") {}
+[WARNING] Object number 10.22 not defined (1818: #TRANS	3051	{1 "2"	10 "22"}	-16125.00	20100212	"30027 Decko AB, 22"	"") {}
+[WARNING] Object number 10.23 not defined (1824: #TRANS	3051	{1 "2"	10 "23"}	-16125.00	20100212	"30027 Decko AB, 23"	"") {}
+[WARNING] Object number 10.90000 not defined (1830: #TRANS	3051	{1 "2"	10 "90000"}	16125.00	20100212	"30027 Decko AB, 90000"	"") {}
+[WARNING] Object number 10.24 not defined (1836: #TRANS	3051	{1 "2"	10 "24"}	-155975.00	20100212	"30025 Byggmannen AB, 24"	"") {}
+[WARNING] Object number 10.25 not defined (1842: #TRANS	3051	{1 "2"	10 "25"}	-57600.00	20100212	"30023 Åke Berg & Son, 25"	"") {}
+[WARNING] Object number 10.26 not defined (1848: #TRANS	3051	{1 "2"	10 "26"}	-20827.01	20100219	"30021 Fushion, 26"	"") {}
+[WARNING] Object number 10.27 not defined (1854: #TRANS	3051	{1 "2"	10 "27"}	-71000.00	20100219	"30002 Kläppen Fjällstation, 27"	"") {}
+[WARNING] Object number 10.28 not defined (1860: #TRANS	3051	{10 "28"}	-3405.00	20100219	"30000 Hemsons Hotel, 28"	"") {}
+[WARNING] Object number 10.29 not defined (1867: #TRANS	3051	{10 "29"}	-3405.00	20100219	"30002 Kläppen Fjällstation, 29"	"") {}
+[WARNING] Object number 10.30 not defined (1874: #TRANS	3051	{1 "2"	10 "30"}	-171864.00	20100219	"30010 Stranden AB, 30"	"") {}
+[WARNING] Object number 10.31 not defined (1881: #TRANS	3051	{1 "2"	10 "31"}	-57500.00	20100219	"30009 Miranda, 31"	"") {}
+[WARNING] Object number 10.32 not defined (1887: #TRANS	3051	{1 "2"	10 "32"}	-47850.00	20100219	"30007 Matstället Fisken, 32"	"") {}
+[WARNING] Object number 10.33 not defined (1893: #TRANS	3051	{6 "2"	1 "2"	10 "33"}	-30053.00	20100219	"30006 Bergs Pensionat, 33"	"") {}
+[WARNING] Object number 8.30006 not defined (1895: #TRANS	1510	{8 "30006"	6 "2"	1 "2"	10 "33"}	37566.25	20100219	"30006 Bergs Pensionat, 33"	"") {}
+[WARNING] Object number 10.34 not defined (1899: #TRANS	3051	{1 "2"	10 "34"}	-207360.00	20100316	"30004 Idre Turisthotell AB, 34"	"") {}
+[WARNING] Object number 10.35 not defined (1905: #TRANS	3051	{1 "2"	10 "35"}	-248564.96	20100316	"30002 Kläppen Fjällstation, 35"	"") {}
+[WARNING] Object number 10.36 not defined (1911: #TRANS	3051	{1 "2"	10 "36"}	-233962.50	20100316	"30000 Hemsons Hotel, 36"	"") {}
+[WARNING] Object number 10.37 not defined (1917: #TRANS	3051	{1 "2"	10 "37"}	-207360.00	20100316	"30082 Mora Stadshotell, 37"	"") {}
+[WARNING] Object number 10.38 not defined (1923: #TRANS	3051	{1 "2"	10 "38"}	-391725.00	20100401	"30083 Svenska Mässan i Göteborg, 38"	"") {}
+[WARNING] Object number 10.39 not defined (1930: #TRANS	3051	{1 "2"	10 "39"}	-12712.50	20100409	"30076 MANGO Internetcafe, 39"	"") {}
+[WARNING] Object number 10.40 not defined (1936: #TRANS	3051	{1 "2"	10 "40"}	-12712.50	20100409	"30027 Decko AB, 40"	"") {}
+[WARNING] Object number 10.41 not defined (1942: #TRANS	3051	{10 "41"}	-3405.00	20100409	"30004 Idre Turisthotell AB, 41"	"") {}
+[WARNING] Object number 10.42 not defined (1949: #TRANS	3051	{1 "2"	10 "42"}	-71000.00	20100409	"30018 NUTRA Egendom, 42"	"") {}
+[WARNING] Object number 10.43 not defined (1955: #TRANS	3051	{1 "2"	10 "43"}	-2000.00	20100416	"30076 MANGO Internetcafe, 43"	"") {}
+[WARNING] Object number 10.90001 not defined (1961: #TRANS	3051	{1 "2"	10 "90001"}	2000.00	20100416	"30076 MANGO Internetcafe, 90001"	"") {}
+[WARNING] Object number 10.44 not defined (1967: #TRANS	3051	{1 "2"	10 "44"}	-405360.00	20100416	"30046 Holmenkollmagasinet AS, 44"	"") {}
+[WARNING] Object number 10.45 not defined (1973: #TRANS	3051	{1 "2"	10 "45"}	-6750.00	20100416	"30083 Svenska Mässan i Göteborg, 45"	"") {}
+[WARNING] Object number 10.46 not defined (1980: #TRANS	3051	{1 "2"	10 "46"}	-800.00	20100416	"30082 Mora Stadshotell, 46"	"") {}
+[WARNING] Object number 10.90002 not defined (1986: #TRANS	3051	{1 "2"	10 "90002"}	800.00	20100416	"30082 Mora Stadshotell, 90002"	"") {}
+[WARNING] Object number 10.47 not defined (1992: #TRANS	3051	{1 "2"	10 "47"}	-102600.00	20100519	"30046 Holmenkollmagasinet AS, 47"	"") {}
+[WARNING] Object number 10.48 not defined (1998: #TRANS	3051	{1 "2"	10 "48"}	-246712.56	20100519	"30027 Decko AB, 48"	"") {}
+[WARNING] Object number 10.49 not defined (2004: #TRANS	3051	{1 "2"	10 "49"}	-12712.50	20100519	"30082 Mora Stadshotell, 49"	"") {}
+[WARNING] Object number 10.50 not defined (2010: #TRANS	3051	{1 "2"	10 "50"}	-415305.00	20100519	"30025 Byggmannen AB, 50"	"") {}
+[WARNING] Object number 10.51 not defined (2016: #TRANS	3051	{1 "2"	10 "51"}	-57600.00	20100519	"30023 Åke Berg & Son, 51"	"") {}
+[WARNING] Object number 10.52 not defined (2022: #TRANS	3051	{1 "2"	10 "52"}	-73580.00	20100519	"30021 Fushion, 52"	"") {}
+[WARNING] Object number 10.53 not defined (2028: #TRANS	3051	{1 "2"	10 "53"}	-9056.00	20100519	"30018 NUTRA Egendom, 53"	"") {}
+[WARNING] Object number 10.54 not defined (2034: #TRANS	3051	{1 "2"	10 "54"}	-105525.00	20100609	"30016 Populär, 54"	"") {}
+[WARNING] Object number 10.55 not defined (2040: #TRANS	3051	{1 "2"	10 "55"}	-105525.00	20100609	"30034 BANDER AB, Huvudkontor, 55"	"") {}
+[WARNING] Object number 10.56 not defined (2046: #TRANS	3051	{1 "2"	10 "56"}	-105525.00	20100609	"30038 BANDER AB, Växjö, 56"	"") {}
+[WARNING] Object number 10.57 not defined (2052: #TRANS	3051	{1 "2"	10 "57"}	-105525.00	20100609	"30036 BANDER AB, Borås, 57"	"") {}
+[WARNING] Object number 10.58 not defined (2058: #TRANS	3051	{1 "2"	10 "58"}	-279192.50	20100609	"30010 Stranden AB, 58"	"") {}
+[WARNING] Object number 10.59 not defined (2064: #TRANS	3051	{1 "2"	10 "59"}	-111330.00	20100609	"30009 Miranda, 59"	"") {}
+[WARNING] Object number 10.60 not defined (2070: #TRANS	3051	{1 "2"	10 "60"}	-16125.00	20100609	"30007 Matstället Fisken, 60"	"") {}
+[WARNING] Object number 10.62 not defined (2076: #TRANS	3051	{6 "2"	1 "2"	10 "62"}	-6920.00	20100609	"30006 Bergs Pensionat, 62"	"") {}
+[WARNING] Object number 10.63 not defined (2082: #TRANS	3051	{1 "2"	10 "63"}	-5776.50	20100609	"30004 Idre Turisthotell AB, 63"	"") {}
+[WARNING] Object number 10.64 not defined (2088: #TRANS	3051	{1 "2"	10 "64"}	-536900.22	20100714	"30083 Svenska Mässan i Göteborg, 64"	"") {}
+[WARNING] Object number 10.65 not defined (2095: #TRANS	3051	{1 "2"	10 "65"}	-131906.34	20100714	"30082 Mora Stadshotell, 65"	"") {}
+[WARNING] Object number 10.66 not defined (2102: #TRANS	3051	{1 "2"	10 "66"}	-540.00	20100714	"30076 MANGO Internetcafe, 66"	"") {}
+[WARNING] Object number 10.90004 not defined (2108: #TRANS	3051	{1 "2"	10 "90004"}	540.00	20100719	"30076 MANGO Internetcafe, 90004"	"") {}
+[WARNING] Object number 10.67 not defined (2114: #TRANS	3051	{1 "2"	10 "67"}	-37030.00	20100719	"30046 Holmenkollmagasinet AS, 67"	"") {}
+[WARNING] Object number 10.68 not defined (2120: #TRANS	3051	{1 "2"	10 "68"}	-156000.00	20100719	"30046 Holmenkollmagasinet AS, 68"	"") {}
+[WARNING] Object number 10.90005 not defined (2126: #TRANS	3051	{1 "2"	10 "90005"}	131906.34	20100719	"30082 Mora Stadshotell, 90005"	"") {}
+[WARNING] Object number 10.69 not defined (2133: #TRANS	3051	{1 "2"	10 "69"}	-454240.00	20100805	"30000 Hemsons Hotel, 69"	"") {}
+[WARNING] Object number 10.70 not defined (2139: #TRANS	3051	{1 "2"	10 "70"}	-80226.60	20100805	"30002 Kläppen Fjällstation, 70"	"") {}
+[WARNING] Object number 10.71 not defined (2145: #TRANS	3051	{1 "2"	10 "71"}	-79625.00	20100805	"30009 Miranda, 71"	"") {}
+[WARNING] Object number 10.72 not defined (2151: #TRANS	3051	{1 "2"	10 "72"}	-181800.00	20100805	"30010 Stranden AB, 72"	"") {}
+[WARNING] Object number 10.73 not defined (2157: #TRANS	3051	{1 "2"	10 "73"}	-137912.50	20100902	"30016 Populär, 73"	"") {}
+[WARNING] Object number 10.74 not defined (2163: #TRANS	3051	{1 "2"	10 "74"}	-455625.00	20100902	"30018 NUTRA Egendom, 74"	"") {}
+[WARNING] Object number 10.75 not defined (2169: #TRANS	3051	{1 "2"	10 "75"}	-18525.00	20100902	"30021 Fushion, 75"	"") {}
+[WARNING] Object number 10.90006 not defined (2175: #TRANS	3051	{1 "2"	10 "90006"}	18525.00	20100902	"30021 Fushion, 90006"	"") {}
+[WARNING] Object number 10.76 not defined (2181: #TRANS	3051	{1 "2"	10 "76"}	-146370.00	20100902	"30023 Åke Berg & Son, 76"	"") {}
+[WARNING] Object number 10.77 not defined (2187: #TRANS	3051	{1 "2"	10 "77"}	-54550.00	20100902	"30034 BANDER AB, Huvudkontor, 77"	"") {}
+[WARNING] Object number 10.78 not defined (2193: #TRANS	3051	{1 "2"	10 "78"}	-54550.00	20100902	"30025 Byggmannen AB, 78"	"") {}
+[WARNING] Object number 10.79 not defined (2199: #TRANS	3051	{1 "2"	10 "79"}	-51840.00	20100902	"30029 KEBO AB, 79"	"") {}
+[WARNING] Object number 10.80 not defined (2205: #TRANS	3051	{1 "2"	10 "80"}	-389780.00	20101014	"30029 KEBO AB, 80"	"") {}
+[WARNING] Object number 10.81 not defined (2211: #TRANS	3051	{1 "2"	10 "81"}	-90417.50	20101014	"30031 Möbelbutiken, 81"	"") {}
+[WARNING] Object number 10.82 not defined (2217: #TRANS	3051	{1 "2"	10 "82"}	-90417.50	20101014	"30027 Decko AB, 82"	"") {}
+[WARNING] Object number 10.83 not defined (2223: #TRANS	3051	{1 "2"	10 "83"}	-104740.00	20101014	"30040 Fastighetsbevakning Väst, 83"	"") {}
+[WARNING] Object number 10.84 not defined (2229: #TRANS	3051	{1 "2"	10 "84"}	-96752.00	20101019	"30044 TankShip HB, 84"	"") {}
+[WARNING] Object number 10.85 not defined (2235: #TRANS	3051	{1 "2"	10 "85"}	-77264.00	20101019	"30046 Holmenkollmagasinet AS, 85"	"") {}
+[WARNING] Object number 10.86 not defined (2241: #TRANS	3051	{1 "2"	10 "86"}	-16225.00	20101019	"30076 MANGO Internetcafe, 86"	"") {}
+[WARNING] Object number 10.90007 not defined (2247: #TRANS	3051	{1 "2"	10 "90007"}	16225.00	20101019	"30076 MANGO Internetcafe, 90007"	"") {}
+[WARNING] Object number 10.87 not defined (2253: #TRANS	3051	{1 "2"	10 "87"}	-80895.00	20101019	"30082 Mora Stadshotell, 87"	"") {}
+[WARNING] Object number 10.88 not defined (2260: #TRANS	3051	{1 "2"	10 "88"}	-16225.00	20101110	"30083 Svenska Mässan i Göteborg, 88"	"") {}
+[WARNING] Object number 10.90008 not defined (2267: #TRANS	3051	{1 "2"	10 "90008"}	16225.00	20101110	"30083 Svenska Mässan i Göteborg, 90008"	"") {}
+[WARNING] Object number 10.89 not defined (2274: #TRANS	3051	{1 "2"	10 "89"}	-477422.55	20101110	"30083 Svenska Mässan i Göteborg, 89"	"") {}
+[WARNING] Object number 10.90 not defined (2281: #TRANS	3051	{1 "2"	10 "90"}	-120210.00	20101110	"30000 Hemsons Hotel, 90"	"") {}
+[WARNING] Object number 10.91 not defined (2287: #TRANS	3051	{1 "2"	10 "91"}	-153765.00	20101110	"30002 Kläppen Fjällstation, 91"	"") {}
+[WARNING] Object number 10.92 not defined (2293: #TRANS	3051	{1 "2"	10 "92"}	-179975.00	20101110	"30004 Idre Turisthotell AB, 92"	"") {}
+[WARNING] Object number 10.93 not defined (2299: #TRANS	3051	{6 "2"	1 "2"	10 "93"}	-4900.00	20101110	"30006 Bergs Pensionat, 93"	"") {}
+[WARNING] Object number 10.94 not defined (2305: #TRANS	3051	{1 "2"	10 "94"}	-331290.00	20101213	"30007 Matstället Fisken, 94"	"") {}
+[WARNING] Object number 10.95 not defined (2311: #TRANS	3051	{1 "2"	10 "95"}	-105826.00	20101213	"30009 Miranda, 95"	"") {}
+[WARNING] Object number 10.96 not defined (2318: #TRANS	3051	{1 "2"	10 "96"}	-90338.00	20101213	"30010 Stranden AB, 96"	"") {}
+[WARNING] Object number 10.97 not defined (2324: #TRANS	3051	{1 "2"	10 "97"}	-175252.50	20101213	"30016 Populär, 97"	"") {}
+[WARNING] Object number 10.98 not defined (2330: #TRANS	3051	{1 "2"	10 "98"}	-170707.50	20101213	"30018 NUTRA Egendom, 98"	"") {}
+[WARNING] Object number 10.11 not defined (2517: #TRANS	1510	{8 "30082"	10 "11"}	-38718.00	20100224	"30082 Mora Stadshotell, 11"	"") {}
+[WARNING] Object number 10.8 not defined (2572: #TRANS	1510	{8 "30016"	10 "8"}	-81093.75	20100101	"30016 Populär, 8"	"") {}
+[WARNING] Object number 10.7 not defined (2597: #TRANS	1510	{8 "30010"	10 "7"}	-46687.68	20100301	"30010 Stranden AB, 7"	"") {}
+[WARNING] Object number 10.10 not defined (2622: #TRANS	1510	{8 "30083"	10 "10"}	-333000.00	20100224	"30083 Svenska Mässan i Göteborg, 10"	"") {}
+[WARNING] Object number 10.5483 not defined (2673: #TRANS	4015	{10 "5483"}	54889.03	20100108	"Inköp varor"	"") {}
+[WARNING] Object number 10.6574 not defined (2679: #TRANS	4011	{10 "6574"}	60026.00	20100325	"Inköp varor"	"") {}
+[WARNING] Object number 10.1235 not defined (2686: #TRANS	4011	{10 "1235"}	3349.10	20100430	"Inköp varor"	"") {}
+[WARNING] Object number 10.21313 not defined (2692: #TRANS	4011	{10 "21313"}	1582.06	20101018	"Inköp varor"	"") {}
+[WARNING] Object number 10.987977 not defined (2698: #TRANS	4011	{6 "4"	1 "2"	10 "987977"}	44500.00	20100815	"Inköp material och varor 25 %"	"") {}
+[WARNING] Object number 10.565555 not defined (2704: #TRANS	4011	{6 "5"	1 "2"	10 "565555"}	56600.00	20100815	"Inköp material och varor 25 %"	"") {}
+[WARNING] Object number 10.9976545 not defined (2710: #TRANS	2440	{9 "10008"	1 "2"	10 "9976545"}	-50000.00	20101115	"Faktura 9976545, 10008 Snickeriet"	"") {}

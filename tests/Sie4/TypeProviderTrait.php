@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\Sie4;
 
 use byrokrat\accounting\Account;
-use byrokrat\accounting\Dimension;
 use byrokrat\amount\Currency\SEK;
 
 /**
@@ -51,6 +50,22 @@ trait TypeProviderTrait
             ['201607',     new \DateTimeImmutable('20160701')],
             ['2016',       new \DateTimeImmutable('20160101')],
             ['20160722',   new \DateTimeImmutable('20160722')],
+        ];
+    }
+
+    public function floatTypeProvider()
+    {
+        return [
+            ['1.0', 1.0],
+            ['1', 1.0],
+            ['1.25', 1.25],
+            ['0.0', 0.0],
+            ['-1.25', -1.25],
+            ['"1.0"', 1.0],
+            ['"1"', 1.0],
+            ['"1.25"', 1.25],
+            ['"0.0"', 0.0],
+            ['"-1.25"', -1.25],
         ];
     }
 
@@ -118,6 +133,21 @@ trait TypeProviderTrait
             ["#KONTO 2000 debt",               '2000', 'debt',    Account\Debt::CLASS],
             ["#KONTO 3000 earning",            '3000', 'earning', Account\Earning::CLASS],
             ["#KONTO 4000 cost",               '4000', 'cost',    Account\Cost::CLASS],
+        ];
+    }
+
+    /**
+     * Provider for possible object list representations
+     */
+    public function objectListTypeProvider()
+    {
+        return [
+            ['{10 "foo"}', 'foo'],
+            ['{10 foo }', 'foo'],
+            ['{10 foo}', 'foo'],
+            ['{10 "fo}o"}', 'fo}o'],
+            ['{10 "foo}"}', 'foo}'],
+            ['{10 foo}', 'foo'],
         ];
     }
 }

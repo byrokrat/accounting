@@ -13,7 +13,7 @@ class TransactionTest extends \PHPUnit_Framework_TestCase
         return new Transaction(
             $account = $this->prophesizeAccount()->reveal(),
             $amount = $this->prophesizeAmount()->reveal(),
-            $quantity = 10,
+            $quantity = $this->prophesizeAmount()->reveal(),
             ...$dimensions = [
                 $this->prophesizeDimension()->reveal(),
                 $this->prophesizeDimension()->reveal()

@@ -73,7 +73,7 @@ class DimensionBuilderTest extends \PHPUnit_Framework_TestCase
             $dimensionBuilder->getObject('1', '2')->getDescription()
         );
 
-        $logger->warning('Object number 1.2 not defined')->shouldHaveBeenCalled();
+        $logger->warning('Object number 1.2 not defined', ["_addToLineCount" => 1])->shouldHaveBeenCalled();
     }
 
     public function testGetUnspecifiedDimension()
@@ -89,7 +89,7 @@ class DimensionBuilderTest extends \PHPUnit_Framework_TestCase
             $dimensionBuilder->getDimension('100')->getDescription()
         );
 
-        $logger->warning('Dimension number 100 not defined')->shouldHaveBeenCalled();
+        $logger->warning('Dimension number 100 not defined', ["_addToLineCount" => 1])->shouldHaveBeenCalled();
     }
 
     public function testGetUnspecifiedReservedDimension()

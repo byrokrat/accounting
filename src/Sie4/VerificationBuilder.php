@@ -26,6 +26,7 @@ use byrokrat\accounting\Account;
 use byrokrat\accounting\Dimension;
 use byrokrat\accounting\Transaction;
 use byrokrat\accounting\Verification;
+use byrokrat\amount\Amount;
 use byrokrat\amount\Currency;
 use Psr\Log\LoggerInterface;
 
@@ -55,7 +56,7 @@ class VerificationBuilder
      * @param  Currency           $amount     Transacted amounts
      * @param  \DateTimeInterface $date       Date of accounting action
      * @param  string             $desc       Free text description
-     * @param  integer            $quantity   Quantity if defined
+     * @param  Amount             $quantity   Quantity if defined
      * @param  string             $sign       Signature
      */
     public function createTransaction(
@@ -64,7 +65,7 @@ class VerificationBuilder
         Currency $amount,
         \DateTimeInterface $date = null,
         string $desc = '',
-        int $quantity = 0,
+        Amount $quantity = null,
         string $sign = ''
     ): Transaction {
         $transaction = new Transaction($account, $amount, $quantity, ...$dimensions);
@@ -134,7 +135,11 @@ class VerificationBuilder
             $verification->addTransaction($transaction);
         }
 
-        if (!$verification->isBalanced()) {
+        if (!$verification->getTransactions()) {
+            $this->logger->warning('Trying to add a verification without transactions');
+        }
+
+        if ($verification->getTransactions() && !$verification->isBalanced()) {
             $this->logger->error('Trying to add an unbalanced verification');
         }
 

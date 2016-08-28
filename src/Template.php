@@ -71,7 +71,7 @@ class Template implements Attributable, Describable
      *
      * Substitution variables with the form {var} can be used
      */
-    public function addTransaction(string $number, string $amount, string $quantity = '', array $dimensions = []): self
+    public function addTransaction(string $number, string $amount, string $quantity = '0', array $dimensions = []): self
     {
         $this->transactions[] = [$number, $amount, $quantity, $dimensions];
 
@@ -107,7 +107,7 @@ class Template implements Attributable, Describable
                 new Transaction(
                     $container->findAccount($filter($number)),
                     new Amount($filter($amount)),
-                    intval($filter($quantity)),
+                    new Amount($filter($quantity)),
                     ...$dimensions
                 )
             );

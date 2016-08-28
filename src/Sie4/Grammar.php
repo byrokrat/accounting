@@ -3,8 +3,9 @@
 namespace byrokrat\accounting\Sie4;
 
 use byrokrat\accounting\Transaction;
+use byrokrat\amount\Amount;
 
-class Grammar extends DependencyManager
+class Grammar extends AbstractParser
 {
     protected function parseFILE()
     {
@@ -295,12 +296,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value22 = array();
+        $_value24 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value22[] = $this->value;
+            $_value24[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('FLAGGA')) === 'FLAGGA') {
                 $_success = true;
@@ -314,7 +315,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value22[] = $this->value;
+            $_value24[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -323,9 +324,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value22[] = $this->value;
+            $_value24[] = $this->value;
 
+            $_position22 = $this->position;
+            $_cut23 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseBOOLEAN();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position22;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut23;
 
             if ($_success) {
                 $flag = $this->value;
@@ -333,20 +346,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value22[] = $this->value;
+            $_value24[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value22[] = $this->value;
+            $_value24[] = $this->value;
 
-            $this->value = $_value22;
+            $this->value = $_value24;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$flag) {
-                $this->getContainer()->setAttribute('FLAGGA', $flag);
+                if ($this->assertBool($flag)) {
+                    $this->getContainer()->setAttribute('FLAGGA', $flag);
+                }
             });
         }
 
@@ -375,12 +390,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value23 = array();
+        $_value25 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value23[] = $this->value;
+            $_value25[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('KSUMMA')) === 'KSUMMA') {
                 $_success = true;
@@ -394,15 +409,15 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value23[] = $this->value;
+            $_value25[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value23[] = $this->value;
+            $_value25[] = $this->value;
 
-            $this->value = $_value23;
+            $this->value = $_value25;
         }
 
         $this->cache['KSUMMA_START_POST'][$_position] = array(
@@ -430,12 +445,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value24 = array();
+        $_value28 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value24[] = $this->value;
+            $_value28[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('KSUMMA')) === 'KSUMMA') {
                 $_success = true;
@@ -449,9 +464,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value24[] = $this->value;
+            $_value28[] = $this->value;
 
+            $_position26 = $this->position;
+            $_cut27 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position26;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut27;
 
             if ($_success) {
                 $checksum = $this->value;
@@ -459,21 +486,23 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value24[] = $this->value;
+            $_value28[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value24[] = $this->value;
+            $_value28[] = $this->value;
 
-            $this->value = $_value24;
+            $this->value = $_value28;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$checksum) {
-                $this->getContainer()->setAttribute('KSUMMA', $checksum);
-                $this->getLogger()->notice('Checksum detected but currently not handled');
+                if ($this->assertInt($checksum, 'Expected checksum')) {
+                    $this->getContainer()->setAttribute('KSUMMA', $checksum);
+                    $this->getLogger()->notice('Checksum detected but currently not handled');
+                }
             });
         }
 
@@ -568,109 +597,109 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_position25 = $this->position;
-        $_cut26 = $this->cut;
+        $_position29 = $this->position;
+        $_cut30 = $this->cut;
 
         $this->cut = false;
         $_success = $this->parseADRESS_POST();
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position25;
+            $this->position = $_position29;
 
             $_success = $this->parseBKOD_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position25;
+            $this->position = $_position29;
 
             $_success = $this->parseFNAMN_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position25;
+            $this->position = $_position29;
 
             $_success = $this->parseFNR_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position25;
+            $this->position = $_position29;
 
             $_success = $this->parseFORMAT_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position25;
+            $this->position = $_position29;
 
             $_success = $this->parseFTYP_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position25;
+            $this->position = $_position29;
 
             $_success = $this->parseGEN_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position25;
+            $this->position = $_position29;
 
             $_success = $this->parseKPTYP_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position25;
+            $this->position = $_position29;
 
             $_success = $this->parseOMFATTN_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position25;
+            $this->position = $_position29;
 
             $_success = $this->parseORGNR_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position25;
+            $this->position = $_position29;
 
             $_success = $this->parsePROGRAM_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position25;
+            $this->position = $_position29;
 
             $_success = $this->parsePROSA_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position25;
+            $this->position = $_position29;
 
             $_success = $this->parseRAR_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position25;
+            $this->position = $_position29;
 
             $_success = $this->parseSIETYP_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position25;
+            $this->position = $_position29;
 
             $_success = $this->parseTAXAR_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position25;
+            $this->position = $_position29;
 
             $_success = $this->parseVALUTA_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position25;
+            $this->position = $_position29;
 
             $_success = $this->parseVOID_ROW();
         }
 
-        $this->cut = $_cut26;
+        $this->cut = $_cut30;
 
         $this->cache['IDENTIFICATION_POST'][$_position] = array(
             'success' => $_success,
@@ -697,12 +726,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value35 = array();
+        $_value39 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value35[] = $this->value;
+            $_value39[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('ADRESS')) === 'ADRESS') {
                 $_success = true;
@@ -716,7 +745,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value35[] = $this->value;
+            $_value39[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -725,51 +754,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value35[] = $this->value;
-
-            $_position27 = $this->position;
-            $_cut28 = $this->cut;
-
-            $this->cut = false;
-            $_success = $this->parseSTRING();
-
-            if (!$_success && !$this->cut) {
-                $_success = true;
-                $this->position = $_position27;
-                $this->value = null;
-            }
-
-            $this->cut = $_cut28;
-
-            if ($_success) {
-                $contact = $this->value;
-            }
-        }
-
-        if ($_success) {
-            $_value35[] = $this->value;
-
-            $_position29 = $this->position;
-            $_cut30 = $this->cut;
-
-            $this->cut = false;
-            $_success = $this->parseSTRING();
-
-            if (!$_success && !$this->cut) {
-                $_success = true;
-                $this->position = $_position29;
-                $this->value = null;
-            }
-
-            $this->cut = $_cut30;
-
-            if ($_success) {
-                $address = $this->value;
-            }
-        }
-
-        if ($_success) {
-            $_value35[] = $this->value;
+            $_value39[] = $this->value;
 
             $_position31 = $this->position;
             $_cut32 = $this->cut;
@@ -786,12 +771,12 @@ class Grammar extends DependencyManager
             $this->cut = $_cut32;
 
             if ($_success) {
-                $location = $this->value;
+                $contact = $this->value;
             }
         }
 
         if ($_success) {
-            $_value35[] = $this->value;
+            $_value39[] = $this->value;
 
             $_position33 = $this->position;
             $_cut34 = $this->cut;
@@ -808,20 +793,64 @@ class Grammar extends DependencyManager
             $this->cut = $_cut34;
 
             if ($_success) {
+                $address = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value39[] = $this->value;
+
+            $_position35 = $this->position;
+            $_cut36 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position35;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut36;
+
+            if ($_success) {
+                $location = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value39[] = $this->value;
+
+            $_position37 = $this->position;
+            $_cut38 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position37;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut38;
+
+            if ($_success) {
                 $phone = $this->value;
             }
         }
 
         if ($_success) {
-            $_value35[] = $this->value;
+            $_value39[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value35[] = $this->value;
+            $_value39[] = $this->value;
 
-            $this->value = $_value35;
+            $this->value = $_value39;
         }
 
         if ($_success) {
@@ -855,12 +884,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value36 = array();
+        $_value42 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value36[] = $this->value;
+            $_value42[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('BKOD')) === 'BKOD') {
                 $_success = true;
@@ -874,7 +903,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value36[] = $this->value;
+            $_value42[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -883,9 +912,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value36[] = $this->value;
+            $_value42[] = $this->value;
 
+            $_position40 = $this->position;
+            $_cut41 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position40;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut41;
 
             if ($_success) {
                 $sni = $this->value;
@@ -893,20 +934,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value36[] = $this->value;
+            $_value42[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value36[] = $this->value;
+            $_value42[] = $this->value;
 
-            $this->value = $_value36;
+            $this->value = $_value42;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$sni) {
-                $this->getContainer()->setAttribute('BKOD', $sni);
+                if ($this->assertInt($sni, 'Expected SNI code')) {
+                    $this->getContainer()->setAttribute('BKOD', $sni);
+                }
             });
         }
 
@@ -935,12 +978,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value37 = array();
+        $_value45 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value37[] = $this->value;
+            $_value45[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('FNAMN')) === 'FNAMN') {
                 $_success = true;
@@ -954,7 +997,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value37[] = $this->value;
+            $_value45[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -963,9 +1006,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value37[] = $this->value;
+            $_value45[] = $this->value;
 
+            $_position43 = $this->position;
+            $_cut44 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position43;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut44;
 
             if ($_success) {
                 $name = $this->value;
@@ -973,20 +1028,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value37[] = $this->value;
+            $_value45[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value37[] = $this->value;
+            $_value45[] = $this->value;
 
-            $this->value = $_value37;
+            $this->value = $_value45;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$name) {
-                $this->getContainer()->setAttribute('FNAMN', $name);
+                if ($this->assertString($name, 'Expected company name')) {
+                    $this->getContainer()->setAttribute('FNAMN', $name);
+                }
             });
         }
 
@@ -1015,12 +1072,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value38 = array();
+        $_value48 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value38[] = $this->value;
+            $_value48[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('FNR')) === 'FNR') {
                 $_success = true;
@@ -1034,7 +1091,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value38[] = $this->value;
+            $_value48[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1043,9 +1100,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value38[] = $this->value;
+            $_value48[] = $this->value;
 
+            $_position46 = $this->position;
+            $_cut47 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position46;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut47;
 
             if ($_success) {
                 $id = $this->value;
@@ -1053,20 +1122,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value38[] = $this->value;
+            $_value48[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value38[] = $this->value;
+            $_value48[] = $this->value;
 
-            $this->value = $_value38;
+            $this->value = $_value48;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$id) {
-                $this->getContainer()->setAttribute('FNR', $id);
+                if ($this->assertString($id, 'Expected company identifier')) {
+                    $this->getContainer()->setAttribute('FNR', $id);
+                }
             });
         }
 
@@ -1095,12 +1166,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value39 = array();
+        $_value51 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value39[] = $this->value;
+            $_value51[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('FORMAT')) === 'FORMAT') {
                 $_success = true;
@@ -1114,7 +1185,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value39[] = $this->value;
+            $_value51[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1123,9 +1194,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value39[] = $this->value;
+            $_value51[] = $this->value;
 
+            $_position49 = $this->position;
+            $_cut50 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position49;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut50;
 
             if ($_success) {
                 $charset = $this->value;
@@ -1133,23 +1216,26 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value39[] = $this->value;
+            $_value51[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value39[] = $this->value;
+            $_value51[] = $this->value;
 
-            $this->value = $_value39;
+            $this->value = $_value51;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$charset) {
-                if ($charset != 'PC8') {
-                    $this->getLogger()->warning("Unknown charset $charset defined using #FORMAT");
+                if ($this->assertString($charset, 'Expected charset identifier')) {
+                    if ($charset != 'PC8') {
+                        $this->getLogger()->warning("Unknown charset $charset defined using #FORMAT");
+                    }
+
+                    $this->getContainer()->setAttribute('FORMAT', $charset);
                 }
-                $this->getContainer()->setAttribute('FORMAT', $charset);
             });
         }
 
@@ -1178,12 +1264,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value40 = array();
+        $_value54 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value40[] = $this->value;
+            $_value54[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('FTYP')) === 'FTYP') {
                 $_success = true;
@@ -1197,7 +1283,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value40[] = $this->value;
+            $_value54[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1206,9 +1292,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value40[] = $this->value;
+            $_value54[] = $this->value;
 
+            $_position52 = $this->position;
+            $_cut53 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position52;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut53;
 
             if ($_success) {
                 $type = $this->value;
@@ -1216,20 +1314,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value40[] = $this->value;
+            $_value54[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value40[] = $this->value;
+            $_value54[] = $this->value;
 
-            $this->value = $_value40;
+            $this->value = $_value54;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$type) {
-                $this->getContainer()->setAttribute('FTYP', $type);
+                if ($this->assertString($type, 'Expected company type identifier')) {
+                    $this->getContainer()->setAttribute('FTYP', $type);
+                }
             });
         }
 
@@ -1258,12 +1358,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value43 = array();
+        $_value59 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value43[] = $this->value;
+            $_value59[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('GEN')) === 'GEN') {
                 $_success = true;
@@ -1277,7 +1377,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value43[] = $this->value;
+            $_value59[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1286,9 +1386,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value43[] = $this->value;
+            $_value59[] = $this->value;
 
+            $_position55 = $this->position;
+            $_cut56 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseDATE();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position55;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut56;
 
             if ($_success) {
                 $date = $this->value;
@@ -1296,21 +1408,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value43[] = $this->value;
+            $_value59[] = $this->value;
 
-            $_position41 = $this->position;
-            $_cut42 = $this->cut;
+            $_position57 = $this->position;
+            $_cut58 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position41;
+                $this->position = $_position57;
                 $this->value = null;
             }
 
-            $this->cut = $_cut42;
+            $this->cut = $_cut58;
 
             if ($_success) {
                 $sign = $this->value;
@@ -1318,20 +1430,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value43[] = $this->value;
+            $_value59[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value43[] = $this->value;
+            $_value59[] = $this->value;
 
-            $this->value = $_value43;
+            $this->value = $_value59;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$date, &$sign) {
-                $this->getContainer()->setAttribute('GEN', [$date, strval($sign)]);
+                if ($this->assertDate($date)) {
+                    $this->getContainer()->setAttribute('GEN', [$date, strval($sign)]);
+                }
             });
         }
 
@@ -1360,12 +1474,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value44 = array();
+        $_value62 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value44[] = $this->value;
+            $_value62[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('KPTYP')) === 'KPTYP') {
                 $_success = true;
@@ -1379,7 +1493,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value44[] = $this->value;
+            $_value62[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1388,9 +1502,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value44[] = $this->value;
+            $_value62[] = $this->value;
 
+            $_position60 = $this->position;
+            $_cut61 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position60;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut61;
 
             if ($_success) {
                 $type = $this->value;
@@ -1398,20 +1524,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value44[] = $this->value;
+            $_value62[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value44[] = $this->value;
+            $_value62[] = $this->value;
 
-            $this->value = $_value44;
+            $this->value = $_value62;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$type) {
-                $this->getContainer()->setAttribute('KPTYP', $type);
+                if ($this->assertString($type, 'Expected account plan type identifier')) {
+                    $this->getContainer()->setAttribute('KPTYP', $type);
+                }
             });
         }
 
@@ -1440,12 +1568,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value45 = array();
+        $_value65 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value45[] = $this->value;
+            $_value65[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('OMFATTN')) === 'OMFATTN') {
                 $_success = true;
@@ -1459,7 +1587,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value45[] = $this->value;
+            $_value65[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1468,9 +1596,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value45[] = $this->value;
+            $_value65[] = $this->value;
 
+            $_position63 = $this->position;
+            $_cut64 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseDATE();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position63;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut64;
 
             if ($_success) {
                 $date = $this->value;
@@ -1478,20 +1618,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value45[] = $this->value;
+            $_value65[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value45[] = $this->value;
+            $_value65[] = $this->value;
 
-            $this->value = $_value45;
+            $this->value = $_value65;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$date) {
-                $this->getContainer()->setAttribute('OMFATTN', $date);
+                if ($this->assertDate($date)) {
+                    $this->getContainer()->setAttribute('OMFATTN', $date);
+                }
             });
         }
 
@@ -1520,12 +1662,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value52 = array();
+        $_value72 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value52[] = $this->value;
+            $_value72[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('ORGNR')) === 'ORGNR') {
                 $_success = true;
@@ -1539,7 +1681,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value52[] = $this->value;
+            $_value72[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1548,21 +1690,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value52[] = $this->value;
+            $_value72[] = $this->value;
 
-            $_position46 = $this->position;
-            $_cut47 = $this->cut;
+            $_position66 = $this->position;
+            $_cut67 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position46;
+                $this->position = $_position66;
                 $this->value = null;
             }
 
-            $this->cut = $_cut47;
+            $this->cut = $_cut67;
 
             if ($_success) {
                 $number = $this->value;
@@ -1570,21 +1712,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value52[] = $this->value;
+            $_value72[] = $this->value;
 
-            $_position48 = $this->position;
-            $_cut49 = $this->cut;
+            $_position68 = $this->position;
+            $_cut69 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position48;
+                $this->position = $_position68;
                 $this->value = null;
             }
 
-            $this->cut = $_cut49;
+            $this->cut = $_cut69;
 
             if ($_success) {
                 $acquisition = $this->value;
@@ -1592,21 +1734,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value52[] = $this->value;
+            $_value72[] = $this->value;
 
-            $_position50 = $this->position;
-            $_cut51 = $this->cut;
+            $_position70 = $this->position;
+            $_cut71 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position50;
+                $this->position = $_position70;
                 $this->value = null;
             }
 
-            $this->cut = $_cut51;
+            $this->cut = $_cut71;
 
             if ($_success) {
                 $operation = $this->value;
@@ -1614,20 +1756,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value52[] = $this->value;
+            $_value72[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value52[] = $this->value;
+            $_value72[] = $this->value;
 
-            $this->value = $_value52;
+            $this->value = $_value72;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$number, &$acquisition, &$operation) {
-                $this->getContainer()->setAttribute('ORGNR', [(string)$number, intval($acquisition), intval($operation)]);
+                if ($this->assertString($number, 'Expected organisation number')) {
+                    $this->getContainer()->setAttribute('ORGNR', [$number, intval($acquisition), intval($operation)]);
+                }
             });
         }
 
@@ -1656,12 +1800,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value53 = array();
+        $_value77 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value53[] = $this->value;
+            $_value77[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('PROGRAM')) === 'PROGRAM') {
                 $_success = true;
@@ -1675,7 +1819,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value53[] = $this->value;
+            $_value77[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1684,9 +1828,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value53[] = $this->value;
+            $_value77[] = $this->value;
 
+            $_position73 = $this->position;
+            $_cut74 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position73;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut74;
 
             if ($_success) {
                 $name = $this->value;
@@ -1694,9 +1850,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value53[] = $this->value;
+            $_value77[] = $this->value;
 
+            $_position75 = $this->position;
+            $_cut76 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position75;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut76;
 
             if ($_success) {
                 $version = $this->value;
@@ -1704,20 +1872,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value53[] = $this->value;
+            $_value77[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value53[] = $this->value;
+            $_value77[] = $this->value;
 
-            $this->value = $_value53;
+            $this->value = $_value77;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$name, &$version) {
-                $this->getContainer()->setAttribute('PROGRAM', [$name, $version]);
+                if ($this->assertString($name, 'Expected name') && $this->assertString($version, 'Expected version')) {
+                    $this->getContainer()->setAttribute('PROGRAM', [$name, $version]);
+                }
             });
         }
 
@@ -1746,12 +1916,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value54 = array();
+        $_value80 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value54[] = $this->value;
+            $_value80[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('PROSA')) === 'PROSA') {
                 $_success = true;
@@ -1765,7 +1935,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value54[] = $this->value;
+            $_value80[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1774,9 +1944,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value54[] = $this->value;
+            $_value80[] = $this->value;
 
+            $_position78 = $this->position;
+            $_cut79 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position78;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut79;
 
             if ($_success) {
                 $text = $this->value;
@@ -1784,20 +1966,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value54[] = $this->value;
+            $_value80[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value54[] = $this->value;
+            $_value80[] = $this->value;
 
-            $this->value = $_value54;
+            $this->value = $_value80;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$text) {
-                $this->getContainer()->setAttribute('PROSA', $text);
+                if ($this->assertString($text, 'Expected free text content')) {
+                    $this->getContainer()->setAttribute('PROSA', $text);
+                }
             });
         }
 
@@ -1826,12 +2010,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value59 = array();
+        $_value87 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value59[] = $this->value;
+            $_value87[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('RAR')) === 'RAR') {
                 $_success = true;
@@ -1845,7 +2029,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value59[] = $this->value;
+            $_value87[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1854,9 +2038,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value59[] = $this->value;
+            $_value87[] = $this->value;
 
+            $_position81 = $this->position;
+            $_cut82 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position81;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut82;
 
             if ($_success) {
                 $year = $this->value;
@@ -1864,21 +2060,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value59[] = $this->value;
+            $_value87[] = $this->value;
 
-            $_position55 = $this->position;
-            $_cut56 = $this->cut;
+            $_position83 = $this->position;
+            $_cut84 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseDATE();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position55;
+                $this->position = $_position83;
                 $this->value = null;
             }
 
-            $this->cut = $_cut56;
+            $this->cut = $_cut84;
 
             if ($_success) {
                 $startDate = $this->value;
@@ -1886,21 +2082,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value59[] = $this->value;
+            $_value87[] = $this->value;
 
-            $_position57 = $this->position;
-            $_cut58 = $this->cut;
+            $_position85 = $this->position;
+            $_cut86 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseDATE();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position57;
+                $this->position = $_position85;
                 $this->value = null;
             }
 
-            $this->cut = $_cut58;
+            $this->cut = $_cut86;
 
             if ($_success) {
                 $endDate = $this->value;
@@ -1908,28 +2104,36 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value59[] = $this->value;
+            $_value87[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value59[] = $this->value;
+            $_value87[] = $this->value;
 
-            $this->value = $_value59;
+            $this->value = $_value87;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$startDate, &$endDate) {
-                if (is_null($startDate)) {
-                    $this->getLogger()->warning("Accounting year start date not defined");
-                }
+                // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
+                /*
+                    Skulle kunna använda \DatePeriod för detta..
+                    Men vad betyder det? Ska vi använda period istället för årsnummer?
 
-                if (is_null($endDate)) {
-                    $this->getLogger()->warning("Accounting year end date not defined");
-                }
+                    $this->getContainer()->setAttribute('RAR', [$year, $datePeriod]);
 
-                $this->getContainer()->setAttribute("RAR $year", [$startDate, $endDate]);
+                    $account->setAttribute("IB", [$year, $datePeriod, $balance, $quantity ?: 0]);
+
+                    Hm, det här behöver jag fundera mer över...
+
+
+                 */
+
+                if ($this->assertInt($year) && $this->assertDate($startDate) && $this->assertDate($endDate)) {
+                    $this->getContainer()->setAttribute("RAR $year", [$startDate, $endDate]);
+                }
             });
         }
 
@@ -1958,12 +2162,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value60 = array();
+        $_value90 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value60[] = $this->value;
+            $_value90[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('SIETYP')) === 'SIETYP') {
                 $_success = true;
@@ -1977,7 +2181,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value60[] = $this->value;
+            $_value90[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1986,9 +2190,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value60[] = $this->value;
+            $_value90[] = $this->value;
 
+            $_position88 = $this->position;
+            $_cut89 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position88;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut89;
 
             if ($_success) {
                 $ver = $this->value;
@@ -1996,20 +2212,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value60[] = $this->value;
+            $_value90[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value60[] = $this->value;
+            $_value90[] = $this->value;
 
-            $this->value = $_value60;
+            $this->value = $_value90;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$ver) {
-                $this->getContainer()->setAttribute('SIETYP', $ver);
+                if ($this->assertInt($ver, 'Expected SIE version')) {
+                    $this->getContainer()->setAttribute('SIETYP', $ver);
+                }
             });
         }
 
@@ -2038,12 +2256,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value61 = array();
+        $_value91 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value61[] = $this->value;
+            $_value91[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('TAXAR')) === 'TAXAR') {
                 $_success = true;
@@ -2057,7 +2275,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value61[] = $this->value;
+            $_value91[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2066,7 +2284,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value61[] = $this->value;
+            $_value91[] = $this->value;
 
             $_success = $this->parseINT();
 
@@ -2076,20 +2294,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value61[] = $this->value;
+            $_value91[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value61[] = $this->value;
+            $_value91[] = $this->value;
 
-            $this->value = $_value61;
+            $this->value = $_value91;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year) {
-                $this->getContainer()->setAttribute("TAXAR", $year);
+                if ($this->assertInt($year)) {
+                    $this->getContainer()->setAttribute("TAXAR", $year);
+                }
             });
         }
 
@@ -2118,12 +2338,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value62 = array();
+        $_value94 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value62[] = $this->value;
+            $_value94[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('VALUTA')) === 'VALUTA') {
                 $_success = true;
@@ -2137,7 +2357,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value62[] = $this->value;
+            $_value94[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2146,9 +2366,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value62[] = $this->value;
+            $_value94[] = $this->value;
 
+            $_position92 = $this->position;
+            $_cut93 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position92;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut93;
 
             if ($_success) {
                 $currency = $this->value;
@@ -2156,21 +2388,23 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value62[] = $this->value;
+            $_value94[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value62[] = $this->value;
+            $_value94[] = $this->value;
 
-            $this->value = $_value62;
+            $this->value = $_value94;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$currency) {
-                $this->getContainer()->setAttribute('VALUTA', $currency);
-                $this->getCurrencyBuilder()->setCurrencyClass($currency);
+                if ($this->assertString($currency, 'Expected currency name')) {
+                    $this->getContainer()->setAttribute('VALUTA', $currency);
+                    $this->getCurrencyBuilder()->setCurrencyClass($currency);
+                }
             });
         }
 
@@ -2199,55 +2433,55 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_position63 = $this->position;
-        $_cut64 = $this->cut;
+        $_position95 = $this->position;
+        $_cut96 = $this->cut;
 
         $this->cut = false;
         $_success = $this->parseKONTO_POST();
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position63;
+            $this->position = $_position95;
 
             $_success = $this->parseKTYP_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position63;
+            $this->position = $_position95;
 
             $_success = $this->parseENHET_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position63;
+            $this->position = $_position95;
 
             $_success = $this->parseSRU_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position63;
+            $this->position = $_position95;
 
             $_success = $this->parseDIM_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position63;
+            $this->position = $_position95;
 
             $_success = $this->parseUNDERDIM_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position63;
+            $this->position = $_position95;
 
             $_success = $this->parseOBJEKT_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position63;
+            $this->position = $_position95;
 
             $_success = $this->parseVOID_ROW();
         }
 
-        $this->cut = $_cut64;
+        $this->cut = $_cut96;
 
         $this->cache['ACCOUNT_PLAN_POST'][$_position] = array(
             'success' => $_success,
@@ -2274,12 +2508,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value65 = array();
+        $_value101 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value65[] = $this->value;
+            $_value101[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('KONTO')) === 'KONTO') {
                 $_success = true;
@@ -2293,7 +2527,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value65[] = $this->value;
+            $_value101[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2302,9 +2536,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value65[] = $this->value;
+            $_value101[] = $this->value;
 
+            $_position97 = $this->position;
+            $_cut98 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position97;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut98;
 
             if ($_success) {
                 $number = $this->value;
@@ -2312,30 +2558,44 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value65[] = $this->value;
+            $_value101[] = $this->value;
 
+            $_position99 = $this->position;
+            $_cut100 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
 
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position99;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut100;
+
             if ($_success) {
-                $description = $this->value;
+                $desc = $this->value;
             }
         }
 
         if ($_success) {
-            $_value65[] = $this->value;
+            $_value101[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value65[] = $this->value;
+            $_value101[] = $this->value;
 
-            $this->value = $_value65;
+            $this->value = $_value101;
         }
 
         if ($_success) {
-            $this->value = call_user_func(function () use (&$number, &$description) {
-                $this->getAccountBuilder()->addAccount($number, $description);
+            $this->value = call_user_func(function () use (&$number, &$desc) {
+                if ($this->assertString($number, 'Expected account number') && $this->assertString($desc, 'Expected account description')) {
+                    $this->getAccountBuilder()->addAccount($number, $desc);
+                }
             });
         }
 
@@ -2364,12 +2624,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value66 = array();
+        $_value106 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value66[] = $this->value;
+            $_value106[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('KTYP')) === 'KTYP') {
                 $_success = true;
@@ -2383,7 +2643,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value66[] = $this->value;
+            $_value106[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2392,9 +2652,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value66[] = $this->value;
+            $_value106[] = $this->value;
 
+            $_position102 = $this->position;
+            $_cut103 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position102;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut103;
 
             if ($_success) {
                 $number = $this->value;
@@ -2402,9 +2674,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value66[] = $this->value;
+            $_value106[] = $this->value;
 
+            $_position104 = $this->position;
+            $_cut105 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position104;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut105;
 
             if ($_success) {
                 $type = $this->value;
@@ -2412,20 +2696,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value66[] = $this->value;
+            $_value106[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value66[] = $this->value;
+            $_value106[] = $this->value;
 
-            $this->value = $_value66;
+            $this->value = $_value106;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$number, &$type) {
-                $this->getAccountBuilder()->setAccountType($number, $type);
+                if ($this->assertString($number, 'Expected account number') && $this->assertString($type, 'Expected account type identifier')) {
+                    $this->getAccountBuilder()->setAccountType($number, $type);
+                }
             });
         }
 
@@ -2454,12 +2740,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value67 = array();
+        $_value111 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value67[] = $this->value;
+            $_value111[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('ENHET')) === 'ENHET') {
                 $_success = true;
@@ -2473,7 +2759,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value67[] = $this->value;
+            $_value111[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2482,9 +2768,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value67[] = $this->value;
+            $_value111[] = $this->value;
 
-            $_success = $this->parseSTRING();
+            $_position107 = $this->position;
+            $_cut108 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseACCOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position107;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut108;
 
             if ($_success) {
                 $account = $this->value;
@@ -2492,9 +2790,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value67[] = $this->value;
+            $_value111[] = $this->value;
 
+            $_position109 = $this->position;
+            $_cut110 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position109;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut110;
 
             if ($_success) {
                 $unit = $this->value;
@@ -2502,20 +2812,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value67[] = $this->value;
+            $_value111[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value67[] = $this->value;
+            $_value111[] = $this->value;
 
-            $this->value = $_value67;
+            $this->value = $_value111;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$account, &$unit) {
-                $this->getAccountBuilder()->getAccount($account)->setAttribute('unit', $unit);
+                if ($this->assertAccount($account) && $this->assertString($unit, 'Expected unit')) {
+                    $account->setAttribute('unit', $unit);
+                }
             });
         }
 
@@ -2544,12 +2856,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value70 = array();
+        $_value116 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value70[] = $this->value;
+            $_value116[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('SRU')) === 'SRU') {
                 $_success = true;
@@ -2563,7 +2875,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value70[] = $this->value;
+            $_value116[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2572,9 +2884,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value70[] = $this->value;
+            $_value116[] = $this->value;
 
-            $_success = $this->parseSTRING();
+            $_position112 = $this->position;
+            $_cut113 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseACCOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position112;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut113;
 
             if ($_success) {
                 $account = $this->value;
@@ -2582,21 +2906,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value70[] = $this->value;
+            $_value116[] = $this->value;
 
-            $_position68 = $this->position;
-            $_cut69 = $this->cut;
+            $_position114 = $this->position;
+            $_cut115 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position68;
+                $this->position = $_position114;
                 $this->value = null;
             }
 
-            $this->cut = $_cut69;
+            $this->cut = $_cut115;
 
             if ($_success) {
                 $sru = $this->value;
@@ -2604,24 +2928,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value70[] = $this->value;
+            $_value116[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value70[] = $this->value;
+            $_value116[] = $this->value;
 
-            $this->value = $_value70;
+            $this->value = $_value116;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$account, &$sru) {
-                if (is_null($sru)) {
-                    $this->getLogger()->warning('Sru number not defined');
+                if ($this->assertAccount($account) && $this->assertInt($sru, 'Expected SRU code')) {
+                    $account->setAttribute('sru', $sru);
                 }
-
-                $this->getAccountBuilder()->getAccount($account)->setAttribute('sru', $sru ?: 0);
             });
         }
 
@@ -2650,12 +2972,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value71 = array();
+        $_value121 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value71[] = $this->value;
+            $_value121[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('DIM')) === 'DIM') {
                 $_success = true;
@@ -2669,7 +2991,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value71[] = $this->value;
+            $_value121[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2678,9 +3000,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value71[] = $this->value;
+            $_value121[] = $this->value;
 
+            $_position117 = $this->position;
+            $_cut118 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position117;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut118;
 
             if ($_success) {
                 $dim = $this->value;
@@ -2688,9 +3022,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value71[] = $this->value;
+            $_value121[] = $this->value;
 
+            $_position119 = $this->position;
+            $_cut120 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position119;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut120;
 
             if ($_success) {
                 $desc = $this->value;
@@ -2698,20 +3044,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value71[] = $this->value;
+            $_value121[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value71[] = $this->value;
+            $_value121[] = $this->value;
 
-            $this->value = $_value71;
+            $this->value = $_value121;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$dim, &$desc) {
-                $this->getDimensionBuilder()->addDimension((string)$dim, $desc);
+                if ($this->assertInt($dim) && $this->assertString($desc)) {
+                    $this->getDimensionBuilder()->addDimension((string)$dim, $desc);
+                }
             });
         }
 
@@ -2740,12 +3088,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value72 = array();
+        $_value128 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value72[] = $this->value;
+            $_value128[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('UNDERDIM')) === 'UNDERDIM') {
                 $_success = true;
@@ -2759,7 +3107,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value72[] = $this->value;
+            $_value128[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2768,9 +3116,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value72[] = $this->value;
+            $_value128[] = $this->value;
 
+            $_position122 = $this->position;
+            $_cut123 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position122;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut123;
 
             if ($_success) {
                 $dim = $this->value;
@@ -2778,9 +3138,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value72[] = $this->value;
+            $_value128[] = $this->value;
 
+            $_position124 = $this->position;
+            $_cut125 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position124;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut125;
 
             if ($_success) {
                 $desc = $this->value;
@@ -2788,30 +3160,44 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value72[] = $this->value;
+            $_value128[] = $this->value;
 
+            $_position126 = $this->position;
+            $_cut127 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseINT();
 
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position126;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut127;
+
             if ($_success) {
-                $superdim = $this->value;
+                $super = $this->value;
             }
         }
 
         if ($_success) {
-            $_value72[] = $this->value;
+            $_value128[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value72[] = $this->value;
+            $_value128[] = $this->value;
 
-            $this->value = $_value72;
+            $this->value = $_value128;
         }
 
         if ($_success) {
-            $this->value = call_user_func(function () use (&$dim, &$desc, &$superdim) {
-                $this->getDimensionBuilder()->addDimension((string)$dim, $desc, (string)$superdim);
+            $this->value = call_user_func(function () use (&$dim, &$desc, &$super) {
+                if ($this->assertInt($dim) && $this->assertString($desc) && $this->assertInt($super)) {
+                    $this->getDimensionBuilder()->addDimension((string)$dim, $desc, (string)$super);
+                }
             });
         }
 
@@ -2840,12 +3226,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value73 = array();
+        $_value135 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value73[] = $this->value;
+            $_value135[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('OBJEKT')) === 'OBJEKT') {
                 $_success = true;
@@ -2859,7 +3245,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value73[] = $this->value;
+            $_value135[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2868,9 +3254,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value73[] = $this->value;
+            $_value135[] = $this->value;
 
+            $_position129 = $this->position;
+            $_cut130 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position129;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut130;
 
             if ($_success) {
                 $dim = $this->value;
@@ -2878,9 +3276,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value73[] = $this->value;
+            $_value135[] = $this->value;
 
+            $_position131 = $this->position;
+            $_cut132 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position131;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut132;
 
             if ($_success) {
                 $obj = $this->value;
@@ -2888,9 +3298,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value73[] = $this->value;
+            $_value135[] = $this->value;
 
+            $_position133 = $this->position;
+            $_cut134 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position133;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut134;
 
             if ($_success) {
                 $desc = $this->value;
@@ -2898,20 +3320,22 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value73[] = $this->value;
+            $_value135[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value73[] = $this->value;
+            $_value135[] = $this->value;
 
-            $this->value = $_value73;
+            $this->value = $_value135;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$dim, &$obj, &$desc) {
-                $this->getDimensionBuilder()->addObject((string)$dim, $obj, $desc);
+                if ($this->assertInt($dim) && $this->assertString($obj) && $this->assertString($desc)) {
+                    $this->getDimensionBuilder()->addObject((string)$dim, $obj, $desc);
+                }
             });
         }
 
@@ -2940,61 +3364,61 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_position74 = $this->position;
-        $_cut75 = $this->cut;
+        $_position136 = $this->position;
+        $_cut137 = $this->cut;
 
         $this->cut = false;
         $_success = $this->parseIB_POST();
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position74;
+            $this->position = $_position136;
 
             $_success = $this->parseUB_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position74;
+            $this->position = $_position136;
 
             $_success = $this->parseOIB_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position74;
+            $this->position = $_position136;
 
             $_success = $this->parseOUB_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position74;
+            $this->position = $_position136;
 
             $_success = $this->parsePBUDGET_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position74;
+            $this->position = $_position136;
 
             $_success = $this->parsePSALDO_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position74;
+            $this->position = $_position136;
 
             $_success = $this->parseRES_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position74;
+            $this->position = $_position136;
 
             $_success = $this->parseVER_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position74;
+            $this->position = $_position136;
 
             $_success = $this->parseVOID_ROW();
         }
 
-        $this->cut = $_cut75;
+        $this->cut = $_cut137;
 
         $this->cache['BALANCE_POST'][$_position] = array(
             'success' => $_success,
@@ -3021,12 +3445,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value78 = array();
+        $_value146 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value78[] = $this->value;
+            $_value146[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('IB')) === 'IB') {
                 $_success = true;
@@ -3040,7 +3464,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value78[] = $this->value;
+            $_value146[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3049,9 +3473,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value78[] = $this->value;
+            $_value146[] = $this->value;
 
+            $_position138 = $this->position;
+            $_cut139 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position138;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut139;
 
             if ($_success) {
                 $year = $this->value;
@@ -3059,9 +3495,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value78[] = $this->value;
+            $_value146[] = $this->value;
 
+            $_position140 = $this->position;
+            $_cut141 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseACCOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position140;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut141;
 
             if ($_success) {
                 $account = $this->value;
@@ -3069,9 +3517,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value78[] = $this->value;
+            $_value146[] = $this->value;
 
+            $_position142 = $this->position;
+            $_cut143 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseAMOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position142;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut143;
 
             if ($_success) {
                 $balance = $this->value;
@@ -3079,21 +3539,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value78[] = $this->value;
+            $_value146[] = $this->value;
 
-            $_position76 = $this->position;
-            $_cut77 = $this->cut;
+            $_position144 = $this->position;
+            $_cut145 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseINT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position76;
+                $this->position = $_position144;
                 $this->value = null;
             }
 
-            $this->cut = $_cut77;
+            $this->cut = $_cut145;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -3101,20 +3561,23 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value78[] = $this->value;
+            $_value146[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value78[] = $this->value;
+            $_value146[] = $this->value;
 
-            $this->value = $_value78;
+            $this->value = $_value146;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$balance, &$quantity) {
-                $account->setAttribute("IB $year", [$balance, $quantity ?: 0]);
+                if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
+                    // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
+                    $account->setAttribute("IB $year", [$balance, $quantity ?: null]);
+                }
             });
         }
 
@@ -3143,12 +3606,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value81 = array();
+        $_value155 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value81[] = $this->value;
+            $_value155[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('UB')) === 'UB') {
                 $_success = true;
@@ -3162,7 +3625,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value81[] = $this->value;
+            $_value155[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3171,9 +3634,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value81[] = $this->value;
+            $_value155[] = $this->value;
 
+            $_position147 = $this->position;
+            $_cut148 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position147;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut148;
 
             if ($_success) {
                 $year = $this->value;
@@ -3181,9 +3656,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value81[] = $this->value;
+            $_value155[] = $this->value;
 
+            $_position149 = $this->position;
+            $_cut150 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseACCOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position149;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut150;
 
             if ($_success) {
                 $account = $this->value;
@@ -3191,9 +3678,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value81[] = $this->value;
+            $_value155[] = $this->value;
 
+            $_position151 = $this->position;
+            $_cut152 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseAMOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position151;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut152;
 
             if ($_success) {
                 $balance = $this->value;
@@ -3201,21 +3700,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value81[] = $this->value;
+            $_value155[] = $this->value;
 
-            $_position79 = $this->position;
-            $_cut80 = $this->cut;
+            $_position153 = $this->position;
+            $_cut154 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseINT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position79;
+                $this->position = $_position153;
                 $this->value = null;
             }
 
-            $this->cut = $_cut80;
+            $this->cut = $_cut154;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -3223,20 +3722,23 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value81[] = $this->value;
+            $_value155[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value81[] = $this->value;
+            $_value155[] = $this->value;
 
-            $this->value = $_value81;
+            $this->value = $_value155;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$balance, &$quantity) {
-                $account->setAttribute("UB $year", [$balance, $quantity ?: 0]);
+                if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
+                    // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
+                    $account->setAttribute("UB $year", [$balance, $quantity ?: null]);
+                }
             });
         }
 
@@ -3265,12 +3767,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value84 = array();
+        $_value166 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value84[] = $this->value;
+            $_value166[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('OIB')) === 'OIB') {
                 $_success = true;
@@ -3284,7 +3786,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value84[] = $this->value;
+            $_value166[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3293,9 +3795,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value84[] = $this->value;
+            $_value166[] = $this->value;
 
+            $_position156 = $this->position;
+            $_cut157 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position156;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut157;
 
             if ($_success) {
                 $year = $this->value;
@@ -3303,9 +3817,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value84[] = $this->value;
+            $_value166[] = $this->value;
 
+            $_position158 = $this->position;
+            $_cut159 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseACCOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position158;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut159;
 
             if ($_success) {
                 $account = $this->value;
@@ -3313,9 +3839,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value84[] = $this->value;
+            $_value166[] = $this->value;
 
+            $_position160 = $this->position;
+            $_cut161 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseOBJECT_LIST();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position160;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut161;
 
             if ($_success) {
                 $objects = $this->value;
@@ -3323,9 +3861,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value84[] = $this->value;
+            $_value166[] = $this->value;
 
+            $_position162 = $this->position;
+            $_cut163 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseAMOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position162;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut163;
 
             if ($_success) {
                 $balance = $this->value;
@@ -3333,21 +3883,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value84[] = $this->value;
+            $_value166[] = $this->value;
 
-            $_position82 = $this->position;
-            $_cut83 = $this->cut;
+            $_position164 = $this->position;
+            $_cut165 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseINT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position82;
+                $this->position = $_position164;
                 $this->value = null;
             }
 
-            $this->cut = $_cut83;
+            $this->cut = $_cut165;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -3355,21 +3905,24 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value84[] = $this->value;
+            $_value166[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value84[] = $this->value;
+            $_value166[] = $this->value;
 
-            $this->value = $_value84;
+            $this->value = $_value166;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$objects, &$balance, &$quantity) {
-                foreach ($objects as $object) {
-                    $object->setAttribute("IB $year", [$balance, $quantity ?: 0]);
+                if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+                    // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
+                    foreach ($objects as $object) {
+                        $object->setAttribute("IB $year", [$balance, $quantity ?: null]);
+                    }
                 }
             });
         }
@@ -3399,12 +3952,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value87 = array();
+        $_value177 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value87[] = $this->value;
+            $_value177[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('OUB')) === 'OUB') {
                 $_success = true;
@@ -3418,7 +3971,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value87[] = $this->value;
+            $_value177[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3427,9 +3980,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value87[] = $this->value;
+            $_value177[] = $this->value;
 
+            $_position167 = $this->position;
+            $_cut168 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position167;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut168;
 
             if ($_success) {
                 $year = $this->value;
@@ -3437,9 +4002,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value87[] = $this->value;
+            $_value177[] = $this->value;
 
+            $_position169 = $this->position;
+            $_cut170 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseACCOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position169;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut170;
 
             if ($_success) {
                 $account = $this->value;
@@ -3447,9 +4024,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value87[] = $this->value;
+            $_value177[] = $this->value;
 
+            $_position171 = $this->position;
+            $_cut172 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseOBJECT_LIST();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position171;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut172;
 
             if ($_success) {
                 $objects = $this->value;
@@ -3457,9 +4046,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value87[] = $this->value;
+            $_value177[] = $this->value;
 
+            $_position173 = $this->position;
+            $_cut174 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseAMOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position173;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut174;
 
             if ($_success) {
                 $balance = $this->value;
@@ -3467,21 +4068,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value87[] = $this->value;
+            $_value177[] = $this->value;
 
-            $_position85 = $this->position;
-            $_cut86 = $this->cut;
+            $_position175 = $this->position;
+            $_cut176 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseINT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position85;
+                $this->position = $_position175;
                 $this->value = null;
             }
 
-            $this->cut = $_cut86;
+            $this->cut = $_cut176;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -3489,21 +4090,24 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value87[] = $this->value;
+            $_value177[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value87[] = $this->value;
+            $_value177[] = $this->value;
 
-            $this->value = $_value87;
+            $this->value = $_value177;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$objects, &$balance, &$quantity) {
-                foreach ($objects as $object) {
-                    $object->setAttribute("UB $year", [$balance, $quantity ?: 0]);
+                if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+                    // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
+                    foreach ($objects as $object) {
+                        $object->setAttribute("UB $year", [$balance, $quantity ?: null]);
+                    }
                 }
             });
         }
@@ -3533,12 +4137,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value90 = array();
+        $_value190 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value90[] = $this->value;
+            $_value190[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('PBUDGET')) === 'PBUDGET') {
                 $_success = true;
@@ -3552,7 +4156,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value90[] = $this->value;
+            $_value190[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3561,9 +4165,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value90[] = $this->value;
+            $_value190[] = $this->value;
 
+            $_position178 = $this->position;
+            $_cut179 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position178;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut179;
 
             if ($_success) {
                 $year = $this->value;
@@ -3571,9 +4187,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value90[] = $this->value;
+            $_value190[] = $this->value;
 
+            $_position180 = $this->position;
+            $_cut181 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseDATE();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position180;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut181;
 
             if ($_success) {
                 $period = $this->value;
@@ -3581,9 +4209,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value90[] = $this->value;
+            $_value190[] = $this->value;
 
+            $_position182 = $this->position;
+            $_cut183 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseACCOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position182;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut183;
 
             if ($_success) {
                 $account = $this->value;
@@ -3591,9 +4231,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value90[] = $this->value;
+            $_value190[] = $this->value;
 
+            $_position184 = $this->position;
+            $_cut185 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseOBJECT_LIST();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position184;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut185;
 
             if ($_success) {
                 $objects = $this->value;
@@ -3601,9 +4253,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value90[] = $this->value;
+            $_value190[] = $this->value;
 
+            $_position186 = $this->position;
+            $_cut187 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseAMOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position186;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut187;
 
             if ($_success) {
                 $balance = $this->value;
@@ -3611,21 +4275,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value90[] = $this->value;
+            $_value190[] = $this->value;
 
-            $_position88 = $this->position;
-            $_cut89 = $this->cut;
+            $_position188 = $this->position;
+            $_cut189 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseINT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position88;
+                $this->position = $_position188;
                 $this->value = null;
             }
 
-            $this->cut = $_cut89;
+            $this->cut = $_cut189;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -3633,25 +4297,28 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value90[] = $this->value;
+            $_value190[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value90[] = $this->value;
+            $_value190[] = $this->value;
 
-            $this->value = $_value90;
+            $this->value = $_value190;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$period, &$account, &$objects, &$balance, &$quantity) {
-                $key = "PBUDGET $year " . $period->format('Ym');
+                if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+                    // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
+                    $key = "PBUDGET $year " . $period->format('Ym');
 
-                $account->setAttribute($key, [$balance, $quantity ?: 0]);
+                    $account->setAttribute($key, [$balance, $quantity ?: null]);
 
-                foreach ($objects as $object) {
-                    $object->setAttribute($key, [$balance, $quantity ?: 0]);
+                    foreach ($objects as $object) {
+                        $object->setAttribute($key, [$balance, $quantity ?: null]);
+                    }
                 }
             });
         }
@@ -3681,12 +4348,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value93 = array();
+        $_value203 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value93[] = $this->value;
+            $_value203[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('PSALDO')) === 'PSALDO') {
                 $_success = true;
@@ -3700,7 +4367,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value93[] = $this->value;
+            $_value203[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3709,9 +4376,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value93[] = $this->value;
+            $_value203[] = $this->value;
 
+            $_position191 = $this->position;
+            $_cut192 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position191;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut192;
 
             if ($_success) {
                 $year = $this->value;
@@ -3719,9 +4398,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value93[] = $this->value;
+            $_value203[] = $this->value;
 
+            $_position193 = $this->position;
+            $_cut194 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseDATE();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position193;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut194;
 
             if ($_success) {
                 $period = $this->value;
@@ -3729,9 +4420,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value93[] = $this->value;
+            $_value203[] = $this->value;
 
+            $_position195 = $this->position;
+            $_cut196 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseACCOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position195;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut196;
 
             if ($_success) {
                 $account = $this->value;
@@ -3739,9 +4442,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value93[] = $this->value;
+            $_value203[] = $this->value;
 
+            $_position197 = $this->position;
+            $_cut198 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseOBJECT_LIST();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position197;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut198;
 
             if ($_success) {
                 $objects = $this->value;
@@ -3749,9 +4464,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value93[] = $this->value;
+            $_value203[] = $this->value;
 
+            $_position199 = $this->position;
+            $_cut200 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseAMOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position199;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut200;
 
             if ($_success) {
                 $balance = $this->value;
@@ -3759,21 +4486,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value93[] = $this->value;
+            $_value203[] = $this->value;
 
-            $_position91 = $this->position;
-            $_cut92 = $this->cut;
+            $_position201 = $this->position;
+            $_cut202 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseINT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position91;
+                $this->position = $_position201;
                 $this->value = null;
             }
 
-            $this->cut = $_cut92;
+            $this->cut = $_cut202;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -3781,25 +4508,28 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value93[] = $this->value;
+            $_value203[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value93[] = $this->value;
+            $_value203[] = $this->value;
 
-            $this->value = $_value93;
+            $this->value = $_value203;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$period, &$account, &$objects, &$balance, &$quantity) {
-                $key = "PSALDO $year " . $period->format('Ym');
+                if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+                    $key = "PSALDO $year " . $period->format('Ym');
+                    // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
 
-                $account->setAttribute($key, [$balance, $quantity ?: 0]);
+                    $account->setAttribute($key, [$balance, $quantity ?: null]);
 
-                foreach ($objects as $object) {
-                    $object->setAttribute($key, [$balance, $quantity ?: 0]);
+                    foreach ($objects as $object) {
+                        $object->setAttribute($key, [$balance, $quantity ?: null]);
+                    }
                 }
             });
         }
@@ -3829,12 +4559,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value96 = array();
+        $_value212 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value96[] = $this->value;
+            $_value212[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('RES')) === 'RES') {
                 $_success = true;
@@ -3848,7 +4578,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value96[] = $this->value;
+            $_value212[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3857,9 +4587,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value96[] = $this->value;
+            $_value212[] = $this->value;
 
+            $_position204 = $this->position;
+            $_cut205 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseINT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position204;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut205;
 
             if ($_success) {
                 $year = $this->value;
@@ -3867,9 +4609,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value96[] = $this->value;
+            $_value212[] = $this->value;
 
+            $_position206 = $this->position;
+            $_cut207 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseACCOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position206;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut207;
 
             if ($_success) {
                 $account = $this->value;
@@ -3877,9 +4631,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value96[] = $this->value;
+            $_value212[] = $this->value;
 
+            $_position208 = $this->position;
+            $_cut209 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseAMOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position208;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut209;
 
             if ($_success) {
                 $balance = $this->value;
@@ -3887,21 +4653,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value96[] = $this->value;
+            $_value212[] = $this->value;
 
-            $_position94 = $this->position;
-            $_cut95 = $this->cut;
+            $_position210 = $this->position;
+            $_cut211 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseINT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position94;
+                $this->position = $_position210;
                 $this->value = null;
             }
 
-            $this->cut = $_cut95;
+            $this->cut = $_cut211;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -3909,20 +4675,23 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value96[] = $this->value;
+            $_value212[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value96[] = $this->value;
+            $_value212[] = $this->value;
 
-            $this->value = $_value96;
+            $this->value = $_value212;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$balance, &$quantity) {
-                $account->setAttribute("RES $year", [$balance, $quantity ?: 0]);
+                if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
+                    // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
+                    $account->setAttribute("RES $year", [$balance, $quantity ?: null]);
+                }
             });
         }
 
@@ -3951,12 +4720,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value103 = array();
+        $_value225 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value103[] = $this->value;
+            $_value225[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('VER')) === 'VER') {
                 $_success = true;
@@ -3970,7 +4739,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value103[] = $this->value;
+            $_value225[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3979,9 +4748,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value103[] = $this->value;
+            $_value225[] = $this->value;
 
+            $_position213 = $this->position;
+            $_cut214 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position213;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut214;
 
             if ($_success) {
                 $series = $this->value;
@@ -3989,9 +4770,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value103[] = $this->value;
+            $_value225[] = $this->value;
 
+            $_position215 = $this->position;
+            $_cut216 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseSTRING();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position215;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut216;
 
             if ($_success) {
                 $number = $this->value;
@@ -3999,9 +4792,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value103[] = $this->value;
+            $_value225[] = $this->value;
 
+            $_position217 = $this->position;
+            $_cut218 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseDATE();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position217;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut218;
 
             if ($_success) {
                 $date = $this->value;
@@ -4009,21 +4814,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value103[] = $this->value;
+            $_value225[] = $this->value;
 
-            $_position97 = $this->position;
-            $_cut98 = $this->cut;
+            $_position219 = $this->position;
+            $_cut220 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position97;
+                $this->position = $_position219;
                 $this->value = null;
             }
 
-            $this->cut = $_cut98;
+            $this->cut = $_cut220;
 
             if ($_success) {
                 $desc = $this->value;
@@ -4031,21 +4836,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value103[] = $this->value;
+            $_value225[] = $this->value;
 
-            $_position99 = $this->position;
-            $_cut100 = $this->cut;
+            $_position221 = $this->position;
+            $_cut222 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseDATE();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position99;
+                $this->position = $_position221;
                 $this->value = null;
             }
 
-            $this->cut = $_cut100;
+            $this->cut = $_cut222;
 
             if ($_success) {
                 $regdate = $this->value;
@@ -4053,21 +4858,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value103[] = $this->value;
+            $_value225[] = $this->value;
 
-            $_position101 = $this->position;
-            $_cut102 = $this->cut;
+            $_position223 = $this->position;
+            $_cut224 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position101;
+                $this->position = $_position223;
                 $this->value = null;
             }
 
-            $this->cut = $_cut102;
+            $this->cut = $_cut224;
 
             if ($_success) {
                 $sign = $this->value;
@@ -4075,19 +4880,19 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value103[] = $this->value;
+            $_value225[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value103[] = $this->value;
+            $_value225[] = $this->value;
 
             $_success = $this->parseSUBROW_START();
         }
 
         if ($_success) {
-            $_value103[] = $this->value;
+            $_value225[] = $this->value;
 
             $_success = $this->parseTRANS_LIST();
 
@@ -4097,30 +4902,32 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value103[] = $this->value;
+            $_value225[] = $this->value;
 
             $_success = $this->parseSUBROW_END();
         }
 
         if ($_success) {
-            $_value103[] = $this->value;
+            $_value225[] = $this->value;
 
-            $this->value = $_value103;
+            $this->value = $_value225;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$series, &$number, &$date, &$desc, &$regdate, &$sign, &$trans) {
-                $this->getContainer()->addItem(
-                    $this->getVerificationBuilder()->createVerification(
-                        $series,
-                        $number,
-                        $date,
-                        $desc ?: '',
-                        $regdate ?: null,
-                        $sign ?: '',
-                        $trans
-                    )
-                );
+                if ($this->assertString($series) && $this->assertString($number) && $this->assertDate($date)) {
+                    $this->getContainer()->addItem(
+                        $this->getVerificationBuilder()->createVerification(
+                            $series,
+                            $number,
+                            $date,
+                            $desc ?: '',
+                            $regdate ?: null,
+                            $sign ?: '',
+                            $trans
+                        )
+                    );
+                }
             });
         }
 
@@ -4149,53 +4956,53 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value107 = array();
-        $_cut108 = $this->cut;
+        $_value229 = array();
+        $_cut230 = $this->cut;
 
         while (true) {
-            $_position106 = $this->position;
+            $_position228 = $this->position;
 
             $this->cut = false;
-            $_position104 = $this->position;
-            $_cut105 = $this->cut;
+            $_position226 = $this->position;
+            $_cut227 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseTRANS_POST();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position104;
+                $this->position = $_position226;
 
                 $_success = $this->parseBTRANS_POST();
             }
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position104;
+                $this->position = $_position226;
 
                 $_success = $this->parseRTRANS_POST();
             }
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position104;
+                $this->position = $_position226;
 
                 $_success = $this->parseUNKNOWN_POST();
             }
 
-            $this->cut = $_cut105;
+            $this->cut = $_cut227;
 
             if (!$_success) {
                 break;
             }
 
-            $_value107[] = $this->value;
+            $_value229[] = $this->value;
         }
 
         if (!$this->cut) {
             $_success = true;
-            $this->position = $_position106;
-            $this->value = $_value107;
+            $this->position = $_position228;
+            $this->value = $_value229;
         }
 
-        $this->cut = $_cut108;
+        $this->cut = $_cut230;
 
         if ($_success) {
             $trans = $this->value;
@@ -4237,12 +5044,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value117 = array();
+        $_value245 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value117[] = $this->value;
+            $_value245[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('TRANS')) === 'TRANS') {
                 $_success = true;
@@ -4256,7 +5063,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value117[] = $this->value;
+            $_value245[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -4265,9 +5072,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value117[] = $this->value;
+            $_value245[] = $this->value;
 
+            $_position231 = $this->position;
+            $_cut232 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseACCOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position231;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut232;
 
             if ($_success) {
                 $account = $this->value;
@@ -4275,9 +5094,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value117[] = $this->value;
+            $_value245[] = $this->value;
 
+            $_position233 = $this->position;
+            $_cut234 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseOBJECT_LIST();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position233;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut234;
 
             if ($_success) {
                 $objects = $this->value;
@@ -4285,9 +5116,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value117[] = $this->value;
+            $_value245[] = $this->value;
 
+            $_position235 = $this->position;
+            $_cut236 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseAMOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position235;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut236;
 
             if ($_success) {
                 $amount = $this->value;
@@ -4295,21 +5138,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value117[] = $this->value;
+            $_value245[] = $this->value;
 
-            $_position109 = $this->position;
-            $_cut110 = $this->cut;
+            $_position237 = $this->position;
+            $_cut238 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseDATE();
+            $_success = $this->parseOPTIONAL_DATE();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position109;
+                $this->position = $_position237;
                 $this->value = null;
             }
 
-            $this->cut = $_cut110;
+            $this->cut = $_cut238;
 
             if ($_success) {
                 $date = $this->value;
@@ -4317,21 +5160,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value117[] = $this->value;
+            $_value245[] = $this->value;
 
-            $_position111 = $this->position;
-            $_cut112 = $this->cut;
+            $_position239 = $this->position;
+            $_cut240 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position111;
+                $this->position = $_position239;
                 $this->value = null;
             }
 
-            $this->cut = $_cut112;
+            $this->cut = $_cut240;
 
             if ($_success) {
                 $desc = $this->value;
@@ -4339,21 +5182,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value117[] = $this->value;
+            $_value245[] = $this->value;
 
-            $_position113 = $this->position;
-            $_cut114 = $this->cut;
+            $_position241 = $this->position;
+            $_cut242 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseINT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position113;
+                $this->position = $_position241;
                 $this->value = null;
             }
 
-            $this->cut = $_cut114;
+            $this->cut = $_cut242;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -4361,50 +5204,52 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value117[] = $this->value;
+            $_value245[] = $this->value;
 
-            $_position115 = $this->position;
-            $_cut116 = $this->cut;
+            $_position243 = $this->position;
+            $_cut244 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position115;
+                $this->position = $_position243;
                 $this->value = null;
             }
 
-            $this->cut = $_cut116;
+            $this->cut = $_cut244;
 
             if ($_success) {
-                $signature = $this->value;
+                $sign = $this->value;
             }
         }
 
         if ($_success) {
-            $_value117[] = $this->value;
+            $_value245[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value117[] = $this->value;
+            $_value245[] = $this->value;
 
-            $this->value = $_value117;
+            $this->value = $_value245;
         }
 
         if ($_success) {
-            $this->value = call_user_func(function () use (&$account, &$objects, &$amount, &$date, &$desc, &$quantity, &$signature) {
-                return $this->getVerificationBuilder()->createTransaction(
-                    $account,
-                    $objects,
-                    $amount,
-                    $date ?: null,
-                    $desc ?: '',
-                    $quantity ?: 0,
-                    $signature ?: ''
-                );
+            $this->value = call_user_func(function () use (&$account, &$objects, &$amount, &$date, &$desc, &$quantity, &$sign) {
+                if ($this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($amount)) {
+                    return $this->getVerificationBuilder()->createTransaction(
+                        $account,
+                        $objects,
+                        $amount,
+                        $date ?: null,
+                        $desc ?: '',
+                        $quantity ?: null,
+                        $sign ?: ''
+                    );
+                }
             });
         }
 
@@ -4433,12 +5278,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value126 = array();
+        $_value260 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value126[] = $this->value;
+            $_value260[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('BTRANS')) === 'BTRANS') {
                 $_success = true;
@@ -4452,7 +5297,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value126[] = $this->value;
+            $_value260[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -4461,9 +5306,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value126[] = $this->value;
+            $_value260[] = $this->value;
 
+            $_position246 = $this->position;
+            $_cut247 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseACCOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position246;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut247;
 
             if ($_success) {
                 $account = $this->value;
@@ -4471,9 +5328,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value126[] = $this->value;
+            $_value260[] = $this->value;
 
+            $_position248 = $this->position;
+            $_cut249 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseOBJECT_LIST();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position248;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut249;
 
             if ($_success) {
                 $objects = $this->value;
@@ -4481,9 +5350,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value126[] = $this->value;
+            $_value260[] = $this->value;
 
+            $_position250 = $this->position;
+            $_cut251 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseAMOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position250;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut251;
 
             if ($_success) {
                 $amount = $this->value;
@@ -4491,21 +5372,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value126[] = $this->value;
+            $_value260[] = $this->value;
 
-            $_position118 = $this->position;
-            $_cut119 = $this->cut;
+            $_position252 = $this->position;
+            $_cut253 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseDATE();
+            $_success = $this->parseOPTIONAL_DATE();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position118;
+                $this->position = $_position252;
                 $this->value = null;
             }
 
-            $this->cut = $_cut119;
+            $this->cut = $_cut253;
 
             if ($_success) {
                 $date = $this->value;
@@ -4513,21 +5394,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value126[] = $this->value;
+            $_value260[] = $this->value;
 
-            $_position120 = $this->position;
-            $_cut121 = $this->cut;
+            $_position254 = $this->position;
+            $_cut255 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position120;
+                $this->position = $_position254;
                 $this->value = null;
             }
 
-            $this->cut = $_cut121;
+            $this->cut = $_cut255;
 
             if ($_success) {
                 $desc = $this->value;
@@ -4535,21 +5416,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value126[] = $this->value;
+            $_value260[] = $this->value;
 
-            $_position122 = $this->position;
-            $_cut123 = $this->cut;
+            $_position256 = $this->position;
+            $_cut257 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseINT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position122;
+                $this->position = $_position256;
                 $this->value = null;
             }
 
-            $this->cut = $_cut123;
+            $this->cut = $_cut257;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -4557,42 +5438,44 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value126[] = $this->value;
+            $_value260[] = $this->value;
 
-            $_position124 = $this->position;
-            $_cut125 = $this->cut;
+            $_position258 = $this->position;
+            $_cut259 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position124;
+                $this->position = $_position258;
                 $this->value = null;
             }
 
-            $this->cut = $_cut125;
+            $this->cut = $_cut259;
 
             if ($_success) {
-                $signature = $this->value;
+                $sign = $this->value;
             }
         }
 
         if ($_success) {
-            $_value126[] = $this->value;
+            $_value260[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value126[] = $this->value;
+            $_value260[] = $this->value;
 
-            $this->value = $_value126;
+            $this->value = $_value260;
         }
 
         if ($_success) {
-            $this->value = call_user_func(function () use (&$account, &$objects, &$amount, &$date, &$desc, &$quantity, &$signature) {
-                $this->getLogger()->notice('Detected a BTRANS post, removed transactions are not supported yet..');
+            $this->value = call_user_func(function () use (&$account, &$objects, &$amount, &$date, &$desc, &$quantity, &$sign) {
+                if ($this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($amount)) {
+                    $this->getLogger()->notice('Detected a BTRANS post, removed transactions are not supported yet..');
+                }
             });
         }
 
@@ -4621,12 +5504,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value135 = array();
+        $_value275 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value275[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('RTRANS')) === 'RTRANS') {
                 $_success = true;
@@ -4640,7 +5523,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value275[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -4649,9 +5532,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value275[] = $this->value;
 
+            $_position261 = $this->position;
+            $_cut262 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseACCOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position261;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut262;
 
             if ($_success) {
                 $account = $this->value;
@@ -4659,9 +5554,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value275[] = $this->value;
 
+            $_position263 = $this->position;
+            $_cut264 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseOBJECT_LIST();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position263;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut264;
 
             if ($_success) {
                 $objects = $this->value;
@@ -4669,9 +5576,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value275[] = $this->value;
 
+            $_position265 = $this->position;
+            $_cut266 = $this->cut;
+
+            $this->cut = false;
             $_success = $this->parseAMOUNT();
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position265;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut266;
 
             if ($_success) {
                 $amount = $this->value;
@@ -4679,21 +5598,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value275[] = $this->value;
 
-            $_position127 = $this->position;
-            $_cut128 = $this->cut;
+            $_position267 = $this->position;
+            $_cut268 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseDATE();
+            $_success = $this->parseOPTIONAL_DATE();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position127;
+                $this->position = $_position267;
                 $this->value = null;
             }
 
-            $this->cut = $_cut128;
+            $this->cut = $_cut268;
 
             if ($_success) {
                 $date = $this->value;
@@ -4701,21 +5620,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value275[] = $this->value;
 
-            $_position129 = $this->position;
-            $_cut130 = $this->cut;
+            $_position269 = $this->position;
+            $_cut270 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position129;
+                $this->position = $_position269;
                 $this->value = null;
             }
 
-            $this->cut = $_cut130;
+            $this->cut = $_cut270;
 
             if ($_success) {
                 $desc = $this->value;
@@ -4723,21 +5642,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value275[] = $this->value;
 
-            $_position131 = $this->position;
-            $_cut132 = $this->cut;
+            $_position271 = $this->position;
+            $_cut272 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseINT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position131;
+                $this->position = $_position271;
                 $this->value = null;
             }
 
-            $this->cut = $_cut132;
+            $this->cut = $_cut272;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -4745,42 +5664,44 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value275[] = $this->value;
 
-            $_position133 = $this->position;
-            $_cut134 = $this->cut;
+            $_position273 = $this->position;
+            $_cut274 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position133;
+                $this->position = $_position273;
                 $this->value = null;
             }
 
-            $this->cut = $_cut134;
+            $this->cut = $_cut274;
 
             if ($_success) {
-                $signature = $this->value;
+                $sign = $this->value;
             }
         }
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value275[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value275[] = $this->value;
 
-            $this->value = $_value135;
+            $this->value = $_value275;
         }
 
         if ($_success) {
-            $this->value = call_user_func(function () use (&$account, &$objects, &$amount, &$date, &$desc, &$quantity, &$signature) {
-                $this->getLogger()->notice('Detected a RTRANS post, added transactions are not supported yet..');
+            $this->value = call_user_func(function () use (&$account, &$objects, &$amount, &$date, &$desc, &$quantity, &$sign) {
+                if ($this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($amount)) {
+                    $this->getLogger()->notice('Detected a RTRANS post, added transactions are not supported yet..');
+                }
             });
         }
 
@@ -4809,25 +5730,25 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_position136 = $this->position;
-        $_cut137 = $this->cut;
+        $_position276 = $this->position;
+        $_cut277 = $this->cut;
 
         $this->cut = false;
         $_success = $this->parseUNKNOWN_POST();
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position136;
+            $this->position = $_position276;
 
             $_success = $this->parseINVALID_LINE();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position136;
+            $this->position = $_position276;
 
             $_success = $this->parseEMPTY_LINE();
         }
 
-        $this->cut = $_cut137;
+        $this->cut = $_cut277;
 
         $this->cache['VOID_ROW'][$_position] = array(
             'success' => $_success,
@@ -4854,15 +5775,15 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value143 = array();
+        $_value283 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value143[] = $this->value;
+            $_value283[] = $this->value;
 
-            $_position138 = $this->position;
-            $_cut139 = $this->cut;
+            $_position278 = $this->position;
+            $_cut279 = $this->cut;
 
             $this->cut = false;
             if (substr($this->string, $this->position, strlen('#')) === '#') {
@@ -4882,21 +5803,21 @@ class Grammar extends DependencyManager
                 $_success = false;
             }
 
-            $this->position = $_position138;
-            $this->cut = $_cut139;
+            $this->position = $_position278;
+            $this->cut = $_cut279;
         }
 
         if ($_success) {
-            $_value143[] = $this->value;
+            $_value283[] = $this->value;
 
             $_success = $this->parseSTRING();
 
             if ($_success) {
-                $_value141 = array($this->value);
-                $_cut142 = $this->cut;
+                $_value281 = array($this->value);
+                $_cut282 = $this->cut;
 
                 while (true) {
-                    $_position140 = $this->position;
+                    $_position280 = $this->position;
 
                     $this->cut = false;
                     $_success = $this->parseSTRING();
@@ -4905,16 +5826,16 @@ class Grammar extends DependencyManager
                         break;
                     }
 
-                    $_value141[] = $this->value;
+                    $_value281[] = $this->value;
                 }
 
                 if (!$this->cut) {
                     $_success = true;
-                    $this->position = $_position140;
-                    $this->value = $_value141;
+                    $this->position = $_position280;
+                    $this->value = $_value281;
                 }
 
-                $this->cut = $_cut142;
+                $this->cut = $_cut282;
             }
 
             if ($_success) {
@@ -4923,15 +5844,15 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value143[] = $this->value;
+            $_value283[] = $this->value;
 
             $_success = $this->parseEOL();
         }
 
         if ($_success) {
-            $_value143[] = $this->value;
+            $_value283[] = $this->value;
 
-            $this->value = $_value143;
+            $this->value = $_value283;
         }
 
         if ($_success) {
@@ -4965,15 +5886,15 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value149 = array();
+        $_value289 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value149[] = $this->value;
+            $_value289[] = $this->value;
 
-            $_position144 = $this->position;
-            $_cut145 = $this->cut;
+            $_position284 = $this->position;
+            $_cut285 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseVALID_LABEL();
@@ -4985,12 +5906,12 @@ class Grammar extends DependencyManager
                 $_success = false;
             }
 
-            $this->position = $_position144;
-            $this->cut = $_cut145;
+            $this->position = $_position284;
+            $this->cut = $_cut285;
         }
 
         if ($_success) {
-            $_value149[] = $this->value;
+            $_value289[] = $this->value;
 
             $_success = $this->parseVALID_CHARS();
 
@@ -5000,7 +5921,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value149[] = $this->value;
+            $_value289[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -5009,13 +5930,13 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value149[] = $this->value;
+            $_value289[] = $this->value;
 
-            $_value147 = array();
-            $_cut148 = $this->cut;
+            $_value287 = array();
+            $_cut288 = $this->cut;
 
             while (true) {
-                $_position146 = $this->position;
+                $_position286 = $this->position;
 
                 $this->cut = false;
                 $_success = $this->parseSTRING();
@@ -5024,16 +5945,16 @@ class Grammar extends DependencyManager
                     break;
                 }
 
-                $_value147[] = $this->value;
+                $_value287[] = $this->value;
             }
 
             if (!$this->cut) {
                 $_success = true;
-                $this->position = $_position146;
-                $this->value = $_value147;
+                $this->position = $_position286;
+                $this->value = $_value287;
             }
 
-            $this->cut = $_cut148;
+            $this->cut = $_cut288;
 
             if ($_success) {
                 $vars = $this->value;
@@ -5041,15 +5962,15 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value149[] = $this->value;
+            $_value289[] = $this->value;
 
             $_success = $this->parseEOL();
         }
 
         if ($_success) {
-            $_value149[] = $this->value;
+            $_value289[] = $this->value;
 
-            $this->value = $_value149;
+            $this->value = $_value289;
         }
 
         if ($_success) {
@@ -5091,8 +6012,8 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_position150 = $this->position;
-        $_cut151 = $this->cut;
+        $_position290 = $this->position;
+        $_cut291 = $this->cut;
 
         $this->cut = false;
         if (substr($this->string, $this->position, strlen('ADRESS')) === 'ADRESS') {
@@ -5106,7 +6027,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('BKOD')) === 'BKOD') {
                 $_success = true;
@@ -5120,7 +6041,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('DIM')) === 'DIM') {
                 $_success = true;
@@ -5134,7 +6055,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('ENHET')) === 'ENHET') {
                 $_success = true;
@@ -5148,7 +6069,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('FLAGGA')) === 'FLAGGA') {
                 $_success = true;
@@ -5162,7 +6083,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('FNAMN')) === 'FNAMN') {
                 $_success = true;
@@ -5176,7 +6097,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('FNR')) === 'FNR') {
                 $_success = true;
@@ -5190,7 +6111,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('FORMAT')) === 'FORMAT') {
                 $_success = true;
@@ -5204,7 +6125,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('FTYP')) === 'FTYP') {
                 $_success = true;
@@ -5218,7 +6139,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('GEN')) === 'GEN') {
                 $_success = true;
@@ -5232,7 +6153,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('IB')) === 'IB') {
                 $_success = true;
@@ -5246,7 +6167,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('KONTO')) === 'KONTO') {
                 $_success = true;
@@ -5260,7 +6181,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('KPTYP')) === 'KPTYP') {
                 $_success = true;
@@ -5274,7 +6195,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('KSUMMA')) === 'KSUMMA') {
                 $_success = true;
@@ -5288,7 +6209,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('KTYP')) === 'KTYP') {
                 $_success = true;
@@ -5302,7 +6223,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('OBJEKT')) === 'OBJEKT') {
                 $_success = true;
@@ -5316,7 +6237,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('OIB')) === 'OIB') {
                 $_success = true;
@@ -5330,7 +6251,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('OMFATTN')) === 'OMFATTN') {
                 $_success = true;
@@ -5344,7 +6265,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('ORGNR')) === 'ORGNR') {
                 $_success = true;
@@ -5358,7 +6279,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('OUB')) === 'OUB') {
                 $_success = true;
@@ -5372,7 +6293,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('PBUDGET')) === 'PBUDGET') {
                 $_success = true;
@@ -5386,7 +6307,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('PROGRAM')) === 'PROGRAM') {
                 $_success = true;
@@ -5400,7 +6321,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('PROSA')) === 'PROSA') {
                 $_success = true;
@@ -5414,7 +6335,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('PSALDO')) === 'PSALDO') {
                 $_success = true;
@@ -5428,7 +6349,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('RAR')) === 'RAR') {
                 $_success = true;
@@ -5442,7 +6363,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('RES')) === 'RES') {
                 $_success = true;
@@ -5456,7 +6377,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('SIETYP')) === 'SIETYP') {
                 $_success = true;
@@ -5470,7 +6391,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('SRU')) === 'SRU') {
                 $_success = true;
@@ -5484,7 +6405,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('TAXAR')) === 'TAXAR') {
                 $_success = true;
@@ -5498,7 +6419,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('TRANS')) === 'TRANS') {
                 $_success = true;
@@ -5512,7 +6433,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('RTRANS')) === 'RTRANS') {
                 $_success = true;
@@ -5526,7 +6447,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('BTRANS')) === 'BTRANS') {
                 $_success = true;
@@ -5540,7 +6461,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('UB')) === 'UB') {
                 $_success = true;
@@ -5554,7 +6475,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('UNDERDIM')) === 'UNDERDIM') {
                 $_success = true;
@@ -5568,7 +6489,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('VALUTA')) === 'VALUTA') {
                 $_success = true;
@@ -5582,7 +6503,7 @@ class Grammar extends DependencyManager
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position150;
+            $this->position = $_position290;
 
             if (substr($this->string, $this->position, strlen('VER')) === 'VER') {
                 $_success = true;
@@ -5595,7 +6516,7 @@ class Grammar extends DependencyManager
             }
         }
 
-        $this->cut = $_cut151;
+        $this->cut = $_cut291;
 
         $this->cache['VALID_LABEL'][$_position] = array(
             'success' => $_success,
@@ -5622,12 +6543,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value152 = array();
+        $_value292 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value152[] = $this->value;
+            $_value292[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('{')) === '{') {
                 $_success = true;
@@ -5641,21 +6562,21 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value152[] = $this->value;
+            $_value292[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value152[] = $this->value;
+            $_value292[] = $this->value;
 
             $_success = $this->parseEOL();
         }
 
         if ($_success) {
-            $_value152[] = $this->value;
+            $_value292[] = $this->value;
 
-            $this->value = $_value152;
+            $this->value = $_value292;
         }
 
         $this->cache['SUBROW_START'][$_position] = array(
@@ -5683,12 +6604,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value155 = array();
+        $_value295 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value155[] = $this->value;
+            $_value295[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('}')) === '}') {
                 $_success = true;
@@ -5702,33 +6623,33 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value155[] = $this->value;
+            $_value295[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value155[] = $this->value;
+            $_value295[] = $this->value;
 
-            $_position153 = $this->position;
-            $_cut154 = $this->cut;
+            $_position293 = $this->position;
+            $_cut294 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseEOL();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position153;
+                $this->position = $_position293;
                 $this->value = null;
             }
 
-            $this->cut = $_cut154;
+            $this->cut = $_cut294;
         }
 
         if ($_success) {
-            $_value155[] = $this->value;
+            $_value295[] = $this->value;
 
-            $this->value = $_value155;
+            $this->value = $_value295;
         }
 
         $this->cache['SUBROW_END'][$_position] = array(
@@ -5756,13 +6677,13 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value159 = array();
+        $_value299 = array();
 
-        $_value157 = array();
-        $_cut158 = $this->cut;
+        $_value297 = array();
+        $_cut298 = $this->cut;
 
         while (true) {
-            $_position156 = $this->position;
+            $_position296 = $this->position;
 
             $this->cut = false;
             $_success = $this->parseEMPTY_LINE();
@@ -5771,25 +6692,25 @@ class Grammar extends DependencyManager
                 break;
             }
 
-            $_value157[] = $this->value;
+            $_value297[] = $this->value;
         }
 
         if (!$this->cut) {
             $_success = true;
-            $this->position = $_position156;
-            $this->value = $_value157;
+            $this->position = $_position296;
+            $this->value = $_value297;
         }
 
-        $this->cut = $_cut158;
+        $this->cut = $_cut298;
 
         if ($_success) {
-            $_value159[] = $this->value;
+            $_value299[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value159[] = $this->value;
+            $_value299[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('#')) === '#') {
                 $_success = true;
@@ -5803,9 +6724,9 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value159[] = $this->value;
+            $_value299[] = $this->value;
 
-            $this->value = $_value159;
+            $this->value = $_value299;
         }
 
         $this->cache['ROW_START'][$_position] = array(
@@ -5833,13 +6754,13 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value165 = array();
+        $_value305 = array();
 
-        $_value161 = array();
-        $_cut162 = $this->cut;
+        $_value301 = array();
+        $_cut302 = $this->cut;
 
         while (true) {
-            $_position160 = $this->position;
+            $_position300 = $this->position;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
@@ -5848,49 +6769,49 @@ class Grammar extends DependencyManager
                 break;
             }
 
-            $_value161[] = $this->value;
+            $_value301[] = $this->value;
         }
 
         if (!$this->cut) {
             $_success = true;
-            $this->position = $_position160;
-            $this->value = $_value161;
+            $this->position = $_position300;
+            $this->value = $_value301;
         }
 
-        $this->cut = $_cut162;
+        $this->cut = $_cut302;
 
         if ($_success) {
             $fields = $this->value;
         }
 
         if ($_success) {
-            $_value165[] = $this->value;
+            $_value305[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value165[] = $this->value;
+            $_value305[] = $this->value;
 
-            $_position163 = $this->position;
-            $_cut164 = $this->cut;
+            $_position303 = $this->position;
+            $_cut304 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseEOL();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position163;
+                $this->position = $_position303;
                 $this->value = null;
             }
 
-            $this->cut = $_cut164;
+            $this->cut = $_cut304;
         }
 
         if ($_success) {
-            $_value165[] = $this->value;
+            $_value305[] = $this->value;
 
-            $this->value = $_value165;
+            $this->value = $_value305;
         }
 
         if ($_success) {
@@ -5914,6 +6835,55 @@ class Grammar extends DependencyManager
         return $_success;
     }
 
+    protected function parseOPTIONAL_DATE()
+    {
+        $_position = $this->position;
+
+        if (isset($this->cache['OPTIONAL_DATE'][$_position])) {
+            $_success = $this->cache['OPTIONAL_DATE'][$_position]['success'];
+            $this->position = $this->cache['OPTIONAL_DATE'][$_position]['position'];
+            $this->value = $this->cache['OPTIONAL_DATE'][$_position]['value'];
+
+            return $_success;
+        }
+
+        $_position306 = $this->position;
+        $_cut307 = $this->cut;
+
+        $this->cut = false;
+        $_success = $this->parseDATE();
+
+        if (!$_success && !$this->cut) {
+            $this->position = $_position306;
+
+            $_success = $this->parseEMPTY_STRING();
+        }
+
+        $this->cut = $_cut307;
+
+        if ($_success) {
+            $date = $this->value;
+        }
+
+        if ($_success) {
+            $this->value = call_user_func(function () use (&$date) {
+                return $date;
+            });
+        }
+
+        $this->cache['OPTIONAL_DATE'][$_position] = array(
+            'success' => $_success,
+            'position' => $this->position,
+            'value' => $this->value
+        );
+
+        if (!$_success) {
+            $this->report($_position, 'OPTIONAL_DATE');
+        }
+
+        return $_success;
+    }
+
     protected function parseDATE()
     {
         $_position = $this->position;
@@ -5926,26 +6896,26 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value168 = array();
+        $_value310 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value168[] = $this->value;
+            $_value310[] = $this->value;
 
-            $_position166 = $this->position;
-            $_cut167 = $this->cut;
+            $_position308 = $this->position;
+            $_cut309 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseRAW_DATE();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position166;
+                $this->position = $_position308;
 
                 $_success = $this->parseQUOTED_DATE();
             }
 
-            $this->cut = $_cut167;
+            $this->cut = $_cut309;
 
             if ($_success) {
                 $date = $this->value;
@@ -5953,15 +6923,15 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value168[] = $this->value;
+            $_value310[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value168[] = $this->value;
+            $_value310[] = $this->value;
 
-            $this->value = $_value168;
+            $this->value = $_value310;
         }
 
         if ($_success) {
@@ -5995,7 +6965,7 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value169 = array();
+        $_value311 = array();
 
         if (substr($this->string, $this->position, strlen('"')) === '"') {
             $_success = true;
@@ -6008,7 +6978,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value169[] = $this->value;
+            $_value311[] = $this->value;
 
             $_success = $this->parseRAW_DATE();
 
@@ -6018,7 +6988,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value169[] = $this->value;
+            $_value311[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('"')) === '"') {
                 $_success = true;
@@ -6032,9 +7002,9 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value169[] = $this->value;
+            $_value311[] = $this->value;
 
-            $this->value = $_value169;
+            $this->value = $_value311;
         }
 
         if ($_success) {
@@ -6068,9 +7038,9 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value177 = array();
+        $_value319 = array();
 
-        $_value170 = array();
+        $_value312 = array();
 
         if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
             $_success = true;
@@ -6081,7 +7051,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value170[] = $this->value;
+            $_value312[] = $this->value;
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -6093,7 +7063,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value170[] = $this->value;
+            $_value312[] = $this->value;
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -6105,7 +7075,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value170[] = $this->value;
+            $_value312[] = $this->value;
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -6117,9 +7087,9 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value170[] = $this->value;
+            $_value312[] = $this->value;
 
-            $this->value = $_value170;
+            $this->value = $_value312;
         }
 
         if ($_success) {
@@ -6127,13 +7097,13 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value177[] = $this->value;
+            $_value319[] = $this->value;
 
-            $_position172 = $this->position;
-            $_cut173 = $this->cut;
+            $_position314 = $this->position;
+            $_cut315 = $this->cut;
 
             $this->cut = false;
-            $_value171 = array();
+            $_value313 = array();
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -6144,7 +7114,7 @@ class Grammar extends DependencyManager
             }
 
             if ($_success) {
-                $_value171[] = $this->value;
+                $_value313[] = $this->value;
 
                 if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                     $_success = true;
@@ -6156,18 +7126,18 @@ class Grammar extends DependencyManager
             }
 
             if ($_success) {
-                $_value171[] = $this->value;
+                $_value313[] = $this->value;
 
-                $this->value = $_value171;
+                $this->value = $_value313;
             }
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position172;
+                $this->position = $_position314;
                 $this->value = null;
             }
 
-            $this->cut = $_cut173;
+            $this->cut = $_cut315;
 
             if ($_success) {
                 $month = $this->value;
@@ -6175,13 +7145,13 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value177[] = $this->value;
+            $_value319[] = $this->value;
 
-            $_position175 = $this->position;
-            $_cut176 = $this->cut;
+            $_position317 = $this->position;
+            $_cut318 = $this->cut;
 
             $this->cut = false;
-            $_value174 = array();
+            $_value316 = array();
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -6192,7 +7162,7 @@ class Grammar extends DependencyManager
             }
 
             if ($_success) {
-                $_value174[] = $this->value;
+                $_value316[] = $this->value;
 
                 if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                     $_success = true;
@@ -6204,18 +7174,18 @@ class Grammar extends DependencyManager
             }
 
             if ($_success) {
-                $_value174[] = $this->value;
+                $_value316[] = $this->value;
 
-                $this->value = $_value174;
+                $this->value = $_value316;
             }
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position175;
+                $this->position = $_position317;
                 $this->value = null;
             }
 
-            $this->cut = $_cut176;
+            $this->cut = $_cut318;
 
             if ($_success) {
                 $day = $this->value;
@@ -6223,9 +7193,9 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value177[] = $this->value;
+            $_value319[] = $this->value;
 
-            $this->value = $_value177;
+            $this->value = $_value319;
         }
 
         if ($_success) {
@@ -6263,26 +7233,26 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value180 = array();
+        $_value322 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value180[] = $this->value;
+            $_value322[] = $this->value;
 
-            $_position178 = $this->position;
-            $_cut179 = $this->cut;
+            $_position320 = $this->position;
+            $_cut321 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseRAW_AMOUNT();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position178;
+                $this->position = $_position320;
 
                 $_success = $this->parseQUOTED_AMOUNT();
             }
 
-            $this->cut = $_cut179;
+            $this->cut = $_cut321;
 
             if ($_success) {
                 $amount = $this->value;
@@ -6290,15 +7260,15 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value180[] = $this->value;
+            $_value322[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value180[] = $this->value;
+            $_value322[] = $this->value;
 
-            $this->value = $_value180;
+            $this->value = $_value322;
         }
 
         if ($_success) {
@@ -6332,7 +7302,7 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value181 = array();
+        $_value323 = array();
 
         if (substr($this->string, $this->position, strlen('"')) === '"') {
             $_success = true;
@@ -6345,7 +7315,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value181[] = $this->value;
+            $_value323[] = $this->value;
 
             $_success = $this->parseRAW_AMOUNT();
 
@@ -6355,7 +7325,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value181[] = $this->value;
+            $_value323[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('"')) === '"') {
                 $_success = true;
@@ -6369,9 +7339,9 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value181[] = $this->value;
+            $_value323[] = $this->value;
 
-            $this->value = $_value181;
+            $this->value = $_value323;
         }
 
         if ($_success) {
@@ -6405,10 +7375,10 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value194 = array();
+        $_value336 = array();
 
-        $_position182 = $this->position;
-        $_cut183 = $this->cut;
+        $_position324 = $this->position;
+        $_cut325 = $this->cut;
 
         $this->cut = false;
         if (substr($this->string, $this->position, strlen("-")) === "-") {
@@ -6423,18 +7393,18 @@ class Grammar extends DependencyManager
 
         if (!$_success && !$this->cut) {
             $_success = true;
-            $this->position = $_position182;
+            $this->position = $_position324;
             $this->value = null;
         }
 
-        $this->cut = $_cut183;
+        $this->cut = $_cut325;
 
         if ($_success) {
             $negation = $this->value;
         }
 
         if ($_success) {
-            $_value194[] = $this->value;
+            $_value336[] = $this->value;
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -6445,11 +7415,11 @@ class Grammar extends DependencyManager
             }
 
             if ($_success) {
-                $_value185 = array($this->value);
-                $_cut186 = $this->cut;
+                $_value327 = array($this->value);
+                $_cut328 = $this->cut;
 
                 while (true) {
-                    $_position184 = $this->position;
+                    $_position326 = $this->position;
 
                     $this->cut = false;
                     if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
@@ -6464,16 +7434,16 @@ class Grammar extends DependencyManager
                         break;
                     }
 
-                    $_value185[] = $this->value;
+                    $_value327[] = $this->value;
                 }
 
                 if (!$this->cut) {
                     $_success = true;
-                    $this->position = $_position184;
-                    $this->value = $_value185;
+                    $this->position = $_position326;
+                    $this->value = $_value327;
                 }
 
-                $this->cut = $_cut186;
+                $this->cut = $_cut328;
             }
 
             if ($_success) {
@@ -6482,10 +7452,10 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value194[] = $this->value;
+            $_value336[] = $this->value;
 
-            $_position187 = $this->position;
-            $_cut188 = $this->cut;
+            $_position329 = $this->position;
+            $_cut330 = $this->cut;
 
             $this->cut = false;
             if (substr($this->string, $this->position, strlen(".")) === ".") {
@@ -6500,20 +7470,20 @@ class Grammar extends DependencyManager
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position187;
+                $this->position = $_position329;
                 $this->value = null;
             }
 
-            $this->cut = $_cut188;
+            $this->cut = $_cut330;
         }
 
         if ($_success) {
-            $_value194[] = $this->value;
+            $_value336[] = $this->value;
 
-            $_value193 = array();
+            $_value335 = array();
 
-            $_position189 = $this->position;
-            $_cut190 = $this->cut;
+            $_position331 = $this->position;
+            $_cut332 = $this->cut;
 
             $this->cut = false;
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
@@ -6526,17 +7496,17 @@ class Grammar extends DependencyManager
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position189;
+                $this->position = $_position331;
                 $this->value = null;
             }
 
-            $this->cut = $_cut190;
+            $this->cut = $_cut332;
 
             if ($_success) {
-                $_value193[] = $this->value;
+                $_value335[] = $this->value;
 
-                $_position191 = $this->position;
-                $_cut192 = $this->cut;
+                $_position333 = $this->position;
+                $_cut334 = $this->cut;
 
                 $this->cut = false;
                 if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
@@ -6549,17 +7519,17 @@ class Grammar extends DependencyManager
 
                 if (!$_success && !$this->cut) {
                     $_success = true;
-                    $this->position = $_position191;
+                    $this->position = $_position333;
                     $this->value = null;
                 }
 
-                $this->cut = $_cut192;
+                $this->cut = $_cut334;
             }
 
             if ($_success) {
-                $_value193[] = $this->value;
+                $_value335[] = $this->value;
 
-                $this->value = $_value193;
+                $this->value = $_value335;
             }
 
             if ($_success) {
@@ -6568,9 +7538,9 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value194[] = $this->value;
+            $_value336[] = $this->value;
 
-            $this->value = $_value194;
+            $this->value = $_value336;
         }
 
         if ($_success) {
@@ -6641,7 +7611,7 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value195 = array();
+        $_value337 = array();
 
         $_success = $this->parseINT();
 
@@ -6650,9 +7620,9 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value195[] = $this->value;
+            $_value337[] = $this->value;
 
-            $_success = $this->parseSTRING();
+            $_success = $this->parseOBJECT_LIST_SAFE_STRING();
 
             if ($_success) {
                 $obj = $this->value;
@@ -6660,9 +7630,9 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value195[] = $this->value;
+            $_value337[] = $this->value;
 
-            $this->value = $_value195;
+            $this->value = $_value337;
         }
 
         if ($_success) {
@@ -6684,6 +7654,150 @@ class Grammar extends DependencyManager
         return $_success;
     }
 
+    protected function parseOBJECT_LIST_SAFE_STRING()
+    {
+        $_position = $this->position;
+
+        if (isset($this->cache['OBJECT_LIST_SAFE_STRING'][$_position])) {
+            $_success = $this->cache['OBJECT_LIST_SAFE_STRING'][$_position]['success'];
+            $this->position = $this->cache['OBJECT_LIST_SAFE_STRING'][$_position]['position'];
+            $this->value = $this->cache['OBJECT_LIST_SAFE_STRING'][$_position]['value'];
+
+            return $_success;
+        }
+
+        $_value340 = array();
+
+        $_success = $this->parse_();
+
+        if ($_success) {
+            $_value340[] = $this->value;
+
+            $_position338 = $this->position;
+            $_cut339 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseOBJECT_ID_SAFE_CHARS();
+
+            if (!$_success && !$this->cut) {
+                $this->position = $_position338;
+
+                $_success = $this->parseQUOTED_STRING();
+            }
+
+            $this->cut = $_cut339;
+
+            if ($_success) {
+                $string = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value340[] = $this->value;
+
+            $_success = $this->parse_();
+        }
+
+        if ($_success) {
+            $_value340[] = $this->value;
+
+            $this->value = $_value340;
+        }
+
+        if ($_success) {
+            $this->value = call_user_func(function () use (&$string) {
+                return $string;
+            });
+        }
+
+        $this->cache['OBJECT_LIST_SAFE_STRING'][$_position] = array(
+            'success' => $_success,
+            'position' => $this->position,
+            'value' => $this->value
+        );
+
+        if (!$_success) {
+            $this->report($_position, 'OBJECT_LIST_SAFE_STRING');
+        }
+
+        return $_success;
+    }
+
+    protected function parseOBJECT_ID_SAFE_CHARS()
+    {
+        $_position = $this->position;
+
+        if (isset($this->cache['OBJECT_ID_SAFE_CHARS'][$_position])) {
+            $_success = $this->cache['OBJECT_ID_SAFE_CHARS'][$_position]['success'];
+            $this->position = $this->cache['OBJECT_ID_SAFE_CHARS'][$_position]['position'];
+            $this->value = $this->cache['OBJECT_ID_SAFE_CHARS'][$_position]['value'];
+
+            return $_success;
+        }
+
+        if (preg_match('/^[a-zA-Z0-9!#$%&\'()*+,-.\\/:;<=>?@\\[\\\\\\]^_`|~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■]$/', substr($this->string, $this->position, 1))) {
+            $_success = true;
+            $this->value = substr($this->string, $this->position, 1);
+            $this->position += 1;
+        } else {
+            $_success = false;
+        }
+
+        if ($_success) {
+            $_value342 = array($this->value);
+            $_cut343 = $this->cut;
+
+            while (true) {
+                $_position341 = $this->position;
+
+                $this->cut = false;
+                if (preg_match('/^[a-zA-Z0-9!#$%&\'()*+,-.\\/:;<=>?@\\[\\\\\\]^_`|~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■]$/', substr($this->string, $this->position, 1))) {
+                    $_success = true;
+                    $this->value = substr($this->string, $this->position, 1);
+                    $this->position += 1;
+                } else {
+                    $_success = false;
+                }
+
+                if (!$_success) {
+                    break;
+                }
+
+                $_value342[] = $this->value;
+            }
+
+            if (!$this->cut) {
+                $_success = true;
+                $this->position = $_position341;
+                $this->value = $_value342;
+            }
+
+            $this->cut = $_cut343;
+        }
+
+        if ($_success) {
+            $chars = $this->value;
+        }
+
+        if ($_success) {
+            $this->value = call_user_func(function () use (&$chars) {
+                return implode($chars);
+            });
+        }
+
+        $this->cache['OBJECT_ID_SAFE_CHARS'][$_position] = array(
+            'success' => $_success,
+            'position' => $this->position,
+            'value' => $this->value
+        );
+
+        if (!$_success) {
+            $this->report($_position, 'OBJECT_ID_SAFE_CHARS');
+        }
+
+        return $_success;
+    }
+
     protected function parseOBJECT_LIST()
     {
         $_position = $this->position;
@@ -6696,12 +7810,12 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value199 = array();
+        $_value347 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value199[] = $this->value;
+            $_value347[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('{')) === '{') {
                 $_success = true;
@@ -6715,13 +7829,13 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value199[] = $this->value;
+            $_value347[] = $this->value;
 
-            $_value197 = array();
-            $_cut198 = $this->cut;
+            $_value345 = array();
+            $_cut346 = $this->cut;
 
             while (true) {
-                $_position196 = $this->position;
+                $_position344 = $this->position;
 
                 $this->cut = false;
                 $_success = $this->parseOBJECT();
@@ -6730,16 +7844,16 @@ class Grammar extends DependencyManager
                     break;
                 }
 
-                $_value197[] = $this->value;
+                $_value345[] = $this->value;
             }
 
             if (!$this->cut) {
                 $_success = true;
-                $this->position = $_position196;
-                $this->value = $_value197;
+                $this->position = $_position344;
+                $this->value = $_value345;
             }
 
-            $this->cut = $_cut198;
+            $this->cut = $_cut346;
 
             if ($_success) {
                 $objects = $this->value;
@@ -6747,7 +7861,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value199[] = $this->value;
+            $_value347[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('}')) === '}') {
                 $_success = true;
@@ -6761,15 +7875,15 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value199[] = $this->value;
+            $_value347[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value199[] = $this->value;
+            $_value347[] = $this->value;
 
-            $this->value = $_value199;
+            $this->value = $_value347;
         }
 
         if ($_success) {
@@ -6791,6 +7905,257 @@ class Grammar extends DependencyManager
         return $_success;
     }
 
+    protected function parseFLOAT()
+    {
+        $_position = $this->position;
+
+        if (isset($this->cache['FLOAT'][$_position])) {
+            $_success = $this->cache['FLOAT'][$_position]['success'];
+            $this->position = $this->cache['FLOAT'][$_position]['position'];
+            $this->value = $this->cache['FLOAT'][$_position]['value'];
+
+            return $_success;
+        }
+
+        $_value350 = array();
+
+        $_success = $this->parse_();
+
+        if ($_success) {
+            $_value350[] = $this->value;
+
+            $_position348 = $this->position;
+            $_cut349 = $this->cut;
+
+            $this->cut = false;
+            $_success = $this->parseRAW_FLOAT();
+
+            if (!$_success && !$this->cut) {
+                $this->position = $_position348;
+
+                $_success = $this->parseQUOTED_FLOAT();
+            }
+
+            $this->cut = $_cut349;
+
+            if ($_success) {
+                $float = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value350[] = $this->value;
+
+            $_success = $this->parse_();
+        }
+
+        if ($_success) {
+            $_value350[] = $this->value;
+
+            $this->value = $_value350;
+        }
+
+        if ($_success) {
+            $this->value = call_user_func(function () use (&$float) {
+                return new Amount($float);
+            });
+        }
+
+        $this->cache['FLOAT'][$_position] = array(
+            'success' => $_success,
+            'position' => $this->position,
+            'value' => $this->value
+        );
+
+        if (!$_success) {
+            $this->report($_position, 'FLOAT');
+        }
+
+        return $_success;
+    }
+
+    protected function parseQUOTED_FLOAT()
+    {
+        $_position = $this->position;
+
+        if (isset($this->cache['QUOTED_FLOAT'][$_position])) {
+            $_success = $this->cache['QUOTED_FLOAT'][$_position]['success'];
+            $this->position = $this->cache['QUOTED_FLOAT'][$_position]['position'];
+            $this->value = $this->cache['QUOTED_FLOAT'][$_position]['value'];
+
+            return $_success;
+        }
+
+        $_value351 = array();
+
+        if (substr($this->string, $this->position, strlen('"')) === '"') {
+            $_success = true;
+            $this->value = substr($this->string, $this->position, strlen('"'));
+            $this->position += strlen('"');
+        } else {
+            $_success = false;
+
+            $this->report($this->position, '\'"\'');
+        }
+
+        if ($_success) {
+            $_value351[] = $this->value;
+
+            $_success = $this->parseRAW_FLOAT();
+
+            if ($_success) {
+                $float = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value351[] = $this->value;
+
+            if (substr($this->string, $this->position, strlen('"')) === '"') {
+                $_success = true;
+                $this->value = substr($this->string, $this->position, strlen('"'));
+                $this->position += strlen('"');
+            } else {
+                $_success = false;
+
+                $this->report($this->position, '\'"\'');
+            }
+        }
+
+        if ($_success) {
+            $_value351[] = $this->value;
+
+            $this->value = $_value351;
+        }
+
+        if ($_success) {
+            $this->value = call_user_func(function () use (&$float) {
+                return $float;
+            });
+        }
+
+        $this->cache['QUOTED_FLOAT'][$_position] = array(
+            'success' => $_success,
+            'position' => $this->position,
+            'value' => $this->value
+        );
+
+        if (!$_success) {
+            $this->report($_position, 'QUOTED_FLOAT');
+        }
+
+        return $_success;
+    }
+
+    protected function parseRAW_FLOAT()
+    {
+        $_position = $this->position;
+
+        if (isset($this->cache['RAW_FLOAT'][$_position])) {
+            $_success = $this->cache['RAW_FLOAT'][$_position]['success'];
+            $this->position = $this->cache['RAW_FLOAT'][$_position]['position'];
+            $this->value = $this->cache['RAW_FLOAT'][$_position]['value'];
+
+            return $_success;
+        }
+
+        $_value357 = array();
+
+        $_success = $this->parseRAW_INT();
+
+        if ($_success) {
+            $int = $this->value;
+        }
+
+        if ($_success) {
+            $_value357[] = $this->value;
+
+            $_position352 = $this->position;
+            $_cut353 = $this->cut;
+
+            $this->cut = false;
+            if (substr($this->string, $this->position, strlen('.')) === '.') {
+                $_success = true;
+                $this->value = substr($this->string, $this->position, strlen('.'));
+                $this->position += strlen('.');
+            } else {
+                $_success = false;
+
+                $this->report($this->position, '\'.\'');
+            }
+
+            if (!$_success && !$this->cut) {
+                $_success = true;
+                $this->position = $_position352;
+                $this->value = null;
+            }
+
+            $this->cut = $_cut353;
+        }
+
+        if ($_success) {
+            $_value357[] = $this->value;
+
+            $_value355 = array();
+            $_cut356 = $this->cut;
+
+            while (true) {
+                $_position354 = $this->position;
+
+                $this->cut = false;
+                if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
+                    $_success = true;
+                    $this->value = substr($this->string, $this->position, 1);
+                    $this->position += 1;
+                } else {
+                    $_success = false;
+                }
+
+                if (!$_success) {
+                    break;
+                }
+
+                $_value355[] = $this->value;
+            }
+
+            if (!$this->cut) {
+                $_success = true;
+                $this->position = $_position354;
+                $this->value = $_value355;
+            }
+
+            $this->cut = $_cut356;
+
+            if ($_success) {
+                $trailing = $this->value;
+            }
+        }
+
+        if ($_success) {
+            $_value357[] = $this->value;
+
+            $this->value = $_value357;
+        }
+
+        if ($_success) {
+            $this->value = call_user_func(function () use (&$int, &$trailing) {
+                return $int.'.'.implode($trailing);
+            });
+        }
+
+        $this->cache['RAW_FLOAT'][$_position] = array(
+            'success' => $_success,
+            'position' => $this->position,
+            'value' => $this->value
+        );
+
+        if (!$_success) {
+            $this->report($_position, 'RAW_FLOAT');
+        }
+
+        return $_success;
+    }
+
     protected function parseINT()
     {
         $_position = $this->position;
@@ -6803,26 +8168,26 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value202 = array();
+        $_value360 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value202[] = $this->value;
+            $_value360[] = $this->value;
 
-            $_position200 = $this->position;
-            $_cut201 = $this->cut;
+            $_position358 = $this->position;
+            $_cut359 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseRAW_INT();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position200;
+                $this->position = $_position358;
 
                 $_success = $this->parseQUOTED_INT();
             }
 
-            $this->cut = $_cut201;
+            $this->cut = $_cut359;
 
             if ($_success) {
                 $int = $this->value;
@@ -6830,15 +8195,15 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value202[] = $this->value;
+            $_value360[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value202[] = $this->value;
+            $_value360[] = $this->value;
 
-            $this->value = $_value202;
+            $this->value = $_value360;
         }
 
         if ($_success) {
@@ -6872,7 +8237,7 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value203 = array();
+        $_value361 = array();
 
         if (substr($this->string, $this->position, strlen('"')) === '"') {
             $_success = true;
@@ -6885,7 +8250,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value203[] = $this->value;
+            $_value361[] = $this->value;
 
             $_success = $this->parseRAW_INT();
 
@@ -6895,7 +8260,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value203[] = $this->value;
+            $_value361[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('"')) === '"') {
                 $_success = true;
@@ -6909,9 +8274,9 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value203[] = $this->value;
+            $_value361[] = $this->value;
 
-            $this->value = $_value203;
+            $this->value = $_value361;
         }
 
         if ($_success) {
@@ -6945,10 +8310,10 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value209 = array();
+        $_value367 = array();
 
-        $_position204 = $this->position;
-        $_cut205 = $this->cut;
+        $_position362 = $this->position;
+        $_cut363 = $this->cut;
 
         $this->cut = false;
         if (substr($this->string, $this->position, strlen("-")) === "-") {
@@ -6963,18 +8328,18 @@ class Grammar extends DependencyManager
 
         if (!$_success && !$this->cut) {
             $_success = true;
-            $this->position = $_position204;
+            $this->position = $_position362;
             $this->value = null;
         }
 
-        $this->cut = $_cut205;
+        $this->cut = $_cut363;
 
         if ($_success) {
             $negation = $this->value;
         }
 
         if ($_success) {
-            $_value209[] = $this->value;
+            $_value367[] = $this->value;
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -6985,11 +8350,11 @@ class Grammar extends DependencyManager
             }
 
             if ($_success) {
-                $_value207 = array($this->value);
-                $_cut208 = $this->cut;
+                $_value365 = array($this->value);
+                $_cut366 = $this->cut;
 
                 while (true) {
-                    $_position206 = $this->position;
+                    $_position364 = $this->position;
 
                     $this->cut = false;
                     if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
@@ -7004,16 +8369,16 @@ class Grammar extends DependencyManager
                         break;
                     }
 
-                    $_value207[] = $this->value;
+                    $_value365[] = $this->value;
                 }
 
                 if (!$this->cut) {
                     $_success = true;
-                    $this->position = $_position206;
-                    $this->value = $_value207;
+                    $this->position = $_position364;
+                    $this->value = $_value365;
                 }
 
-                $this->cut = $_cut208;
+                $this->cut = $_cut366;
             }
 
             if ($_success) {
@@ -7022,9 +8387,9 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value209[] = $this->value;
+            $_value367[] = $this->value;
 
-            $this->value = $_value209;
+            $this->value = $_value367;
         }
 
         if ($_success) {
@@ -7058,26 +8423,26 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value212 = array();
+        $_value370 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value212[] = $this->value;
+            $_value370[] = $this->value;
 
-            $_position210 = $this->position;
-            $_cut211 = $this->cut;
+            $_position368 = $this->position;
+            $_cut369 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseRAW_BOOLEAN();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position210;
+                $this->position = $_position368;
 
                 $_success = $this->parseQUOTED_BOOLEAN();
             }
 
-            $this->cut = $_cut211;
+            $this->cut = $_cut369;
 
             if ($_success) {
                 $bool = $this->value;
@@ -7085,15 +8450,15 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value212[] = $this->value;
+            $_value370[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value212[] = $this->value;
+            $_value370[] = $this->value;
 
-            $this->value = $_value212;
+            $this->value = $_value370;
         }
 
         if ($_success) {
@@ -7127,7 +8492,7 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value213 = array();
+        $_value371 = array();
 
         if (substr($this->string, $this->position, strlen('"')) === '"') {
             $_success = true;
@@ -7140,7 +8505,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value213[] = $this->value;
+            $_value371[] = $this->value;
 
             $_success = $this->parseRAW_BOOLEAN();
 
@@ -7150,7 +8515,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value213[] = $this->value;
+            $_value371[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('"')) === '"') {
                 $_success = true;
@@ -7164,9 +8529,9 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value213[] = $this->value;
+            $_value371[] = $this->value;
 
-            $this->value = $_value213;
+            $this->value = $_value371;
         }
 
         if ($_success) {
@@ -7243,26 +8608,32 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value216 = array();
+        $_value374 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value216[] = $this->value;
+            $_value374[] = $this->value;
 
-            $_position214 = $this->position;
-            $_cut215 = $this->cut;
+            $_position372 = $this->position;
+            $_cut373 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseVALID_CHARS();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position214;
+                $this->position = $_position372;
 
                 $_success = $this->parseQUOTED_STRING();
             }
 
-            $this->cut = $_cut215;
+            if (!$_success && !$this->cut) {
+                $this->position = $_position372;
+
+                $_success = $this->parseEMPTY_STRING();
+            }
+
+            $this->cut = $_cut373;
 
             if ($_success) {
                 $string = $this->value;
@@ -7270,15 +8641,15 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value216[] = $this->value;
+            $_value374[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value216[] = $this->value;
+            $_value374[] = $this->value;
 
-            $this->value = $_value216;
+            $this->value = $_value374;
         }
 
         if ($_success) {
@@ -7300,6 +8671,47 @@ class Grammar extends DependencyManager
         return $_success;
     }
 
+    protected function parseEMPTY_STRING()
+    {
+        $_position = $this->position;
+
+        if (isset($this->cache['EMPTY_STRING'][$_position])) {
+            $_success = $this->cache['EMPTY_STRING'][$_position]['success'];
+            $this->position = $this->cache['EMPTY_STRING'][$_position]['position'];
+            $this->value = $this->cache['EMPTY_STRING'][$_position]['value'];
+
+            return $_success;
+        }
+
+        if (substr($this->string, $this->position, strlen('""')) === '""') {
+            $_success = true;
+            $this->value = substr($this->string, $this->position, strlen('""'));
+            $this->position += strlen('""');
+        } else {
+            $_success = false;
+
+            $this->report($this->position, '\'""\'');
+        }
+
+        if ($_success) {
+            $this->value = call_user_func(function () {
+                return '';
+            });
+        }
+
+        $this->cache['EMPTY_STRING'][$_position] = array(
+            'success' => $_success,
+            'position' => $this->position,
+            'value' => $this->value
+        );
+
+        if (!$_success) {
+            $this->report($_position, 'EMPTY_STRING');
+        }
+
+        return $_success;
+    }
+
     protected function parseQUOTED_STRING()
     {
         $_position = $this->position;
@@ -7312,7 +8724,7 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value222 = array();
+        $_value380 = array();
 
         if (substr($this->string, $this->position, strlen('"')) === '"') {
             $_success = true;
@@ -7325,23 +8737,23 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value222[] = $this->value;
+            $_value380[] = $this->value;
 
-            $_value220 = array();
-            $_cut221 = $this->cut;
+            $_value378 = array();
+            $_cut379 = $this->cut;
 
             while (true) {
-                $_position219 = $this->position;
+                $_position377 = $this->position;
 
                 $this->cut = false;
-                $_position217 = $this->position;
-                $_cut218 = $this->cut;
+                $_position375 = $this->position;
+                $_cut376 = $this->cut;
 
                 $this->cut = false;
                 $_success = $this->parseESCAPED_QUOTE();
 
                 if (!$_success && !$this->cut) {
-                    $this->position = $_position217;
+                    $this->position = $_position375;
 
                     if (substr($this->string, $this->position, strlen(' ')) === ' ') {
                         $_success = true;
@@ -7355,27 +8767,27 @@ class Grammar extends DependencyManager
                 }
 
                 if (!$_success && !$this->cut) {
-                    $this->position = $_position217;
+                    $this->position = $_position375;
 
                     $_success = $this->parseVALID_CHARS();
                 }
 
-                $this->cut = $_cut218;
+                $this->cut = $_cut376;
 
                 if (!$_success) {
                     break;
                 }
 
-                $_value220[] = $this->value;
+                $_value378[] = $this->value;
             }
 
             if (!$this->cut) {
                 $_success = true;
-                $this->position = $_position219;
-                $this->value = $_value220;
+                $this->position = $_position377;
+                $this->value = $_value378;
             }
 
-            $this->cut = $_cut221;
+            $this->cut = $_cut379;
 
             if ($_success) {
                 $string = $this->value;
@@ -7383,7 +8795,7 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value222[] = $this->value;
+            $_value380[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('"')) === '"') {
                 $_success = true;
@@ -7397,9 +8809,9 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value222[] = $this->value;
+            $_value380[] = $this->value;
 
-            $this->value = $_value222;
+            $this->value = $_value380;
         }
 
         if ($_success) {
@@ -7416,81 +8828,6 @@ class Grammar extends DependencyManager
 
         if (!$_success) {
             $this->report($_position, 'QUOTED_STRING');
-        }
-
-        return $_success;
-    }
-
-    protected function parseVALID_CHARS()
-    {
-        $_position = $this->position;
-
-        if (isset($this->cache['VALID_CHARS'][$_position])) {
-            $_success = $this->cache['VALID_CHARS'][$_position]['success'];
-            $this->position = $this->cache['VALID_CHARS'][$_position]['position'];
-            $this->value = $this->cache['VALID_CHARS'][$_position]['value'];
-
-            return $_success;
-        }
-
-        if (preg_match('/^[a-zA-Z0-9!#$%&\'()*+,-.\\/:;<=>?@\\[\\\\\\]^_`{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■]$/', substr($this->string, $this->position, 1))) {
-            $_success = true;
-            $this->value = substr($this->string, $this->position, 1);
-            $this->position += 1;
-        } else {
-            $_success = false;
-        }
-
-        if ($_success) {
-            $_value224 = array($this->value);
-            $_cut225 = $this->cut;
-
-            while (true) {
-                $_position223 = $this->position;
-
-                $this->cut = false;
-                if (preg_match('/^[a-zA-Z0-9!#$%&\'()*+,-.\\/:;<=>?@\\[\\\\\\]^_`{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■]$/', substr($this->string, $this->position, 1))) {
-                    $_success = true;
-                    $this->value = substr($this->string, $this->position, 1);
-                    $this->position += 1;
-                } else {
-                    $_success = false;
-                }
-
-                if (!$_success) {
-                    break;
-                }
-
-                $_value224[] = $this->value;
-            }
-
-            if (!$this->cut) {
-                $_success = true;
-                $this->position = $_position223;
-                $this->value = $_value224;
-            }
-
-            $this->cut = $_cut225;
-        }
-
-        if ($_success) {
-            $chars = $this->value;
-        }
-
-        if ($_success) {
-            $this->value = call_user_func(function () use (&$chars) {
-                return implode($chars);
-            });
-        }
-
-        $this->cache['VALID_CHARS'][$_position] = array(
-            'success' => $_success,
-            'position' => $this->position,
-            'value' => $this->value
-        );
-
-        if (!$_success) {
-            $this->report($_position, 'VALID_CHARS');
         }
 
         return $_success;
@@ -7537,6 +8874,81 @@ class Grammar extends DependencyManager
         return $_success;
     }
 
+    protected function parseVALID_CHARS()
+    {
+        $_position = $this->position;
+
+        if (isset($this->cache['VALID_CHARS'][$_position])) {
+            $_success = $this->cache['VALID_CHARS'][$_position]['success'];
+            $this->position = $this->cache['VALID_CHARS'][$_position]['position'];
+            $this->value = $this->cache['VALID_CHARS'][$_position]['value'];
+
+            return $_success;
+        }
+
+        if (preg_match('/^[a-zA-Z0-9!#$%&\'()*+,-.\\/:;<=>?@\\[\\\\\\]^_`{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■]$/', substr($this->string, $this->position, 1))) {
+            $_success = true;
+            $this->value = substr($this->string, $this->position, 1);
+            $this->position += 1;
+        } else {
+            $_success = false;
+        }
+
+        if ($_success) {
+            $_value382 = array($this->value);
+            $_cut383 = $this->cut;
+
+            while (true) {
+                $_position381 = $this->position;
+
+                $this->cut = false;
+                if (preg_match('/^[a-zA-Z0-9!#$%&\'()*+,-.\\/:;<=>?@\\[\\\\\\]^_`{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■]$/', substr($this->string, $this->position, 1))) {
+                    $_success = true;
+                    $this->value = substr($this->string, $this->position, 1);
+                    $this->position += 1;
+                } else {
+                    $_success = false;
+                }
+
+                if (!$_success) {
+                    break;
+                }
+
+                $_value382[] = $this->value;
+            }
+
+            if (!$this->cut) {
+                $_success = true;
+                $this->position = $_position381;
+                $this->value = $_value382;
+            }
+
+            $this->cut = $_cut383;
+        }
+
+        if ($_success) {
+            $chars = $this->value;
+        }
+
+        if ($_success) {
+            $this->value = call_user_func(function () use (&$chars) {
+                return implode($chars);
+            });
+        }
+
+        $this->cache['VALID_CHARS'][$_position] = array(
+            'success' => $_success,
+            'position' => $this->position,
+            'value' => $this->value
+        );
+
+        if (!$_success) {
+            $this->report($_position, 'VALID_CHARS');
+        }
+
+        return $_success;
+    }
+
     protected function parseEMPTY_LINE()
     {
         $_position = $this->position;
@@ -7549,20 +8961,20 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value226 = array();
+        $_value384 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value226[] = $this->value;
+            $_value384[] = $this->value;
 
             $_success = $this->parseEOL();
         }
 
         if ($_success) {
-            $_value226[] = $this->value;
+            $_value384[] = $this->value;
 
-            $this->value = $_value226;
+            $this->value = $_value384;
         }
 
         $this->cache['EMPTY_LINE'][$_position] = array(
@@ -7590,10 +9002,10 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value229 = array();
+        $_value387 = array();
 
-        $_position227 = $this->position;
-        $_cut228 = $this->cut;
+        $_position385 = $this->position;
+        $_cut386 = $this->cut;
 
         $this->cut = false;
         if (substr($this->string, $this->position, strlen("\r")) === "\r") {
@@ -7608,14 +9020,14 @@ class Grammar extends DependencyManager
 
         if (!$_success && !$this->cut) {
             $_success = true;
-            $this->position = $_position227;
+            $this->position = $_position385;
             $this->value = null;
         }
 
-        $this->cut = $_cut228;
+        $this->cut = $_cut386;
 
         if ($_success) {
-            $_value229[] = $this->value;
+            $_value387[] = $this->value;
 
             if (substr($this->string, $this->position, strlen("\n")) === "\n") {
                 $_success = true;
@@ -7629,9 +9041,9 @@ class Grammar extends DependencyManager
         }
 
         if ($_success) {
-            $_value229[] = $this->value;
+            $_value387[] = $this->value;
 
-            $this->value = $_value229;
+            $this->value = $_value387;
         }
 
         if ($_success) {
@@ -7665,15 +9077,15 @@ class Grammar extends DependencyManager
             return $_success;
         }
 
-        $_value233 = array();
-        $_cut234 = $this->cut;
+        $_value391 = array();
+        $_cut392 = $this->cut;
 
         while (true) {
-            $_position232 = $this->position;
+            $_position390 = $this->position;
 
             $this->cut = false;
-            $_position230 = $this->position;
-            $_cut231 = $this->cut;
+            $_position388 = $this->position;
+            $_cut389 = $this->cut;
 
             $this->cut = false;
             if (substr($this->string, $this->position, strlen(" ")) === " ") {
@@ -7687,7 +9099,7 @@ class Grammar extends DependencyManager
             }
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position230;
+                $this->position = $_position388;
 
                 if (substr($this->string, $this->position, strlen("\t")) === "\t") {
                     $_success = true;
@@ -7700,22 +9112,22 @@ class Grammar extends DependencyManager
                 }
             }
 
-            $this->cut = $_cut231;
+            $this->cut = $_cut389;
 
             if (!$_success) {
                 break;
             }
 
-            $_value233[] = $this->value;
+            $_value391[] = $this->value;
         }
 
         if (!$this->cut) {
             $_success = true;
-            $this->position = $_position232;
-            $this->value = $_value233;
+            $this->position = $_position390;
+            $this->value = $_value391;
         }
 
-        $this->cut = $_cut234;
+        $this->cut = $_cut392;
 
         $this->cache['_'][$_position] = array(
             'success' => $_success,

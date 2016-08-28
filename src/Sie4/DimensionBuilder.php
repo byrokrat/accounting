@@ -96,7 +96,7 @@ class DimensionBuilder
             return $this->dims[$dimId];
         }
 
-        $this->logger->warning("Dimension number $dimId not defined");
+        $this->logger->warning("Dimension number $dimId not defined", ['_addToLineCount' => 1]);
 
         if ('2' === $dimId) {
             return $this->dims['2'] = new Dimension('2', 'Kostnadsbärare', $this->getDimension('1'));
@@ -119,7 +119,7 @@ class DimensionBuilder
             return $this->dims["$super.$objectId"];
         }
 
-        $this->logger->warning("Object number $super.$objectId not defined");
+        $this->logger->warning("Object number $super.$objectId not defined", ['_addToLineCount' => 1]);
 
         $this->addObject($super, $objectId, 'UNSPECIFIED');
 

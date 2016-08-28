@@ -111,7 +111,7 @@ class AccountBuilder
     public function getAccount(string $number): Account
     {
         if (!isset($this->accounts[$number])) {
-            $this->logger->warning("Account number $number not defined");
+            $this->logger->warning("Account number $number not defined", ['_addToLineCount' => 1]);
             $this->addAccount($number, 'UNSPECIFIED');
         }
 

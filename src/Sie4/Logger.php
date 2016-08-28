@@ -149,12 +149,17 @@ class Logger extends AbstractLogger
      */
     private function format(string $level, string $msg, array $context): string
     {
+        $lineCount = $this->lineCount;
+        $lineCount += $context['_addToLineCount'] ?? 0;
+
+        unset($context['_addToLineCount']);
+
         return sprintf(
             '[%s] %s (%s: %s) %s',
             strtoupper($level),
             $msg,
-            $this->lineCount,
-            trim($this->lines[$this->lineCount - 1] ?? ''),
+            $lineCount,
+            trim($this->lines[$lineCount - 1] ?? ''),
             json_encode((object)$context)
         );
     }

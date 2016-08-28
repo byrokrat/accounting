@@ -23,11 +23,13 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\Sie4;
 
 use byrokrat\accounting\Container;
+use byrokrat\accounting\Account;
+use byrokrat\amount\Currency;
 
 /**
  * Manage parser dependencies
  */
-class DependencyManager
+class AbstractParser
 {
     /**
      * @var AccountBuilder Builder for account objects
@@ -131,5 +133,79 @@ class DependencyManager
     protected function getVerificationBuilder(): VerificationBuilder
     {
         return $this->verificationBuilder;
+    }
+
+    /**
+     * Assert that $expr is thruthy and log a warning if not
+     *
+     * @param  mixed  $expr
+     * @param  string $failureMessage
+     * @return bool   The thruthiness of $expr
+     */
+    protected function assert($expr, string $failureMessage): bool
+    {
+        if ($expr) {
+            return true;
+        }
+
+        $this->getLogger()->warning($failureMessage);
+
+        return false;
+    }
+
+    /**
+     * Assert that $expr is an array and log warning if not
+     */
+    protected function assertArray($expr, $failureMessage = 'Expected a set of values'): bool
+    {
+        return $this->assert(is_array($expr), $failureMessage);
+    }
+
+    /**
+     * Assert that $expr is a boolen and log warning if not
+     */
+    protected function assertBool($expr, $failureMessage = 'Expected bool (1 or 0)'): bool
+    {
+        return $this->assert(is_bool($expr), $failureMessage);
+    }
+
+    /**
+     * Assert that $expr is an integer and log warning if not
+     */
+    protected function assertInt($expr, $failureMessage = 'Expected integer'): bool
+    {
+        return $this->assert(is_int($expr), $failureMessage);
+    }
+
+    /**
+     * Assert that $expr is a string and log warning if not
+     */
+    protected function assertString($expr, $failureMessage = 'Expected string'): bool
+    {
+        return $this->assert(is_string($expr), $failureMessage);
+    }
+
+    /**
+     * Assert that $expr is an account and log warning if not
+     */
+    protected function assertAccount($expr, $failureMessage = 'Expected account'): bool
+    {
+        return $this->assert(is_object($expr) && $expr instanceof Account, $failureMessage);
+    }
+
+    /**
+     * Assert that $expr is a monetary amount and log warning if not
+     */
+    protected function assertAmount($expr, $failureMessage = 'Expected monetary amount'): bool
+    {
+        return $this->assert(is_object($expr) && $expr instanceof Currency, $failureMessage);
+    }
+
+    /**
+     * Assert that $expr is a Date and log warning if not
+     */
+    protected function assertDate($expr, $failureMessage = 'Expected date'): bool
+    {
+        return $this->assert(is_object($expr) && $expr instanceof \DateTimeInterface, $failureMessage);
     }
 }
