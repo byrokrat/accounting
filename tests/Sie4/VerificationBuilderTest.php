@@ -6,6 +6,7 @@ namespace byrokrat\accounting\Sie4;
 
 use byrokrat\accounting\Account;
 use byrokrat\accounting\Exception;
+use byrokrat\amount\Amount;
 use byrokrat\amount\Currency;
 use Psr\Log\LoggerInterface;
 
@@ -28,7 +29,7 @@ class VerificationBuilderTest extends \PHPUnit_Framework_TestCase
             $amount = $this->createMock(Currency::CLASS),
             $date = new \DateTime,
             $desc = 'desc',
-            $quantity = 10,
+            $quantity = new Amount('10'),
             $sign = 'HF'
         );
 

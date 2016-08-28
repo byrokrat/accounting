@@ -2117,22 +2117,8 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$startDate, &$endDate) {
-                // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
-                /*
-                    Skulle kunna använda \DatePeriod för detta..
-                    Men vad betyder det? Ska vi använda period istället för årsnummer?
-
-                    $this->getContainer()->setAttribute('RAR', [$year, $datePeriod]);
-
-                    $account->setAttribute("IB", [$year, $datePeriod, $balance, $quantity ?: 0]);
-
-                    Hm, det här behöver jag fundera mer över...
-
-
-                 */
-
                 if ($this->assertInt($year) && $this->assertDate($startDate) && $this->assertDate($endDate)) {
-                    $this->getContainer()->setAttribute("RAR $year", [$startDate, $endDate]);
+                    $this->getContainer()->setAttribute("RAR[$year]", [$startDate, $endDate]);
                 }
             });
         }
@@ -3575,8 +3561,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
-                    // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
-                    $account->setAttribute("IB $year", [$balance, $quantity ?: null]);
+                    $account->setAttribute("IB[$year]", [$balance, $quantity ?: null]);
                 }
             });
         }
@@ -3736,8 +3721,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
-                    // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
-                    $account->setAttribute("UB $year", [$balance, $quantity ?: null]);
+                    $account->setAttribute("UB[$year]", [$balance, $quantity ?: null]);
                 }
             });
         }
@@ -3919,9 +3903,8 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$objects, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
-                    // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
                     foreach ($objects as $object) {
-                        $object->setAttribute("IB $year", [$balance, $quantity ?: null]);
+                        $object->setAttribute("IB[$year]", [$balance, $quantity ?: null]);
                     }
                 }
             });
@@ -4104,9 +4087,8 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$objects, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
-                    // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
                     foreach ($objects as $object) {
-                        $object->setAttribute("UB $year", [$balance, $quantity ?: null]);
+                        $object->setAttribute("UB[$year]", [$balance, $quantity ?: null]);
                     }
                 }
             });
@@ -4311,9 +4293,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$period, &$account, &$objects, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
-                    // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
-                    $key = "PBUDGET $year " . $period->format('Ym');
-
+                    $key = "PBUDGET[$year][{$period->format('Ym')}]";
                     $account->setAttribute($key, [$balance, $quantity ?: null]);
 
                     foreach ($objects as $object) {
@@ -4522,9 +4502,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$period, &$account, &$objects, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
-                    $key = "PSALDO $year " . $period->format('Ym');
-                    // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
-
+                    $key = "PSALDO[$year][{$period->format('Ym')}]";
                     $account->setAttribute($key, [$balance, $quantity ?: null]);
 
                     foreach ($objects as $object) {
@@ -4689,8 +4667,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
-                    // TODO här ska bokföringsår sparas på något intelligentare sätt till attribut
-                    $account->setAttribute("RES $year", [$balance, $quantity ?: null]);
+                    $account->setAttribute("RES[$year]", [$balance, $quantity ?: null]);
                 }
             });
         }

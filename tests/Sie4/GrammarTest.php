@@ -15,7 +15,7 @@ use byrokrat\amount\Currency\SEK;
  *
  * Referenced rules are from the SIE specs dated 2008-09-30
  *
- * @covers \byrokrat\accounting\Sie4\DependencyManager
+ * @covers \byrokrat\accounting\Sie4\AbstractParser
  * @covers \byrokrat\accounting\Sie4\Grammar
  * @covers \byrokrat\accounting\Sie4\Parser
  */
@@ -268,8 +268,8 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
                 'ORGNR' => ['123456-1234', 0, 0],
                 'PROGRAM' => ['byrokrat', '1.0'],
                 'PROSA' => 'foobar',
-                'RAR 0' =>[new \DateTimeImmutable('20160101'), new \DateTimeImmutable('20161231')],
-                'RAR -1' =>[new \DateTimeImmutable('20150101'), new \DateTimeImmutable('20151231')],
+                'RAR[0]' =>[new \DateTimeImmutable('20160101'), new \DateTimeImmutable('20161231')],
+                'RAR[-1]' =>[new \DateTimeImmutable('20150101'), new \DateTimeImmutable('20151231')],
                 'SIETYP' => 4,
                 'TAXAR' => 2016,
                 'VALUTA' => 'EUR',
@@ -434,7 +434,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $money,
-            $account->getAttribute('IB 0')[0]
+            $account->getAttribute('IB[0]')[0]
         );
     }
 
@@ -453,24 +453,24 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             new SEK('100'),
-            $objB->getAttribute('IB 0')[0]
+            $objB->getAttribute('IB[0]')[0]
         );
 
         $objA = $content->query()->findDimension('20');
 
         $this->assertEquals(
             new SEK('100'),
-            $objA->getAttribute('IB 0')[0]
+            $objA->getAttribute('IB[0]')[0]
         );
 
         $this->assertEquals(
             new SEK('200'),
-            $objA->getAttribute('IB -1')[0]
+            $objA->getAttribute('IB[-1]')[0]
         );
 
         $this->assertEquals(
             new Amount('1'),
-            $objA->getAttribute('IB -1')[1]
+            $objA->getAttribute('IB[-1]')[1]
         );
     }
 
@@ -569,6 +569,32 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             new Amount('2.5'),
             $transactions[0]->getQuantity()
+        );
+    }
+
+    public function testPbudget()
+    {
+        $account = $this->parse("
+            #FLAGGA 1
+            #PBUDGET 0 201608 1920 {} 100 1
+        ")->query()->findAccount('1920');
+
+        $this->assertEquals(
+            $account->getAttribute('PBUDGET[0][201608]'),
+            [new SEK('100'), new Amount('1')]
+        );
+    }
+
+    public function testPsaldo()
+    {
+        $account = $this->parse("
+            #FLAGGA 1
+            #PSALDO 0 201608 1920 {} 100 1
+        ")->query()->findAccount('1920');
+
+        $this->assertEquals(
+            $account->getAttribute('PSALDO[0][201608]'),
+            [new SEK('100'), new Amount('1')]
         );
     }
 }
