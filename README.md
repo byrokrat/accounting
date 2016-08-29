@@ -6,6 +6,7 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/byrokrat/accounting.svg?style=flat-square)](https://scrutinizer-ci.com/g/byrokrat/accounting)
 [![Dependency Status](https://img.shields.io/gemnasium/byrokrat/accounting.svg?style=flat-square)](https://gemnasium.com/byrokrat/accounting)
 
+> NOTE! This package is under development and the API subject to change.
 
 Classes for working with bookkeeping data according to Swedish standards.
 
@@ -15,10 +16,14 @@ Installation
 composer require byrokrat/accounting
 ```
 
+Documentation
+-------------
+- [Querying accounting data](docs/01-querying.md)
+- [Parsing SIE files](02-parsing-sie-files.md)
+- [Generating verifications using templates](03-templates.md)
+
 Usage
 -----
-> NOTE! This package is under development and the API subject to change.
-
 ### Building queries
 
 The package is shipped with a generic solution for querying accounting data: the

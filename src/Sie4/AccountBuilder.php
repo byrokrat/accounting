@@ -75,6 +75,10 @@ class AccountBuilder
      */
     public function addAccount(string $number, string $description)
     {
+        if (isset($this->accounts[$number])) {
+            $this->logger->warning("Overwriting previously created account $number");
+        }
+
         try {
             $this->accounts[$number] = $this->factory->createAccount($number, $description);
         } catch (Exception\RuntimeException $e) {

@@ -1,0 +1,2 @@
+[NOTICE] Detected a BTRANS post, removed transactions are not supported yet.. (2204: #BTRANS 1910 {} -157.00) {}
+[NOTICE] Detected a RTRANS post, added transactions are not supported yet.. (2205: #RTRANS 1920 {} -157.00) {}

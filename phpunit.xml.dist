@@ -2,13 +2,9 @@
     <testsuites>
         <testsuite name="unit">
             <directory>./tests</directory>
-            <exclude>./tests/Sie4/integration</exclude>
         </testsuite>
         <testsuite name="docs">
             <file>./tests/DocumentationExamples.php</file>
-        </testsuite>
-        <testsuite name="integration">
-            <directory>./tests/Sie4/integration</directory>
         </testsuite>
     </testsuites>
     <filter>

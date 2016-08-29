@@ -67,6 +67,10 @@ class DimensionBuilder
      */
     public function addDimension(string $dimId, string $desc, string $super = '')
     {
+        if (isset($this->dims[$dimId])) {
+            $this->logger->warning("Overwriting previously created dimension $dimId");
+        }
+
         $this->dims[$dimId] = new Dimension(
             $dimId,
             $desc,
@@ -81,6 +85,10 @@ class DimensionBuilder
      */
     public function addObject(string $super, string $objectId, string $desc)
     {
+        if (isset($this->dims["$super.$objectId"])) {
+            $this->logger->warning("Overwriting previously created object $super.$objectId");
+        }
+
         $this->dims["$super.$objectId"] = new Dimension($objectId, $desc, $this->getDimension($super));
     }
 

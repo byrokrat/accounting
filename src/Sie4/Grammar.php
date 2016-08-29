@@ -1916,12 +1916,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value80 = array();
+        $_value81 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value80[] = $this->value;
+            $_value81[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('PROSA')) === 'PROSA') {
                 $_success = true;
@@ -1935,7 +1935,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value80[] = $this->value;
+            $_value81[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -1944,21 +1944,31 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value80[] = $this->value;
+            $_value81[] = $this->value;
 
-            $_position78 = $this->position;
-            $_cut79 = $this->cut;
+            $_value79 = array();
+            $_cut80 = $this->cut;
 
-            $this->cut = false;
-            $_success = $this->parseSTRING();
+            while (true) {
+                $_position78 = $this->position;
 
-            if (!$_success && !$this->cut) {
-                $_success = true;
-                $this->position = $_position78;
-                $this->value = null;
+                $this->cut = false;
+                $_success = $this->parseSTRING();
+
+                if (!$_success) {
+                    break;
+                }
+
+                $_value79[] = $this->value;
             }
 
-            $this->cut = $_cut79;
+            if (!$this->cut) {
+                $_success = true;
+                $this->position = $_position78;
+                $this->value = $_value79;
+            }
+
+            $this->cut = $_cut80;
 
             if ($_success) {
                 $text = $this->value;
@@ -1966,22 +1976,20 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value80[] = $this->value;
+            $_value81[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value80[] = $this->value;
+            $_value81[] = $this->value;
 
-            $this->value = $_value80;
+            $this->value = $_value81;
         }
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$text) {
-                if ($this->assertString($text, 'Expected free text content')) {
-                    $this->getContainer()->setAttribute('PROSA', $text);
-                }
+                $this->getContainer()->setAttribute('PROSA', implode(' ', $text));
             });
         }
 
@@ -2010,12 +2018,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value87 = array();
+        $_value88 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value87[] = $this->value;
+            $_value88[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('RAR')) === 'RAR') {
                 $_success = true;
@@ -2029,7 +2037,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value87[] = $this->value;
+            $_value88[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2038,21 +2046,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value87[] = $this->value;
+            $_value88[] = $this->value;
 
-            $_position81 = $this->position;
-            $_cut82 = $this->cut;
+            $_position82 = $this->position;
+            $_cut83 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position81;
+                $this->position = $_position82;
                 $this->value = null;
             }
 
-            $this->cut = $_cut82;
+            $this->cut = $_cut83;
 
             if ($_success) {
                 $year = $this->value;
@@ -2060,21 +2068,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value87[] = $this->value;
+            $_value88[] = $this->value;
 
-            $_position83 = $this->position;
-            $_cut84 = $this->cut;
+            $_position84 = $this->position;
+            $_cut85 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseDATE();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position83;
+                $this->position = $_position84;
                 $this->value = null;
             }
 
-            $this->cut = $_cut84;
+            $this->cut = $_cut85;
 
             if ($_success) {
                 $startDate = $this->value;
@@ -2082,21 +2090,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value87[] = $this->value;
+            $_value88[] = $this->value;
 
-            $_position85 = $this->position;
-            $_cut86 = $this->cut;
+            $_position86 = $this->position;
+            $_cut87 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseDATE();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position85;
+                $this->position = $_position86;
                 $this->value = null;
             }
 
-            $this->cut = $_cut86;
+            $this->cut = $_cut87;
 
             if ($_success) {
                 $endDate = $this->value;
@@ -2104,15 +2112,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value87[] = $this->value;
+            $_value88[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value87[] = $this->value;
+            $_value88[] = $this->value;
 
-            $this->value = $_value87;
+            $this->value = $_value88;
         }
 
         if ($_success) {
@@ -2148,12 +2156,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value90 = array();
+        $_value91 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value90[] = $this->value;
+            $_value91[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('SIETYP')) === 'SIETYP') {
                 $_success = true;
@@ -2167,7 +2175,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value90[] = $this->value;
+            $_value91[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2176,21 +2184,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value90[] = $this->value;
+            $_value91[] = $this->value;
 
-            $_position88 = $this->position;
-            $_cut89 = $this->cut;
+            $_position89 = $this->position;
+            $_cut90 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position88;
+                $this->position = $_position89;
                 $this->value = null;
             }
 
-            $this->cut = $_cut89;
+            $this->cut = $_cut90;
 
             if ($_success) {
                 $ver = $this->value;
@@ -2198,15 +2206,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value90[] = $this->value;
+            $_value91[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value90[] = $this->value;
+            $_value91[] = $this->value;
 
-            $this->value = $_value90;
+            $this->value = $_value91;
         }
 
         if ($_success) {
@@ -2242,12 +2250,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value91 = array();
+        $_value92 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value91[] = $this->value;
+            $_value92[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('TAXAR')) === 'TAXAR') {
                 $_success = true;
@@ -2261,7 +2269,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value91[] = $this->value;
+            $_value92[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2270,7 +2278,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value91[] = $this->value;
+            $_value92[] = $this->value;
 
             $_success = $this->parseINT();
 
@@ -2280,15 +2288,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value91[] = $this->value;
+            $_value92[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value91[] = $this->value;
+            $_value92[] = $this->value;
 
-            $this->value = $_value91;
+            $this->value = $_value92;
         }
 
         if ($_success) {
@@ -2324,12 +2332,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value94 = array();
+        $_value95 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value94[] = $this->value;
+            $_value95[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('VALUTA')) === 'VALUTA') {
                 $_success = true;
@@ -2343,7 +2351,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value94[] = $this->value;
+            $_value95[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2352,21 +2360,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value94[] = $this->value;
+            $_value95[] = $this->value;
 
-            $_position92 = $this->position;
-            $_cut93 = $this->cut;
+            $_position93 = $this->position;
+            $_cut94 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position92;
+                $this->position = $_position93;
                 $this->value = null;
             }
 
-            $this->cut = $_cut93;
+            $this->cut = $_cut94;
 
             if ($_success) {
                 $currency = $this->value;
@@ -2374,15 +2382,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value94[] = $this->value;
+            $_value95[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value94[] = $this->value;
+            $_value95[] = $this->value;
 
-            $this->value = $_value94;
+            $this->value = $_value95;
         }
 
         if ($_success) {
@@ -2419,55 +2427,55 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_position95 = $this->position;
-        $_cut96 = $this->cut;
+        $_position96 = $this->position;
+        $_cut97 = $this->cut;
 
         $this->cut = false;
         $_success = $this->parseKONTO_POST();
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position95;
+            $this->position = $_position96;
 
             $_success = $this->parseKTYP_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position95;
+            $this->position = $_position96;
 
             $_success = $this->parseENHET_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position95;
+            $this->position = $_position96;
 
             $_success = $this->parseSRU_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position95;
+            $this->position = $_position96;
 
             $_success = $this->parseDIM_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position95;
+            $this->position = $_position96;
 
             $_success = $this->parseUNDERDIM_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position95;
+            $this->position = $_position96;
 
             $_success = $this->parseOBJEKT_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position95;
+            $this->position = $_position96;
 
             $_success = $this->parseVOID_ROW();
         }
 
-        $this->cut = $_cut96;
+        $this->cut = $_cut97;
 
         $this->cache['ACCOUNT_PLAN_POST'][$_position] = array(
             'success' => $_success,
@@ -2494,12 +2502,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value101 = array();
+        $_value102 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value102[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('KONTO')) === 'KONTO') {
                 $_success = true;
@@ -2513,7 +2521,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value102[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2522,21 +2530,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value102[] = $this->value;
 
-            $_position97 = $this->position;
-            $_cut98 = $this->cut;
+            $_position98 = $this->position;
+            $_cut99 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position97;
+                $this->position = $_position98;
                 $this->value = null;
             }
 
-            $this->cut = $_cut98;
+            $this->cut = $_cut99;
 
             if ($_success) {
                 $number = $this->value;
@@ -2544,21 +2552,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value102[] = $this->value;
 
-            $_position99 = $this->position;
-            $_cut100 = $this->cut;
+            $_position100 = $this->position;
+            $_cut101 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position99;
+                $this->position = $_position100;
                 $this->value = null;
             }
 
-            $this->cut = $_cut100;
+            $this->cut = $_cut101;
 
             if ($_success) {
                 $desc = $this->value;
@@ -2566,15 +2574,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value102[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value101[] = $this->value;
+            $_value102[] = $this->value;
 
-            $this->value = $_value101;
+            $this->value = $_value102;
         }
 
         if ($_success) {
@@ -2610,12 +2618,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value106 = array();
+        $_value107 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value106[] = $this->value;
+            $_value107[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('KTYP')) === 'KTYP') {
                 $_success = true;
@@ -2629,7 +2637,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value106[] = $this->value;
+            $_value107[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2638,21 +2646,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value106[] = $this->value;
+            $_value107[] = $this->value;
 
-            $_position102 = $this->position;
-            $_cut103 = $this->cut;
+            $_position103 = $this->position;
+            $_cut104 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position102;
+                $this->position = $_position103;
                 $this->value = null;
             }
 
-            $this->cut = $_cut103;
+            $this->cut = $_cut104;
 
             if ($_success) {
                 $number = $this->value;
@@ -2660,21 +2668,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value106[] = $this->value;
+            $_value107[] = $this->value;
 
-            $_position104 = $this->position;
-            $_cut105 = $this->cut;
+            $_position105 = $this->position;
+            $_cut106 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position104;
+                $this->position = $_position105;
                 $this->value = null;
             }
 
-            $this->cut = $_cut105;
+            $this->cut = $_cut106;
 
             if ($_success) {
                 $type = $this->value;
@@ -2682,15 +2690,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value106[] = $this->value;
+            $_value107[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value106[] = $this->value;
+            $_value107[] = $this->value;
 
-            $this->value = $_value106;
+            $this->value = $_value107;
         }
 
         if ($_success) {
@@ -2726,12 +2734,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value111 = array();
+        $_value112 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value111[] = $this->value;
+            $_value112[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('ENHET')) === 'ENHET') {
                 $_success = true;
@@ -2745,7 +2753,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value111[] = $this->value;
+            $_value112[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2754,21 +2762,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value111[] = $this->value;
+            $_value112[] = $this->value;
 
-            $_position107 = $this->position;
-            $_cut108 = $this->cut;
+            $_position108 = $this->position;
+            $_cut109 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseACCOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position107;
+                $this->position = $_position108;
                 $this->value = null;
             }
 
-            $this->cut = $_cut108;
+            $this->cut = $_cut109;
 
             if ($_success) {
                 $account = $this->value;
@@ -2776,21 +2784,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value111[] = $this->value;
+            $_value112[] = $this->value;
 
-            $_position109 = $this->position;
-            $_cut110 = $this->cut;
+            $_position110 = $this->position;
+            $_cut111 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position109;
+                $this->position = $_position110;
                 $this->value = null;
             }
 
-            $this->cut = $_cut110;
+            $this->cut = $_cut111;
 
             if ($_success) {
                 $unit = $this->value;
@@ -2798,15 +2806,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value111[] = $this->value;
+            $_value112[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value111[] = $this->value;
+            $_value112[] = $this->value;
 
-            $this->value = $_value111;
+            $this->value = $_value112;
         }
 
         if ($_success) {
@@ -2842,12 +2850,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value116 = array();
+        $_value117 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value116[] = $this->value;
+            $_value117[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('SRU')) === 'SRU') {
                 $_success = true;
@@ -2861,7 +2869,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value116[] = $this->value;
+            $_value117[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2870,21 +2878,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value116[] = $this->value;
+            $_value117[] = $this->value;
 
-            $_position112 = $this->position;
-            $_cut113 = $this->cut;
+            $_position113 = $this->position;
+            $_cut114 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseACCOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position112;
+                $this->position = $_position113;
                 $this->value = null;
             }
 
-            $this->cut = $_cut113;
+            $this->cut = $_cut114;
 
             if ($_success) {
                 $account = $this->value;
@@ -2892,21 +2900,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value116[] = $this->value;
+            $_value117[] = $this->value;
 
-            $_position114 = $this->position;
-            $_cut115 = $this->cut;
+            $_position115 = $this->position;
+            $_cut116 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position114;
+                $this->position = $_position115;
                 $this->value = null;
             }
 
-            $this->cut = $_cut115;
+            $this->cut = $_cut116;
 
             if ($_success) {
                 $sru = $this->value;
@@ -2914,15 +2922,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value116[] = $this->value;
+            $_value117[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value116[] = $this->value;
+            $_value117[] = $this->value;
 
-            $this->value = $_value116;
+            $this->value = $_value117;
         }
 
         if ($_success) {
@@ -2958,12 +2966,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value121 = array();
+        $_value122 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value121[] = $this->value;
+            $_value122[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('DIM')) === 'DIM') {
                 $_success = true;
@@ -2977,7 +2985,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value121[] = $this->value;
+            $_value122[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -2986,21 +2994,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value121[] = $this->value;
+            $_value122[] = $this->value;
 
-            $_position117 = $this->position;
-            $_cut118 = $this->cut;
+            $_position118 = $this->position;
+            $_cut119 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position117;
+                $this->position = $_position118;
                 $this->value = null;
             }
 
-            $this->cut = $_cut118;
+            $this->cut = $_cut119;
 
             if ($_success) {
                 $dim = $this->value;
@@ -3008,21 +3016,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value121[] = $this->value;
+            $_value122[] = $this->value;
 
-            $_position119 = $this->position;
-            $_cut120 = $this->cut;
+            $_position120 = $this->position;
+            $_cut121 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position119;
+                $this->position = $_position120;
                 $this->value = null;
             }
 
-            $this->cut = $_cut120;
+            $this->cut = $_cut121;
 
             if ($_success) {
                 $desc = $this->value;
@@ -3030,15 +3038,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value121[] = $this->value;
+            $_value122[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value121[] = $this->value;
+            $_value122[] = $this->value;
 
-            $this->value = $_value121;
+            $this->value = $_value122;
         }
 
         if ($_success) {
@@ -3074,12 +3082,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value128 = array();
+        $_value129 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value128[] = $this->value;
+            $_value129[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('UNDERDIM')) === 'UNDERDIM') {
                 $_success = true;
@@ -3093,7 +3101,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value128[] = $this->value;
+            $_value129[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3102,21 +3110,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value128[] = $this->value;
+            $_value129[] = $this->value;
 
-            $_position122 = $this->position;
-            $_cut123 = $this->cut;
+            $_position123 = $this->position;
+            $_cut124 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position122;
+                $this->position = $_position123;
                 $this->value = null;
             }
 
-            $this->cut = $_cut123;
+            $this->cut = $_cut124;
 
             if ($_success) {
                 $dim = $this->value;
@@ -3124,21 +3132,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value128[] = $this->value;
+            $_value129[] = $this->value;
 
-            $_position124 = $this->position;
-            $_cut125 = $this->cut;
+            $_position125 = $this->position;
+            $_cut126 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position124;
+                $this->position = $_position125;
                 $this->value = null;
             }
 
-            $this->cut = $_cut125;
+            $this->cut = $_cut126;
 
             if ($_success) {
                 $desc = $this->value;
@@ -3146,21 +3154,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value128[] = $this->value;
+            $_value129[] = $this->value;
 
-            $_position126 = $this->position;
-            $_cut127 = $this->cut;
+            $_position127 = $this->position;
+            $_cut128 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position126;
+                $this->position = $_position127;
                 $this->value = null;
             }
 
-            $this->cut = $_cut127;
+            $this->cut = $_cut128;
 
             if ($_success) {
                 $super = $this->value;
@@ -3168,15 +3176,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value128[] = $this->value;
+            $_value129[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value128[] = $this->value;
+            $_value129[] = $this->value;
 
-            $this->value = $_value128;
+            $this->value = $_value129;
         }
 
         if ($_success) {
@@ -3212,12 +3220,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value135 = array();
+        $_value136 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value136[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('OBJEKT')) === 'OBJEKT') {
                 $_success = true;
@@ -3231,7 +3239,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value136[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3240,21 +3248,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value136[] = $this->value;
 
-            $_position129 = $this->position;
-            $_cut130 = $this->cut;
+            $_position130 = $this->position;
+            $_cut131 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position129;
+                $this->position = $_position130;
                 $this->value = null;
             }
 
-            $this->cut = $_cut130;
+            $this->cut = $_cut131;
 
             if ($_success) {
                 $dim = $this->value;
@@ -3262,21 +3270,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value136[] = $this->value;
 
-            $_position131 = $this->position;
-            $_cut132 = $this->cut;
+            $_position132 = $this->position;
+            $_cut133 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position131;
+                $this->position = $_position132;
                 $this->value = null;
             }
 
-            $this->cut = $_cut132;
+            $this->cut = $_cut133;
 
             if ($_success) {
                 $obj = $this->value;
@@ -3284,21 +3292,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value136[] = $this->value;
 
-            $_position133 = $this->position;
-            $_cut134 = $this->cut;
+            $_position134 = $this->position;
+            $_cut135 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position133;
+                $this->position = $_position134;
                 $this->value = null;
             }
 
-            $this->cut = $_cut134;
+            $this->cut = $_cut135;
 
             if ($_success) {
                 $desc = $this->value;
@@ -3306,15 +3314,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value136[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value135[] = $this->value;
+            $_value136[] = $this->value;
 
-            $this->value = $_value135;
+            $this->value = $_value136;
         }
 
         if ($_success) {
@@ -3350,61 +3358,61 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_position136 = $this->position;
-        $_cut137 = $this->cut;
+        $_position137 = $this->position;
+        $_cut138 = $this->cut;
 
         $this->cut = false;
         $_success = $this->parseIB_POST();
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position136;
+            $this->position = $_position137;
 
             $_success = $this->parseUB_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position136;
+            $this->position = $_position137;
 
             $_success = $this->parseOIB_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position136;
+            $this->position = $_position137;
 
             $_success = $this->parseOUB_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position136;
+            $this->position = $_position137;
 
             $_success = $this->parsePBUDGET_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position136;
+            $this->position = $_position137;
 
             $_success = $this->parsePSALDO_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position136;
+            $this->position = $_position137;
 
             $_success = $this->parseRES_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position136;
+            $this->position = $_position137;
 
             $_success = $this->parseVER_POST();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position136;
+            $this->position = $_position137;
 
             $_success = $this->parseVOID_ROW();
         }
 
-        $this->cut = $_cut137;
+        $this->cut = $_cut138;
 
         $this->cache['BALANCE_POST'][$_position] = array(
             'success' => $_success,
@@ -3431,12 +3439,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value146 = array();
+        $_value147 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value146[] = $this->value;
+            $_value147[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('IB')) === 'IB') {
                 $_success = true;
@@ -3450,7 +3458,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value146[] = $this->value;
+            $_value147[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3459,21 +3467,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value146[] = $this->value;
+            $_value147[] = $this->value;
 
-            $_position138 = $this->position;
-            $_cut139 = $this->cut;
+            $_position139 = $this->position;
+            $_cut140 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position138;
+                $this->position = $_position139;
                 $this->value = null;
             }
 
-            $this->cut = $_cut139;
+            $this->cut = $_cut140;
 
             if ($_success) {
                 $year = $this->value;
@@ -3481,21 +3489,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value146[] = $this->value;
+            $_value147[] = $this->value;
 
-            $_position140 = $this->position;
-            $_cut141 = $this->cut;
+            $_position141 = $this->position;
+            $_cut142 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseACCOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position140;
+                $this->position = $_position141;
                 $this->value = null;
             }
 
-            $this->cut = $_cut141;
+            $this->cut = $_cut142;
 
             if ($_success) {
                 $account = $this->value;
@@ -3503,21 +3511,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value146[] = $this->value;
+            $_value147[] = $this->value;
 
-            $_position142 = $this->position;
-            $_cut143 = $this->cut;
+            $_position143 = $this->position;
+            $_cut144 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseAMOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position142;
+                $this->position = $_position143;
                 $this->value = null;
             }
 
-            $this->cut = $_cut143;
+            $this->cut = $_cut144;
 
             if ($_success) {
                 $balance = $this->value;
@@ -3525,21 +3533,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value146[] = $this->value;
+            $_value147[] = $this->value;
 
-            $_position144 = $this->position;
-            $_cut145 = $this->cut;
+            $_position145 = $this->position;
+            $_cut146 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position144;
+                $this->position = $_position145;
                 $this->value = null;
             }
 
-            $this->cut = $_cut145;
+            $this->cut = $_cut146;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -3547,15 +3555,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value146[] = $this->value;
+            $_value147[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value146[] = $this->value;
+            $_value147[] = $this->value;
 
-            $this->value = $_value146;
+            $this->value = $_value147;
         }
 
         if ($_success) {
@@ -3591,12 +3599,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value155 = array();
+        $_value156 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value155[] = $this->value;
+            $_value156[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('UB')) === 'UB') {
                 $_success = true;
@@ -3610,7 +3618,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value155[] = $this->value;
+            $_value156[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3619,21 +3627,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value155[] = $this->value;
+            $_value156[] = $this->value;
 
-            $_position147 = $this->position;
-            $_cut148 = $this->cut;
+            $_position148 = $this->position;
+            $_cut149 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position147;
+                $this->position = $_position148;
                 $this->value = null;
             }
 
-            $this->cut = $_cut148;
+            $this->cut = $_cut149;
 
             if ($_success) {
                 $year = $this->value;
@@ -3641,21 +3649,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value155[] = $this->value;
+            $_value156[] = $this->value;
 
-            $_position149 = $this->position;
-            $_cut150 = $this->cut;
+            $_position150 = $this->position;
+            $_cut151 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseACCOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position149;
+                $this->position = $_position150;
                 $this->value = null;
             }
 
-            $this->cut = $_cut150;
+            $this->cut = $_cut151;
 
             if ($_success) {
                 $account = $this->value;
@@ -3663,21 +3671,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value155[] = $this->value;
+            $_value156[] = $this->value;
 
-            $_position151 = $this->position;
-            $_cut152 = $this->cut;
+            $_position152 = $this->position;
+            $_cut153 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseAMOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position151;
+                $this->position = $_position152;
                 $this->value = null;
             }
 
-            $this->cut = $_cut152;
+            $this->cut = $_cut153;
 
             if ($_success) {
                 $balance = $this->value;
@@ -3685,21 +3693,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value155[] = $this->value;
+            $_value156[] = $this->value;
 
-            $_position153 = $this->position;
-            $_cut154 = $this->cut;
+            $_position154 = $this->position;
+            $_cut155 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position153;
+                $this->position = $_position154;
                 $this->value = null;
             }
 
-            $this->cut = $_cut154;
+            $this->cut = $_cut155;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -3707,15 +3715,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value155[] = $this->value;
+            $_value156[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value155[] = $this->value;
+            $_value156[] = $this->value;
 
-            $this->value = $_value155;
+            $this->value = $_value156;
         }
 
         if ($_success) {
@@ -3751,12 +3759,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value166 = array();
+        $_value167 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value166[] = $this->value;
+            $_value167[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('OIB')) === 'OIB') {
                 $_success = true;
@@ -3770,7 +3778,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value166[] = $this->value;
+            $_value167[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3779,21 +3787,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value166[] = $this->value;
+            $_value167[] = $this->value;
 
-            $_position156 = $this->position;
-            $_cut157 = $this->cut;
+            $_position157 = $this->position;
+            $_cut158 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position156;
+                $this->position = $_position157;
                 $this->value = null;
             }
 
-            $this->cut = $_cut157;
+            $this->cut = $_cut158;
 
             if ($_success) {
                 $year = $this->value;
@@ -3801,21 +3809,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value166[] = $this->value;
+            $_value167[] = $this->value;
 
-            $_position158 = $this->position;
-            $_cut159 = $this->cut;
+            $_position159 = $this->position;
+            $_cut160 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseACCOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position158;
+                $this->position = $_position159;
                 $this->value = null;
             }
 
-            $this->cut = $_cut159;
+            $this->cut = $_cut160;
 
             if ($_success) {
                 $account = $this->value;
@@ -3823,21 +3831,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value166[] = $this->value;
+            $_value167[] = $this->value;
 
-            $_position160 = $this->position;
-            $_cut161 = $this->cut;
+            $_position161 = $this->position;
+            $_cut162 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseOBJECT_LIST();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position160;
+                $this->position = $_position161;
                 $this->value = null;
             }
 
-            $this->cut = $_cut161;
+            $this->cut = $_cut162;
 
             if ($_success) {
                 $objects = $this->value;
@@ -3845,21 +3853,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value166[] = $this->value;
+            $_value167[] = $this->value;
 
-            $_position162 = $this->position;
-            $_cut163 = $this->cut;
+            $_position163 = $this->position;
+            $_cut164 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseAMOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position162;
+                $this->position = $_position163;
                 $this->value = null;
             }
 
-            $this->cut = $_cut163;
+            $this->cut = $_cut164;
 
             if ($_success) {
                 $balance = $this->value;
@@ -3867,21 +3875,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value166[] = $this->value;
+            $_value167[] = $this->value;
 
-            $_position164 = $this->position;
-            $_cut165 = $this->cut;
+            $_position165 = $this->position;
+            $_cut166 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position164;
+                $this->position = $_position165;
                 $this->value = null;
             }
 
-            $this->cut = $_cut165;
+            $this->cut = $_cut166;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -3889,15 +3897,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value166[] = $this->value;
+            $_value167[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value166[] = $this->value;
+            $_value167[] = $this->value;
 
-            $this->value = $_value166;
+            $this->value = $_value167;
         }
 
         if ($_success) {
@@ -3935,12 +3943,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value177 = array();
+        $_value178 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value177[] = $this->value;
+            $_value178[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('OUB')) === 'OUB') {
                 $_success = true;
@@ -3954,7 +3962,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value177[] = $this->value;
+            $_value178[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -3963,21 +3971,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value177[] = $this->value;
+            $_value178[] = $this->value;
 
-            $_position167 = $this->position;
-            $_cut168 = $this->cut;
+            $_position168 = $this->position;
+            $_cut169 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position167;
+                $this->position = $_position168;
                 $this->value = null;
             }
 
-            $this->cut = $_cut168;
+            $this->cut = $_cut169;
 
             if ($_success) {
                 $year = $this->value;
@@ -3985,21 +3993,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value177[] = $this->value;
+            $_value178[] = $this->value;
 
-            $_position169 = $this->position;
-            $_cut170 = $this->cut;
+            $_position170 = $this->position;
+            $_cut171 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseACCOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position169;
+                $this->position = $_position170;
                 $this->value = null;
             }
 
-            $this->cut = $_cut170;
+            $this->cut = $_cut171;
 
             if ($_success) {
                 $account = $this->value;
@@ -4007,21 +4015,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value177[] = $this->value;
+            $_value178[] = $this->value;
 
-            $_position171 = $this->position;
-            $_cut172 = $this->cut;
+            $_position172 = $this->position;
+            $_cut173 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseOBJECT_LIST();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position171;
+                $this->position = $_position172;
                 $this->value = null;
             }
 
-            $this->cut = $_cut172;
+            $this->cut = $_cut173;
 
             if ($_success) {
                 $objects = $this->value;
@@ -4029,21 +4037,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value177[] = $this->value;
+            $_value178[] = $this->value;
 
-            $_position173 = $this->position;
-            $_cut174 = $this->cut;
+            $_position174 = $this->position;
+            $_cut175 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseAMOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position173;
+                $this->position = $_position174;
                 $this->value = null;
             }
 
-            $this->cut = $_cut174;
+            $this->cut = $_cut175;
 
             if ($_success) {
                 $balance = $this->value;
@@ -4051,21 +4059,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value177[] = $this->value;
+            $_value178[] = $this->value;
 
-            $_position175 = $this->position;
-            $_cut176 = $this->cut;
+            $_position176 = $this->position;
+            $_cut177 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position175;
+                $this->position = $_position176;
                 $this->value = null;
             }
 
-            $this->cut = $_cut176;
+            $this->cut = $_cut177;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -4073,15 +4081,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value177[] = $this->value;
+            $_value178[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value177[] = $this->value;
+            $_value178[] = $this->value;
 
-            $this->value = $_value177;
+            $this->value = $_value178;
         }
 
         if ($_success) {
@@ -4119,12 +4127,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value190 = array();
+        $_value191 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value190[] = $this->value;
+            $_value191[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('PBUDGET')) === 'PBUDGET') {
                 $_success = true;
@@ -4138,7 +4146,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value190[] = $this->value;
+            $_value191[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -4147,21 +4155,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value190[] = $this->value;
+            $_value191[] = $this->value;
 
-            $_position178 = $this->position;
-            $_cut179 = $this->cut;
+            $_position179 = $this->position;
+            $_cut180 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position178;
+                $this->position = $_position179;
                 $this->value = null;
             }
 
-            $this->cut = $_cut179;
+            $this->cut = $_cut180;
 
             if ($_success) {
                 $year = $this->value;
@@ -4169,21 +4177,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value190[] = $this->value;
+            $_value191[] = $this->value;
 
-            $_position180 = $this->position;
-            $_cut181 = $this->cut;
+            $_position181 = $this->position;
+            $_cut182 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseDATE();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position180;
+                $this->position = $_position181;
                 $this->value = null;
             }
 
-            $this->cut = $_cut181;
+            $this->cut = $_cut182;
 
             if ($_success) {
                 $period = $this->value;
@@ -4191,21 +4199,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value190[] = $this->value;
+            $_value191[] = $this->value;
 
-            $_position182 = $this->position;
-            $_cut183 = $this->cut;
+            $_position183 = $this->position;
+            $_cut184 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseACCOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position182;
+                $this->position = $_position183;
                 $this->value = null;
             }
 
-            $this->cut = $_cut183;
+            $this->cut = $_cut184;
 
             if ($_success) {
                 $account = $this->value;
@@ -4213,21 +4221,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value190[] = $this->value;
+            $_value191[] = $this->value;
 
-            $_position184 = $this->position;
-            $_cut185 = $this->cut;
+            $_position185 = $this->position;
+            $_cut186 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseOBJECT_LIST();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position184;
+                $this->position = $_position185;
                 $this->value = null;
             }
 
-            $this->cut = $_cut185;
+            $this->cut = $_cut186;
 
             if ($_success) {
                 $objects = $this->value;
@@ -4235,21 +4243,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value190[] = $this->value;
+            $_value191[] = $this->value;
 
-            $_position186 = $this->position;
-            $_cut187 = $this->cut;
+            $_position187 = $this->position;
+            $_cut188 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseAMOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position186;
+                $this->position = $_position187;
                 $this->value = null;
             }
 
-            $this->cut = $_cut187;
+            $this->cut = $_cut188;
 
             if ($_success) {
                 $balance = $this->value;
@@ -4257,21 +4265,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value190[] = $this->value;
+            $_value191[] = $this->value;
 
-            $_position188 = $this->position;
-            $_cut189 = $this->cut;
+            $_position189 = $this->position;
+            $_cut190 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position188;
+                $this->position = $_position189;
                 $this->value = null;
             }
 
-            $this->cut = $_cut189;
+            $this->cut = $_cut190;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -4279,15 +4287,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value190[] = $this->value;
+            $_value191[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value190[] = $this->value;
+            $_value191[] = $this->value;
 
-            $this->value = $_value190;
+            $this->value = $_value191;
         }
 
         if ($_success) {
@@ -4328,12 +4336,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value203 = array();
+        $_value204 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value203[] = $this->value;
+            $_value204[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('PSALDO')) === 'PSALDO') {
                 $_success = true;
@@ -4347,7 +4355,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value203[] = $this->value;
+            $_value204[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -4356,21 +4364,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value203[] = $this->value;
+            $_value204[] = $this->value;
 
-            $_position191 = $this->position;
-            $_cut192 = $this->cut;
+            $_position192 = $this->position;
+            $_cut193 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position191;
+                $this->position = $_position192;
                 $this->value = null;
             }
 
-            $this->cut = $_cut192;
+            $this->cut = $_cut193;
 
             if ($_success) {
                 $year = $this->value;
@@ -4378,21 +4386,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value203[] = $this->value;
+            $_value204[] = $this->value;
 
-            $_position193 = $this->position;
-            $_cut194 = $this->cut;
+            $_position194 = $this->position;
+            $_cut195 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseDATE();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position193;
+                $this->position = $_position194;
                 $this->value = null;
             }
 
-            $this->cut = $_cut194;
+            $this->cut = $_cut195;
 
             if ($_success) {
                 $period = $this->value;
@@ -4400,21 +4408,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value203[] = $this->value;
+            $_value204[] = $this->value;
 
-            $_position195 = $this->position;
-            $_cut196 = $this->cut;
+            $_position196 = $this->position;
+            $_cut197 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseACCOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position195;
+                $this->position = $_position196;
                 $this->value = null;
             }
 
-            $this->cut = $_cut196;
+            $this->cut = $_cut197;
 
             if ($_success) {
                 $account = $this->value;
@@ -4422,21 +4430,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value203[] = $this->value;
+            $_value204[] = $this->value;
 
-            $_position197 = $this->position;
-            $_cut198 = $this->cut;
+            $_position198 = $this->position;
+            $_cut199 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseOBJECT_LIST();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position197;
+                $this->position = $_position198;
                 $this->value = null;
             }
 
-            $this->cut = $_cut198;
+            $this->cut = $_cut199;
 
             if ($_success) {
                 $objects = $this->value;
@@ -4444,21 +4452,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value203[] = $this->value;
+            $_value204[] = $this->value;
 
-            $_position199 = $this->position;
-            $_cut200 = $this->cut;
+            $_position200 = $this->position;
+            $_cut201 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseAMOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position199;
+                $this->position = $_position200;
                 $this->value = null;
             }
 
-            $this->cut = $_cut200;
+            $this->cut = $_cut201;
 
             if ($_success) {
                 $balance = $this->value;
@@ -4466,21 +4474,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value203[] = $this->value;
+            $_value204[] = $this->value;
 
-            $_position201 = $this->position;
-            $_cut202 = $this->cut;
+            $_position202 = $this->position;
+            $_cut203 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position201;
+                $this->position = $_position202;
                 $this->value = null;
             }
 
-            $this->cut = $_cut202;
+            $this->cut = $_cut203;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -4488,15 +4496,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value203[] = $this->value;
+            $_value204[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value203[] = $this->value;
+            $_value204[] = $this->value;
 
-            $this->value = $_value203;
+            $this->value = $_value204;
         }
 
         if ($_success) {
@@ -4537,12 +4545,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value212 = array();
+        $_value213 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value212[] = $this->value;
+            $_value213[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('RES')) === 'RES') {
                 $_success = true;
@@ -4556,7 +4564,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value212[] = $this->value;
+            $_value213[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -4565,21 +4573,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value212[] = $this->value;
+            $_value213[] = $this->value;
 
-            $_position204 = $this->position;
-            $_cut205 = $this->cut;
+            $_position205 = $this->position;
+            $_cut206 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseINT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position204;
+                $this->position = $_position205;
                 $this->value = null;
             }
 
-            $this->cut = $_cut205;
+            $this->cut = $_cut206;
 
             if ($_success) {
                 $year = $this->value;
@@ -4587,21 +4595,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value212[] = $this->value;
+            $_value213[] = $this->value;
 
-            $_position206 = $this->position;
-            $_cut207 = $this->cut;
+            $_position207 = $this->position;
+            $_cut208 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseACCOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position206;
+                $this->position = $_position207;
                 $this->value = null;
             }
 
-            $this->cut = $_cut207;
+            $this->cut = $_cut208;
 
             if ($_success) {
                 $account = $this->value;
@@ -4609,21 +4617,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value212[] = $this->value;
+            $_value213[] = $this->value;
 
-            $_position208 = $this->position;
-            $_cut209 = $this->cut;
+            $_position209 = $this->position;
+            $_cut210 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseAMOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position208;
+                $this->position = $_position209;
                 $this->value = null;
             }
 
-            $this->cut = $_cut209;
+            $this->cut = $_cut210;
 
             if ($_success) {
                 $balance = $this->value;
@@ -4631,21 +4639,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value212[] = $this->value;
+            $_value213[] = $this->value;
 
-            $_position210 = $this->position;
-            $_cut211 = $this->cut;
+            $_position211 = $this->position;
+            $_cut212 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position210;
+                $this->position = $_position211;
                 $this->value = null;
             }
 
-            $this->cut = $_cut211;
+            $this->cut = $_cut212;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -4653,15 +4661,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value212[] = $this->value;
+            $_value213[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value212[] = $this->value;
+            $_value213[] = $this->value;
 
-            $this->value = $_value212;
+            $this->value = $_value213;
         }
 
         if ($_success) {
@@ -4697,12 +4705,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value225 = array();
+        $_value226 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value225[] = $this->value;
+            $_value226[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('VER')) === 'VER') {
                 $_success = true;
@@ -4716,7 +4724,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value225[] = $this->value;
+            $_value226[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -4725,21 +4733,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value225[] = $this->value;
+            $_value226[] = $this->value;
 
-            $_position213 = $this->position;
-            $_cut214 = $this->cut;
+            $_position214 = $this->position;
+            $_cut215 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position213;
+                $this->position = $_position214;
                 $this->value = null;
             }
 
-            $this->cut = $_cut214;
+            $this->cut = $_cut215;
 
             if ($_success) {
                 $series = $this->value;
@@ -4747,21 +4755,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value225[] = $this->value;
+            $_value226[] = $this->value;
 
-            $_position215 = $this->position;
-            $_cut216 = $this->cut;
+            $_position216 = $this->position;
+            $_cut217 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position215;
+                $this->position = $_position216;
                 $this->value = null;
             }
 
-            $this->cut = $_cut216;
+            $this->cut = $_cut217;
 
             if ($_success) {
                 $number = $this->value;
@@ -4769,21 +4777,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value225[] = $this->value;
+            $_value226[] = $this->value;
 
-            $_position217 = $this->position;
-            $_cut218 = $this->cut;
+            $_position218 = $this->position;
+            $_cut219 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseDATE();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position217;
+                $this->position = $_position218;
                 $this->value = null;
             }
 
-            $this->cut = $_cut218;
+            $this->cut = $_cut219;
 
             if ($_success) {
                 $date = $this->value;
@@ -4791,21 +4799,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value225[] = $this->value;
+            $_value226[] = $this->value;
 
-            $_position219 = $this->position;
-            $_cut220 = $this->cut;
+            $_position220 = $this->position;
+            $_cut221 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position219;
+                $this->position = $_position220;
                 $this->value = null;
             }
 
-            $this->cut = $_cut220;
+            $this->cut = $_cut221;
 
             if ($_success) {
                 $desc = $this->value;
@@ -4813,21 +4821,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value225[] = $this->value;
+            $_value226[] = $this->value;
 
-            $_position221 = $this->position;
-            $_cut222 = $this->cut;
+            $_position222 = $this->position;
+            $_cut223 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseDATE();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position221;
+                $this->position = $_position222;
                 $this->value = null;
             }
 
-            $this->cut = $_cut222;
+            $this->cut = $_cut223;
 
             if ($_success) {
                 $regdate = $this->value;
@@ -4835,21 +4843,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value225[] = $this->value;
+            $_value226[] = $this->value;
 
-            $_position223 = $this->position;
-            $_cut224 = $this->cut;
+            $_position224 = $this->position;
+            $_cut225 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position223;
+                $this->position = $_position224;
                 $this->value = null;
             }
 
-            $this->cut = $_cut224;
+            $this->cut = $_cut225;
 
             if ($_success) {
                 $sign = $this->value;
@@ -4857,19 +4865,19 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value225[] = $this->value;
+            $_value226[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value225[] = $this->value;
+            $_value226[] = $this->value;
 
             $_success = $this->parseSUBROW_START();
         }
 
         if ($_success) {
-            $_value225[] = $this->value;
+            $_value226[] = $this->value;
 
             $_success = $this->parseTRANS_LIST();
 
@@ -4879,15 +4887,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value225[] = $this->value;
+            $_value226[] = $this->value;
 
             $_success = $this->parseSUBROW_END();
         }
 
         if ($_success) {
-            $_value225[] = $this->value;
+            $_value226[] = $this->value;
 
-            $this->value = $_value225;
+            $this->value = $_value226;
         }
 
         if ($_success) {
@@ -4933,53 +4941,53 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value229 = array();
-        $_cut230 = $this->cut;
+        $_value230 = array();
+        $_cut231 = $this->cut;
 
         while (true) {
-            $_position228 = $this->position;
+            $_position229 = $this->position;
 
             $this->cut = false;
-            $_position226 = $this->position;
-            $_cut227 = $this->cut;
+            $_position227 = $this->position;
+            $_cut228 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseTRANS_POST();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position226;
+                $this->position = $_position227;
 
                 $_success = $this->parseBTRANS_POST();
             }
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position226;
+                $this->position = $_position227;
 
                 $_success = $this->parseRTRANS_POST();
             }
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position226;
+                $this->position = $_position227;
 
                 $_success = $this->parseUNKNOWN_POST();
             }
 
-            $this->cut = $_cut227;
+            $this->cut = $_cut228;
 
             if (!$_success) {
                 break;
             }
 
-            $_value229[] = $this->value;
+            $_value230[] = $this->value;
         }
 
         if (!$this->cut) {
             $_success = true;
-            $this->position = $_position228;
-            $this->value = $_value229;
+            $this->position = $_position229;
+            $this->value = $_value230;
         }
 
-        $this->cut = $_cut230;
+        $this->cut = $_cut231;
 
         if ($_success) {
             $trans = $this->value;
@@ -5021,12 +5029,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value245 = array();
+        $_value246 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value245[] = $this->value;
+            $_value246[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('TRANS')) === 'TRANS') {
                 $_success = true;
@@ -5040,7 +5048,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value245[] = $this->value;
+            $_value246[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -5049,21 +5057,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value245[] = $this->value;
+            $_value246[] = $this->value;
 
-            $_position231 = $this->position;
-            $_cut232 = $this->cut;
+            $_position232 = $this->position;
+            $_cut233 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseACCOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position231;
+                $this->position = $_position232;
                 $this->value = null;
             }
 
-            $this->cut = $_cut232;
+            $this->cut = $_cut233;
 
             if ($_success) {
                 $account = $this->value;
@@ -5071,21 +5079,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value245[] = $this->value;
+            $_value246[] = $this->value;
 
-            $_position233 = $this->position;
-            $_cut234 = $this->cut;
+            $_position234 = $this->position;
+            $_cut235 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseOBJECT_LIST();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position233;
+                $this->position = $_position234;
                 $this->value = null;
             }
 
-            $this->cut = $_cut234;
+            $this->cut = $_cut235;
 
             if ($_success) {
                 $objects = $this->value;
@@ -5093,21 +5101,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value245[] = $this->value;
+            $_value246[] = $this->value;
 
-            $_position235 = $this->position;
-            $_cut236 = $this->cut;
+            $_position236 = $this->position;
+            $_cut237 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseAMOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position235;
+                $this->position = $_position236;
                 $this->value = null;
             }
 
-            $this->cut = $_cut236;
+            $this->cut = $_cut237;
 
             if ($_success) {
                 $amount = $this->value;
@@ -5115,21 +5123,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value245[] = $this->value;
+            $_value246[] = $this->value;
 
-            $_position237 = $this->position;
-            $_cut238 = $this->cut;
+            $_position238 = $this->position;
+            $_cut239 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseOPTIONAL_DATE();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position237;
+                $this->position = $_position238;
                 $this->value = null;
             }
 
-            $this->cut = $_cut238;
+            $this->cut = $_cut239;
 
             if ($_success) {
                 $date = $this->value;
@@ -5137,21 +5145,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value245[] = $this->value;
+            $_value246[] = $this->value;
 
-            $_position239 = $this->position;
-            $_cut240 = $this->cut;
+            $_position240 = $this->position;
+            $_cut241 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position239;
+                $this->position = $_position240;
                 $this->value = null;
             }
 
-            $this->cut = $_cut240;
+            $this->cut = $_cut241;
 
             if ($_success) {
                 $desc = $this->value;
@@ -5159,21 +5167,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value245[] = $this->value;
+            $_value246[] = $this->value;
 
-            $_position241 = $this->position;
-            $_cut242 = $this->cut;
+            $_position242 = $this->position;
+            $_cut243 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position241;
+                $this->position = $_position242;
                 $this->value = null;
             }
 
-            $this->cut = $_cut242;
+            $this->cut = $_cut243;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -5181,21 +5189,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value245[] = $this->value;
+            $_value246[] = $this->value;
 
-            $_position243 = $this->position;
-            $_cut244 = $this->cut;
+            $_position244 = $this->position;
+            $_cut245 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position243;
+                $this->position = $_position244;
                 $this->value = null;
             }
 
-            $this->cut = $_cut244;
+            $this->cut = $_cut245;
 
             if ($_success) {
                 $sign = $this->value;
@@ -5203,15 +5211,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value245[] = $this->value;
+            $_value246[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value245[] = $this->value;
+            $_value246[] = $this->value;
 
-            $this->value = $_value245;
+            $this->value = $_value246;
         }
 
         if ($_success) {
@@ -5255,12 +5263,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value260 = array();
+        $_value261 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value260[] = $this->value;
+            $_value261[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('BTRANS')) === 'BTRANS') {
                 $_success = true;
@@ -5274,7 +5282,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value260[] = $this->value;
+            $_value261[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -5283,21 +5291,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value260[] = $this->value;
+            $_value261[] = $this->value;
 
-            $_position246 = $this->position;
-            $_cut247 = $this->cut;
+            $_position247 = $this->position;
+            $_cut248 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseACCOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position246;
+                $this->position = $_position247;
                 $this->value = null;
             }
 
-            $this->cut = $_cut247;
+            $this->cut = $_cut248;
 
             if ($_success) {
                 $account = $this->value;
@@ -5305,21 +5313,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value260[] = $this->value;
+            $_value261[] = $this->value;
 
-            $_position248 = $this->position;
-            $_cut249 = $this->cut;
+            $_position249 = $this->position;
+            $_cut250 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseOBJECT_LIST();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position248;
+                $this->position = $_position249;
                 $this->value = null;
             }
 
-            $this->cut = $_cut249;
+            $this->cut = $_cut250;
 
             if ($_success) {
                 $objects = $this->value;
@@ -5327,21 +5335,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value260[] = $this->value;
+            $_value261[] = $this->value;
 
-            $_position250 = $this->position;
-            $_cut251 = $this->cut;
+            $_position251 = $this->position;
+            $_cut252 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseAMOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position250;
+                $this->position = $_position251;
                 $this->value = null;
             }
 
-            $this->cut = $_cut251;
+            $this->cut = $_cut252;
 
             if ($_success) {
                 $amount = $this->value;
@@ -5349,21 +5357,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value260[] = $this->value;
+            $_value261[] = $this->value;
 
-            $_position252 = $this->position;
-            $_cut253 = $this->cut;
+            $_position253 = $this->position;
+            $_cut254 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseOPTIONAL_DATE();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position252;
+                $this->position = $_position253;
                 $this->value = null;
             }
 
-            $this->cut = $_cut253;
+            $this->cut = $_cut254;
 
             if ($_success) {
                 $date = $this->value;
@@ -5371,21 +5379,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value260[] = $this->value;
+            $_value261[] = $this->value;
 
-            $_position254 = $this->position;
-            $_cut255 = $this->cut;
+            $_position255 = $this->position;
+            $_cut256 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position254;
+                $this->position = $_position255;
                 $this->value = null;
             }
 
-            $this->cut = $_cut255;
+            $this->cut = $_cut256;
 
             if ($_success) {
                 $desc = $this->value;
@@ -5393,21 +5401,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value260[] = $this->value;
+            $_value261[] = $this->value;
 
-            $_position256 = $this->position;
-            $_cut257 = $this->cut;
+            $_position257 = $this->position;
+            $_cut258 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position256;
+                $this->position = $_position257;
                 $this->value = null;
             }
 
-            $this->cut = $_cut257;
+            $this->cut = $_cut258;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -5415,21 +5423,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value260[] = $this->value;
+            $_value261[] = $this->value;
 
-            $_position258 = $this->position;
-            $_cut259 = $this->cut;
+            $_position259 = $this->position;
+            $_cut260 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position258;
+                $this->position = $_position259;
                 $this->value = null;
             }
 
-            $this->cut = $_cut259;
+            $this->cut = $_cut260;
 
             if ($_success) {
                 $sign = $this->value;
@@ -5437,15 +5445,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value260[] = $this->value;
+            $_value261[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value260[] = $this->value;
+            $_value261[] = $this->value;
 
-            $this->value = $_value260;
+            $this->value = $_value261;
         }
 
         if ($_success) {
@@ -5481,12 +5489,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value275 = array();
+        $_value276 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value275[] = $this->value;
+            $_value276[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('RTRANS')) === 'RTRANS') {
                 $_success = true;
@@ -5500,7 +5508,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value275[] = $this->value;
+            $_value276[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -5509,21 +5517,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value275[] = $this->value;
+            $_value276[] = $this->value;
 
-            $_position261 = $this->position;
-            $_cut262 = $this->cut;
+            $_position262 = $this->position;
+            $_cut263 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseACCOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position261;
+                $this->position = $_position262;
                 $this->value = null;
             }
 
-            $this->cut = $_cut262;
+            $this->cut = $_cut263;
 
             if ($_success) {
                 $account = $this->value;
@@ -5531,21 +5539,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value275[] = $this->value;
+            $_value276[] = $this->value;
 
-            $_position263 = $this->position;
-            $_cut264 = $this->cut;
+            $_position264 = $this->position;
+            $_cut265 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseOBJECT_LIST();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position263;
+                $this->position = $_position264;
                 $this->value = null;
             }
 
-            $this->cut = $_cut264;
+            $this->cut = $_cut265;
 
             if ($_success) {
                 $objects = $this->value;
@@ -5553,21 +5561,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value275[] = $this->value;
+            $_value276[] = $this->value;
 
-            $_position265 = $this->position;
-            $_cut266 = $this->cut;
+            $_position266 = $this->position;
+            $_cut267 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseAMOUNT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position265;
+                $this->position = $_position266;
                 $this->value = null;
             }
 
-            $this->cut = $_cut266;
+            $this->cut = $_cut267;
 
             if ($_success) {
                 $amount = $this->value;
@@ -5575,21 +5583,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value275[] = $this->value;
+            $_value276[] = $this->value;
 
-            $_position267 = $this->position;
-            $_cut268 = $this->cut;
+            $_position268 = $this->position;
+            $_cut269 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseOPTIONAL_DATE();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position267;
+                $this->position = $_position268;
                 $this->value = null;
             }
 
-            $this->cut = $_cut268;
+            $this->cut = $_cut269;
 
             if ($_success) {
                 $date = $this->value;
@@ -5597,21 +5605,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value275[] = $this->value;
+            $_value276[] = $this->value;
 
-            $_position269 = $this->position;
-            $_cut270 = $this->cut;
+            $_position270 = $this->position;
+            $_cut271 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position269;
+                $this->position = $_position270;
                 $this->value = null;
             }
 
-            $this->cut = $_cut270;
+            $this->cut = $_cut271;
 
             if ($_success) {
                 $desc = $this->value;
@@ -5619,21 +5627,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value275[] = $this->value;
+            $_value276[] = $this->value;
 
-            $_position271 = $this->position;
-            $_cut272 = $this->cut;
+            $_position272 = $this->position;
+            $_cut273 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position271;
+                $this->position = $_position272;
                 $this->value = null;
             }
 
-            $this->cut = $_cut272;
+            $this->cut = $_cut273;
 
             if ($_success) {
                 $quantity = $this->value;
@@ -5641,21 +5649,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value275[] = $this->value;
+            $_value276[] = $this->value;
 
-            $_position273 = $this->position;
-            $_cut274 = $this->cut;
+            $_position274 = $this->position;
+            $_cut275 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position273;
+                $this->position = $_position274;
                 $this->value = null;
             }
 
-            $this->cut = $_cut274;
+            $this->cut = $_cut275;
 
             if ($_success) {
                 $sign = $this->value;
@@ -5663,15 +5671,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value275[] = $this->value;
+            $_value276[] = $this->value;
 
             $_success = $this->parseROW_END();
         }
 
         if ($_success) {
-            $_value275[] = $this->value;
+            $_value276[] = $this->value;
 
-            $this->value = $_value275;
+            $this->value = $_value276;
         }
 
         if ($_success) {
@@ -5707,25 +5715,25 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_position276 = $this->position;
-        $_cut277 = $this->cut;
+        $_position277 = $this->position;
+        $_cut278 = $this->cut;
 
         $this->cut = false;
         $_success = $this->parseUNKNOWN_POST();
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position276;
+            $this->position = $_position277;
 
             $_success = $this->parseINVALID_LINE();
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position276;
+            $this->position = $_position277;
 
             $_success = $this->parseEMPTY_LINE();
         }
 
-        $this->cut = $_cut277;
+        $this->cut = $_cut278;
 
         $this->cache['VOID_ROW'][$_position] = array(
             'success' => $_success,
@@ -5752,15 +5760,15 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value283 = array();
+        $_value284 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value283[] = $this->value;
+            $_value284[] = $this->value;
 
-            $_position278 = $this->position;
-            $_cut279 = $this->cut;
+            $_position279 = $this->position;
+            $_cut280 = $this->cut;
 
             $this->cut = false;
             if (substr($this->string, $this->position, strlen('#')) === '#') {
@@ -5780,21 +5788,21 @@ class Grammar extends AbstractParser
                 $_success = false;
             }
 
-            $this->position = $_position278;
-            $this->cut = $_cut279;
+            $this->position = $_position279;
+            $this->cut = $_cut280;
         }
 
         if ($_success) {
-            $_value283[] = $this->value;
+            $_value284[] = $this->value;
 
             $_success = $this->parseSTRING();
 
             if ($_success) {
-                $_value281 = array($this->value);
-                $_cut282 = $this->cut;
+                $_value282 = array($this->value);
+                $_cut283 = $this->cut;
 
                 while (true) {
-                    $_position280 = $this->position;
+                    $_position281 = $this->position;
 
                     $this->cut = false;
                     $_success = $this->parseSTRING();
@@ -5803,16 +5811,16 @@ class Grammar extends AbstractParser
                         break;
                     }
 
-                    $_value281[] = $this->value;
+                    $_value282[] = $this->value;
                 }
 
                 if (!$this->cut) {
                     $_success = true;
-                    $this->position = $_position280;
-                    $this->value = $_value281;
+                    $this->position = $_position281;
+                    $this->value = $_value282;
                 }
 
-                $this->cut = $_cut282;
+                $this->cut = $_cut283;
             }
 
             if ($_success) {
@@ -5821,15 +5829,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value283[] = $this->value;
+            $_value284[] = $this->value;
 
             $_success = $this->parseEOL();
         }
 
         if ($_success) {
-            $_value283[] = $this->value;
+            $_value284[] = $this->value;
 
-            $this->value = $_value283;
+            $this->value = $_value284;
         }
 
         if ($_success) {
@@ -5863,15 +5871,15 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value289 = array();
+        $_value290 = array();
 
         $_success = $this->parseROW_START();
 
         if ($_success) {
-            $_value289[] = $this->value;
+            $_value290[] = $this->value;
 
-            $_position284 = $this->position;
-            $_cut285 = $this->cut;
+            $_position285 = $this->position;
+            $_cut286 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseVALID_LABEL();
@@ -5883,12 +5891,12 @@ class Grammar extends AbstractParser
                 $_success = false;
             }
 
-            $this->position = $_position284;
-            $this->cut = $_cut285;
+            $this->position = $_position285;
+            $this->cut = $_cut286;
         }
 
         if ($_success) {
-            $_value289[] = $this->value;
+            $_value290[] = $this->value;
 
             $_success = $this->parseVALID_CHARS();
 
@@ -5898,7 +5906,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value289[] = $this->value;
+            $_value290[] = $this->value;
 
             $_success = true;
             $this->value = null;
@@ -5907,13 +5915,13 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value289[] = $this->value;
+            $_value290[] = $this->value;
 
-            $_value287 = array();
-            $_cut288 = $this->cut;
+            $_value288 = array();
+            $_cut289 = $this->cut;
 
             while (true) {
-                $_position286 = $this->position;
+                $_position287 = $this->position;
 
                 $this->cut = false;
                 $_success = $this->parseSTRING();
@@ -5922,16 +5930,16 @@ class Grammar extends AbstractParser
                     break;
                 }
 
-                $_value287[] = $this->value;
+                $_value288[] = $this->value;
             }
 
             if (!$this->cut) {
                 $_success = true;
-                $this->position = $_position286;
-                $this->value = $_value287;
+                $this->position = $_position287;
+                $this->value = $_value288;
             }
 
-            $this->cut = $_cut288;
+            $this->cut = $_cut289;
 
             if ($_success) {
                 $vars = $this->value;
@@ -5939,15 +5947,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value289[] = $this->value;
+            $_value290[] = $this->value;
 
             $_success = $this->parseEOL();
         }
 
         if ($_success) {
-            $_value289[] = $this->value;
+            $_value290[] = $this->value;
 
-            $this->value = $_value289;
+            $this->value = $_value290;
         }
 
         if ($_success) {
@@ -5989,8 +5997,8 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_position290 = $this->position;
-        $_cut291 = $this->cut;
+        $_position291 = $this->position;
+        $_cut292 = $this->cut;
 
         $this->cut = false;
         if (substr($this->string, $this->position, strlen('ADRESS')) === 'ADRESS') {
@@ -6004,7 +6012,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('BKOD')) === 'BKOD') {
                 $_success = true;
@@ -6018,7 +6026,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('DIM')) === 'DIM') {
                 $_success = true;
@@ -6032,7 +6040,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('ENHET')) === 'ENHET') {
                 $_success = true;
@@ -6046,7 +6054,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('FLAGGA')) === 'FLAGGA') {
                 $_success = true;
@@ -6060,7 +6068,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('FNAMN')) === 'FNAMN') {
                 $_success = true;
@@ -6074,7 +6082,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('FNR')) === 'FNR') {
                 $_success = true;
@@ -6088,7 +6096,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('FORMAT')) === 'FORMAT') {
                 $_success = true;
@@ -6102,7 +6110,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('FTYP')) === 'FTYP') {
                 $_success = true;
@@ -6116,7 +6124,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('GEN')) === 'GEN') {
                 $_success = true;
@@ -6130,7 +6138,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('IB')) === 'IB') {
                 $_success = true;
@@ -6144,7 +6152,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('KONTO')) === 'KONTO') {
                 $_success = true;
@@ -6158,7 +6166,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('KPTYP')) === 'KPTYP') {
                 $_success = true;
@@ -6172,7 +6180,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('KSUMMA')) === 'KSUMMA') {
                 $_success = true;
@@ -6186,7 +6194,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('KTYP')) === 'KTYP') {
                 $_success = true;
@@ -6200,7 +6208,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('OBJEKT')) === 'OBJEKT') {
                 $_success = true;
@@ -6214,7 +6222,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('OIB')) === 'OIB') {
                 $_success = true;
@@ -6228,7 +6236,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('OMFATTN')) === 'OMFATTN') {
                 $_success = true;
@@ -6242,7 +6250,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('ORGNR')) === 'ORGNR') {
                 $_success = true;
@@ -6256,7 +6264,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('OUB')) === 'OUB') {
                 $_success = true;
@@ -6270,7 +6278,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('PBUDGET')) === 'PBUDGET') {
                 $_success = true;
@@ -6284,7 +6292,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('PROGRAM')) === 'PROGRAM') {
                 $_success = true;
@@ -6298,7 +6306,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('PROSA')) === 'PROSA') {
                 $_success = true;
@@ -6312,7 +6320,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('PSALDO')) === 'PSALDO') {
                 $_success = true;
@@ -6326,7 +6334,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('RAR')) === 'RAR') {
                 $_success = true;
@@ -6340,7 +6348,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('RES')) === 'RES') {
                 $_success = true;
@@ -6354,7 +6362,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('SIETYP')) === 'SIETYP') {
                 $_success = true;
@@ -6368,7 +6376,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('SRU')) === 'SRU') {
                 $_success = true;
@@ -6382,7 +6390,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('TAXAR')) === 'TAXAR') {
                 $_success = true;
@@ -6396,7 +6404,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('TRANS')) === 'TRANS') {
                 $_success = true;
@@ -6410,7 +6418,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('RTRANS')) === 'RTRANS') {
                 $_success = true;
@@ -6424,7 +6432,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('BTRANS')) === 'BTRANS') {
                 $_success = true;
@@ -6438,7 +6446,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('UB')) === 'UB') {
                 $_success = true;
@@ -6452,7 +6460,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('UNDERDIM')) === 'UNDERDIM') {
                 $_success = true;
@@ -6466,7 +6474,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('VALUTA')) === 'VALUTA') {
                 $_success = true;
@@ -6480,7 +6488,7 @@ class Grammar extends AbstractParser
         }
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position290;
+            $this->position = $_position291;
 
             if (substr($this->string, $this->position, strlen('VER')) === 'VER') {
                 $_success = true;
@@ -6493,7 +6501,7 @@ class Grammar extends AbstractParser
             }
         }
 
-        $this->cut = $_cut291;
+        $this->cut = $_cut292;
 
         $this->cache['VALID_LABEL'][$_position] = array(
             'success' => $_success,
@@ -6520,12 +6528,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value292 = array();
+        $_value293 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value292[] = $this->value;
+            $_value293[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('{')) === '{') {
                 $_success = true;
@@ -6539,21 +6547,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value292[] = $this->value;
+            $_value293[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value292[] = $this->value;
+            $_value293[] = $this->value;
 
             $_success = $this->parseEOL();
         }
 
         if ($_success) {
-            $_value292[] = $this->value;
+            $_value293[] = $this->value;
 
-            $this->value = $_value292;
+            $this->value = $_value293;
         }
 
         $this->cache['SUBROW_START'][$_position] = array(
@@ -6581,12 +6589,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value295 = array();
+        $_value296 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value295[] = $this->value;
+            $_value296[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('}')) === '}') {
                 $_success = true;
@@ -6600,33 +6608,33 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value295[] = $this->value;
+            $_value296[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value295[] = $this->value;
+            $_value296[] = $this->value;
 
-            $_position293 = $this->position;
-            $_cut294 = $this->cut;
+            $_position294 = $this->position;
+            $_cut295 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseEOL();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position293;
+                $this->position = $_position294;
                 $this->value = null;
             }
 
-            $this->cut = $_cut294;
+            $this->cut = $_cut295;
         }
 
         if ($_success) {
-            $_value295[] = $this->value;
+            $_value296[] = $this->value;
 
-            $this->value = $_value295;
+            $this->value = $_value296;
         }
 
         $this->cache['SUBROW_END'][$_position] = array(
@@ -6654,13 +6662,13 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value299 = array();
+        $_value300 = array();
 
-        $_value297 = array();
-        $_cut298 = $this->cut;
+        $_value298 = array();
+        $_cut299 = $this->cut;
 
         while (true) {
-            $_position296 = $this->position;
+            $_position297 = $this->position;
 
             $this->cut = false;
             $_success = $this->parseEMPTY_LINE();
@@ -6669,25 +6677,25 @@ class Grammar extends AbstractParser
                 break;
             }
 
-            $_value297[] = $this->value;
+            $_value298[] = $this->value;
         }
 
         if (!$this->cut) {
             $_success = true;
-            $this->position = $_position296;
-            $this->value = $_value297;
+            $this->position = $_position297;
+            $this->value = $_value298;
         }
 
-        $this->cut = $_cut298;
+        $this->cut = $_cut299;
 
         if ($_success) {
-            $_value299[] = $this->value;
+            $_value300[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value299[] = $this->value;
+            $_value300[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('#')) === '#') {
                 $_success = true;
@@ -6701,9 +6709,9 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value299[] = $this->value;
+            $_value300[] = $this->value;
 
-            $this->value = $_value299;
+            $this->value = $_value300;
         }
 
         $this->cache['ROW_START'][$_position] = array(
@@ -6731,13 +6739,13 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value305 = array();
+        $_value306 = array();
 
-        $_value301 = array();
-        $_cut302 = $this->cut;
+        $_value302 = array();
+        $_cut303 = $this->cut;
 
         while (true) {
-            $_position300 = $this->position;
+            $_position301 = $this->position;
 
             $this->cut = false;
             $_success = $this->parseSTRING();
@@ -6746,49 +6754,49 @@ class Grammar extends AbstractParser
                 break;
             }
 
-            $_value301[] = $this->value;
+            $_value302[] = $this->value;
         }
 
         if (!$this->cut) {
             $_success = true;
-            $this->position = $_position300;
-            $this->value = $_value301;
+            $this->position = $_position301;
+            $this->value = $_value302;
         }
 
-        $this->cut = $_cut302;
+        $this->cut = $_cut303;
 
         if ($_success) {
             $fields = $this->value;
         }
 
         if ($_success) {
-            $_value305[] = $this->value;
+            $_value306[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value305[] = $this->value;
+            $_value306[] = $this->value;
 
-            $_position303 = $this->position;
-            $_cut304 = $this->cut;
+            $_position304 = $this->position;
+            $_cut305 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseEOL();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position303;
+                $this->position = $_position304;
                 $this->value = null;
             }
 
-            $this->cut = $_cut304;
+            $this->cut = $_cut305;
         }
 
         if ($_success) {
-            $_value305[] = $this->value;
+            $_value306[] = $this->value;
 
-            $this->value = $_value305;
+            $this->value = $_value306;
         }
 
         if ($_success) {
@@ -6824,19 +6832,19 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_position306 = $this->position;
-        $_cut307 = $this->cut;
+        $_position307 = $this->position;
+        $_cut308 = $this->cut;
 
         $this->cut = false;
         $_success = $this->parseDATE();
 
         if (!$_success && !$this->cut) {
-            $this->position = $_position306;
+            $this->position = $_position307;
 
             $_success = $this->parseEMPTY_STRING();
         }
 
-        $this->cut = $_cut307;
+        $this->cut = $_cut308;
 
         if ($_success) {
             $date = $this->value;
@@ -6873,26 +6881,26 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value310 = array();
+        $_value311 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value310[] = $this->value;
+            $_value311[] = $this->value;
 
-            $_position308 = $this->position;
-            $_cut309 = $this->cut;
+            $_position309 = $this->position;
+            $_cut310 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseRAW_DATE();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position308;
+                $this->position = $_position309;
 
                 $_success = $this->parseQUOTED_DATE();
             }
 
-            $this->cut = $_cut309;
+            $this->cut = $_cut310;
 
             if ($_success) {
                 $date = $this->value;
@@ -6900,15 +6908,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value310[] = $this->value;
+            $_value311[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value310[] = $this->value;
+            $_value311[] = $this->value;
 
-            $this->value = $_value310;
+            $this->value = $_value311;
         }
 
         if ($_success) {
@@ -6942,7 +6950,7 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value311 = array();
+        $_value312 = array();
 
         if (substr($this->string, $this->position, strlen('"')) === '"') {
             $_success = true;
@@ -6955,7 +6963,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value311[] = $this->value;
+            $_value312[] = $this->value;
 
             $_success = $this->parseRAW_DATE();
 
@@ -6965,7 +6973,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value311[] = $this->value;
+            $_value312[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('"')) === '"') {
                 $_success = true;
@@ -6979,9 +6987,9 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value311[] = $this->value;
+            $_value312[] = $this->value;
 
-            $this->value = $_value311;
+            $this->value = $_value312;
         }
 
         if ($_success) {
@@ -7015,9 +7023,9 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value319 = array();
+        $_value320 = array();
 
-        $_value312 = array();
+        $_value313 = array();
 
         if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
             $_success = true;
@@ -7028,7 +7036,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value312[] = $this->value;
+            $_value313[] = $this->value;
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -7040,7 +7048,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value312[] = $this->value;
+            $_value313[] = $this->value;
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -7052,7 +7060,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value312[] = $this->value;
+            $_value313[] = $this->value;
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -7064,9 +7072,9 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value312[] = $this->value;
+            $_value313[] = $this->value;
 
-            $this->value = $_value312;
+            $this->value = $_value313;
         }
 
         if ($_success) {
@@ -7074,13 +7082,13 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value319[] = $this->value;
+            $_value320[] = $this->value;
 
-            $_position314 = $this->position;
-            $_cut315 = $this->cut;
+            $_position315 = $this->position;
+            $_cut316 = $this->cut;
 
             $this->cut = false;
-            $_value313 = array();
+            $_value314 = array();
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -7091,7 +7099,7 @@ class Grammar extends AbstractParser
             }
 
             if ($_success) {
-                $_value313[] = $this->value;
+                $_value314[] = $this->value;
 
                 if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                     $_success = true;
@@ -7103,18 +7111,18 @@ class Grammar extends AbstractParser
             }
 
             if ($_success) {
-                $_value313[] = $this->value;
+                $_value314[] = $this->value;
 
-                $this->value = $_value313;
+                $this->value = $_value314;
             }
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position314;
+                $this->position = $_position315;
                 $this->value = null;
             }
 
-            $this->cut = $_cut315;
+            $this->cut = $_cut316;
 
             if ($_success) {
                 $month = $this->value;
@@ -7122,13 +7130,13 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value319[] = $this->value;
+            $_value320[] = $this->value;
 
-            $_position317 = $this->position;
-            $_cut318 = $this->cut;
+            $_position318 = $this->position;
+            $_cut319 = $this->cut;
 
             $this->cut = false;
-            $_value316 = array();
+            $_value317 = array();
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -7139,7 +7147,7 @@ class Grammar extends AbstractParser
             }
 
             if ($_success) {
-                $_value316[] = $this->value;
+                $_value317[] = $this->value;
 
                 if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                     $_success = true;
@@ -7151,18 +7159,18 @@ class Grammar extends AbstractParser
             }
 
             if ($_success) {
-                $_value316[] = $this->value;
+                $_value317[] = $this->value;
 
-                $this->value = $_value316;
+                $this->value = $_value317;
             }
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position317;
+                $this->position = $_position318;
                 $this->value = null;
             }
 
-            $this->cut = $_cut318;
+            $this->cut = $_cut319;
 
             if ($_success) {
                 $day = $this->value;
@@ -7170,9 +7178,9 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value319[] = $this->value;
+            $_value320[] = $this->value;
 
-            $this->value = $_value319;
+            $this->value = $_value320;
         }
 
         if ($_success) {
@@ -7210,26 +7218,26 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value322 = array();
+        $_value323 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value322[] = $this->value;
+            $_value323[] = $this->value;
 
-            $_position320 = $this->position;
-            $_cut321 = $this->cut;
+            $_position321 = $this->position;
+            $_cut322 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseRAW_AMOUNT();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position320;
+                $this->position = $_position321;
 
                 $_success = $this->parseQUOTED_AMOUNT();
             }
 
-            $this->cut = $_cut321;
+            $this->cut = $_cut322;
 
             if ($_success) {
                 $amount = $this->value;
@@ -7237,15 +7245,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value322[] = $this->value;
+            $_value323[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value322[] = $this->value;
+            $_value323[] = $this->value;
 
-            $this->value = $_value322;
+            $this->value = $_value323;
         }
 
         if ($_success) {
@@ -7279,7 +7287,7 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value323 = array();
+        $_value324 = array();
 
         if (substr($this->string, $this->position, strlen('"')) === '"') {
             $_success = true;
@@ -7292,7 +7300,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value323[] = $this->value;
+            $_value324[] = $this->value;
 
             $_success = $this->parseRAW_AMOUNT();
 
@@ -7302,7 +7310,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value323[] = $this->value;
+            $_value324[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('"')) === '"') {
                 $_success = true;
@@ -7316,9 +7324,9 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value323[] = $this->value;
+            $_value324[] = $this->value;
 
-            $this->value = $_value323;
+            $this->value = $_value324;
         }
 
         if ($_success) {
@@ -7352,10 +7360,10 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value336 = array();
+        $_value337 = array();
 
-        $_position324 = $this->position;
-        $_cut325 = $this->cut;
+        $_position325 = $this->position;
+        $_cut326 = $this->cut;
 
         $this->cut = false;
         if (substr($this->string, $this->position, strlen("-")) === "-") {
@@ -7370,18 +7378,18 @@ class Grammar extends AbstractParser
 
         if (!$_success && !$this->cut) {
             $_success = true;
-            $this->position = $_position324;
+            $this->position = $_position325;
             $this->value = null;
         }
 
-        $this->cut = $_cut325;
+        $this->cut = $_cut326;
 
         if ($_success) {
             $negation = $this->value;
         }
 
         if ($_success) {
-            $_value336[] = $this->value;
+            $_value337[] = $this->value;
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -7392,11 +7400,11 @@ class Grammar extends AbstractParser
             }
 
             if ($_success) {
-                $_value327 = array($this->value);
-                $_cut328 = $this->cut;
+                $_value328 = array($this->value);
+                $_cut329 = $this->cut;
 
                 while (true) {
-                    $_position326 = $this->position;
+                    $_position327 = $this->position;
 
                     $this->cut = false;
                     if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
@@ -7411,16 +7419,16 @@ class Grammar extends AbstractParser
                         break;
                     }
 
-                    $_value327[] = $this->value;
+                    $_value328[] = $this->value;
                 }
 
                 if (!$this->cut) {
                     $_success = true;
-                    $this->position = $_position326;
-                    $this->value = $_value327;
+                    $this->position = $_position327;
+                    $this->value = $_value328;
                 }
 
-                $this->cut = $_cut328;
+                $this->cut = $_cut329;
             }
 
             if ($_success) {
@@ -7429,10 +7437,10 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value336[] = $this->value;
+            $_value337[] = $this->value;
 
-            $_position329 = $this->position;
-            $_cut330 = $this->cut;
+            $_position330 = $this->position;
+            $_cut331 = $this->cut;
 
             $this->cut = false;
             if (substr($this->string, $this->position, strlen(".")) === ".") {
@@ -7447,20 +7455,20 @@ class Grammar extends AbstractParser
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position329;
+                $this->position = $_position330;
                 $this->value = null;
             }
 
-            $this->cut = $_cut330;
+            $this->cut = $_cut331;
         }
 
         if ($_success) {
-            $_value336[] = $this->value;
+            $_value337[] = $this->value;
 
-            $_value335 = array();
+            $_value336 = array();
 
-            $_position331 = $this->position;
-            $_cut332 = $this->cut;
+            $_position332 = $this->position;
+            $_cut333 = $this->cut;
 
             $this->cut = false;
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
@@ -7473,17 +7481,17 @@ class Grammar extends AbstractParser
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position331;
+                $this->position = $_position332;
                 $this->value = null;
             }
 
-            $this->cut = $_cut332;
+            $this->cut = $_cut333;
 
             if ($_success) {
-                $_value335[] = $this->value;
+                $_value336[] = $this->value;
 
-                $_position333 = $this->position;
-                $_cut334 = $this->cut;
+                $_position334 = $this->position;
+                $_cut335 = $this->cut;
 
                 $this->cut = false;
                 if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
@@ -7496,17 +7504,17 @@ class Grammar extends AbstractParser
 
                 if (!$_success && !$this->cut) {
                     $_success = true;
-                    $this->position = $_position333;
+                    $this->position = $_position334;
                     $this->value = null;
                 }
 
-                $this->cut = $_cut334;
+                $this->cut = $_cut335;
             }
 
             if ($_success) {
-                $_value335[] = $this->value;
+                $_value336[] = $this->value;
 
-                $this->value = $_value335;
+                $this->value = $_value336;
             }
 
             if ($_success) {
@@ -7515,9 +7523,9 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value336[] = $this->value;
+            $_value337[] = $this->value;
 
-            $this->value = $_value336;
+            $this->value = $_value337;
         }
 
         if ($_success) {
@@ -7588,7 +7596,7 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value337 = array();
+        $_value338 = array();
 
         $_success = $this->parseINT();
 
@@ -7597,7 +7605,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value337[] = $this->value;
+            $_value338[] = $this->value;
 
             $_success = $this->parseOBJECT_LIST_SAFE_STRING();
 
@@ -7607,9 +7615,9 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value337[] = $this->value;
+            $_value338[] = $this->value;
 
-            $this->value = $_value337;
+            $this->value = $_value338;
         }
 
         if ($_success) {
@@ -7643,26 +7651,26 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value340 = array();
+        $_value341 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value340[] = $this->value;
+            $_value341[] = $this->value;
 
-            $_position338 = $this->position;
-            $_cut339 = $this->cut;
+            $_position339 = $this->position;
+            $_cut340 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseOBJECT_ID_SAFE_CHARS();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position338;
+                $this->position = $_position339;
 
                 $_success = $this->parseQUOTED_STRING();
             }
 
-            $this->cut = $_cut339;
+            $this->cut = $_cut340;
 
             if ($_success) {
                 $string = $this->value;
@@ -7670,15 +7678,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value340[] = $this->value;
+            $_value341[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value340[] = $this->value;
+            $_value341[] = $this->value;
 
-            $this->value = $_value340;
+            $this->value = $_value341;
         }
 
         if ($_success) {
@@ -7721,11 +7729,11 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value342 = array($this->value);
-            $_cut343 = $this->cut;
+            $_value343 = array($this->value);
+            $_cut344 = $this->cut;
 
             while (true) {
-                $_position341 = $this->position;
+                $_position342 = $this->position;
 
                 $this->cut = false;
                 if (preg_match('/^[a-zA-Z0-9!#$%&\'()*+,-.\\/:;<=>?@\\[\\\\\\]^_`|~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■]$/', substr($this->string, $this->position, 1))) {
@@ -7740,16 +7748,16 @@ class Grammar extends AbstractParser
                     break;
                 }
 
-                $_value342[] = $this->value;
+                $_value343[] = $this->value;
             }
 
             if (!$this->cut) {
                 $_success = true;
-                $this->position = $_position341;
-                $this->value = $_value342;
+                $this->position = $_position342;
+                $this->value = $_value343;
             }
 
-            $this->cut = $_cut343;
+            $this->cut = $_cut344;
         }
 
         if ($_success) {
@@ -7787,12 +7795,12 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value347 = array();
+        $_value348 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value347[] = $this->value;
+            $_value348[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('{')) === '{') {
                 $_success = true;
@@ -7806,13 +7814,13 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value347[] = $this->value;
+            $_value348[] = $this->value;
 
-            $_value345 = array();
-            $_cut346 = $this->cut;
+            $_value346 = array();
+            $_cut347 = $this->cut;
 
             while (true) {
-                $_position344 = $this->position;
+                $_position345 = $this->position;
 
                 $this->cut = false;
                 $_success = $this->parseOBJECT();
@@ -7821,16 +7829,16 @@ class Grammar extends AbstractParser
                     break;
                 }
 
-                $_value345[] = $this->value;
+                $_value346[] = $this->value;
             }
 
             if (!$this->cut) {
                 $_success = true;
-                $this->position = $_position344;
-                $this->value = $_value345;
+                $this->position = $_position345;
+                $this->value = $_value346;
             }
 
-            $this->cut = $_cut346;
+            $this->cut = $_cut347;
 
             if ($_success) {
                 $objects = $this->value;
@@ -7838,7 +7846,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value347[] = $this->value;
+            $_value348[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('}')) === '}') {
                 $_success = true;
@@ -7852,15 +7860,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value347[] = $this->value;
+            $_value348[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value347[] = $this->value;
+            $_value348[] = $this->value;
 
-            $this->value = $_value347;
+            $this->value = $_value348;
         }
 
         if ($_success) {
@@ -7894,26 +7902,32 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value350 = array();
+        $_value351 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value350[] = $this->value;
+            $_value351[] = $this->value;
 
-            $_position348 = $this->position;
-            $_cut349 = $this->cut;
+            $_position349 = $this->position;
+            $_cut350 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseRAW_FLOAT();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position348;
+                $this->position = $_position349;
 
                 $_success = $this->parseQUOTED_FLOAT();
             }
 
-            $this->cut = $_cut349;
+            if (!$_success && !$this->cut) {
+                $this->position = $_position349;
+
+                $_success = $this->parseEMPTY_STRING();
+            }
+
+            $this->cut = $_cut350;
 
             if ($_success) {
                 $float = $this->value;
@@ -7921,15 +7935,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value350[] = $this->value;
+            $_value351[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value350[] = $this->value;
+            $_value351[] = $this->value;
 
-            $this->value = $_value350;
+            $this->value = $_value351;
         }
 
         if ($_success) {
@@ -7963,7 +7977,7 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value351 = array();
+        $_value352 = array();
 
         if (substr($this->string, $this->position, strlen('"')) === '"') {
             $_success = true;
@@ -7976,7 +7990,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value351[] = $this->value;
+            $_value352[] = $this->value;
 
             $_success = $this->parseRAW_FLOAT();
 
@@ -7986,7 +8000,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value351[] = $this->value;
+            $_value352[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('"')) === '"') {
                 $_success = true;
@@ -8000,9 +8014,9 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value351[] = $this->value;
+            $_value352[] = $this->value;
 
-            $this->value = $_value351;
+            $this->value = $_value352;
         }
 
         if ($_success) {
@@ -8036,7 +8050,7 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value357 = array();
+        $_value358 = array();
 
         $_success = $this->parseRAW_INT();
 
@@ -8045,10 +8059,10 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value357[] = $this->value;
+            $_value358[] = $this->value;
 
-            $_position352 = $this->position;
-            $_cut353 = $this->cut;
+            $_position353 = $this->position;
+            $_cut354 = $this->cut;
 
             $this->cut = false;
             if (substr($this->string, $this->position, strlen('.')) === '.') {
@@ -8063,21 +8077,21 @@ class Grammar extends AbstractParser
 
             if (!$_success && !$this->cut) {
                 $_success = true;
-                $this->position = $_position352;
+                $this->position = $_position353;
                 $this->value = null;
             }
 
-            $this->cut = $_cut353;
+            $this->cut = $_cut354;
         }
 
         if ($_success) {
-            $_value357[] = $this->value;
+            $_value358[] = $this->value;
 
-            $_value355 = array();
-            $_cut356 = $this->cut;
+            $_value356 = array();
+            $_cut357 = $this->cut;
 
             while (true) {
-                $_position354 = $this->position;
+                $_position355 = $this->position;
 
                 $this->cut = false;
                 if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
@@ -8092,16 +8106,16 @@ class Grammar extends AbstractParser
                     break;
                 }
 
-                $_value355[] = $this->value;
+                $_value356[] = $this->value;
             }
 
             if (!$this->cut) {
                 $_success = true;
-                $this->position = $_position354;
-                $this->value = $_value355;
+                $this->position = $_position355;
+                $this->value = $_value356;
             }
 
-            $this->cut = $_cut356;
+            $this->cut = $_cut357;
 
             if ($_success) {
                 $trailing = $this->value;
@@ -8109,9 +8123,9 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value357[] = $this->value;
+            $_value358[] = $this->value;
 
-            $this->value = $_value357;
+            $this->value = $_value358;
         }
 
         if ($_success) {
@@ -8145,26 +8159,26 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value360 = array();
+        $_value361 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value360[] = $this->value;
+            $_value361[] = $this->value;
 
-            $_position358 = $this->position;
-            $_cut359 = $this->cut;
+            $_position359 = $this->position;
+            $_cut360 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseRAW_INT();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position358;
+                $this->position = $_position359;
 
                 $_success = $this->parseQUOTED_INT();
             }
 
-            $this->cut = $_cut359;
+            $this->cut = $_cut360;
 
             if ($_success) {
                 $int = $this->value;
@@ -8172,15 +8186,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value360[] = $this->value;
+            $_value361[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value360[] = $this->value;
+            $_value361[] = $this->value;
 
-            $this->value = $_value360;
+            $this->value = $_value361;
         }
 
         if ($_success) {
@@ -8214,7 +8228,7 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value361 = array();
+        $_value362 = array();
 
         if (substr($this->string, $this->position, strlen('"')) === '"') {
             $_success = true;
@@ -8227,7 +8241,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value361[] = $this->value;
+            $_value362[] = $this->value;
 
             $_success = $this->parseRAW_INT();
 
@@ -8237,7 +8251,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value361[] = $this->value;
+            $_value362[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('"')) === '"') {
                 $_success = true;
@@ -8251,9 +8265,9 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value361[] = $this->value;
+            $_value362[] = $this->value;
 
-            $this->value = $_value361;
+            $this->value = $_value362;
         }
 
         if ($_success) {
@@ -8287,10 +8301,10 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value367 = array();
+        $_value368 = array();
 
-        $_position362 = $this->position;
-        $_cut363 = $this->cut;
+        $_position363 = $this->position;
+        $_cut364 = $this->cut;
 
         $this->cut = false;
         if (substr($this->string, $this->position, strlen("-")) === "-") {
@@ -8305,18 +8319,18 @@ class Grammar extends AbstractParser
 
         if (!$_success && !$this->cut) {
             $_success = true;
-            $this->position = $_position362;
+            $this->position = $_position363;
             $this->value = null;
         }
 
-        $this->cut = $_cut363;
+        $this->cut = $_cut364;
 
         if ($_success) {
             $negation = $this->value;
         }
 
         if ($_success) {
-            $_value367[] = $this->value;
+            $_value368[] = $this->value;
 
             if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
                 $_success = true;
@@ -8327,11 +8341,11 @@ class Grammar extends AbstractParser
             }
 
             if ($_success) {
-                $_value365 = array($this->value);
-                $_cut366 = $this->cut;
+                $_value366 = array($this->value);
+                $_cut367 = $this->cut;
 
                 while (true) {
-                    $_position364 = $this->position;
+                    $_position365 = $this->position;
 
                     $this->cut = false;
                     if (preg_match('/^[0-9]$/', substr($this->string, $this->position, 1))) {
@@ -8346,16 +8360,16 @@ class Grammar extends AbstractParser
                         break;
                     }
 
-                    $_value365[] = $this->value;
+                    $_value366[] = $this->value;
                 }
 
                 if (!$this->cut) {
                     $_success = true;
-                    $this->position = $_position364;
-                    $this->value = $_value365;
+                    $this->position = $_position365;
+                    $this->value = $_value366;
                 }
 
-                $this->cut = $_cut366;
+                $this->cut = $_cut367;
             }
 
             if ($_success) {
@@ -8364,9 +8378,9 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value367[] = $this->value;
+            $_value368[] = $this->value;
 
-            $this->value = $_value367;
+            $this->value = $_value368;
         }
 
         if ($_success) {
@@ -8400,26 +8414,26 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value370 = array();
+        $_value371 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value370[] = $this->value;
+            $_value371[] = $this->value;
 
-            $_position368 = $this->position;
-            $_cut369 = $this->cut;
+            $_position369 = $this->position;
+            $_cut370 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseRAW_BOOLEAN();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position368;
+                $this->position = $_position369;
 
                 $_success = $this->parseQUOTED_BOOLEAN();
             }
 
-            $this->cut = $_cut369;
+            $this->cut = $_cut370;
 
             if ($_success) {
                 $bool = $this->value;
@@ -8427,15 +8441,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value370[] = $this->value;
+            $_value371[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value370[] = $this->value;
+            $_value371[] = $this->value;
 
-            $this->value = $_value370;
+            $this->value = $_value371;
         }
 
         if ($_success) {
@@ -8469,7 +8483,7 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value371 = array();
+        $_value372 = array();
 
         if (substr($this->string, $this->position, strlen('"')) === '"') {
             $_success = true;
@@ -8482,7 +8496,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value371[] = $this->value;
+            $_value372[] = $this->value;
 
             $_success = $this->parseRAW_BOOLEAN();
 
@@ -8492,7 +8506,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value371[] = $this->value;
+            $_value372[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('"')) === '"') {
                 $_success = true;
@@ -8506,9 +8520,9 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value371[] = $this->value;
+            $_value372[] = $this->value;
 
-            $this->value = $_value371;
+            $this->value = $_value372;
         }
 
         if ($_success) {
@@ -8585,32 +8599,32 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value374 = array();
+        $_value375 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value374[] = $this->value;
+            $_value375[] = $this->value;
 
-            $_position372 = $this->position;
-            $_cut373 = $this->cut;
+            $_position373 = $this->position;
+            $_cut374 = $this->cut;
 
             $this->cut = false;
             $_success = $this->parseVALID_CHARS();
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position372;
+                $this->position = $_position373;
 
                 $_success = $this->parseQUOTED_STRING();
             }
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position372;
+                $this->position = $_position373;
 
                 $_success = $this->parseEMPTY_STRING();
             }
 
-            $this->cut = $_cut373;
+            $this->cut = $_cut374;
 
             if ($_success) {
                 $string = $this->value;
@@ -8618,15 +8632,15 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value374[] = $this->value;
+            $_value375[] = $this->value;
 
             $_success = $this->parse_();
         }
 
         if ($_success) {
-            $_value374[] = $this->value;
+            $_value375[] = $this->value;
 
-            $this->value = $_value374;
+            $this->value = $_value375;
         }
 
         if ($_success) {
@@ -8701,7 +8715,7 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value380 = array();
+        $_value381 = array();
 
         if (substr($this->string, $this->position, strlen('"')) === '"') {
             $_success = true;
@@ -8714,23 +8728,23 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value380[] = $this->value;
+            $_value381[] = $this->value;
 
-            $_value378 = array();
-            $_cut379 = $this->cut;
+            $_value379 = array();
+            $_cut380 = $this->cut;
 
             while (true) {
-                $_position377 = $this->position;
+                $_position378 = $this->position;
 
                 $this->cut = false;
-                $_position375 = $this->position;
-                $_cut376 = $this->cut;
+                $_position376 = $this->position;
+                $_cut377 = $this->cut;
 
                 $this->cut = false;
                 $_success = $this->parseESCAPED_QUOTE();
 
                 if (!$_success && !$this->cut) {
-                    $this->position = $_position375;
+                    $this->position = $_position376;
 
                     if (substr($this->string, $this->position, strlen(' ')) === ' ') {
                         $_success = true;
@@ -8744,27 +8758,27 @@ class Grammar extends AbstractParser
                 }
 
                 if (!$_success && !$this->cut) {
-                    $this->position = $_position375;
+                    $this->position = $_position376;
 
                     $_success = $this->parseVALID_CHARS();
                 }
 
-                $this->cut = $_cut376;
+                $this->cut = $_cut377;
 
                 if (!$_success) {
                     break;
                 }
 
-                $_value378[] = $this->value;
+                $_value379[] = $this->value;
             }
 
             if (!$this->cut) {
                 $_success = true;
-                $this->position = $_position377;
-                $this->value = $_value378;
+                $this->position = $_position378;
+                $this->value = $_value379;
             }
 
-            $this->cut = $_cut379;
+            $this->cut = $_cut380;
 
             if ($_success) {
                 $string = $this->value;
@@ -8772,7 +8786,7 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value380[] = $this->value;
+            $_value381[] = $this->value;
 
             if (substr($this->string, $this->position, strlen('"')) === '"') {
                 $_success = true;
@@ -8786,9 +8800,9 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value380[] = $this->value;
+            $_value381[] = $this->value;
 
-            $this->value = $_value380;
+            $this->value = $_value381;
         }
 
         if ($_success) {
@@ -8872,11 +8886,11 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value382 = array($this->value);
-            $_cut383 = $this->cut;
+            $_value383 = array($this->value);
+            $_cut384 = $this->cut;
 
             while (true) {
-                $_position381 = $this->position;
+                $_position382 = $this->position;
 
                 $this->cut = false;
                 if (preg_match('/^[a-zA-Z0-9!#$%&\'()*+,-.\\/:;<=>?@\\[\\\\\\]^_`{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■]$/', substr($this->string, $this->position, 1))) {
@@ -8891,16 +8905,16 @@ class Grammar extends AbstractParser
                     break;
                 }
 
-                $_value382[] = $this->value;
+                $_value383[] = $this->value;
             }
 
             if (!$this->cut) {
                 $_success = true;
-                $this->position = $_position381;
-                $this->value = $_value382;
+                $this->position = $_position382;
+                $this->value = $_value383;
             }
 
-            $this->cut = $_cut383;
+            $this->cut = $_cut384;
         }
 
         if ($_success) {
@@ -8938,20 +8952,20 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value384 = array();
+        $_value385 = array();
 
         $_success = $this->parse_();
 
         if ($_success) {
-            $_value384[] = $this->value;
+            $_value385[] = $this->value;
 
             $_success = $this->parseEOL();
         }
 
         if ($_success) {
-            $_value384[] = $this->value;
+            $_value385[] = $this->value;
 
-            $this->value = $_value384;
+            $this->value = $_value385;
         }
 
         $this->cache['EMPTY_LINE'][$_position] = array(
@@ -8979,10 +8993,10 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value387 = array();
+        $_value388 = array();
 
-        $_position385 = $this->position;
-        $_cut386 = $this->cut;
+        $_position386 = $this->position;
+        $_cut387 = $this->cut;
 
         $this->cut = false;
         if (substr($this->string, $this->position, strlen("\r")) === "\r") {
@@ -8997,14 +9011,14 @@ class Grammar extends AbstractParser
 
         if (!$_success && !$this->cut) {
             $_success = true;
-            $this->position = $_position385;
+            $this->position = $_position386;
             $this->value = null;
         }
 
-        $this->cut = $_cut386;
+        $this->cut = $_cut387;
 
         if ($_success) {
-            $_value387[] = $this->value;
+            $_value388[] = $this->value;
 
             if (substr($this->string, $this->position, strlen("\n")) === "\n") {
                 $_success = true;
@@ -9018,9 +9032,9 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $_value387[] = $this->value;
+            $_value388[] = $this->value;
 
-            $this->value = $_value387;
+            $this->value = $_value388;
         }
 
         if ($_success) {
@@ -9054,15 +9068,15 @@ class Grammar extends AbstractParser
             return $_success;
         }
 
-        $_value391 = array();
-        $_cut392 = $this->cut;
+        $_value392 = array();
+        $_cut393 = $this->cut;
 
         while (true) {
-            $_position390 = $this->position;
+            $_position391 = $this->position;
 
             $this->cut = false;
-            $_position388 = $this->position;
-            $_cut389 = $this->cut;
+            $_position389 = $this->position;
+            $_cut390 = $this->cut;
 
             $this->cut = false;
             if (substr($this->string, $this->position, strlen(" ")) === " ") {
@@ -9076,7 +9090,7 @@ class Grammar extends AbstractParser
             }
 
             if (!$_success && !$this->cut) {
-                $this->position = $_position388;
+                $this->position = $_position389;
 
                 if (substr($this->string, $this->position, strlen("\t")) === "\t") {
                     $_success = true;
@@ -9089,22 +9103,22 @@ class Grammar extends AbstractParser
                 }
             }
 
-            $this->cut = $_cut389;
+            $this->cut = $_cut390;
 
             if (!$_success) {
                 break;
             }
 
-            $_value391[] = $this->value;
+            $_value392[] = $this->value;
         }
 
         if (!$this->cut) {
             $_success = true;
-            $this->position = $_position390;
-            $this->value = $_value391;
+            $this->position = $_position391;
+            $this->value = $_value392;
         }
 
-        $this->cut = $_cut392;
+        $this->cut = $_cut393;
 
         $this->cache['_'][$_position] = array(
             'success' => $_success,

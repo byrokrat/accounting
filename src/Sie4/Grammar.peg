@@ -159,10 +159,8 @@ grammar Grammar extends AbstractParser
         }
     };
 
-    PROSA_POST = ROW_START 'PROSA' ^ text:STRING? ROW_END {
-        if ($this->assertString($text, 'Expected free text content')) {
-            $this->getContainer()->setAttribute('PROSA', $text);
-        }
+    PROSA_POST = ROW_START 'PROSA' ^ text:STRING* ROW_END {
+        $this->getContainer()->setAttribute('PROSA', implode(' ', $text));
     };
 
     RAR_POST = ROW_START 'RAR' ^ year:INT? startDate:DATE? endDate:DATE? ROW_END {
@@ -503,7 +501,7 @@ grammar Grammar extends AbstractParser
 
     // Float
 
-    FLOAT = _ float:(RAW_FLOAT / QUOTED_FLOAT) _ {
+    FLOAT = _ float:(RAW_FLOAT / QUOTED_FLOAT / EMPTY_STRING) _ {
         return new Amount($float);
     };
 

@@ -1,3 +1,8 @@
+[NOTICE] Detected a BTRANS post, removed transactions are not supported yet.. (614: #BTRANS 1930  {} -1000 20101007 "" "" "2 Christer Bengtsson") {}
+[NOTICE] Detected a RTRANS post, added transactions are not supported yet.. (615: #RTRANS 1930  {} 0 20101007 "" "" "2 Christer Bengtsson") {}
+[NOTICE] Detected a BTRANS post, removed transactions are not supported yet.. (617: #BTRANS 2640  {} 200 20101007 "" "" "2 Christer Bengtsson") {}
+[NOTICE] Detected a RTRANS post, added transactions are not supported yet.. (618: #RTRANS 2640  {} 0 20101007 "" "" "2 Christer Bengtsson") {}
+[NOTICE] Detected a BTRANS post, removed transactions are not supported yet.. (620: #BTRANS 4010  {} 800 20101007 "" "" "2 Christer Bengtsson") {}
 [WARNING] Object number 1.1010 not defined (624: #TRANS 9999  { "1" "1010"} -4675 20100122 "") {}
 [WARNING] Object number 1.1100 not defined (625: #TRANS 9999  { "1" "1100" "6" "1118"} 5367 20100122 "") {}
 [WARNING] Object number 6.1118 not defined (625: #TRANS 9999  { "1" "1100" "6" "1118"} 5367 20100122 "") {}
@@ -13,4 +18,8 @@
 [WARNING] Object number 2.301 not defined (655: #TRANS 9999  { "1" "1300" "2" "301"} -11384.5 20100122 "") {}
 [WARNING] Object number 6.1161 not defined (663: #TRANS 9999  { "1" "1100" "6" "1161"} 5704 20100122 "") {}
 [WARNING] Object number 6.1162 not defined (670: #TRANS 9999  { "1" "1100" "6" "1162"} 5704 20100122 "") {}
+[NOTICE] Detected a RTRANS post, added transactions are not supported yet.. (725: #RTRANS 1930  {} 500 20100326 "" "" "2 Christer Bengtsson") {}
+[NOTICE] Detected a RTRANS post, added transactions are not supported yet.. (727: #RTRANS 3010  { "1" "1"} -500 20100326 "" "" "2 Christer Bengtsson") {}
+[NOTICE] Detected a RTRANS post, added transactions are not supported yet.. (775: #RTRANS 1920  {} 1000 20100826 "" "" "2 Christer Bengtsson") {}
+[NOTICE] Detected a RTRANS post, added transactions are not supported yet.. (777: #RTRANS 1930  {} -1000 20100826 "" "" "2 Christer Bengtsson") {}
 [WARNING] Object number 6.1010 not defined (819: #TRANS 3010  { "1" "1" "6" "1010"} -1000 20100131 "") {}

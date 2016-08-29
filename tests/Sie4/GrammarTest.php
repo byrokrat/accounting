@@ -14,10 +14,6 @@ use byrokrat\amount\Currency\SEK;
  * Tests the grammar specification in Grammar.peg
  *
  * Referenced rules are from the SIE specs dated 2008-09-30
- *
- * @covers \byrokrat\accounting\Sie4\AbstractParser
- * @covers \byrokrat\accounting\Sie4\Grammar
- * @covers \byrokrat\accounting\Sie4\Parser
  */
 class GrammarTest extends \PHPUnit_Framework_TestCase
 {
@@ -267,7 +263,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
                 'OMFATTN' => new \DateTimeImmutable('20160101'),
                 'ORGNR' => ['123456-1234', 0, 0],
                 'PROGRAM' => ['byrokrat', '1.0'],
-                'PROSA' => 'foobar',
+                'PROSA' => 'foo bar baz',
                 'RAR[0]' =>[new \DateTimeImmutable('20160101'), new \DateTimeImmutable('20161231')],
                 'RAR[-1]' =>[new \DateTimeImmutable('20150101'), new \DateTimeImmutable('20151231')],
                 'SIETYP' => 4,
@@ -287,7 +283,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
                 #OMFATTN 20160101
                 #ORGNR 123456-1234
                 #PROGRAM byrokrat 1.0
-                #PROSA foobar
+                #PROSA \"foo bar\" baz
                 #RAR 0 20160101 20161231
                 #RAR -1 20150101 20151231
                 #SIETYP 4
@@ -328,6 +324,20 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(
             $expectedClass,
             $account
+        );
+    }
+
+    public function testWarningOnAccountDuplication()
+    {
+        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectExceptionMessageRegExp('/Overwriting previously created account/');
+        $this->parse(
+            "
+                #FLAGGA 1
+                #KONTO 1920 bank
+                #KONTO 1920 bank
+            ",
+            ParserFactory::FAIL_ON_WARNING
         );
     }
 
@@ -422,6 +432,34 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testWarningOnDimensionDuplication()
+    {
+        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectExceptionMessageRegExp('/Overwriting previously created dimension/');
+        $this->parse(
+            "
+                #FLAGGA 1
+                #DIM 1 name
+                #UNDERDIM 1 name 1
+            ",
+            ParserFactory::FAIL_ON_WARNING
+        );
+    }
+
+    public function testWarningOnObjectDuplication()
+    {
+        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectExceptionMessageRegExp('/Overwriting previously created object/');
+        $this->parse(
+            "
+                #FLAGGA 1
+                #OBJEKT 1 obj desc
+                #OBJEKT 1 obj desc
+            ",
+            ParserFactory::FAIL_ON_WARNING
+        );
+    }
+
     /**
      * @dataProvider currencyTypeProvider
      */
@@ -496,6 +534,31 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
             'Ver B',
             $verifications[1]->getDescription()
         );
+    }
+
+    public function testParserResetsBetweenRuns()
+    {
+        $parser = (new ParserFactory)->createParser(ParserFactory::FAIL_ON_ERROR);
+
+        $parser->parse("
+            #FLAGGA 1
+            #VER \"\" \"\" 20110104 \"Ver A\"
+            {
+                #TRANS  3010 {} -100.00
+                #TRANS  1920 {} 100.00
+            }
+        ");
+
+        $parser->parse("
+            #FLAGGA 1
+            #VER \"\" \"\" 20110104 \"Ver B\"
+            {
+                #TRANS  3010 {} -100.00
+                #TRANS  1920 {} 100.00
+            }
+        ");
+
+        $this->assertCount(1, $parser->getContainer()->query()->verifications()->toArray());
     }
 
     public function testCreateVerificationSeries()
