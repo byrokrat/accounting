@@ -9,6 +9,6 @@ fi
 
 printf "Generating SIE parser"
 
-vendor/bin/phpeg generate src/Sie4/Grammar.peg
+vendor/bin/phpeg generate src/Sie4/Parser/Grammar.peg
 
 printf " [done]\n"

@@ -20,12 +20,12 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Sie;
+namespace byrokrat\accounting\Sie4\Writer;
 
 /**
  * Value object for storing sie-file settings
  */
-class Settings implements SettingsInterface
+class Settings
 {
     /**
      * @var \DateTimeImmutable[] First and last days of accounting year

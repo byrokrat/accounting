@@ -21,7 +21,7 @@ class DocumentationExamples extends \PHPUnit_Framework_TestCase
 
         $asserter->assertReadme('README.md');
         $asserter->assertReadme('docs/01-querying.md');
-        $asserter->assertReadme('docs/02-parsing-sie-files.md');
+        $asserter->assertReadme('docs/02-sie.md');
         $asserter->assertReadme('docs/03-templates.md');
     }
 }

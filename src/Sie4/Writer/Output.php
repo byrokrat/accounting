@@ -20,7 +20,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Sie;
+namespace byrokrat\accounting\Sie4\Writer;
 
 /**
  * Simple stream helper for creating content

@@ -2,10 +2,10 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Sie4;
+namespace byrokrat\accounting\Sie4\Parser;
 
 /**
- * @covers \byrokrat\accounting\Sie4\ParserFactory
+ * @covers \byrokrat\accounting\Sie4\Parser\ParserFactory
  */
 class ParserFactoryTest extends \PHPUnit_Framework_TestCase
 {

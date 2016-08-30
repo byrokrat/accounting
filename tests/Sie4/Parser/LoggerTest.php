@@ -2,13 +2,13 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Sie4;
+namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Exception;
 use Psr\Log\LogLevel;
 
 /**
- * @covers \byrokrat\accounting\Sie4\Logger
+ * @covers \byrokrat\accounting\Sie4\Parser\Logger
  */
 class LoggerTest extends \PHPUnit_Framework_TestCase
 {

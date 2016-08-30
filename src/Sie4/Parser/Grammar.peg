@@ -18,7 +18,7 @@
  * Copyright 2016 Hannes Forsgård
  */
 
-namespace byrokrat\accounting\Sie4;
+namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Transaction;
 use byrokrat\amount\Amount;

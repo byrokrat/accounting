@@ -2,14 +2,14 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Sie4;
+namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Account;
 use byrokrat\accounting\Exception;
 use Psr\Log\LoggerInterface;
 
 /**
- * @covers \byrokrat\accounting\Sie4\AccountBuilder
+ * @covers \byrokrat\accounting\Sie4\Parser\AccountBuilder
  */
 class AccountBuilderTest extends \PHPUnit_Framework_TestCase
 {

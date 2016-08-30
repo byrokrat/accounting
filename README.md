@@ -19,7 +19,7 @@ composer require byrokrat/accounting
 Documentation
 -------------
 - [Querying accounting data](docs/01-querying.md)
-- [Parsing SIE files](02-parsing-sie-files.md)
+- [Parsing and writing SIE files](02-sie.md)
 - [Generating verifications using templates](03-templates.md)
 
 Usage
@@ -81,26 +81,3 @@ $verificationsUsingAccount1921 = $verifications->verifications()->where(function
 // Outputs 'Verification using account 1921'
 echo $verificationsUsingAccount1921[0]->getDescription();
 ```
-
-### Generating sie
-
-Transaction data can be read and written in the [SIE](http://www.sie.se/) format.
-
-<!-- @expectOutput /^\#FLAGGA 0/ -->
-```php
-namespace byrokrat\accounting;
-use byrokrat\amount\Amount;
-
-echo (new Sie\Writer)->generate(
-    (new Sie\Settings)->setTargetCompany('my-company'),
-    new Query([
-        (new Verification)
-            ->addTransaction(new Transaction(new Account\Asset('1920', 'Bank'), new Amount('100')))
-            ->addTransaction(new Transaction(new Account\Earning('3000', 'Intänk'), new Amount('-100')))
-    ])
-);
-```
-
-Credits
--------
-@author Hannes Forsgård (hannes.forsgard@fripost.org)

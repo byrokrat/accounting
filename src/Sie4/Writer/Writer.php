@@ -20,7 +20,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Sie;
+namespace byrokrat\accounting\Sie4\Writer;
 
 use byrokrat\accounting\Account;
 use byrokrat\accounting\Exception;
@@ -38,6 +38,8 @@ use byrokrat\accounting\Query;
  *
  * This implementation is based on specification 4B from the
  * maintainer (SIE gruppen) dated 2008-09-30.
+ *
+ * TODO rewrite using tha same object structure as in Parser
  */
 class Writer
 {
@@ -51,7 +53,7 @@ class Writer
     }
      */
 
-    public function generate(SettingsInterface $settings, Query $verifications): string
+    public function generate(Settings $settings, Query $verifications): string
     {
         $output = new Output;
         $this->writeHeader($settings, $output);
@@ -62,7 +64,7 @@ class Writer
     /**
      * Write file header to output
      */
-    public function writeHeader(SettingsInterface $settings, Output $output)
+    public function writeHeader(Settings $settings, Output $output)
     {
         $output->writeln('#FLAGGA 0');
         $output->writeln('#SIETYP 4');
@@ -131,6 +133,7 @@ class Writer
      */
     public function writeVerification(Verification $verification, Output $output)
     {
+        // TODO validate that verification is balanced...
         $output->writeln(
             '#VER "" "" %s %s',
             $verification->getDescription(),
@@ -148,6 +151,7 @@ class Writer
      */
     public function writeVerifications(Query $verifications, Output $output)
     {
+        // TODO not valid since accounts must be written before verifications...
         $verifications->accounts()->each(function ($account) use ($output) {
             $this->writeAccount($account, $output);
         });
@@ -176,48 +180,5 @@ class Writer
             return 'I';
         }
         // TODO error if this line is reached
-    }
-
-
-    /**
-     * Generate SIE string (using charset CP437) for $accounts
-     *
-     * @param  string $description String describing this chart of accounts
-     * @param  Query  $accounts
-     */
-    public function exportChart(string $description, Query $accounts): string
-    {
-        // TODO ska helt enkelt byggas upp i med det nya systemet..
-        // TODO eller tas bort helt?
-
-        /*$program = self::quote($this->program);
-        $description = self::quote($description);
-        $version = self::quote($this->version);
-        $creator = self::quote($this->creator);
-        $chartType = self::quote('');
-
-        $sie = "#FILTYP KONTO" . self::EOL;
-        $sie .= "#PROGRAM $program $version" . self::EOL;
-        $sie .= "#PROSA $description" . self::EOL;
-        $sie .= "#FORMAT PC8" . self::EOL;
-        $sie .= "#GEN {$this->date->format('Ymd')} $creator" . self::EOL;
-        $sie .= "#KPTYP $chartType" . self::EOL;
-
-        $sie .= self::EOL;
-
-        // Generate accounts
-        foreach ($accounts as $account) {
-            $number = self::quote($account->getId());
-            $name = self::quote($account->getDescription());
-            $type = self::quote($this->translateAccountType($account));
-            $sie .= "#KONTO $number $name" . self::EOL;
-            $sie .= "#KTYP $number $type" . self::EOL;
-        }
-
-        // Convert charset
-        $sie = iconv("UTF-8", "CP437", $sie);
-
-        return $sie;
-        */
     }
 }

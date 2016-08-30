@@ -20,7 +20,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Sie4;
+namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Query;
 use byrokrat\accounting\Exception;

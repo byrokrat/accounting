@@ -2,6 +2,7 @@
 <ruleset>
     <file>./src</file>
     <file>./tests</file>
-    <exclude-pattern>./src/Sie4/Grammar.php</exclude-pattern>
+    <file>./integrations</file>
+    <exclude-pattern>./src/Sie4/Parser/Grammar.php</exclude-pattern>
     <rule ref="PSR2"/>
 </ruleset>

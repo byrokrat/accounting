@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Sie;
+namespace byrokrat\accounting\Sie4\Writer;
 
 class OutputTest extends \PHPUnit_Framework_TestCase
 {

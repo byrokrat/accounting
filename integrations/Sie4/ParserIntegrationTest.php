@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Sie4;
+namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Exception\ParserException;
 
@@ -15,7 +15,7 @@ class Sie4IntegrationTest extends \PHPUnit_Framework_TestCase
 {
     public function fileInfoProvider()
     {
-        foreach (new \DirectoryIterator(__DIR__ . '/Sie4') as $fileInfo) {
+        foreach (new \DirectoryIterator(__DIR__ . '/parserdata') as $fileInfo) {
             if (in_array(strtoupper($fileInfo->getExtension()), ['SE', 'SI'])) {
                 yield [$fileInfo->getRealPath()];
             }

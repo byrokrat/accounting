@@ -1,5 +1,5 @@
-# Parsing SIE files
+# Generating verifications using templates
 
 > TODO write...
 
-&larr; [Parsing SIE files](02-parsing-sie-files.md)
+&larr; [Parsing and writing SIE files](02-sie.md)
