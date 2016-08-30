@@ -2,8 +2,8 @@
 
 Accounting data can be read and written in the [SIE](http://www.sie.se/) file format.
 
-- [Parsing SIE files](#Parsing-SIE-files)
-- [Writing SIE files](#Writing-SIE-files)
+- [Parsing SIE files](#parsing-sie-files)
+- [Writing SIE files](#writing-sie-files)
 
 ## Parsing SIE files
 
