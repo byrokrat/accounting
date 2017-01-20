@@ -29,7 +29,7 @@ Usage
 The package is shipped with a generic solution for querying accounting data: the
 [Query](/src/Query.php) object.
 
-<!-- @expectOutput /^-300\.00Verification using account 1921$/ -->
+<!-- @expectOutput "/^-300\.00Verification using account 1921$/" -->
 ```php
 namespace byrokrat\accounting;
 

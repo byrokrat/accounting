@@ -14,7 +14,7 @@ matrix:
     fast_finish: true
 
 install:
-    - composer require hanneskod/readme-tester:dev-master $COMPOSER_FLAGS --no-interaction
+    - composer require hanneskod/readme-tester:^1.0@beta $COMPOSER_FLAGS --no-interaction
 
 script:
     - phpunit --verbose

@@ -7,7 +7,7 @@ Accounting data can be read and written in the [SIE](http://www.sie.se/) file fo
 
 ## Parsing SIE files
 
-<!-- @expectOutput /^1100.00$/ -->
+<!-- @expectOutput "/^1100.00$/" -->
 ```php
 namespace byrokrat\accounting\Sie4\Parser;
 
@@ -38,7 +38,7 @@ echo $verifications[0]->getMagnitude();
 
 ## Writing SIE files
 
-<!-- @expectOutput /^\#FLAGGA 0/ -->
+<!-- @expectOutput "/^\#FLAGGA 0/" -->
 ```php
 namespace byrokrat\accounting;
 use byrokrat\amount\Amount;
