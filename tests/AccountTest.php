@@ -75,4 +75,12 @@ class AccountTest extends \PHPUnit_Framework_TestCase
             (new Account\Asset('1000'))->getNumber()
         );
     }
+
+    public function testCastToString()
+    {
+        $this->assertSame(
+            '1000 (desc)',
+            (string)new Account\Asset('1000', 'desc')
+        );
+    }
 }

@@ -86,4 +86,9 @@ abstract class Account extends Dimension
     {
         return false;
     }
+
+    public function __toString(): string
+    {
+        return sprintf('%s (%s)', $this->getId(), $this->getDescription());
+    }
 }

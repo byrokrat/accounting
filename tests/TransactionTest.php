@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\amount\Amount;
+
 class TransactionTest extends \PHPUnit_Framework_TestCase
 {
     use utils\InterfaceAssertionsTrait, utils\PropheciesTrait;
@@ -85,6 +87,25 @@ class TransactionTest extends \PHPUnit_Framework_TestCase
         $this->assertSignable(
             $signature = 'signature',
             $transaction->setSignature($signature)
+        );
+    }
+
+    public function testCastToString()
+    {
+        $account = $this->prophesize(Account::CLASS);
+        $account->__toString()->willReturn('account');
+
+        $amount = $this->prophesize(Amount::CLASS);
+        $amount->getString()->willReturn('amount');
+
+        $transaction = new Transaction(
+            $account->reveal(),
+            $amount->reveal()
+        );
+
+        $this->assertSame(
+            'account: amount',
+            (string)$transaction
         );
     }
 }

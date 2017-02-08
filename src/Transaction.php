@@ -124,4 +124,9 @@ class Transaction implements Attributable, Dateable, Describable, Queryable, Sig
             yield $dim;
         }
     }
+
+    public function __toString(): string
+    {
+        return sprintf('%s: %s', $this->getAccount(), $this->getAmount());
+    }
 }

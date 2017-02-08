@@ -142,4 +142,22 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
             ->addTransaction($this->prophesizeTransaction(new Amount('100'))->reveal())
             ->getMagnitude();
     }
+
+    public function testCastToString()
+    {
+        $transactionA = $this->prophesize(Transaction::CLASS);
+        $transactionA->__toString()->willReturn('1234: 100');
+
+        $transactionB = $this->prophesize(Transaction::CLASS);
+        $transactionB->__toString()->willReturn('4321: -100');
+
+        $this->assertSame(
+            "[20170208] Verification\n * 1234: 100\n * 4321: -100",
+            (string)(new Verification($this->createMock(TransactionSummary::CLASS)))
+                ->setDate(new \DateTime('20170208'))
+                ->setDescription('Verification')
+                ->addTransaction($transactionA->reveal())
+                ->addTransaction($transactionB->reveal())
+        );
+    }
 }

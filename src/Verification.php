@@ -169,4 +169,17 @@ class Verification implements Attributable, Dateable, Describable, Queryable, Si
     {
         return $this->summary->getMagnitude();
     }
+
+    public function __toString(): string
+    {
+        $delim = "\n * ";
+
+        return sprintf(
+            "[%s] %s%s%s",
+            $this->getDate()->format('Ymd'),
+            $this->getDescription(),
+            $delim,
+            implode($delim, $this->getTransactions())
+        );
+    }
 }
