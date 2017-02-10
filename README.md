@@ -1,4 +1,4 @@
-# Byrokrat.Accounting
+# Accounting
 
 [![Packagist Version](https://img.shields.io/packagist/v/byrokrat/accounting.svg?style=flat-square)](https://packagist.org/packages/byrokrat/accounting)
 [![license](https://img.shields.io/github/license/byrokrat/accounting.svg?maxAge=2592000&style=flat-square)](LICENSE)
@@ -13,21 +13,21 @@ Classes for working with bookkeeping data according to Swedish standards.
 Installation
 ------------
 ```shell
-composer require byrokrat/accounting
+composer require byrokrat/accounting:dev-master
 ```
-
-Documentation
--------------
-- [Querying accounting data](docs/01-querying.md)
-- [Parsing and writing SIE files](docs/02-sie.md)
-- [Generating verifications using templates](docs/03-templates.md)
 
 Usage
 -----
-### Building queries
+[Read the complete documentation here.](docs/README.md)
 
-The package is shipped with a generic solution for querying accounting data: the
-[Query](/src/Query.php) object.
+Although it would be possible to build a general bookkeeping application around
+*Accounting* it was developed with two scenarios in mind:
+
+1. Analyzing accounting data (possibly exported from general bookkeeping).
+1. Generating bookkeeping data using templates (and possibly import to general
+   bookkeeping).
+
+## Building queries
 
 <!-- @expectOutput "/^-300\.00Verification using account 1921$/" -->
 ```php
@@ -81,3 +81,10 @@ $verificationsUsingAccount1921 = $verifications->verifications()->where(function
 // Outputs 'Verification using account 1921'
 echo $verificationsUsingAccount1921[0]->getDescription();
 ```
+
+Documentation
+-------------
+- [Start](docs/README.md)
+- [Querying accounting data](docs/01-querying.md)
+- [Parsing and writing SIE files](docs/02-sie.md)
+- [Generating verifications using templates](docs/03-templates.md)
