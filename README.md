@@ -18,7 +18,7 @@ composer require byrokrat/accounting:dev-master
 
 Usage
 -----
-[Read the complete documentation here.](docs/README.md)
+[Read the complete documentation here.](docs)
 
 Although it would be possible to build a general bookkeeping application around
 *Accounting* it was developed with two scenarios in mind:
@@ -47,7 +47,7 @@ $accounts = new Query([
 
 // Create some verifications
 
-$verifications = new Query([
+$ledger = new Query([
     (new Verification)
         ->setDescription('Verification text')
         ->addTransaction(new Transaction($accounts->findAccount('1920'), new SEK('100')))
@@ -63,7 +63,7 @@ $verifications = new Query([
 
 $summaries = [];
 
-$verifications->transactions()->each(function ($transaction) use (&$summaries) {
+$ledger->transactions()->each(function ($transaction) use (&$summaries) {
     $key = $transaction->getAccount()->getId();
     $summaries[$key] = $summaries[$key] ?? new TransactionSummary;
     $summaries[$key]->addToSummary($transaction);
@@ -73,10 +73,7 @@ $verifications->transactions()->each(function ($transaction) use (&$summaries) {
 echo $summaries[3000]->getOutgoingBalance();
 
 // Iterate over verifications concerning a specific account
-
-$verificationsUsingAccount1921 = $verifications->verifications()->where(function ($item) {
-    return $item instanceof Account && $item->getId() == '1921';
-})->toArray();
+$verificationsUsingAccount1921 = $ledger->verifications()->withAccount('1921')->toArray();
 
 // Outputs 'Verification using account 1921'
 echo $verificationsUsingAccount1921[0]->getDescription();
@@ -84,7 +81,7 @@ echo $verificationsUsingAccount1921[0]->getDescription();
 
 Documentation
 -------------
-- [Start](docs/README.md)
+- [Index](docs)
 - [Querying accounting data](docs/01-querying.md)
 - [Parsing and writing SIE files](docs/02-sie.md)
 - [Generating verifications using templates](docs/03-templates.md)

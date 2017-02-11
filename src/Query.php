@@ -472,6 +472,16 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
+     * Filter those objects that contain a specific account number
+     */
+    public function withAccount(string $accountId): Query
+    {
+        return $this->where(function ($item) use ($accountId) {
+            return $item instanceof Account && $item->getId() == $accountId;
+        });
+    }
+
+    /**
      * Validate that data can be traversed using a foreach loop
      *
      * @param  mixed $data

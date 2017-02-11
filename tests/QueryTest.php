@@ -451,6 +451,21 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @depends testWhereAndWhereNot
+     */
+    public function testWithAccount()
+    {
+        $transA = $this->prophesizeTransaction(null, $this->prophesizeAccount('1234')->reveal())->reveal();
+        $transB = $this->prophesizeTransaction(null, $this->prophesizeAccount('1000')->reveal())->reveal();
+
+        $this->assertSame(
+            [$transA],
+            (new Query([$transA, $transB]))->transactions()->withAccount('1234')->toArray(),
+            'queryableB should be removed as it does not contain account 1234'
+        );
+    }
+
     public function testFindAccount()
     {
         $this->assertEquals(
