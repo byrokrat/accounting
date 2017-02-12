@@ -15,10 +15,10 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertSame(
             [
-                $transactionA = $this->prophesizeTransaction()->reveal(),
-                $transactionB = $this->prophesizeTransaction()->reveal()
+                $transA = $this->prophesizeTransaction()->reveal(),
+                $transB = $this->prophesizeTransaction()->reveal()
             ],
-            (new Verification)->addTransaction($transactionA)->addTransaction($transactionB)->getTransactions()
+            (new Verification)->addTransaction($transA)->addTransaction($transB)->getTransactions()
         );
     }
 
@@ -145,19 +145,20 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
 
     public function testCastToString()
     {
-        $transactionA = $this->prophesize(Transaction::CLASS);
-        $transactionA->__toString()->willReturn('1234: 100');
+        $transA = $this->prophesize(Transaction::CLASS);
+        $transA->__toString()->willReturn('1234: 100');
 
-        $transactionB = $this->prophesize(Transaction::CLASS);
-        $transactionB->__toString()->willReturn('4321: -100');
+        $transB = $this->prophesize(Transaction::CLASS);
+        $transB->__toString()->willReturn('4321: -100');
+
+        $summary = $this->prophesize(TransactionSummary::CLASS);
+        $summary->getTransactions()->willReturn([$transA->reveal(), $transB->reveal()]);
 
         $this->assertSame(
             "[20170208] Verification\n * 1234: 100\n * 4321: -100",
-            (string)(new Verification($this->createMock(TransactionSummary::CLASS)))
+            (string)(new Verification($summary->reveal()))
                 ->setDate(new \DateTime('20170208'))
                 ->setDescription('Verification')
-                ->addTransaction($transactionA->reveal())
-                ->addTransaction($transactionB->reveal())
         );
     }
 }

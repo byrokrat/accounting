@@ -8,7 +8,7 @@
 
 > NOTE! This package is under development and the API subject to change.
 
-Classes for working with bookkeeping data according to Swedish standards.
+Analysis and generation of bookkeeping data according to Swedish standards.
 
 Installation
 ------------
@@ -21,13 +21,16 @@ Usage
 [Read the complete documentation here.](docs)
 
 Although it would be possible to build a general bookkeeping application around
-*Accounting* it was developed with two scenarios in mind:
+*Accounting* it was developed with two distinct scenarios in mind:
 
 1. Analyzing accounting data (possibly exported from general bookkeeping).
 1. Generating bookkeeping data using templates (and possibly import to general
    bookkeeping).
 
-## Building queries
+To enable import and export of bookkeeping data *Accounting* supports parsing
+and generating files in the [SIE](docs/02-sie.md) file format.
+
+## Analyzing data
 
 <!-- @expectOutput "/^-300\.00Verification using account 1921$/" -->
 ```php

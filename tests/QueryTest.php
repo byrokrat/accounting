@@ -32,6 +32,16 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testToTransactionSummary()
+    {
+        $trans = $this->prophesizeTransaction(new Amount('50'))->reveal();
+
+        $this->assertEquals(
+            new Amount('100'),
+            (new Query([1, $trans, $trans]))->toTransactionSummary()->getOutgoingBalance()
+        );
+    }
+
     /**
      * @depends testToArray
      */

@@ -191,4 +191,20 @@ class TransactionSummaryTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(Exception\RuntimeException::CLASS);
         (new TransactionSummary)->getMagnitude();
     }
+
+    public function testGetTransactions()
+    {
+        $summary = new TransactionSummary;
+
+        $transA = $this->prophesizeTransaction(new Amount('5'))->reveal();
+        $transB = $this->prophesizeTransaction(new Amount('-5'))->reveal();
+
+        $summary->addToSummary($transA);
+        $summary->addToSummary($transB);
+
+        $this->assertEquals(
+            [$transA, $transB],
+            $summary->getTransactions()
+        );
+    }
 }

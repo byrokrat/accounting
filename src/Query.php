@@ -363,6 +363,20 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
+     * Summarize transactions matched by query
+     */
+    public function toTransactionSummary(): TransactionSummary
+    {
+        $summary = new TransactionSummary;
+
+        foreach ($this->transactions()->getIterator() as $transaction) {
+            $summary->addToSummary($transaction);
+        }
+
+        return $summary;
+    }
+
+    /**
      * Implements the Queryable interface
      */
     public function query(): Query

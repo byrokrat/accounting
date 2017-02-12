@@ -50,6 +50,11 @@ class TransactionSummary
     private $credit;
 
     /**
+     * @var Transaction[] Transactions included in summary
+     */
+    private $transactions = [];
+
+    /**
      * Setup calculation starting points
      *
      * @param Amount  $incoming Incoming balance
@@ -88,6 +93,8 @@ class TransactionSummary
         if (!$this->isInitialized()) {
             $this->initialize($transaction->getAmount()->subtract($transaction->getAmount()));
         }
+
+        $this->transactions[] = $transaction;
 
         $this->balance = $this->balance->add($transaction->getAmount());
 
@@ -156,6 +163,16 @@ class TransactionSummary
         }
 
         return $this->getDebit();
+    }
+
+    /**
+     * Get included transactions
+     *
+     * @return Transaction[]
+     */
+    public function getTransactions(): array
+    {
+        return $this->transactions;
     }
 
     /**

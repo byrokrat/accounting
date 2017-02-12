@@ -5,6 +5,14 @@
 1. skapa en run_tests.sh som kör alla tester och ska köras innan
    jag committar någonting... (kolla travis och liknande...)
 
+## Query
+
+Fler metoder i stil med withAccount(). Förslagsvis:
+
+1. withSignature()
+1. withAmountGreaterThan('100')
+1. osv...
+
 ## Verifikationer
 
 1. Måste kunna hantera verifikationer utan transaktioner (kommer ex från JFSBok)
