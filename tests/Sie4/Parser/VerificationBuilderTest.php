@@ -155,25 +155,4 @@ class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
 
         $logger->error(\Prophecy\Argument::type('string'))->shouldHaveBeenCalled();
     }
-
-    public function testErrorOnNoTransactionsInVerification()
-    {
-        $logger = $this->prophesize(LoggerInterface::CLASS);
-
-        $verificationBuilder = new VerificationBuilder(
-            $logger->reveal()
-        );
-
-        $verification = $verificationBuilder->createVerification(
-            '',
-            '',
-            new \DateTime,
-            '',
-            null,
-            '',
-            []
-        );
-
-        $logger->warning(\Prophecy\Argument::type('string'))->shouldHaveBeenCalled();
-    }
 }

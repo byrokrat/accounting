@@ -18,7 +18,7 @@ composer require byrokrat/accounting:dev-master
 
 Usage
 -----
-[Read the complete documentation here.](docs)
+[Read the documentation here.](docs)
 
 Although it would be possible to build a general bookkeeping application around
 *Accounting* it was developed with two distinct scenarios in mind:
@@ -30,7 +30,7 @@ Although it would be possible to build a general bookkeeping application around
 To enable import and export of bookkeeping data *Accounting* supports parsing
 and generating files in the [SIE](docs/02-sie.md) file format.
 
-## Analyzing data
+### Analyzing data
 
 <!-- @expectOutput "/^-300\.00Verification using account 1921$/" -->
 ```php
@@ -75,16 +75,13 @@ $ledger->transactions()->each(function ($transaction) use (&$summaries) {
 // Outputs -300
 echo $summaries[3000]->getOutgoingBalance();
 
-// Iterate over verifications concerning a specific account
-$verificationsUsingAccount1921 = $ledger->verifications()->withAccount('1921')->toArray();
-
-// Outputs 'Verification using account 1921'
-echo $verificationsUsingAccount1921[0]->getDescription();
+// Select verifications concerning a specific account (outputs 'Verification using account 1921')
+echo $ledger->verifications()->withAccount('1921')->first()->getDescription();
 ```
 
 Documentation
 -------------
-- [Index](docs)
+- [Start](docs)
 - [Querying accounting data](docs/01-querying.md)
 - [Parsing and writing SIE files](docs/02-sie.md)
 - [Generating verifications using templates](docs/03-templates.md)

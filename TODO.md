@@ -11,11 +11,10 @@ Fler metoder i stil med withAccount(). Förslagsvis:
 
 1. withSignature()
 1. withAmountGreaterThan('100')
+1. withDate($start, $stop = null)
 1. osv...
 
-## Verifikationer
-
-1. Måste kunna hantera verifikationer utan transaktioner (kommer ex från JFSBok)
+Ska det vara whereAccount() osv.. istället??
 
 ## Transaktioner
 
@@ -28,9 +27,8 @@ Består av summeringar för varje konto:
 
 1. ingående balans (vid årets början, från "ingående balans")
 1. ingående saldo (vid periodens början, om huvudbok inte skrivs ut för hela året)
-1. poster (Transactions) som berör kontot (beräknas från verifikationer) (+ verifikationsbeskrivning)
+1. poster (Transactions) som berör kontot (varje transaktion listas och behöver veta villket verifikat det tillhör)
 1. utgående saldo
-1. varje transaktion listas och behöver veta villket verifikat det tillhör..
 
 ## Kontoplaner
 

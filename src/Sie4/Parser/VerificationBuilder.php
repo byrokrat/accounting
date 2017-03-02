@@ -135,10 +135,6 @@ class VerificationBuilder
             $verification->addTransaction($transaction);
         }
 
-        if (!$verification->getTransactions()) {
-            $this->logger->warning('Trying to add a verification without transactions');
-        }
-
         if ($verification->getTransactions() && !$verification->isBalanced()) {
             $this->logger->error('Trying to add an unbalanced verification');
         }
