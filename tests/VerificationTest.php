@@ -7,7 +7,7 @@ namespace byrokrat\accounting;
 use byrokrat\amount\Amount;
 use byrokrat\amount\Currency\SEK;
 
-class VerificationTest extends \PHPUnit_Framework_TestCase
+class VerificationTest extends \PHPUnit\Framework\TestCase
 {
     use utils\InterfaceAssertionsTrait, utils\PropheciesTrait;
 
@@ -137,7 +137,7 @@ class VerificationTest extends \PHPUnit_Framework_TestCase
 
     public function testExceptionOnGetMagnitudeWithUnbalancedVerification()
     {
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         (new Verification)
             ->addTransaction($this->prophesizeTransaction(new Amount('100'))->reveal())
             ->getMagnitude();

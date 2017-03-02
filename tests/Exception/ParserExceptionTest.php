@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Exception;
 
-class ParserExceptionTest extends \PHPUnit_Framework_TestCase
+class ParserExceptionTest extends \PHPUnit\Framework\TestCase
 {
     public function testErrorsAndWarnings()
     {

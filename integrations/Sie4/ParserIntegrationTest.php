@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
+use byrokrat\accounting\Container;
 use byrokrat\accounting\Exception\ParserException;
 
 /**
@@ -11,7 +12,7 @@ use byrokrat\accounting\Exception\ParserException;
  *
  * @see http://www.sie.se/?page_id=125 Example files downloaded 2016-08-22
  */
-class Sie4IntegrationTest extends \PHPUnit_Framework_TestCase
+class Sie4IntegrationTest extends \PHPUnit\Framework\TestCase
 {
     public function fileInfoProvider()
     {
@@ -30,6 +31,8 @@ class Sie4IntegrationTest extends \PHPUnit_Framework_TestCase
         list($container, $errors) = $this->parse(
             file_get_contents($fname)
         );
+
+        $this->assertInstanceOf(Container::CLASS, $container);
 
         if ($errors) {
             $expected = is_readable("$fname.errors") ? file("$fname.errors", FILE_IGNORE_NEW_LINES) : [];

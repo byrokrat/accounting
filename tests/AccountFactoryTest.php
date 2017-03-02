@@ -7,7 +7,7 @@ namespace byrokrat\accounting;
 /**
  * @covers \byrokrat\accounting\AccountFactory
  */
-class AccountFactoryTest extends \PHPUnit_Framework_TestCase
+class AccountFactoryTest extends \PHPUnit\Framework\TestCase
 {
     public function accountTypesProvider()
     {

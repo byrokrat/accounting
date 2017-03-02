@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Writer;
 
-class SettingsTest extends \PHPUnit_Framework_TestCase
+class SettingsTest extends \PHPUnit\Framework\TestCase
 {
     public function testDefaultAccountingYear()
     {

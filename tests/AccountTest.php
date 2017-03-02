@@ -4,11 +4,11 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
-class AccountTest extends \PHPUnit_Framework_TestCase
+class AccountTest extends \PHPUnit\Framework\TestCase
 {
     public function testExceptionOnNonNumericAccountNumber()
     {
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         new Account\Asset('this-is-not-a-numerical-string');
     }
 

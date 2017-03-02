@@ -7,7 +7,7 @@ namespace byrokrat\accounting\Sie4\Parser;
 /**
  * @covers \byrokrat\accounting\Sie4\Parser\ParserFactory
  */
-class ParserFactoryTest extends \PHPUnit_Framework_TestCase
+class ParserFactoryTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreateParser()
     {

@@ -13,7 +13,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @covers \byrokrat\accounting\Sie4\VerificationBuilder
  */
-class VerificationBuilderTest extends \PHPUnit_Framework_TestCase
+class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
 {
     use \byrokrat\accounting\utils\PropheciesTrait;
 

@@ -6,7 +6,7 @@ namespace byrokrat\accounting;
 
 use byrokrat\amount\Amount;
 
-class TransactionSummaryTest extends \PHPUnit_Framework_TestCase
+class TransactionSummaryTest extends \PHPUnit\Framework\TestCase
 {
     use utils\PropheciesTrait;
 
@@ -144,7 +144,7 @@ class TransactionSummaryTest extends \PHPUnit_Framework_TestCase
 
     public function testExceptionOnGetMagnitudeWithoutBalance()
     {
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
 
         (new TransactionSummary)
             ->addToSummary($this->prophesizeTransaction(new Amount('5'))->reveal())
@@ -188,7 +188,7 @@ class TransactionSummaryTest extends \PHPUnit_Framework_TestCase
 
     public function testExceptionOnUninitializedSummaries()
     {
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         (new TransactionSummary)->getMagnitude();
     }
 

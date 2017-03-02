@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
-class ContainerTest extends \PHPUnit_Framework_TestCase
+class ContainerTest extends \PHPUnit\Framework\TestCase
 {
     use utils\InterfaceAssertionsTrait;
 

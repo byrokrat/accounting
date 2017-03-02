@@ -10,7 +10,7 @@ use Psr\Log\LogLevel;
 /**
  * @covers \byrokrat\accounting\Sie4\Parser\Logger
  */
-class LoggerTest extends \PHPUnit_Framework_TestCase
+class LoggerTest extends \PHPUnit\Framework\TestCase
 {
     public function testLogEvents()
     {

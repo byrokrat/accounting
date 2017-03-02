@@ -6,13 +6,13 @@ namespace byrokrat\accounting;
 
 use byrokrat\amount\Amount;
 
-class QueryTest extends \PHPUnit_Framework_TestCase
+class QueryTest extends \PHPUnit\Framework\TestCase
 {
     use utils\PropheciesTrait;
 
     public function testInvalidConstructorArgument()
     {
-        $this->setExpectedException(Exception\LogicException::CLASS);
+        $this->expectException(Exception\LogicException::CLASS);
         (new Query(0))->exec();
     }
 
@@ -486,7 +486,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
 
     public function testExceptionOnUnknownAccountNumber()
     {
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         (new Query)->findAccount('1234');
     }
 
@@ -500,7 +500,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
 
     public function testExceptionOnUnknownDimensionNumber()
     {
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         (new Query)->findDimension('1234');
     }
 
@@ -517,7 +517,7 @@ class QueryTest extends \PHPUnit_Framework_TestCase
 
     public function testExceptionOnLoadingUnvalidData()
     {
-        $this->setExpectedException(Exception\LogicException::CLASS);
+        $this->expectException(Exception\LogicException::CLASS);
         (new Query)->load(null);
     }
 }

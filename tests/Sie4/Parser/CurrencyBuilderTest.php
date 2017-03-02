@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @covers \byrokrat\accounting\Sie4\Parser\CurrencyBuilder
  */
-class CurrencyBuilderTest extends \PHPUnit_Framework_TestCase
+class CurrencyBuilderTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreateMoney()
     {

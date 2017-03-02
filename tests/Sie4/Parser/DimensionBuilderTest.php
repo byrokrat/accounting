@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @covers \byrokrat\accounting\Sie4\Parser\DimensionBuilder
  */
-class DimensionBuilderTest extends \PHPUnit_Framework_TestCase
+class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreateAndGetDimension()
     {

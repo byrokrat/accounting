@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
-class DimensionTest extends \PHPUnit_Framework_TestCase
+class DimensionTest extends \PHPUnit\Framework\TestCase
 {
     use utils\InterfaceAssertionsTrait;
 
@@ -61,13 +61,13 @@ class DimensionTest extends \PHPUnit_Framework_TestCase
 
     public function testExceptionWhenNoParentIsSet()
     {
-        $this->setExpectedException(Exception\LogicException::CLASS);
+        $this->expectException(Exception\LogicException::CLASS);
         (new Dimension('0'))->getParent();
     }
 
     public function testExceptionOnInvalidArgumentInDimension()
     {
-        $this->setExpectedException(Exception\LogicException::CLASS);
+        $this->expectException(Exception\LogicException::CLASS);
         (new Dimension('0'))->inDimension(0);
     }
 

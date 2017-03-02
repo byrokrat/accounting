@@ -15,7 +15,7 @@ use byrokrat\amount\Currency\SEK;
  *
  * Referenced rules are from the SIE specs dated 2008-09-30
  */
-class GrammarTest extends \PHPUnit_Framework_TestCase
+class GrammarTest extends \PHPUnit\Framework\TestCase
 {
     use \byrokrat\accounting\utils\InterfaceAssertionsTrait, TypeProviderTrait;
 
@@ -32,7 +32,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
      */
     public function testLabelRequired()
     {
-        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectException(Exception\ParserException::CLASS);
         $this->expectExceptionMessageRegExp("/invalid line/");
         $this->parse(
             "
@@ -119,7 +119,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
      */
     public function testUnknownFieldsAtEndOfLine()
     {
-        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectException(Exception\ParserException::CLASS);
         $this->expectExceptionMessageRegExp("/unknown field/");
         $this->parse(
             "#FLAGGA 1 unknown-field-at-end-of-line\n",
@@ -132,7 +132,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
      */
     public function testUnknownLabels()
     {
-        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectException(Exception\ParserException::CLASS);
         $this->expectExceptionMessageRegExp("/unknown statement/");
         $this->parse(
             "
@@ -213,7 +213,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
      */
     public function testStringTypeInvalidChars(string $char)
     {
-        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectException(Exception\ParserException::CLASS);
         $this->parse("
             #FLAGGA 1
             #VALUTA \"bar{$char}baz\"
@@ -222,7 +222,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
 
     public function testNoticeOnKsumma()
     {
-        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectException(Exception\ParserException::CLASS);
         $this->expectExceptionMessageRegExp("/Checksum detected but currently not handled/");
         $this->parse(
             "
@@ -298,7 +298,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
      */
     public function testExceptionOnInvalidCharset()
     {
-        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectException(Exception\ParserException::CLASS);
         $this->expectExceptionMessageRegExp("/Unknown charset/");
         $this->parse(
             "
@@ -329,7 +329,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
 
     public function testWarningOnAccountDuplication()
     {
-        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectException(Exception\ParserException::CLASS);
         $this->expectExceptionMessageRegExp('/Overwriting previously created account/');
         $this->parse(
             "
@@ -369,7 +369,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
 
     public function testWarningOnMissingSruAccount()
     {
-        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectException(Exception\ParserException::CLASS);
         $this->expectExceptionMessageRegExp("/Expected account/");
         $this->parse(
             "
@@ -382,7 +382,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
 
     public function testWarningOnMissingSruNumber()
     {
-        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectException(Exception\ParserException::CLASS);
         $this->expectExceptionMessageRegExp("/Expected SRU code/");
         $this->parse(
             "
@@ -434,7 +434,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
 
     public function testWarningOnDimensionDuplication()
     {
-        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectException(Exception\ParserException::CLASS);
         $this->expectExceptionMessageRegExp('/Overwriting previously created dimension/');
         $this->parse(
             "
@@ -448,7 +448,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
 
     public function testWarningOnObjectDuplication()
     {
-        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectException(Exception\ParserException::CLASS);
         $this->expectExceptionMessageRegExp('/Overwriting previously created object/');
         $this->parse(
             "
@@ -587,7 +587,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
 
     public function testExceptionOnUnbalancedVerification()
     {
-        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectException(Exception\ParserException::CLASS);
         $this->expectExceptionMessageRegExp("/Trying to add an unbalanced verification/");
         $this->parse("
             #FLAGGA 1
@@ -600,7 +600,7 @@ class GrammarTest extends \PHPUnit_Framework_TestCase
 
     public function testWarningOnMissingTransactionAmont()
     {
-        $this->setExpectedException(Exception\ParserException::CLASS);
+        $this->expectException(Exception\ParserException::CLASS);
         $this->expectExceptionMessageRegExp("/Expected monetary amount/");
         $this->parse(
             "

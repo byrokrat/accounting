@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @covers \byrokrat\accounting\Sie4\Parser\AccountBuilder
  */
-class AccountBuilderTest extends \PHPUnit_Framework_TestCase
+class AccountBuilderTest extends \PHPUnit\Framework\TestCase
 {
     use \byrokrat\accounting\utils\PropheciesTrait;
 
@@ -59,7 +59,7 @@ class AccountBuilderTest extends \PHPUnit_Framework_TestCase
             $this->createMock(LoggerInterface::CLASS)
         );
 
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $accountBuilder->getAccount('1234');
     }
 

@@ -6,7 +6,7 @@ namespace byrokrat\accounting;
 
 use byrokrat\amount\Amount;
 
-class TransactionTest extends \PHPUnit_Framework_TestCase
+class TransactionTest extends \PHPUnit\Framework\TestCase
 {
     use utils\InterfaceAssertionsTrait, utils\PropheciesTrait;
 

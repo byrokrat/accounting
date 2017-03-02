@@ -9,7 +9,7 @@ use byrokrat\amount\Amount;
 /**
  * @covers \byrokrat\accounting\Template
  */
-class TemplateTest extends \PHPUnit_Framework_TestCase
+class TemplateTest extends \PHPUnit\Framework\TestCase
 {
     use utils\InterfaceAssertionsTrait;
 
@@ -124,7 +124,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
 
     public function testExceptionOnMissingTranslation()
     {
-        $this->setExpectedException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::CLASS);
         $template = new Template('', '{not-substituted}');
         $template->build([], new Query);
     }
