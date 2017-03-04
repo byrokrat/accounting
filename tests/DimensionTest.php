@@ -43,7 +43,7 @@ class DimensionTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [$parent],
-            $child->query()->toArray()
+            $child->select()->toArray()
         );
     }
 
@@ -55,7 +55,7 @@ class DimensionTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [],
-            $dim->query()->toArray()
+            $dim->select()->toArray()
         );
     }
 

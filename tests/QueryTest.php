@@ -98,7 +98,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             1,
-            (new Query([1, 2, 3]))->first()
+            (new Query([1, 2, 3]))->getFirst()
         );
     }
 
@@ -110,13 +110,13 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             3,
-            (new Query(['A', false, 3]))->filter('is_integer')->first()
+            (new Query(['A', false, 3]))->filter('is_integer')->getFirst()
         );
     }
 
     public function testFirstWithNoItems()
     {
-        $this->assertNull((new Query)->first());
+        $this->assertNull((new Query)->getFirst());
     }
 
     public function testIsEmpty()
@@ -208,7 +208,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     /**
      * @depends testAttributables
      */
-    public function testWithAttribute()
+    public function testWhereAttribute()
     {
         $attributableProphecy = $this->prophesize(Interfaces\Attributable::CLASS);
 
@@ -220,22 +220,22 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [$attributable],
-            (new Query([1, $attributable, 3]))->withAttribute('A')->toArray()
+            (new Query([1, $attributable, 3]))->whereAttribute('A')->toArray()
         );
 
         $this->assertSame(
             [],
-            (new Query([1, $attributable, 3]))->withAttribute('B')->toArray()
+            (new Query([1, $attributable, 3]))->whereAttribute('B')->toArray()
         );
 
         $this->assertSame(
             [$attributable],
-            (new Query([1, $attributable, 3]))->withAttribute('A', 'foobar')->toArray()
+            (new Query([1, $attributable, 3]))->whereAttribute('A', 'foobar')->toArray()
         );
 
         $this->assertSame(
             [],
-            (new Query([1, $attributable, 3]))->withAttribute('A', 'not-foobar')->toArray()
+            (new Query([1, $attributable, 3]))->whereAttribute('A', 'not-foobar')->toArray()
         );
     }
 
@@ -276,7 +276,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             $query = new Query,
-            $query->query()
+            $query->select()
         );
     }
 
@@ -464,44 +464,44 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     /**
      * @depends testWhereAndWhereNot
      */
-    public function testWithAccount()
+    public function testWhereAccount()
     {
         $transA = $this->prophesizeTransaction(null, $this->prophesizeAccount('1234')->reveal())->reveal();
         $transB = $this->prophesizeTransaction(null, $this->prophesizeAccount('1000')->reveal())->reveal();
 
         $this->assertSame(
             [$transA],
-            (new Query([$transA, $transB]))->transactions()->withAccount('1234')->toArray(),
+            (new Query([$transA, $transB]))->transactions()->whereAccount('1234')->toArray(),
             'queryableB should be removed as it does not contain account 1234'
         );
     }
 
-    public function testFindAccount()
+    public function testGetAccount()
     {
         $this->assertEquals(
             $account = $this->prophesizeAccount('1234', '')->reveal(),
-            (new Query(['foo', $account, 'bar']))->findAccount('1234')
+            (new Query(['foo', $account, 'bar']))->getAccount('1234')
         );
     }
 
     public function testExceptionOnUnknownAccountNumber()
     {
         $this->expectException(Exception\RuntimeException::CLASS);
-        (new Query)->findAccount('1234');
+        (new Query)->getAccount('1234');
     }
 
-    public function testFindDimension()
+    public function testGetDimension()
     {
         $this->assertEquals(
             $dimension = $this->prophesizeDimension('1234')->reveal(),
-            (new Query(['foo', $dimension, 'bar']))->findDimension('1234')
+            (new Query(['foo', $dimension, 'bar']))->getDimension('1234')
         );
     }
 
     public function testExceptionOnUnknownDimensionNumber()
     {
         $this->expectException(Exception\RuntimeException::CLASS);
-        (new Query)->findDimension('1234');
+        (new Query)->getDimension('1234');
     }
 
     /**

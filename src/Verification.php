@@ -142,7 +142,7 @@ class Verification implements Attributable, Dateable, Describable, Queryable, Si
     /**
      * For verifications queryable content consists of transactions
      */
-    public function query(): Query
+    public function select(): Query
     {
         return new Query($this->getIterator());
     }

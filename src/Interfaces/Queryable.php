@@ -30,5 +30,5 @@ interface Queryable
     /**
      * Get a query object loaded with queryable content
      */
-    public function query(): Query;
+    public function select(): Query;
 }

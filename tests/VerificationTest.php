@@ -84,7 +84,7 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
             (new Verification)
                 ->addTransaction($this->prophesizeTransaction()->reveal())
                 ->addTransaction($this->prophesizeTransaction()->reveal())
-                ->query()->transactions()->toArray()
+                ->select()->transactions()->toArray()
         );
     }
 

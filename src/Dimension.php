@@ -122,7 +122,7 @@ class Dimension implements Attributable, Describable, Queryable
     /**
      * Implements the Queryable interface
      */
-    public function query(): Query
+    public function select(): Query
     {
         return $this->hasParent() ? new Query([$this->getParent()]) : new Query;
     }

@@ -88,7 +88,7 @@ class Template implements Attributable, Describable
      */
     public function build(array $translationMap, Queryable $container): Verification
     {
-        $container = $container->query();
+        $container = $container->select();
         $filter = $this->createTranslationFilter($translationMap);
 
         $ver = (new Verification)->setDescription(
@@ -98,14 +98,14 @@ class Template implements Attributable, Describable
         foreach ($this->transactions as list($number, $amount, $quantity, $dimensions)) {
             $dimensions = array_map(
                 function ($number) use ($container, $filter) {
-                    return $container->findDimension($filter($number));
+                    return $container->getDimension($filter($number));
                 },
                 $dimensions
             );
 
             $ver->addTransaction(
                 new Transaction(
-                    $container->findAccount($filter($number)),
+                    $container->getAccount($filter($number)),
                     new Amount($filter($amount)),
                     new Amount($filter($quantity)),
                     ...$dimensions

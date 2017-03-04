@@ -314,7 +314,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
      */
     public function testAccountType(string $raw, string $expectedNr, string $expectedDesc, string $expectedClass)
     {
-        $account = $this->parse("#FLAGGA 1\n$raw\n")->query()->findAccount($expectedNr);
+        $account = $this->parse("#FLAGGA 1\n$raw\n")->select()->getAccount($expectedNr);
 
         $this->assertSame(
             $expectedDesc,
@@ -350,7 +350,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             'kr',
-            $content->query()->findAccount('1920')->getAttribute('unit')
+            $content->select()->getAccount('1920')->getAttribute('unit')
         );
     }
 
@@ -363,7 +363,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             2000,
-            $content->query()->findAccount('1920')->getAttribute('sru')
+            $content->select()->getAccount('1920')->getAttribute('sru')
         );
     }
 
@@ -400,7 +400,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             #DIM 10 parent
             #UNDERDIM 20 child 10
             #OBJEKT 20 30 obj
-        ")->query()->findDimension('30');
+        ")->select()->getDimension('30');
 
         $this->assertSame(
             'obj',
@@ -428,7 +428,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             $this->parse("
                 #FLAGGA 1
                 #OIB 0 0 $list 0 0
-            ")->query()->findDimension($objId)
+            ")->select()->getDimension($objId)
         );
     }
 
@@ -468,7 +468,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         $account = $this->parse("
             #FLAGGA 1
             #IB 0 1920 $raw
-        ")->query()->findAccount('1920');
+        ")->select()->getAccount('1920');
 
         $this->assertEquals(
             $money,
@@ -487,14 +487,14 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             #OIB -1 1920 {10 \"20\"} 200 1
         ");
 
-        $objB = $content->query()->findDimension('30');
+        $objB = $content->select()->getDimension('30');
 
         $this->assertEquals(
             new SEK('100'),
             $objB->getAttribute('IB[0]')[0]
         );
 
-        $objA = $content->query()->findDimension('20');
+        $objA = $content->select()->getDimension('20');
 
         $this->assertEquals(
             new SEK('100'),
@@ -526,7 +526,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
                 #TRANS  3010 {} -100.00
                 #TRANS  1920 {} 100.00
             }
-        ")->query()->verifications()->toArray();
+        ")->select()->verifications()->toArray();
 
         $this->assertCount(2, $verifications);
 
@@ -558,7 +558,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             }
         ");
 
-        $this->assertCount(1, $parser->getContainer()->query()->verifications()->toArray());
+        $this->assertCount(1, $parser->getContainer()->select()->verifications()->toArray());
     }
 
     public function testCreateVerificationSeries()
@@ -575,7 +575,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
                 #TRANS  3010 {} -100.00
                 #TRANS  1920 {} 100.00
             }
-        ")->query()->verifications()->withAttribute('series', 'B')->toArray();
+        ")->select()->verifications()->whereAttribute('series', 'B')->toArray();
 
         $this->assertCount(1, $seriesA);
 
@@ -627,7 +627,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
                 }
             ",
             ParserFactory::FAIL_ON_NOTICE
-        )->query()->transactions()->toArray();
+        )->select()->transactions()->toArray();
 
         $this->assertEquals(
             new Amount('2.5'),
@@ -640,7 +640,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         $account = $this->parse("
             #FLAGGA 1
             #PBUDGET 0 201608 1920 {} 100 1
-        ")->query()->findAccount('1920');
+        ")->select()->getAccount('1920');
 
         $this->assertEquals(
             $account->getAttribute('PBUDGET[0][201608]'),
@@ -653,7 +653,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         $account = $this->parse("
             #FLAGGA 1
             #PSALDO 0 201608 1920 {} 100 1
-        ")->query()->findAccount('1920');
+        ")->select()->getAccount('1920');
 
         $this->assertEquals(
             $account->getAttribute('PSALDO[0][201608]'),

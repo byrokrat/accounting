@@ -54,7 +54,7 @@ class Query implements Queryable, \IteratorAggregate, \Countable
             foreach ($data as $item) {
                 yield $item;
                 if ($item instanceof Interfaces\Queryable) {
-                    yield from $item->query();
+                    yield from $item->select();
                 }
             }
         };
@@ -101,7 +101,7 @@ class Query implements Queryable, \IteratorAggregate, \Countable
             ->filter(function ($item) use ($value) {
                 return $item === $value;
             })
-            ->first();
+            ->getFirst();
     }
 
     /**
@@ -182,24 +182,13 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
-     * Get the first item in query matching filter
-     *
-     * @param  callable $filter Takes one argument and returnes a boolean
-     * @return mixed    The first matching item, null if no item is found
-     */
-    public function find(callable $filter)
-    {
-        return $this->filter($filter)->first();
-    }
-
-    /**
      * Find account object with id
      *
      * @throws Exception\RuntimeException If account does not exist
      */
-    public function findAccount(string $accountId): Account
+    public function getAccount(string $accountId): Account
     {
-        return $this->accounts()->findDimension($accountId);
+        return $this->accounts()->getDimension($accountId);
     }
 
     /**
@@ -207,11 +196,11 @@ class Query implements Queryable, \IteratorAggregate, \Countable
      *
      * @throws Exception\RuntimeException If dimension does not exist
      */
-    public function findDimension(string $dimensionId): Dimension
+    public function getDimension(string $dimensionId): Dimension
     {
-        $dimension = $this->dimensions()->find(function ($dimension) use ($dimensionId) {
+        $dimension = $this->dimensions()->filter(function ($dimension) use ($dimensionId) {
             return $dimension->getId() == $dimensionId;
-        });
+        })->getFirst();
 
         if ($dimension) {
             return $dimension;
@@ -225,7 +214,7 @@ class Query implements Queryable, \IteratorAggregate, \Countable
      *
      * @return mixed The first item in query, null if no item is found
      */
-    public function first()
+    public function getFirst()
     {
         foreach ($this->getIterator() as $item) {
             return $item;
@@ -301,7 +290,7 @@ class Query implements Queryable, \IteratorAggregate, \Countable
             foreach ($data as $item) {
                 yield $item;
                 if ($item instanceof Interfaces\Queryable) {
-                    yield from $item->query();
+                    yield from $item->select();
                 }
             }
         });
@@ -379,7 +368,7 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     /**
      * Implements the Queryable interface
      */
-    public function query(): Query
+    public function select(): Query
     {
         return $this;
     }
@@ -478,7 +467,7 @@ class Query implements Queryable, \IteratorAggregate, \Countable
      * @param  string $name  Case-insensitive name of attribute
      * @param  mixed  $value If specified attribute must be set to value for filter to pass
      */
-    public function withAttribute(string $name, $value = null): Query
+    public function whereAttribute(string $name, $value = null): Query
     {
         return $this->attributables()->filter(function ($item) use ($name, $value) {
             return $item->hasAttribute($name) && (is_null($value) || $item->getAttribute($name) == $value);
@@ -488,7 +477,7 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     /**
      * Filter those objects that contain a specific account number
      */
-    public function withAccount(string $accountId): Query
+    public function whereAccount(string $accountId): Query
     {
         return $this->where(function ($item) use ($accountId) {
             return $item instanceof Account && $item->getId() == $accountId;

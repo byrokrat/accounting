@@ -54,7 +54,7 @@ trait PropheciesTrait
         $account->getNumber()->willReturn(intval($number));
         $account->getDescription()->willReturn($desc);
         $account->getAttributes()->willReturn($attr);
-        $account->query()->willReturn(new Query);
+        $account->select()->willReturn(new Query);
 
         return $account;
     }
@@ -76,7 +76,7 @@ trait PropheciesTrait
     {
         $dim = $this->prophesize(Dimension::CLASS);
         $dim->getId()->willReturn($number);
-        $dim->query()->willReturn(new Query);
+        $dim->select()->willReturn(new Query);
 
         return $dim;
     }
@@ -84,12 +84,12 @@ trait PropheciesTrait
     /**
      * Create queryable prophecy
      *
-     * @param array $content Will be returned as query content by query()
+     * @param array $content Will be returned as query content by select()
      */
     public function prophesizeQueryable(array $content = []): ObjectProphecy
     {
         $queryable = $this->prophesize(Interfaces\Queryable::CLASS);
-        $queryable->query()->will(function () use ($content) {
+        $queryable->select()->will(function () use ($content) {
             return new Query($content);
         });
 
@@ -107,7 +107,7 @@ trait PropheciesTrait
         $transaction = $this->prophesize(Transaction::CLASS);
         $transaction->getAmount()->willReturn($amount ?: new Amount('0'));
         $transaction->getAccount()->willReturn($account ?: $this->prophesizeAccount()->reveal());
-        $transaction->query()->will(function () use ($amount, $account) {
+        $transaction->select()->will(function () use ($amount, $account) {
             return new Query([$amount, $account]);
         });
 
@@ -117,14 +117,14 @@ trait PropheciesTrait
     /**
      * Create verification prophecy
      *
-     * @param  array $transactions Will be returned by getTransactions() and as query() content
+     * @param  array $transactions Will be returned by getTransactions() and as select() content
      */
     public function prophesizeVerification(array $transactions = []): ObjectProphecy
     {
         $verification = $this->prophesize(Verification::CLASS);
         $verification->isBalanced()->willReturn(true);
         $verification->getTransactions()->willReturn($transactions);
-        $verification->query()->will(function () use ($transactions) {
+        $verification->select()->will(function () use ($transactions) {
             return new Query($transactions);
         });
 

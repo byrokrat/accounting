@@ -2,19 +2,20 @@
 
 1. Support `__set_state` på alla value-classer, så att en kan göra
    var_export på ett parse-tree och spara för senare analys...
-1. skapa en run_tests.sh som kör alla tester och ska köras innan
-   jag committar någonting... (kolla travis och liknande...)
+
+## Readme
+
+1. Låt oss först här generera lite verifikationer med templates.
+1. Och sedan analysera de genererade verifikationerna...
+1. Och så kan jag passa på att flytta ut exempel till doc...
 
 ## Query
 
-Fler metoder i stil med withAccount(). Förslagsvis:
+Fler metoder i stil med whereAccount(). Exempelvis:
 
-1. withSignature()
-1. withAmountGreaterThan('100')
-1. withDate($start, $stop = null)
-1. osv...
-
-Ska det vara whereAccount() osv.. istället??
+1. whereSignature()
+1. whereAmountGreaterThan('100')
+1. whereDate($start, $stop = null)
 
 ## Transaktioner
 

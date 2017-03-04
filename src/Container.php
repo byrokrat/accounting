@@ -77,7 +77,7 @@ class Container implements Attributable, Queryable, \IteratorAggregate
     /**
      * Implements the Queryable interface
      */
-    public function query(): Query
+    public function select(): Query
     {
         return new Query($this->getIterator());
     }

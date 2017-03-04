@@ -74,7 +74,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             array_merge([$account, $amount], $dimensions),
-            $transaction->query()->toArray()
+            $transaction->select()->toArray()
         );
     }
 

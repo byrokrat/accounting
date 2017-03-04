@@ -53,13 +53,13 @@ $accounts = new Query([
 $ledger = new Query([
     (new Verification)
         ->setDescription('Verification text')
-        ->addTransaction(new Transaction($accounts->findAccount('1920'), new SEK('100')))
-        ->addTransaction(new Transaction($accounts->findAccount('3000'), new SEK('-100')))
+        ->addTransaction(new Transaction($accounts->getAccount('1920'), new SEK('100')))
+        ->addTransaction(new Transaction($accounts->getAccount('3000'), new SEK('-100')))
     ,
     (new Verification)
         ->setDescription('Verification using account 1921')
-        ->addTransaction(new Transaction($accounts->findAccount('1921'), new SEK('200')))
-        ->addTransaction(new Transaction($accounts->findAccount('3000'), new SEK('-200')))
+        ->addTransaction(new Transaction($accounts->getAccount('1921'), new SEK('200')))
+        ->addTransaction(new Transaction($accounts->getAccount('3000'), new SEK('-200')))
 ]);
 
 // Calculate account balances
@@ -76,7 +76,7 @@ $ledger->transactions()->each(function ($transaction) use (&$summaries) {
 echo $summaries[3000]->getOutgoingBalance();
 
 // Select verifications concerning a specific account (outputs 'Verification using account 1921')
-echo $ledger->verifications()->withAccount('1921')->first()->getDescription();
+echo $ledger->verifications()->whereAccount('1921')->getFirst()->getDescription();
 ```
 
 Documentation

@@ -3,7 +3,7 @@
 use byrokrat\accounting\Container;
 
 return function (Container $container) {
-    $account = $container->query()->findAccount('1512');
+    $account = $container->select()->getAccount('1512');
 
     $this->assertSame(
         "Belånade fordringar",
