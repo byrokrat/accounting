@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\accounting\Interfaces\Describable;
 use byrokrat\accounting\Interfaces\Queryable;
 use byrokrat\amount\Amount;
 
@@ -81,6 +82,49 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
+     * Get all items matched by query
+     *
+     * As the result set is constructed by multiple generators the probability
+     * of having multiple items with the same native key is high, which in turn
+     * triggers unexpected behaviour in iterator_to_array(). For that reason
+     * this method should be used instead of iterator_to_array.
+     *
+     * @return array The collection of items currently in query
+     */
+    public function asArray(): array
+    {
+        $items = [];
+
+        foreach ($this->getIterator() as $item) {
+            $items[] = $item;
+        }
+
+        return $items;
+    }
+
+    /**
+     * Get all items matched by query wrapped in a container
+     */
+    public function asContainer(): Container
+    {
+        return new Container(...$this->asArray());
+    }
+
+    /**
+     * Summarize transactions matched by query
+     */
+    public function asSummary(): TransactionSummary
+    {
+        $summary = new TransactionSummary;
+
+        foreach ($this->transactions()->getIterator() as $transaction) {
+            $summary->addToSummary($transaction);
+        }
+
+        return $summary;
+    }
+
+    /**
      * Filter that returns only Attributable objects
      */
     public function attributables(): Query
@@ -106,6 +150,8 @@ class Query implements Queryable, \IteratorAggregate, \Countable
 
     /**
      * Count the items currently in iterator
+     *
+     * Implements the Countable interface
      */
     public function count(): int
     {
@@ -128,7 +174,7 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     public function describables(): Query
     {
         return $this->filter(function ($item) {
-            return $item instanceof Interfaces\Describable;
+            return $item instanceof Describable;
         });
     }
 
@@ -313,67 +359,6 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
-     * Filter that returns only Signable objects
-     */
-    public function signables(): Query
-    {
-        return $this->filter(function ($item) {
-            return $item instanceof Interfaces\Signable;
-        });
-    }
-
-    /**
-     * Get all items matched by query
-     *
-     * As the result set is constructed by multiple generators the probability
-     * of having multiple items with the same native key is high, which in turn
-     * triggers unexpected behaviour in iterator_to_array(). For that reason
-     * this method should be used instead of iterator_to_array.
-     *
-     * @return array The collection of items currently in query
-     */
-    public function toArray(): array
-    {
-        $items = [];
-
-        foreach ($this->getIterator() as $item) {
-            $items[] = $item;
-        }
-
-        return $items;
-    }
-
-    /**
-     * Get all items matched by query wrapped in a container
-     */
-    public function toContainer(): Container
-    {
-        return new Container(...$this->toArray());
-    }
-
-    /**
-     * Summarize transactions matched by query
-     */
-    public function toTransactionSummary(): TransactionSummary
-    {
-        $summary = new TransactionSummary;
-
-        foreach ($this->transactions()->getIterator() as $transaction) {
-            $summary->addToSummary($transaction);
-        }
-
-        return $summary;
-    }
-
-    /**
-     * Implements the Queryable interface
-     */
-    public function select(): Query
-    {
-        return $this;
-    }
-
-    /**
      * Filter that returns only Queryable objects
      */
     public function queryables(): Query
@@ -397,6 +382,24 @@ class Query implements Queryable, \IteratorAggregate, \Countable
         });
 
         return $initial;
+    }
+
+    /**
+     * Filter that returns only Signable objects
+     */
+    public function signables(): Query
+    {
+        return $this->filter(function ($item) {
+            return $item instanceof Interfaces\Signable;
+        });
+    }
+
+    /**
+     * Implements the Queryable interface
+     */
+    public function select(): Query
+    {
+        return $this;
     }
 
     /**
@@ -462,6 +465,58 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
+     * Filter those objects that contain a specific account number
+     */
+    public function whereAccount(string $accountId): Query
+    {
+        return $this->where(function ($item) use ($accountId) {
+            return $item instanceof Account && $item->getId() == $accountId;
+        });
+    }
+
+    /**
+     * Filter those objects whose amount matches $amount when compared using $comp
+     */
+    public function whereAmount(string $comp, Amount $amount): Query
+    {
+        return $this->where(function ($item) use ($comp, $amount) {
+            if ($item instanceof Verification) {
+                return $item->getMagnitude()->$comp($amount);
+            }
+
+            if ($item instanceof Transaction) {
+                return $item->getAmount()->$comp($amount);
+            }
+
+            return false;
+        });
+    }
+
+    /**
+     * Filter those objects that contains a specific amount
+     */
+    public function whereAmountEquals(Amount $amount): Query
+    {
+        return $this->whereAmount('equals', $amount);
+    }
+
+    /**
+     * Filter those objects that contains an amount greater than $amount
+     */
+    public function whereAmountIsGreaterThan(Amount $amount): Query
+    {
+        return $this->whereAmount('isGreaterThan', $amount);
+    }
+
+    /**
+     * Filter those objects that contains an amount less than $amount
+     */
+    public function whereAmountIsLessThan(Amount $amount): Query
+    {
+        return $this->whereAmount('isLessThan', $amount);
+    }
+
+    /**
      * Filter attributable objects with a specific attribute set
      *
      * @param  string $name  Case-insensitive name of attribute
@@ -475,12 +530,12 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
-     * Filter those objects that contain a specific account number
+     * Filter those objects that contain a description matching $regexp
      */
-    public function whereAccount(string $accountId): Query
+    public function whereDescription(string $regexp): Query
     {
-        return $this->where(function ($item) use ($accountId) {
-            return $item instanceof Account && $item->getId() == $accountId;
+        return $this->where(function ($item) use ($regexp) {
+            return $item instanceof Describable && preg_match($regexp, $item->getDescription());
         });
     }
 

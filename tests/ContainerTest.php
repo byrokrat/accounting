@@ -48,7 +48,7 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
                 $a = 'foo',
                 $b = 'bar'
             ],
-            (new Container($a, $b))->select()->toArray()
+            (new Container($a, $b))->select()->asArray()
         );
     }
 }

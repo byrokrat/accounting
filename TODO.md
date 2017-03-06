@@ -9,13 +9,24 @@
 1. Och sedan analysera de genererade verifikationerna...
 1. Och så kan jag passa på att flytta ut exempel till doc...
 
-## Query
+## Macroable
 
-Fler metoder i stil med whereAccount(). Exempelvis:
+Gör query macroable så att den enkelt kan lägga till sökfunktioner efter hand..
 
-1. whereSignature()
-1. whereAmountGreaterThan('100')
-1. whereDate($start, $stop = null)
+```php
+Query::macro('whereIsPayment', function () {
+    return $this->whereDescription('/^Utbetalning$/');
+});
+```
+
+Detta kan sedan användas som
+
+```php
+$bok->select()->transactions()->whereIsPayment()->asArray();
+```
+
+Kanske kan jag stryka en del metoder från Query efter detta? Klassen börjar bli
+lite väl tjock...
 
 ## Transaktioner
 

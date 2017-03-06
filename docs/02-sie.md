@@ -30,7 +30,7 @@ $content = $parser->parse("
 echo $content->getAttribute('FLAGGA');
 
 /** @var \byrokrat\accounting\Verification[] $verifications */
-$verifications = $content->select()->verifications()->toArray();
+$verifications = $content->select()->verifications()->asArray();
 
 // Outputs '100.00'
 echo $verifications[0]->getMagnitude();

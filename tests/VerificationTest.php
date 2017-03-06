@@ -79,12 +79,12 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
 
     public function testQueryable()
     {
-        $this->assertCount(
+        $this->assertSame(
             2,
             (new Verification)
                 ->addTransaction($this->prophesizeTransaction()->reveal())
                 ->addTransaction($this->prophesizeTransaction()->reveal())
-                ->select()->transactions()->toArray()
+                ->select()->transactions()->count()
         );
     }
 

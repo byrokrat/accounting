@@ -16,34 +16,34 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         (new Query(0))->exec();
     }
 
-    public function testToArray()
+    public function testAsArray()
     {
         $this->assertSame(
             [1, 2, 3],
-            (new Query([1, 2, 3]))->toArray()
+            (new Query([1, 2, 3]))->asArray()
         );
     }
 
-    public function testToContainer()
+    public function testAsContainer()
     {
         $this->assertEquals(
             new Container(1, 2, 3),
-            (new Query([1, 2, 3]))->toContainer()
+            (new Query([1, 2, 3]))->asContainer()
         );
     }
 
-    public function testToTransactionSummary()
+    public function testAsSummary()
     {
         $trans = $this->prophesizeTransaction(new Amount('50'))->reveal();
 
         $this->assertEquals(
             new Amount('100'),
-            (new Query([1, $trans, $trans]))->toTransactionSummary()->getOutgoingBalance()
+            (new Query([1, $trans, $trans]))->asSummary()->getOutgoingBalance()
         );
     }
 
     /**
-     * @depends testToArray
+     * @depends testAsArray
      */
     public function testNestedIteration()
     {
@@ -54,13 +54,13 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             ['before', $queryable2, 'foo', $queryable1, 'bar', 'after'],
-            $query->toArray(),
+            $query->asArray(),
             'Nested iteration should yield values bottom down'
         );
 
         $this->assertSame(
             ['before', $queryable2, 'foo', $queryable1, 'bar', 'after'],
-            $query->toArray(),
+            $query->asArray(),
             'Query should be rewindable and yield the same results the second time'
         );
     }
@@ -72,7 +72,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             [1, 2, 3],
-            (new Query([1, $this->prophesizeQueryable([2])->reveal(), 3]))->filter('is_integer')->toArray()
+            (new Query([1, $this->prophesizeQueryable([2])->reveal(), 3]))->filter('is_integer')->asArray()
         );
     }
 
@@ -85,12 +85,12 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [1, 2],
-            $query->filter('is_integer')->toArray()
+            $query->filter('is_integer')->asArray()
         );
 
         $this->assertSame(
             [1, 'A', 2],
-            $query->toArray()
+            $query->asArray()
         );
     }
 
@@ -178,7 +178,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             [$account = $this->prophesizeAccount()->reveal()],
-            (new Query([1, $account, 3]))->accounts()->toArray()
+            (new Query([1, $account, 3]))->accounts()->asArray()
         );
     }
 
@@ -189,7 +189,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             [$amount = $this->prophesizeAmount()->reveal()],
-            (new Query([1, $amount, 3]))->amounts()->toArray()
+            (new Query([1, $amount, 3]))->amounts()->asArray()
         );
     }
 
@@ -201,7 +201,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         $attributable = $this->createMock(Interfaces\Attributable::CLASS);
         $this->assertSame(
             [$attributable],
-            (new Query([1, $attributable, 3]))->attributables()->toArray()
+            (new Query([1, $attributable, 3]))->attributables()->asArray()
         );
     }
 
@@ -220,22 +220,22 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [$attributable],
-            (new Query([1, $attributable, 3]))->whereAttribute('A')->toArray()
+            (new Query([1, $attributable, 3]))->whereAttribute('A')->asArray()
         );
 
         $this->assertSame(
             [],
-            (new Query([1, $attributable, 3]))->whereAttribute('B')->toArray()
+            (new Query([1, $attributable, 3]))->whereAttribute('B')->asArray()
         );
 
         $this->assertSame(
             [$attributable],
-            (new Query([1, $attributable, 3]))->whereAttribute('A', 'foobar')->toArray()
+            (new Query([1, $attributable, 3]))->whereAttribute('A', 'foobar')->asArray()
         );
 
         $this->assertSame(
             [],
-            (new Query([1, $attributable, 3]))->whereAttribute('A', 'not-foobar')->toArray()
+            (new Query([1, $attributable, 3]))->whereAttribute('A', 'not-foobar')->asArray()
         );
     }
 
@@ -246,7 +246,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             [$dateable = $this->prophesize(Interfaces\Dateable::CLASS)->reveal()],
-            (new Query([1, $dateable, 3]))->dateables()->toArray()
+            (new Query([1, $dateable, 3]))->dateables()->asArray()
         );
     }
 
@@ -257,7 +257,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             [$describable = $this->prophesize(Interfaces\Describable::CLASS)->reveal()],
-            (new Query([1, $describable, 3]))->describables()->toArray()
+            (new Query([1, $describable, 3]))->describables()->asArray()
         );
     }
 
@@ -268,7 +268,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             [$dimension = $this->prophesizeDimension()->reveal()],
-            (new Query([1, $dimension, 3]))->dimensions()->toArray()
+            (new Query([1, $dimension, 3]))->dimensions()->asArray()
         );
     }
 
@@ -287,7 +287,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             [$queryable = $this->prophesizeQueryable()->reveal()],
-            (new Query([1, $queryable, 3]))->queryables()->toArray()
+            (new Query([1, $queryable, 3]))->queryables()->asArray()
         );
     }
 
@@ -298,7 +298,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             [$signable = $this->prophesize(Interfaces\Signable::CLASS)->reveal()],
-            (new Query([1, $signable, 3]))->signables()->toArray()
+            (new Query([1, $signable, 3]))->signables()->asArray()
         );
     }
 
@@ -309,7 +309,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             [$transaction = $this->prophesizeTransaction()->reveal()],
-            (new Query([1, $transaction, 3]))->transactions()->toArray()
+            (new Query([1, $transaction, 3]))->transactions()->asArray()
         );
     }
 
@@ -320,7 +320,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             [$verification = $this->prophesizeVerification()->reveal()],
-            (new Query([1, $verification, 3]))->verifications()->toArray()
+            (new Query([1, $verification, 3]))->verifications()->asArray()
         );
     }
 
@@ -352,7 +352,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @depends testToArray
+     * @depends testAsArray
      */
     public function testMap()
     {
@@ -360,7 +360,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
             [10, 20],
             (new Query([0, 10]))->map(function ($integer) {
                 return $integer + 10;
-            })->toArray()
+            })->asArray()
         );
     }
 
@@ -375,12 +375,12 @@ class QueryTest extends \PHPUnit\Framework\TestCase
             [10, 20],
             $query->map(function ($integer) {
                 return $integer + 10;
-            })->toArray()
+            })->asArray()
         );
 
         $this->assertSame(
             [0, 10],
-            $query->toArray()
+            $query->asArray()
         );
     }
 
@@ -408,13 +408,13 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @depends testToArray
+     * @depends testAsArray
      */
     public function testUnique()
     {
         $this->assertSame(
             [1, 2, 3],
-            (new Query([1, 2, 3, 2]))->unique()->toArray()
+            (new Query([1, 2, 3, 2]))->unique()->asArray()
         );
     }
 
@@ -428,13 +428,13 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [$queryableA, $queryableB],
-            (new Query([$queryableA, $queryableB, $queryableB, $queryableA]))->unique()->toArray()
+            (new Query([$queryableA, $queryableB, $queryableB, $queryableA]))->unique()->asArray()
         );
     }
 
     /**
      * @depends testQueryables
-     * @depends testToArray
+     * @depends testAsArray
      */
     public function testWhereAndWhereNot()
     {
@@ -450,13 +450,13 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [$queryableA, $queryableB],
-            (clone $query)->queryables()->where($filter)->toArray(),
+            (clone $query)->queryables()->where($filter)->asArray(),
             'queryableC should be removed as it does not contain the subitem foo'
         );
 
         $this->assertSame(
             [$queryableC],
-            (clone $query)->queryables()->whereNot($filter)->toArray(),
+            (clone $query)->queryables()->whereNot($filter)->asArray(),
             'queryableC should be kept as it does not contain the subitem foo'
         );
     }
@@ -471,8 +471,89 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [$transA],
-            (new Query([$transA, $transB]))->transactions()->whereAccount('1234')->toArray(),
-            'queryableB should be removed as it does not contain account 1234'
+            (new Query([$transA, $transB]))->transactions()->whereAccount('1234')->asArray(),
+            'transB should be removed as it does not contain account 1234'
+        );
+    }
+
+    /**
+     * @depends testWhereAndWhereNot
+     */
+    public function testWhereAmountEquals()
+    {
+        $transA = $this->prophesizeTransaction(new Amount('4'))->reveal();
+        $transB = $this->prophesizeTransaction(new Amount('2'))->reveal();
+
+        $verA = $this->prophesizeVerification();
+        $verA->getMagnitude()->willReturn(new Amount('3'));
+        $verA = $verA->reveal();
+
+        $verB = $this->prophesizeVerification();
+        $verB->getMagnitude()->willReturn(new Amount('1'));
+        $verB = $verB->reveal();
+
+        $testItems = [$transA, $transB, $verA, $verB];
+
+        $this->assertSame(
+            [$transA],
+            (new Query($testItems))->whereAmountEquals(new Amount('4'))->asArray()
+        );
+
+        $this->assertSame(
+            [$verA],
+            (new Query($testItems))->whereAmountEquals(new Amount('3'))->asArray()
+        );
+
+        return $testItems;
+    }
+
+    /**
+     * @depends testWhereAmountEquals
+     */
+    public function testWhereAmountIsGreaterThan(array $testItems)
+    {
+        $this->assertCount(
+            2,
+            (new Query($testItems))->whereAmountIsGreaterThan(new Amount('2'))->asArray()
+        );
+
+        $this->assertCount(
+            1,
+            (new Query($testItems))->whereAmountIsGreaterThan(new Amount('3'))->asArray()
+        );
+    }
+
+    /**
+     * @depends testWhereAmountEquals
+     */
+    public function testWhereAmountIsLessThan(array $testItems)
+    {
+        $this->assertCount(
+            1,
+            (new Query($testItems))->whereAmountIsLessThan(new Amount('2'))->asArray()
+        );
+
+        $this->assertCount(
+            2,
+            (new Query($testItems))->whereAmountIsLessThan(new Amount('3'))->asArray()
+        );
+    }
+
+    /**
+     * @depends testWhereAndWhereNot
+     */
+    public function testWhereDescription()
+    {
+        $fooProphecy = $this->prophesize(Interfaces\Describable::CLASS);
+        $fooProphecy->getDescription()->willReturn('foo');
+
+        $barProphecy = $this->prophesize(Interfaces\Describable::CLASS);
+        $barProphecy->getDescription()->willReturn('bar');
+
+        $this->assertSame(
+            [$foo = $fooProphecy->reveal()],
+            (new Query([$foo, $barProphecy->reveal()]))->whereDescription('/foo/')->asArray(),
+            'Array should only contain foo as regexp does not match bar'
         );
     }
 
@@ -505,13 +586,13 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @depends testToArray
+     * @depends testAsArray
      */
     public function testLoad()
     {
         $this->assertSame(
             [1, 2, 3, 4],
-            (new Query([1, 2]))->load([3, 4])->toArray()
+            (new Query([1, 2]))->load([3, 4])->asArray()
         );
     }
 

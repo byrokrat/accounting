@@ -526,7 +526,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
                 #TRANS  3010 {} -100.00
                 #TRANS  1920 {} 100.00
             }
-        ")->select()->verifications()->toArray();
+        ")->select()->verifications()->asArray();
 
         $this->assertCount(2, $verifications);
 
@@ -558,7 +558,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             }
         ");
 
-        $this->assertCount(1, $parser->getContainer()->select()->verifications()->toArray());
+        $this->assertCount(1, $parser->getContainer()->select()->verifications()->asArray());
     }
 
     public function testCreateVerificationSeries()
@@ -575,7 +575,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
                 #TRANS  3010 {} -100.00
                 #TRANS  1920 {} 100.00
             }
-        ")->select()->verifications()->whereAttribute('series', 'B')->toArray();
+        ")->select()->verifications()->whereAttribute('series', 'B')->asArray();
 
         $this->assertCount(1, $seriesA);
 
@@ -627,7 +627,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
                 }
             ",
             ParserFactory::FAIL_ON_NOTICE
-        )->select()->transactions()->toArray();
+        )->select()->transactions()->asArray();
 
         $this->assertEquals(
             new Amount('2.5'),
