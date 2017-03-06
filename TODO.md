@@ -9,6 +9,11 @@
 1. Och sedan analysera de genererade verifikationerna...
 1. Och så kan jag passa på att flytta ut exempel till doc...
 
+## DSL
+
+Det börjar bli väldigt många metoder i Query. Flytta det som inte är core till
+domain specific language. Något i stil med `QueryDslTrait`..
+
 ## Macroable
 
 Gör query macroable så att den enkelt kan lägga till sökfunktioner efter hand..
