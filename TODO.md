@@ -3,30 +3,6 @@
 1. Support `__set_state` på alla value-classer, så att en kan göra
    var_export på ett parse-tree och spara för senare analys...
 
-## DSL
-
-Det börjar bli väldigt många metoder i Query. Flytta det som inte är core till
-domain specific language. Något i stil med `QueryDslTrait`..
-
-## Macroable
-
-Gör query macroable så att den enkelt kan lägga till sökfunktioner efter hand..
-
-```php
-Query::macro('whereIsPayment', function () {
-    return $this->whereDescription('/^Utbetalning$/');
-});
-```
-
-Detta kan sedan användas som
-
-```php
-$bok->select()->transactions()->whereIsPayment()->asArray();
-```
-
-Kanske kan jag stryka en del metoder från Query efter detta? Klassen börjar bli
-lite väl tjock...
-
 ## Transaktioner
 
 1. En transaction ska kunna vara struken, och ska i så fall inte räknas i arithmetiken...

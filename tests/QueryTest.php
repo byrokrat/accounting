@@ -76,6 +76,14 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testFilterType()
+    {
+        $this->assertSame(
+            [$query = new Query],
+            (new Query([1, $query]))->filterType(Query::CLASS)->asArray()
+        );
+    }
+
     /**
      * @depends testFilter
      */
@@ -182,32 +190,6 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @depends testFilter
-     */
-    public function testAmounts()
-    {
-        $this->assertSame(
-            [$amount = $this->prophesizeAmount()->reveal()],
-            (new Query([1, $amount, 3]))->amounts()->asArray()
-        );
-    }
-
-    /**
-     * @depends testFilter
-     */
-    public function testAttributables()
-    {
-        $attributable = $this->createMock(Interfaces\Attributable::CLASS);
-        $this->assertSame(
-            [$attributable],
-            (new Query([1, $attributable, 3]))->attributables()->asArray()
-        );
-    }
-
-    /**
-     * @depends testAttributables
-     */
     public function testWhereAttribute()
     {
         $attributableProphecy = $this->prophesize(Interfaces\Attributable::CLASS);
@@ -239,66 +221,11 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @depends testFilter
-     */
-    public function testDateables()
-    {
-        $this->assertSame(
-            [$dateable = $this->prophesize(Interfaces\Dateable::CLASS)->reveal()],
-            (new Query([1, $dateable, 3]))->dateables()->asArray()
-        );
-    }
-
-    /**
-     * @depends testFilter
-     */
-    public function testDescribables()
-    {
-        $this->assertSame(
-            [$describable = $this->prophesize(Interfaces\Describable::CLASS)->reveal()],
-            (new Query([1, $describable, 3]))->describables()->asArray()
-        );
-    }
-
-    /**
-     * @depends testFilter
-     */
-    public function testDimensions()
-    {
-        $this->assertSame(
-            [$dimension = $this->prophesizeDimension()->reveal()],
-            (new Query([1, $dimension, 3]))->dimensions()->asArray()
-        );
-    }
-
     public function testQueryIsQueryable()
     {
         $this->assertSame(
             $query = new Query,
             $query->select()
-        );
-    }
-
-    /**
-     * @depends testFilter
-     */
-    public function testQueryables()
-    {
-        $this->assertSame(
-            [$queryable = $this->prophesizeQueryable()->reveal()],
-            (new Query([1, $queryable, 3]))->queryables()->asArray()
-        );
-    }
-
-    /**
-     * @depends testFilter
-     */
-    public function testSignables()
-    {
-        $this->assertSame(
-            [$signable = $this->prophesize(Interfaces\Signable::CLASS)->reveal()],
-            (new Query([1, $signable, 3]))->signables()->asArray()
         );
     }
 
@@ -433,36 +360,41 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @depends testQueryables
      * @depends testAsArray
      */
-    public function testWhereAndWhereNot()
+    public function testWhere()
     {
-        $queryableA = $this->prophesizeQueryable(['A', 'foo'])->reveal();
-        $queryableB = $this->prophesizeQueryable(['B', 'foo'])->reveal();
-        $queryableC = $this->prophesizeQueryable(['C', 'bar'])->reveal();
-
-        $query = new Query([$queryableA, $queryableB, $queryableC]);
-
-        $filter = function ($item) {
-            return is_string($item) && $item == 'foo';
-        };
+        $foo = $this->prophesizeQueryable(['', 'foo'])->reveal();
+        $bar = $this->prophesizeQueryable(['', 'bar'])->reveal();
 
         $this->assertSame(
-            [$queryableA, $queryableB],
-            (clone $query)->queryables()->where($filter)->asArray(),
-            'queryableC should be removed as it does not contain the subitem foo'
-        );
-
-        $this->assertSame(
-            [$queryableC],
-            (clone $query)->queryables()->whereNot($filter)->asArray(),
-            'queryableC should be kept as it does not contain the subitem foo'
+            [$foo],
+            (new Query([$foo, $bar]))->filterType(Interfaces\Queryable::CLASS)->where(function ($item) {
+                return is_string($item) && $item == 'foo';
+            })->asArray(),
+            '$bar should be removed as it does not contain the subitem foo'
         );
     }
 
     /**
-     * @depends testWhereAndWhereNot
+     * @depends testAsArray
+     */
+    public function testWhereNot()
+    {
+        $foo = $this->prophesizeQueryable(['', 'foo'])->reveal();
+        $bar = $this->prophesizeQueryable(['', 'bar'])->reveal();
+
+        $this->assertSame(
+            [$bar],
+            (new Query([$foo, $bar]))->filterType(Interfaces\Queryable::CLASS)->whereNot(function ($item) {
+                return is_string($item) && $item == 'foo';
+            })->asArray(),
+            '$bar should be kept as it does not contain the subitem foo'
+        );
+    }
+
+    /**
+     * @depends testWhere
      */
     public function testWhereAccount()
     {
@@ -477,7 +409,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @depends testWhereAndWhereNot
+     * @depends testWhere
      */
     public function testWhereAmountEquals()
     {
@@ -540,7 +472,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @depends testWhereAndWhereNot
+     * @depends testWhere
      */
     public function testWhereDescription()
     {
@@ -600,5 +532,28 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(Exception\LogicException::CLASS);
         (new Query)->load(null);
+    }
+
+    /**
+     * @depends testFilter
+     */
+    public function testMacro()
+    {
+        Query::macro('whereInternalType', function ($type) {
+            return $this->filter(function ($item) use ($type) {
+                return gettype($item) == $type;
+            });
+        });
+
+        $this->assertSame(
+            ['A'],
+            (new Query([1, 'A', false]))->whereInternalType('string')->asArray()
+        );
+    }
+
+    public function testExceptionOnUndefinedMethodCall()
+    {
+        $this->expectException(Exception\LogicException::CLASS);
+        (new Query)->thisMethodDoesNotExist();
     }
 }

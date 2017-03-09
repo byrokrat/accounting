@@ -10,21 +10,6 @@
 
 Analysis and generation of bookkeeping data according to Swedish standards.
 
-Why?
-----
-The motivation for creating Accounting was to provide solutions for two scenarios:
-
-1. The need to generate bookkeeping data using templates (and possibly import to
-   general bookkeeping).
-1. The need to analyze accounting data (possibly exported from general
-   bookkeeping).
-
-Although it would be possible to build a general bookkeeping application on top
-of Accounting this was never the primary concern.
-
-To enable import and export of bookkeeping data Accounting supports parsing
-and generating files in the [SIE](docs/02-sie.md) file format.
-
 Installation
 ------------
 ```shell
@@ -34,6 +19,18 @@ composer require byrokrat/accounting:dev-master
 Usage
 -----
 [Read the documentation here.](docs)
+
+Although it would be possible to build a general bookkeeping application on top
+of Accounting this was never the primary concern. The motivation for creating
+Accounting was to provide solutions for two scenarios:
+
+1. The need to generate bookkeeping data using templates (and possibly import to
+   general bookkeeping).
+1. The need to analyze accounting data (possibly exported from general
+   bookkeeping).
+
+To enable import and export of bookkeeping data Accounting supports parsing
+and generating files in the [SIE](docs/02-sie.md) file format.
 
 ### Generating accounting data using templates
 

@@ -22,19 +22,30 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
-use byrokrat\accounting\Interfaces\Describable;
-use byrokrat\accounting\Interfaces\Queryable;
 use byrokrat\amount\Amount;
 
 /**
  * Filter and iterate over collections of accounting objects
  */
-class Query implements Queryable, \IteratorAggregate, \Countable
+class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
 {
     /**
      * @var callable Internal factory for creating the query iterator
      */
     private $iteratorFactory;
+
+    /**
+     * @var \Closure Registerad macros
+     */
+    private static $macros = [];
+
+    /**
+     * Load macro
+     */
+    public static function macro(string $name, \Closure $macro)
+    {
+        self::$macros[$name] = $macro;
+    }
 
     /**
      * Load data to query
@@ -62,23 +73,25 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
+     * Execute macro if defined
+     *
+     * @throws Exception\LogicException If macro $name is not defined
+     */
+    public function __call(string $name, array $args)
+    {
+        if (isset(self::$macros[$name])) {
+            return self::$macros[$name]->call($this, ...$args);
+        }
+
+        throw new Exception\LogicException("Call to undefined method ".__CLASS__."::$name()");
+    }
+
+    /**
      * Filter that returns only Account objects
      */
     public function accounts(): Query
     {
-        return $this->filter(function ($item) {
-            return $item instanceof Account;
-        });
-    }
-
-    /**
-     * Filter that returns only Amount objects
-     */
-    public function amounts(): Query
-    {
-        return $this->filter(function ($item) {
-            return $item instanceof Amount;
-        });
+        return $this->filterType(Account::CLASS);
     }
 
     /**
@@ -125,16 +138,6 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
-     * Filter that returns only Attributable objects
-     */
-    public function attributables(): Query
-    {
-        return $this->filter(function ($item) {
-            return $item instanceof Interfaces\Attributable;
-        });
-    }
-
-    /**
      * Check if query contains a given value
      *
      * @param mixed $value The value to search for
@@ -159,36 +162,6 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
-     * Filter that returns only Dateable objects
-     */
-    public function dateables(): Query
-    {
-        return $this->filter(function ($item) {
-            return $item instanceof Interfaces\Dateable;
-        });
-    }
-
-    /**
-     * Filter that returns only Describable objects
-     */
-    public function describables(): Query
-    {
-        return $this->filter(function ($item) {
-            return $item instanceof Describable;
-        });
-    }
-
-    /**
-     * Filter that returns only Dimension objects
-     */
-    public function dimensions(): Query
-    {
-        return $this->filter(function ($item) {
-            return $item instanceof Dimension;
-        });
-    }
-
-    /**
      * Immediately execute callback for all items in query
      *
      * @param callable $callback Executed for all items matching query
@@ -210,7 +183,7 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
-     * Create a new querywith those items that pass a truth test definied in $filter
+     * Create a new query with those items that pass a truth test definied in $filter
      *
      * @param callable $filter Takes one argument and returnes a boolean
      */
@@ -224,6 +197,16 @@ class Query implements Queryable, \IteratorAggregate, \Countable
                     yield $item;
                 }
             }
+        });
+    }
+
+    /**
+     * Create a new query with those items thet are an instance of $type
+     */
+    public function filterType(string $type): Query
+    {
+        return $this->filter(function ($item) use ($type) {
+            return $item instanceof $type;
         });
     }
 
@@ -244,8 +227,8 @@ class Query implements Queryable, \IteratorAggregate, \Countable
      */
     public function getDimension(string $dimensionId): Dimension
     {
-        $dimension = $this->dimensions()->filter(function ($dimension) use ($dimensionId) {
-            return $dimension->getId() == $dimensionId;
+        $dimension = $this->filter(function ($item) use ($dimensionId) {
+            return $item instanceof Dimension && $item->getId() == $dimensionId;
         })->getFirst();
 
         if ($dimension) {
@@ -359,16 +342,6 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
-     * Filter that returns only Queryable objects
-     */
-    public function queryables(): Query
-    {
-        return $this->filter(function ($item) {
-            return $item instanceof Interfaces\Queryable;
-        });
-    }
-
-    /**
      * Reduces items in query to a single value
      *
      * @param  callable $callback Takes two values, the result of the previous iteration and the current item
@@ -385,16 +358,6 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
-     * Filter that returns only Signable objects
-     */
-    public function signables(): Query
-    {
-        return $this->filter(function ($item) {
-            return $item instanceof Interfaces\Signable;
-        });
-    }
-
-    /**
      * Implements the Queryable interface
      */
     public function select(): Query
@@ -407,9 +370,7 @@ class Query implements Queryable, \IteratorAggregate, \Countable
      */
     public function transactions(): Query
     {
-        return $this->filter(function ($item) {
-            return $item instanceof Transaction;
-        });
+        return $this->filterType(Transaction::CLASS);
     }
 
     /**
@@ -435,9 +396,7 @@ class Query implements Queryable, \IteratorAggregate, \Countable
      */
     public function verifications(): Query
     {
-        return $this->filter(function ($item) {
-            return $item instanceof Verification;
-        });
+        return $this->filterType(Verification::CLASS);
     }
 
     /**
@@ -524,8 +483,10 @@ class Query implements Queryable, \IteratorAggregate, \Countable
      */
     public function whereAttribute(string $name, $value = null): Query
     {
-        return $this->attributables()->filter(function ($item) use ($name, $value) {
-            return $item->hasAttribute($name) && (is_null($value) || $item->getAttribute($name) == $value);
+        return $this->filter(function ($item) use ($name, $value) {
+            return $item instanceof Interfaces\Attributable
+                && $item->hasAttribute($name)
+                && (is_null($value) || $item->getAttribute($name) == $value);
         });
     }
 
@@ -535,7 +496,8 @@ class Query implements Queryable, \IteratorAggregate, \Countable
     public function whereDescription(string $regexp): Query
     {
         return $this->where(function ($item) use ($regexp) {
-            return $item instanceof Describable && preg_match($regexp, $item->getDescription());
+            return $item instanceof Interfaces\Describable
+                && preg_match($regexp, $item->getDescription());
         });
     }
 
@@ -543,7 +505,6 @@ class Query implements Queryable, \IteratorAggregate, \Countable
      * Validate that data can be traversed using a foreach loop
      *
      * @param  mixed $data
-     * @return void
      * @throws Exception\LogicException if $data is not traversable
      */
     private function validateTraversability($data)
