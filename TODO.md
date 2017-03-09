@@ -1,8 +1,5 @@
 # TODO
 
-1. Support `__set_state` på alla value-classer, så att en kan göra
-   var_export på ett parse-tree och spara för senare analys...
-
 ## Transaktioner
 
 1. En transaction ska kunna vara struken, och ska i så fall inte räknas i arithmetiken...

@@ -57,6 +57,18 @@ class Container implements Attributable, Queryable, \IteratorAggregate
     }
 
     /**
+     * Add multiple additional item
+     */
+    public function addItems(array $items): self
+    {
+        foreach ($items as $item) {
+            $this->addItem($item);
+        }
+
+        return $this;
+    }
+
+    /**
      * Get loaded items
      */
     public function getItems(): array

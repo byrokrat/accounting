@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\accounting\Query;
+use byrokrat\accounting\Container;
 use byrokrat\accounting\Exception;
 
 /**
@@ -58,8 +58,8 @@ class Parser extends Grammar
         }
 
         $this->getContainer()
-            ->addItem(new Query($this->getAccountBuilder()->getAccounts()))
-            ->addItem(new Query($this->getDimensionBuilder()->getDimensions()));
+            ->addItems($this->getAccountBuilder()->getAccounts())
+            ->addItems($this->getDimensionBuilder()->getDimensions());
 
         if ($this->getLogger()->getLog()) {
             throw new Exception\ParserException($this->getLogger()->getLog());

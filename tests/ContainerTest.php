@@ -51,4 +51,12 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
             (new Container($a, $b))->select()->asArray()
         );
     }
+
+    public function testAddItems()
+    {
+        $this->assertSame(
+            ['foo', 'bar', 'baz'],
+            (new Container('foo'))->addItems(['bar', 'baz'])->getItems()
+        );
+    }
 }
