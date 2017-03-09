@@ -3,12 +3,6 @@
 1. Support `__set_state` på alla value-classer, så att en kan göra
    var_export på ett parse-tree och spara för senare analys...
 
-## Readme
-
-1. Låt oss först här generera lite verifikationer med templates.
-1. Och sedan analysera de genererade verifikationerna...
-1. Och så kan jag passa på att flytta ut exempel till doc...
-
 ## DSL
 
 Det börjar bli väldigt många metoder i Query. Flytta det som inte är core till

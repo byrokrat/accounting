@@ -10,6 +10,21 @@
 
 Analysis and generation of bookkeeping data according to Swedish standards.
 
+Why?
+----
+The motivation for creating Accounting was to provide solutions for two scenarios:
+
+1. The need to generate bookkeeping data using templates (and possibly import to
+   general bookkeeping).
+1. The need to analyze accounting data (possibly exported from general
+   bookkeeping).
+
+Although it would be possible to build a general bookkeeping application on top
+of Accounting this was never the primary concern.
+
+To enable import and export of bookkeeping data Accounting supports parsing
+and generating files in the [SIE](docs/02-sie.md) file format.
+
 Installation
 ------------
 ```shell
@@ -20,63 +35,89 @@ Usage
 -----
 [Read the documentation here.](docs)
 
-Although it would be possible to build a general bookkeeping application around
-*Accounting* it was developed with two distinct scenarios in mind:
+### Generating accounting data using templates
 
-1. Analyzing accounting data (possibly exported from general bookkeeping).
-1. Generating bookkeeping data using templates (and possibly import to general
-   bookkeeping).
+First we create an accounting template
 
-To enable import and export of bookkeeping data *Accounting* supports parsing
-and generating files in the [SIE](docs/02-sie.md) file format.
+<!-- @example template -->
+```php
+$template = new byrokrat\accounting\Template(
+    'template_name',
+    '{description}',
+    ['1920', '{bank_amount}'],
+    ['{account}', '{income_amount}']
+);
+```
+
+To build verifications using our template we need an account plan
+
+<!--
+    @example accounts
+    @extends template
+-->
+```php
+$accountFactory = new byrokrat\accounting\AccountFactory;
+
+$accounts = new byrokrat\accounting\Container(
+    $accountFactory->createAccount('1920', 'Bank'),
+    $accountFactory->createAccount('3000', 'Incomes'),
+    $accountFactory->createAccount('3010', 'Sales')
+);
+```
+
+And to create a verification we supply a list of translation values and the
+account plan.
+
+<!--
+    @example verifications
+    @extends accounts
+-->
+```php
+$verA = $template->build(
+    [
+        'description' => 'basic income',
+        'bank_amount' => '999',
+        'income_amount' => '-999',
+        'account' => '3000'
+    ],
+    $accounts
+);
+
+$verB = $template->build(
+    [
+        'description' => 'sales',
+        'bank_amount' => '333',
+        'income_amount' => '-333',
+        'account' => '3010'
+    ],
+    $accounts
+);
+```
 
 ### Analyzing data
 
-<!-- @expectOutput "/^-300\.00Verification using account 1921$/" -->
+The generated data may be analyzed something like this:
+
+<!--
+    @example analysis
+    @extends verifications
+    @expectOutput "/^-999\.00sales$/"
+-->
 ```php
-namespace byrokrat\accounting;
-
-use byrokrat\amount\Currency\SEK;
-
-// Create an account plan
-
-$accountFactory = new AccountFactory;
-
-$accounts = new Query([
-    $accountFactory->createAccount('1920', 'Bank'),
-    $accountFactory->createAccount('1921', 'Cash'),
-    $accountFactory->createAccount('3000', 'Income'),
-]);
-
-// Create some verifications
-
-$ledger = new Query([
-    (new Verification)
-        ->setDescription('Verification text')
-        ->addTransaction(new Transaction($accounts->getAccount('1920'), new SEK('100')))
-        ->addTransaction(new Transaction($accounts->getAccount('3000'), new SEK('-100')))
-    ,
-    (new Verification)
-        ->setDescription('Verification using account 1921')
-        ->addTransaction(new Transaction($accounts->getAccount('1921'), new SEK('200')))
-        ->addTransaction(new Transaction($accounts->getAccount('3000'), new SEK('-200')))
-]);
-
-// Calculate account balances
-
+$data = new byrokrat\accounting\Container($verA, $verB);
 $summaries = [];
 
-$ledger->transactions()->each(function ($transaction) use (&$summaries) {
+$data->select()->transactions()->each(function ($transaction) use (&$summaries) {
     $key = $transaction->getAccount()->getId();
-    $summaries[$key] = $summaries[$key] ?? new TransactionSummary;
+    $summaries[$key] = $summaries[$key] ?? new byrokrat\accounting\TransactionSummary;
     $summaries[$key]->addToSummary($transaction);
 });
 
 // Outputs -300
 echo $summaries[3000]->getOutgoingBalance();
 
-// Select verifications concerning a specific account (outputs 'Verification using account 1921')
-echo $ledger->verifications()->whereAccount('1921')->getFirst()->getDescription();
+// Select verifications concerning a specific account (outputs 'sales')
+echo $data->select()->verifications()->whereAccount('3010')->getFirst()->getDescription();
 ```
 
 Documentation
