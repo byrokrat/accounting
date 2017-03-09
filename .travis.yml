@@ -19,3 +19,4 @@ install:
 script:
     - phpunit --verbose
     - phpunit integrations --verbose
+    - readme-tester test README.md docs -v
