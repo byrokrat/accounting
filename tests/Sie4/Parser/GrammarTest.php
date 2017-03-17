@@ -472,7 +472,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             $money,
-            $account->getAttribute('IB[0]')[0]
+            $account->getAttribute('incoming_balance')
         );
     }
 
@@ -491,24 +491,24 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             new SEK('100'),
-            $objB->getAttribute('IB[0]')[0]
+            $objB->getAttribute('incoming_balance')
         );
 
         $objA = $content->select()->getDimension('20');
 
         $this->assertEquals(
             new SEK('100'),
-            $objA->getAttribute('IB[0]')[0]
+            $objA->getAttribute('incoming_balance')
         );
 
         $this->assertEquals(
             new SEK('200'),
-            $objA->getAttribute('IB[-1]')[0]
+            $objA->getAttribute('incoming_balance[-1]')
         );
 
         $this->assertEquals(
             new Amount('1'),
-            $objA->getAttribute('IB[-1]')[1]
+            $objA->getAttribute('incoming_quantity[-1]')
         );
     }
 

@@ -255,7 +255,12 @@ grammar Grammar extends AbstractParser
 
     IB_POST = ROW_START 'IB' ^ year:INT? account:ACCOUNT? balance:AMOUNT? quantity:FLOAT? ROW_END {
         if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
-            $account->setAttribute("IB[$year]", [$balance, $quantity ?: null]);
+            if ($year == 0) {
+                $account->setAttribute("incoming_balance", $balance);
+                $account->setAttribute("incoming_quantity", $quantity ?: new Amount('0'));
+            }
+            $account->setAttribute("incoming_balance[$year]", $balance);
+            $account->setAttribute("incoming_quantity[$year]", $quantity ?: new Amount('0'));
         }
     };
 
@@ -268,7 +273,12 @@ grammar Grammar extends AbstractParser
     OIB_POST = ROW_START 'OIB' ^ year:INT? account:ACCOUNT? objects:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
         if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
             foreach ($objects as $object) {
-                $object->setAttribute("IB[$year]", [$balance, $quantity ?: null]);
+                if ($year == 0) {
+                    $object->setAttribute("incoming_balance", $balance);
+                    $object->setAttribute("incoming_quantity", $quantity ?: new Amount('0'));
+                }
+                $object->setAttribute("incoming_balance[$year]", $balance);
+                $object->setAttribute("incoming_quantity[$year]", $quantity ?: new Amount('0'));
             }
         }
     };
@@ -483,7 +493,12 @@ grammar Grammar extends AbstractParser
     // Account
 
     ACCOUNT = number:STRING {
-        return $this->getAccountBuilder()->getAccount($number);
+        $account = $this->getAccountBuilder()->getAccount($number);
+        $account->setAttribute(
+            'incoming_balance',
+            $this->getCurrencyBuilder()->createMoney('0')
+        );
+        return $account;
     };
 
     // Object

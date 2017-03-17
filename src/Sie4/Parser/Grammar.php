@@ -3569,7 +3569,12 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
-                    $account->setAttribute("IB[$year]", [$balance, $quantity ?: null]);
+                    if ($year == 0) {
+                        $account->setAttribute("incoming_balance", $balance);
+                        $account->setAttribute("incoming_quantity", $quantity ?: new Amount('0'));
+                    }
+                    $account->setAttribute("incoming_balance[$year]", $balance);
+                    $account->setAttribute("incoming_quantity[$year]", $quantity ?: new Amount('0'));
                 }
             });
         }
@@ -3912,7 +3917,12 @@ class Grammar extends AbstractParser
             $this->value = call_user_func(function () use (&$year, &$account, &$objects, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
                     foreach ($objects as $object) {
-                        $object->setAttribute("IB[$year]", [$balance, $quantity ?: null]);
+                        if ($year == 0) {
+                            $object->setAttribute("incoming_balance", $balance);
+                            $object->setAttribute("incoming_quantity", $quantity ?: new Amount('0'));
+                        }
+                        $object->setAttribute("incoming_balance[$year]", $balance);
+                        $object->setAttribute("incoming_quantity[$year]", $quantity ?: new Amount('0'));
                     }
                 }
             });
@@ -7572,7 +7582,12 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$number) {
-                return $this->getAccountBuilder()->getAccount($number);
+                $account = $this->getAccountBuilder()->getAccount($number);
+                $account->setAttribute(
+                    'incoming_balance',
+                    $this->getCurrencyBuilder()->createMoney('0')
+                );
+                return $account;
             });
         }
 

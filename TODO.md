@@ -1,5 +1,10 @@
 # TODO
 
+## Parser
+
+Se över alla setAttribute() i Grammar. Jag behöver en bra och konsekvent namn-strategi!
+Se exempelvis 'incoming_balance'
+
 ## Transaktioner
 
 1. En transaction ska kunna vara struken, och ska i så fall inte räknas i arithmetiken...
