@@ -27,7 +27,7 @@ use byrokrat\amount\Amount;
 /**
  * Create summaries for collections of transactions
  */
-class TransactionSummary
+class Summary
 {
     /**
      * @var Amount Incoming balance
@@ -88,7 +88,7 @@ class TransactionSummary
     /**
      * Add transaction to summary calculations
      */
-    public function addToSummary(Transaction $transaction): self
+    public function addTransaction(Transaction $transaction): self
     {
         if (!$this->isInitialized()) {
             $this->initialize($transaction->getAmount()->subtract($transaction->getAmount()));

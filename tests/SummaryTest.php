@@ -6,16 +6,16 @@ namespace byrokrat\accounting;
 
 use byrokrat\amount\Amount;
 
-class TransactionSummaryTest extends \PHPUnit\Framework\TestCase
+class SummaryTest extends \PHPUnit\Framework\TestCase
 {
     use utils\PropheciesTrait;
 
     public function testBasicSummary()
     {
-        $summary = new TransactionSummary(new Amount('10'));
+        $summary = new Summary(new Amount('10'));
 
-        $summary->addToSummary($this->prophesizeTransaction(new Amount('5'))->reveal());
-        $summary->addToSummary($this->prophesizeTransaction(new Amount('-5'))->reveal());
+        $summary->addTransaction($this->prophesizeTransaction(new Amount('5'))->reveal());
+        $summary->addTransaction($this->prophesizeTransaction(new Amount('-5'))->reveal());
 
         $this->assertEquals(
             new Amount('10'),
@@ -47,11 +47,11 @@ class TransactionSummaryTest extends \PHPUnit\Framework\TestCase
 
     public function testPositiveBalance()
     {
-        $summary = new TransactionSummary(new Amount('10'));
+        $summary = new Summary(new Amount('10'));
 
-        $summary->addToSummary($this->prophesizeTransaction(new Amount('5'))->reveal());
-        $summary->addToSummary($this->prophesizeTransaction(new Amount('5'))->reveal());
-        $summary->addToSummary($this->prophesizeTransaction(new Amount('-5'))->reveal());
+        $summary->addTransaction($this->prophesizeTransaction(new Amount('5'))->reveal());
+        $summary->addTransaction($this->prophesizeTransaction(new Amount('5'))->reveal());
+        $summary->addTransaction($this->prophesizeTransaction(new Amount('-5'))->reveal());
 
         $this->assertEquals(
             new Amount('10'),
@@ -78,11 +78,11 @@ class TransactionSummaryTest extends \PHPUnit\Framework\TestCase
 
     public function testNegativeBalance()
     {
-        $summary = new TransactionSummary(new Amount('10'));
+        $summary = new Summary(new Amount('10'));
 
-        $summary->addToSummary($this->prophesizeTransaction(new Amount('5'))->reveal());
-        $summary->addToSummary($this->prophesizeTransaction(new Amount('-5'))->reveal());
-        $summary->addToSummary($this->prophesizeTransaction(new Amount('-5'))->reveal());
+        $summary->addTransaction($this->prophesizeTransaction(new Amount('5'))->reveal());
+        $summary->addTransaction($this->prophesizeTransaction(new Amount('-5'))->reveal());
+        $summary->addTransaction($this->prophesizeTransaction(new Amount('-5'))->reveal());
 
         $this->assertEquals(
             new Amount('10'),
@@ -109,10 +109,10 @@ class TransactionSummaryTest extends \PHPUnit\Framework\TestCase
 
     public function testNegativeIncomingBalance()
     {
-        $summary = new TransactionSummary(new Amount('-10'));
+        $summary = new Summary(new Amount('-10'));
 
-        $summary->addToSummary($this->prophesizeTransaction(new Amount('5'))->reveal());
-        $summary->addToSummary($this->prophesizeTransaction(new Amount('-5'))->reveal());
+        $summary->addTransaction($this->prophesizeTransaction(new Amount('5'))->reveal());
+        $summary->addTransaction($this->prophesizeTransaction(new Amount('-5'))->reveal());
 
         $this->assertEquals(
             new Amount('-10'),
@@ -146,17 +146,17 @@ class TransactionSummaryTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(Exception\RuntimeException::CLASS);
 
-        (new TransactionSummary)
-            ->addToSummary($this->prophesizeTransaction(new Amount('5'))->reveal())
+        (new Summary)
+            ->addTransaction($this->prophesizeTransaction(new Amount('5'))->reveal())
             ->getMagnitude();
     }
 
     public function testWithoutIncomingBalance()
     {
-        $summary = new TransactionSummary;
+        $summary = new Summary;
 
-        $summary->addToSummary($this->prophesizeTransaction(new Amount('5'))->reveal());
-        $summary->addToSummary($this->prophesizeTransaction(new Amount('-5'))->reveal());
+        $summary->addTransaction($this->prophesizeTransaction(new Amount('5'))->reveal());
+        $summary->addTransaction($this->prophesizeTransaction(new Amount('-5'))->reveal());
 
         $this->assertEquals(
             new Amount('0'),
@@ -189,18 +189,18 @@ class TransactionSummaryTest extends \PHPUnit\Framework\TestCase
     public function testExceptionOnUninitializedSummaries()
     {
         $this->expectException(Exception\RuntimeException::CLASS);
-        (new TransactionSummary)->getMagnitude();
+        (new Summary)->getMagnitude();
     }
 
     public function testGetTransactions()
     {
-        $summary = new TransactionSummary;
+        $summary = new Summary;
 
         $transA = $this->prophesizeTransaction(new Amount('5'))->reveal();
         $transB = $this->prophesizeTransaction(new Amount('-5'))->reveal();
 
-        $summary->addToSummary($transA);
-        $summary->addToSummary($transB);
+        $summary->addTransaction($transA);
+        $summary->addTransaction($transB);
 
         $this->assertEquals(
             [$transA, $transB],

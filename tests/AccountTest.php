@@ -68,11 +68,11 @@ class AccountTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetNumber()
+    public function testGetId()
     {
         $this->assertSame(
-            1000,
-            (new Account\Asset('1000'))->getNumber()
+            '1000',
+            (new Account\Asset('1000'))->getId()
         );
     }
 

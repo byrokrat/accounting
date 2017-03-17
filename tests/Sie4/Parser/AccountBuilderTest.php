@@ -122,8 +122,8 @@ class AccountBuilderTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertSame(
-            $originalAccount->getNumber(),
-            $newAccount->getNumber()
+            $originalAccount->getId(),
+            $newAccount->getId()
         );
 
         $this->assertSame(

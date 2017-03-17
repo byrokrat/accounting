@@ -41,9 +41,9 @@ class Verification implements Attributable, Dateable, Describable, Queryable, Si
     use AttributableTrait, DateableTrait, DescribableTrait, SignableTrait;
 
     /**
-     * @var int Verification number
+     * @var int Verification id number
      */
-    private $number = 0;
+    private $idNumber = 0;
 
     /**
      * @var \DateTimeInterface Date verification was entered inte the registry
@@ -51,43 +51,43 @@ class Verification implements Attributable, Dateable, Describable, Queryable, Si
     private $registrationDate;
 
     /**
-     * @var TransactionSummary Transaction summaries
+     * @var Summary Transaction summaries
      */
     private $summary;
 
     /**
      * Optionally load dependencies at construct
      */
-    public function __construct(TransactionSummary $summary = null)
+    public function __construct(Summary $summary = null)
     {
         $this->setDate(new \DateTimeImmutable);
-        $this->summary = $summary ?: new TransactionSummary;
+        $this->summary = $summary ?: new Summary;
     }
 
     /**
-     * Set verification number
+     * Set verification id number
      */
-    public function setNumber(int $number): self
+    public function setId(int $idNumber): self
     {
-        $this->number = $number;
+        $this->idNumber = $idNumber;
 
         return $this;
     }
 
     /**
-     * Check if a verification number is set
+     * Check if a verification id number is set
      */
-    public function hasNumber(): bool
+    public function hasId(): bool
     {
-        return $this->number > 0;
+        return $this->idNumber > 0;
     }
 
     /**
-     * Get verification number
+     * Get verification id number
      */
-    public function getNumber(): int
+    public function getId(): int
     {
-        return $this->number;
+        return $this->idNumber;
     }
 
     /**
@@ -115,7 +115,7 @@ class Verification implements Attributable, Dateable, Describable, Queryable, Si
      */
     public function addTransaction(Transaction $transaction): self
     {
-        $this->summary->addToSummary($transaction);
+        $this->summary->addTransaction($transaction);
         return $this;
     }
 

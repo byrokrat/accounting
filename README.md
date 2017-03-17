@@ -106,8 +106,8 @@ $summaries = [];
 
 $data->select()->transactions()->each(function ($transaction) use (&$summaries) {
     $key = $transaction->getAccount()->getId();
-    $summaries[$key] = $summaries[$key] ?? new byrokrat\accounting\TransactionSummary;
-    $summaries[$key]->addToSummary($transaction);
+    $summaries[$key] = $summaries[$key] ?? new byrokrat\accounting\Summary;
+    $summaries[$key]->addTransaction($transaction);
 });
 
 // Outputs -300

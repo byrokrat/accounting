@@ -48,14 +48,6 @@ abstract class Account extends Dimension
     }
 
     /**
-     * Get account id cast to integer
-     */
-    public function getNumber(): int
-    {
-        return intval($this->getId());
-    }
-
-    /**
      * Check if object represents an asset account
      */
     public function isAsset(): bool

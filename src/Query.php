@@ -41,9 +41,15 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
 
     /**
      * Load macro
+     *
+     * @throws Exception\LogicException If $name already exists
      */
     public static function macro(string $name, \Closure $macro)
     {
+        if (method_exists(__CLASS__, $name) || isset(self::$macros[$name])) {
+            throw new Exception\LogicException("Cannot create macro, $name() does already exist.");
+        }
+
         self::$macros[$name] = $macro;
     }
 
@@ -126,12 +132,12 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
     /**
      * Summarize transactions matched by query
      */
-    public function asSummary(): TransactionSummary
+    public function asSummary(): Summary
     {
-        $summary = new TransactionSummary;
+        $summary = new Summary;
 
         foreach ($this->transactions()->getIterator() as $transaction) {
-            $summary->addToSummary($transaction);
+            $summary->addTransaction($transaction);
         }
 
         return $summary;
@@ -304,6 +310,25 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
     }
 
     /**
+     * Limit the number if items returned by query
+     */
+    public function limit(int $length, int $offset = 0): Query
+    {
+        $index = -1;
+        $count = 0;
+
+        return $this->filter(function () use ($length, $offset, &$index, &$count) {
+        	$index++;
+
+        	if ($offset <= $index && $count < $length) {
+        		return !!++$count;
+        	}
+
+        	return false;
+        });
+    }
+
+    /**
      * Create a new Query including addtional data
      *
      * @param  array|\Traversable $data Items to include
@@ -342,6 +367,26 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
     }
 
     /**
+     * Order items in query by using a custom comparison function
+     *
+     * @param callable $comparator The comparison function must return an integer
+     *     less than, equal to, or greater than zero if the first argument is
+     *     considered to be respectively less than, equal to, or greater than the second.
+     */
+    public function orderBy(callable $comparator): Query
+    {
+        $outerIterator = ($this->iteratorFactory)();
+
+        return new Query(function () use ($outerIterator, $comparator) {
+            $data = iterator_to_array($outerIterator);
+            usort($data, $comparator);
+            foreach ($data as $item) {
+                yield $item;
+            }
+        });
+    }
+
+    /**
      * Reduces items in query to a single value
      *
      * @param  callable $callback Takes two values, the result of the previous iteration and the current item
@@ -371,24 +416,6 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
     public function transactions(): Query
     {
         return $this->filterType(Transaction::CLASS);
-    }
-
-    /**
-     * Filter unique items in query
-     */
-    public function unique(): Query
-    {
-        $uniqueItems = [];
-
-        return $this->filter(function ($item) use (&$uniqueItems) {
-            if (in_array($item, $uniqueItems, true)) {
-                return false;
-            }
-
-            $uniqueItems[] = $item;
-
-            return true;
-        });
     }
 
     /**
@@ -498,6 +525,24 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
         return $this->where(function ($item) use ($regexp) {
             return $item instanceof Interfaces\Describable
                 && preg_match($regexp, $item->getDescription());
+        });
+    }
+
+    /**
+     * Filter unique items in query
+     */
+    public function whereUnique(): Query
+    {
+        $uniqueItems = [];
+
+        return $this->filter(function ($item) use (&$uniqueItems) {
+            if (in_array($item, $uniqueItems, true)) {
+                return false;
+            }
+
+            $uniqueItems[] = $item;
+
+            return true;
         });
     }
 

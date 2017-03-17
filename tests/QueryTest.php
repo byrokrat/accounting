@@ -311,6 +311,25 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @depends testAsArray
+     */
+    public function testOrderBy()
+    {
+        $query = new Query([
+            $account1000 = $this->prophesizeAccount('1000')->reveal(),
+            $account3000 = $this->prophesizeAccount('3000')->reveal(),
+            $account2000 = $this->prophesizeAccount('2000')->reveal(),
+        ]);
+
+        $this->assertEquals(
+            [$account1000, $account2000, $account3000],
+            $query->orderBy(function ($left, $right) {
+                return $left->getId() <=> $right->getId();
+            })->asArray()
+        );
+    }
+
     public function testReduce()
     {
         $this->assertSame(
@@ -337,16 +356,16 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     /**
      * @depends testAsArray
      */
-    public function testUnique()
+    public function testWhereUnique()
     {
         $this->assertSame(
             [1, 2, 3],
-            (new Query([1, 2, 3, 2]))->unique()->asArray()
+            (new Query([1, 2, 3, 2]))->whereUnique()->asArray()
         );
     }
 
     /**
-     * @depends testUnique
+     * @depends testWhereUnique
      */
     public function testUniqueWithObjectItems()
     {
@@ -355,7 +374,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [$queryableA, $queryableB],
-            (new Query([$queryableA, $queryableB, $queryableB, $queryableA]))->unique()->asArray()
+            (new Query([$queryableA, $queryableB, $queryableB, $queryableA]))->whereUnique()->asArray()
         );
     }
 
@@ -520,6 +539,34 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     /**
      * @depends testAsArray
      */
+    public function testLimit()
+    {
+        $query = new Query([1, 2, 3, 4]);
+
+        $this->assertEquals(
+            [1, 2],
+            $query->limit(2)->asArray()
+        );
+
+        $this->assertEquals(
+            [1, 2, 3, 4],
+            $query->limit(10)->asArray()
+        );
+
+        $this->assertEquals(
+            [2, 3],
+            $query->limit(2, 1)->asArray()
+        );
+
+        $this->assertEquals(
+            [3, 4],
+            $query->limit(100, 2)->asArray()
+        );
+    }
+
+    /**
+     * @depends testAsArray
+     */
     public function testLoad()
     {
         $this->assertSame(
@@ -549,6 +596,19 @@ class QueryTest extends \PHPUnit\Framework\TestCase
             ['A'],
             (new Query([1, 'A', false]))->whereInternalType('string')->asArray()
         );
+    }
+
+    public function testExceptionWhenOverwritingMethodWithMacro()
+    {
+        $this->expectException(Exception\LogicException::CLASS);
+        Query::macro('filter', function(){});
+    }
+
+    public function testExceptionWhenOverwritingMacro()
+    {
+        $this->expectException(Exception\LogicException::CLASS);
+        Query::macro('thisRareMacroNameIsCreated', function(){});
+        Query::macro('thisRareMacroNameIsCreated', function(){});
     }
 
     public function testExceptionOnUndefinedMethodCall()

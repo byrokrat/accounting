@@ -67,14 +67,14 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
 
     public function testNumerable()
     {
-        $this->assertFalse((new Verification)->hasNumber());
+        $this->assertFalse((new Verification)->hasId());
 
         $this->assertSame(
             10,
-            (new Verification)->setNumber(10)->getNumber()
+            (new Verification)->setId(10)->getId()
         );
 
-        $this->assertTrue((new Verification)->setNumber(1)->hasNumber());
+        $this->assertTrue((new Verification)->setId(1)->hasId());
     }
 
     public function testQueryable()
@@ -151,7 +151,7 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         $transB = $this->prophesize(Transaction::CLASS);
         $transB->__toString()->willReturn('4321: -100');
 
-        $summary = $this->prophesize(TransactionSummary::CLASS);
+        $summary = $this->prophesize(Summary::CLASS);
         $summary->getTransactions()->willReturn([$transA->reveal(), $transB->reveal()]);
 
         $this->assertSame(

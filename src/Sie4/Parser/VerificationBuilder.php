@@ -108,7 +108,7 @@ class VerificationBuilder
         $verification = (new Verification)->setAttribute('series', $series)->setDate($date);
 
         if ($number) {
-            $verification->setNumber(intval($number));
+            $verification->setId(intval($number));
         }
 
         if ($desc) {

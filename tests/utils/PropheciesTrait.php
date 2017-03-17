@@ -40,7 +40,7 @@ trait PropheciesTrait
     /**
      * Create an Account prophecy
      *
-     * @param string $number Will be returned by getId()/getNumber()
+     * @param string $number Will be returned by getId()
      * @param string $desc   Will be returned by getDescription()
      * @param array  $attr   Will be returned by getAttributes()
      */
@@ -51,7 +51,6 @@ trait PropheciesTrait
     ): ObjectProphecy {
         $account = $this->prophesize(Account::CLASS);
         $account->getId()->willReturn($number);
-        $account->getNumber()->willReturn(intval($number));
         $account->getDescription()->willReturn($desc);
         $account->getAttributes()->willReturn($attr);
         $account->select()->willReturn(new Query);
@@ -70,7 +69,7 @@ trait PropheciesTrait
     /**
      * Create dimension prophecy
      *
-     * @param integer $number Will be returned by getNumber()
+     * @param integer $number Will be returned by getId()
      */
     public function prophesizeDimension(string $number = '0'): ObjectProphecy
     {

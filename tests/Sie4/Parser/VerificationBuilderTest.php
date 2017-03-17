@@ -102,7 +102,7 @@ class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             intval($number),
-            $verification->getNumber()
+            $verification->getId()
         );
 
         $this->assertSame(
