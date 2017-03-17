@@ -55,9 +55,9 @@ based on number we can define a macro for this:
 -->
 ```php
 byrokrat\accounting\Query::macro('orderById', function () {
-	return $this->orderBy(function ($left, $right) {
-		return $left->getId() <=> $right->getId();
-	});
+    return $this->orderBy(function ($left, $right) {
+        return $left->getId() <=> $right->getId();
+    });
 });
 ```
 
@@ -88,37 +88,37 @@ An example of how Accounting may be used to sort transactions inte a ledger
 $summaries = [];
 
 $container->select()->transactions()->each(function ($trans) use (&$summaries) {
-	$account = $trans->getAccount();
+    $account = $trans->getAccount();
 
-	$summaries[$account->getId()] = $summaries[$account->getId()] ?? [
-		$account,
-		new byrokrat\accounting\Summary($account->getAttribute('incoming_balance'))
-	];
+    $summaries[$account->getId()] = $summaries[$account->getId()] ?? [
+        $account,
+        new byrokrat\accounting\Summary($account->getAttribute('incoming_balance'))
+    ];
 
-	$summaries[$account->getId()][1]->addTransaction($trans);
+    $summaries[$account->getId()][1]->addTransaction($trans);
 });
 
 ksort($summaries);
 
 foreach ($summaries as list($account, $summary)) {
-	echo "$account\n";
-	echo "Incoming balance {$summary->getIncomingBalance()}\n\n";
+    echo "$account\n";
+    echo "Incoming balance {$summary->getIncomingBalance()}\n\n";
 
-	$currentBalance = $summary->getIncomingBalance();
+    $currentBalance = $summary->getIncomingBalance();
 
-	foreach ($summary->getTransactions() as $trans) {
-		echo $trans->getAttribute('ver_num'),
-			' ',
-			$trans->getDescription(),
-			'" ',
-			$trans->getAmount(),
-			' ',
-			$currentBalance = $currentBalance->add($trans->getAmount()),
-			"\n";
-	}
+    foreach ($summary->getTransactions() as $trans) {
+        echo $trans->getAttribute('ver_num'),
+            ' ',
+            $trans->getDescription(),
+            '" ',
+            $trans->getAmount(),
+            ' ',
+            $currentBalance = $currentBalance->add($trans->getAmount()),
+            "\n";
+    }
 
-	echo "\nOutgoing balance {$summary->getOutgoingBalance()}\n\n";
-	echo "----------\n\n";
+    echo "\nOutgoing balance {$summary->getOutgoingBalance()}\n\n";
+    echo "----------\n\n";
 }
 ```
 

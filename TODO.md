@@ -19,6 +19,11 @@ Se exempelvis 'incoming_balance'
 1. En transaction ska kunna vara struken, och ska i så fall inte räknas i arithmetiken...
 1. Här ingår även stöd för BTRANS och RTRANS till sie4
 
+## Processor
+
+Ska räkna ihop även quantity på samma sätt som amounts..
+Behöver kunna presenteras på samma sätt som annat...
+
 ## Kontoplaner
 
 `AccountPlan` definierar metoder för gruppering vid rapportskrivning osv..
