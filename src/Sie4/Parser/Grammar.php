@@ -4915,11 +4915,6 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$series, &$number, &$date, &$desc, &$regdate, &$sign, &$trans) {
                 if ($this->assertString($series) && $this->assertString($number) && $this->assertDate($date)) {
-
-                    foreach ($trans as $transaction) {
-                        $transaction->setAttribute('ver_num', $number);
-                    }
-
                     $this->getContainer()->addItem(
                         $this->getVerificationBuilder()->createVerification(
                             $series,

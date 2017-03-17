@@ -116,6 +116,8 @@ class Verification implements Attributable, Dateable, Describable, Queryable, Si
     public function addTransaction(Transaction $transaction): self
     {
         $this->summary->addTransaction($transaction);
+        $transaction->setAttribute('ver_num', $this->getId());
+
         return $this;
     }
 

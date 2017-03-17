@@ -1,5 +1,14 @@
 # TODO
 
+## Template
+
+Bugg: Template skapar verifikationer med vanlit amount-objekt. Ska vara SEK
+eller annan inställd valuta.
+
+Där är också dålig kod med skumma array strukturer som behöver utvecklas...
+
+Template skriver inte heller något datum till varken transaction eller verifikat.
+
 ## Parser
 
 Se över alla setAttribute() i Grammar. Jag behöver en bra och konsekvent namn-strategi!

@@ -106,6 +106,7 @@ trait PropheciesTrait
         $transaction = $this->prophesize(Transaction::CLASS);
         $transaction->getAmount()->willReturn($amount ?: new Amount('0'));
         $transaction->getAccount()->willReturn($account ?: $this->prophesizeAccount()->reveal());
+        $transaction->setAttribute('ver_num', Argument::any());
         $transaction->select()->will(function () use ($amount, $account) {
             return new Query([$amount, $account]);
         });
