@@ -474,6 +474,11 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             $money,
             $account->getAttribute('incoming_balance')
         );
+
+        $this->assertEquals(
+            $money,
+            $account->getAttribute('incoming_balance[0]')
+        );
     }
 
     public function testOib()

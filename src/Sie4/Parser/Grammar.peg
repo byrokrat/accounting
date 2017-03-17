@@ -202,6 +202,10 @@ grammar Grammar extends AbstractParser
     KONTO_POST = ROW_START 'KONTO' ^ number:STRING? desc:STRING? ROW_END {
         if ($this->assertString($number, 'Expected account number') && $this->assertString($desc, 'Expected account description')) {
             $this->getAccountBuilder()->addAccount($number, $desc);
+            $this->getAccountBuilder()->getAccount($number)->setAttribute(
+                'incoming_balance',
+                $this->getCurrencyBuilder()->createMoney('0')
+            );
         }
     };
 
@@ -255,7 +259,7 @@ grammar Grammar extends AbstractParser
 
     IB_POST = ROW_START 'IB' ^ year:INT? account:ACCOUNT? balance:AMOUNT? quantity:FLOAT? ROW_END {
         if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
-            if ($year == 0) {
+            if (0 == $year) {
                 $account->setAttribute("incoming_balance", $balance);
                 $account->setAttribute("incoming_quantity", $quantity ?: new Amount('0'));
             }
@@ -273,7 +277,7 @@ grammar Grammar extends AbstractParser
     OIB_POST = ROW_START 'OIB' ^ year:INT? account:ACCOUNT? objects:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
         if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
             foreach ($objects as $object) {
-                if ($year == 0) {
+                if (0 == $year) {
                     $object->setAttribute("incoming_balance", $balance);
                     $object->setAttribute("incoming_quantity", $quantity ?: new Amount('0'));
                 }
@@ -493,12 +497,7 @@ grammar Grammar extends AbstractParser
     // Account
 
     ACCOUNT = number:STRING {
-        $account = $this->getAccountBuilder()->getAccount($number);
-        $account->setAttribute(
-            'incoming_balance',
-            $this->getCurrencyBuilder()->createMoney('0')
-        );
-        return $account;
+        return $this->getAccountBuilder()->getAccount($number);
     };
 
     // Object
