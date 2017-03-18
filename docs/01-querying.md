@@ -85,39 +85,29 @@ An example of how Accounting may be used to sort transactions inte a ledger
     @expectOutput "/Outgoing balance 1000.00/"
 -->
 ```php
-$summaries = [];
+(new byrokrat\accounting\Processor)->processContainer($container);
 
-$container->select()->transactions()->each(function ($trans) use (&$summaries) {
-    $account = $trans->getAccount();
+$container->select()->accounts()->whereUnique()->orderById()->each('formatAccount');
 
-    $summaries[$account->getId()] = $summaries[$account->getId()] ?? [
-        $account,
-        new byrokrat\accounting\Summary($account->getAttribute('incoming_balance'))
-    ];
-
-    $summaries[$account->getId()][1]->addTransaction($trans);
-});
-
-ksort($summaries);
-
-foreach ($summaries as list($account, $summary)) {
+function formatAccount($account)
+{
     echo "$account\n";
-    echo "Incoming balance {$summary->getIncomingBalance()}\n\n";
+    echo "Incoming balance {$account->getSummary()->getIncomingBalance()}\n\n";
 
-    $currentBalance = $summary->getIncomingBalance();
+    $currentBalance = $account->getSummary()->getIncomingBalance();
 
-    foreach ($summary->getTransactions() as $trans) {
+    foreach ($account->getSummary()->getTransactions() as $trans) {
         echo $trans->getAttribute('ver_num'),
             ' ',
             $trans->getDescription(),
-            '" ',
+            ' ',
             $trans->getAmount(),
             ' ',
             $currentBalance = $currentBalance->add($trans->getAmount()),
             "\n";
     }
 
-    echo "\nOutgoing balance {$summary->getOutgoingBalance()}\n\n";
+    echo "\nOutgoing balance {$account->getSummary()->getOutgoingBalance()}\n\n";
     echo "----------\n\n";
 }
 ```

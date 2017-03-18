@@ -23,6 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\AccountFactory;
+use byrokrat\accounting\Processor;
 use Psr\Log\LogLevel;
 
 /**
@@ -66,7 +67,8 @@ class ParserFactory
             new AccountBuilder(new AccountFactory, $logger),
             new CurrencyBuilder($logger),
             new DimensionBuilder($logger),
-            new VerificationBuilder($logger)
+            new VerificationBuilder($logger),
+            new Processor
         );
     }
 }

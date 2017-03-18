@@ -91,31 +91,23 @@ $verB = $template->build(
 );
 ```
 
-### Analyzing data
+### Querying data
 
-The generated data may be analyzed something like this:
+We then query our generated accounting data using something like
 
 <!--
-    @example analysis
+    @example query
     @extends verifications
-    @expectOutput "/^-999\.00sales$/"
+    @expectOutput "sales"
 -->
 ```php
 $data = new byrokrat\accounting\Container($verA, $verB);
-$summaries = [];
 
-$data->select()->transactions()->each(function ($transaction) use (&$summaries) {
-    $key = $transaction->getAccount()->getId();
-    $summaries[$key] = $summaries[$key] ?? new byrokrat\accounting\Summary;
-    $summaries[$key]->addTransaction($transaction);
-});
-
-// Outputs -300
-echo $summaries[3000]->getOutgoingBalance();
-
-// Select verifications concerning a specific account (outputs 'sales')
+// Grab the first verification concerning account 3010 and output it's description
 echo $data->select()->verifications()->whereAccount('3010')->getFirst()->getDescription();
 ```
+
+For more examples see the documentation.
 
 Documentation
 -------------

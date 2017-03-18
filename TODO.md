@@ -1,13 +1,9 @@
 # TODO
 
-## Template
+## Processor
 
-Bugg: Template skapar verifikationer med vanlit amount-objekt. Ska vara SEK
-eller annan inställd valuta.
-
-Där är också dålig kod med skumma array strukturer som behöver utvecklas...
-
-Template skriver inte heller något datum till varken transaction eller verifikat.
+Ska räkna ihop även quantity på samma sätt som amounts..
+Behöver kunna presenteras på samma sätt som annat...
 
 ## Parser
 
@@ -19,10 +15,11 @@ Se exempelvis 'incoming_balance'
 1. En transaction ska kunna vara struken, och ska i så fall inte räknas i arithmetiken...
 1. Här ingår även stöd för BTRANS och RTRANS till sie4
 
-## Processor
+## Template
 
-Ska räkna ihop även quantity på samma sätt som amounts..
-Behöver kunna presenteras på samma sätt som annat...
+1. Template skapar verifikationer med vanlit amount-objekt. Ska vara SEK eller annan inställd valuta.
+1. Där är också dålig kod med skumma array strukturer som behöver utvecklas...
+1. Template skriver inte heller något datum till varken transaction eller verifikat.
 
 ## Kontoplaner
 
