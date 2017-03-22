@@ -46,11 +46,6 @@ class Dimension implements Attributable, Describable, Queryable
     private $parent;
 
     /**
-     * @var Summary Transaction summary
-     */
-    private $summary;
-
-    /**
      * Load values at construct
      *
      * @param string    $dimensionId Dimension identification
@@ -62,30 +57,6 @@ class Dimension implements Attributable, Describable, Queryable
         $this->dimensionId = $dimensionId;
         $this->setDescription($description);
         $this->parent = $parent;
-    }
-
-    /**
-     * Reset loaded transaction summary
-     */
-    public function resetSummary(Summary $summary = null)
-    {
-        $this->summary = $summary ?: new Summary;
-
-        if ($this->hasAttribute('incoming_balance')) {
-            $this->summary->initialize($this->getAttribute('incoming_balance'));
-        }
-    }
-
-    /**
-     * Get transaction summary
-     */
-    public function getSummary(): Summary
-    {
-        if (!isset($this->summary)) {
-            $this->resetSummary();
-        }
-
-        return $this->summary;
     }
 
     /**

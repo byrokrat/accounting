@@ -56,6 +56,11 @@ class Verification implements Attributable, Dateable, Describable, Queryable, Si
     private $summary;
 
     /**
+     * @var Transaction[] Included transactions
+     */
+    private $transactions = [];
+
+    /**
      * Optionally load dependencies at construct
      */
     public function __construct(Summary $summary = null)
@@ -115,8 +120,9 @@ class Verification implements Attributable, Dateable, Describable, Queryable, Si
      */
     public function addTransaction(Transaction $transaction): self
     {
-        $this->summary->addTransaction($transaction);
         $transaction->setAttribute('ver_num', $this->getId());
+        $this->summary->addAmount($transaction->getAmount());
+        $this->transactions[] = $transaction;
 
         return $this;
     }
@@ -128,7 +134,7 @@ class Verification implements Attributable, Dateable, Describable, Queryable, Si
      */
     public function getTransactions(): array
     {
-        return $this->summary->getTransactions();
+        return $this->transactions;
     }
 
     /**

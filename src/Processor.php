@@ -29,15 +29,31 @@ class Processor
 {
     public function processContainer(Container $container)
     {
-        $container->select()->filterType(Dimension::CLASS)->whereUnique()->each(function ($dimension) {
-            $dimension->resetSummary();
+        $container->select()->filterType(Dimension::CLASS)->whereUnique()->each(function ($dim) {
+            $dim->setAttribute('transactions', []);
+
+            $dim->setAttribute(
+                'summary',
+                new Summary($dim->hasAttribute('incoming_balance') ? $dim->getAttribute('incoming_balance') : null)
+            );
+
+            $dim->setAttribute(
+                'quantity_summary',
+                new Summary($dim->hasAttribute('incoming_quantity') ? $dim->getAttribute('incoming_quantity') : null)
+            );
         });
 
-        $container->select()->transactions()->each(function ($transaction) {
-            $transaction->getAccount()->getSummary()->addTransaction($transaction);
+        $updateDim = function ($dim, $transaction) {
+            $dim->getAttribute('transactions')[] = $transaction;
+            $dim->getAttribute('summary')->addAmount($transaction->getAmount());
+            $dim->getAttribute('quantity_summary')->addAmount($transaction->getQuantity());
+        };
 
-            foreach ($transaction->getDimensions() as $dimension) {
-                $dimension->getSummary()->addTransaction($transaction);
+        $container->select()->transactions()->each(function ($transaction) use ($updateDim) {
+            $updateDim($transaction->getAccount(), $transaction);
+
+            foreach ($transaction->getDimensions() as $dim) {
+                $updateDim($dim, $transaction);
             }
         });
     }

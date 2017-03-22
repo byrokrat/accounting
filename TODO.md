@@ -1,10 +1,5 @@
 # TODO
 
-## Processor
-
-Ska räkna ihop även quantity på samma sätt som amounts..
-Behöver kunna presenteras på samma sätt som annat...
-
 ## Parser
 
 Se över alla setAttribute() i Grammar. Jag behöver en bra och konsekvent namn-strategi!

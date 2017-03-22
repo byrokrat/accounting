@@ -92,11 +92,11 @@ $container->select()->accounts()->whereUnique()->orderById()->each('formatAccoun
 function formatAccount($account)
 {
     echo "$account\n";
-    echo "Incoming balance {$account->getSummary()->getIncomingBalance()}\n\n";
+    echo "Incoming balance {$account->getAttribute('summary')->getIncomingBalance()}\n\n";
 
-    $currentBalance = $account->getSummary()->getIncomingBalance();
+    $currentBalance = $account->getAttribute('summary')->getIncomingBalance();
 
-    foreach ($account->getSummary()->getTransactions() as $trans) {
+    foreach ($account->getAttribute('transactions') as $trans) {
         echo $trans->getAttribute('ver_num'),
             ' ',
             $trans->getDescription(),
@@ -107,7 +107,7 @@ function formatAccount($account)
             "\n";
     }
 
-    echo "\nOutgoing balance {$account->getSummary()->getOutgoingBalance()}\n\n";
+    echo "\nOutgoing balance {$account->getAttribute('summary')->getOutgoingBalance()}\n\n";
     echo "----------\n\n";
 }
 ```

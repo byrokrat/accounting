@@ -14,8 +14,8 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary(new Amount('10'));
 
-        $summary->addTransaction($this->prophesizeTransaction(new Amount('5'))->reveal());
-        $summary->addTransaction($this->prophesizeTransaction(new Amount('-5'))->reveal());
+        $summary->addAmount(new Amount('5'));
+        $summary->addAmount(new Amount('-5'));
 
         $this->assertEquals(
             new Amount('10'),
@@ -49,9 +49,9 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary(new Amount('10'));
 
-        $summary->addTransaction($this->prophesizeTransaction(new Amount('5'))->reveal());
-        $summary->addTransaction($this->prophesizeTransaction(new Amount('5'))->reveal());
-        $summary->addTransaction($this->prophesizeTransaction(new Amount('-5'))->reveal());
+        $summary->addAmount(new Amount('5'));
+        $summary->addAmount(new Amount('5'));
+        $summary->addAmount(new Amount('-5'));
 
         $this->assertEquals(
             new Amount('10'),
@@ -80,9 +80,9 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary(new Amount('10'));
 
-        $summary->addTransaction($this->prophesizeTransaction(new Amount('5'))->reveal());
-        $summary->addTransaction($this->prophesizeTransaction(new Amount('-5'))->reveal());
-        $summary->addTransaction($this->prophesizeTransaction(new Amount('-5'))->reveal());
+        $summary->addAmount(new Amount('5'));
+        $summary->addAmount(new Amount('-5'));
+        $summary->addAmount(new Amount('-5'));
 
         $this->assertEquals(
             new Amount('10'),
@@ -111,8 +111,8 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary(new Amount('-10'));
 
-        $summary->addTransaction($this->prophesizeTransaction(new Amount('5'))->reveal());
-        $summary->addTransaction($this->prophesizeTransaction(new Amount('-5'))->reveal());
+        $summary->addAmount(new Amount('5'));
+        $summary->addAmount(new Amount('-5'));
 
         $this->assertEquals(
             new Amount('-10'),
@@ -147,7 +147,7 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
         $this->expectException(Exception\RuntimeException::CLASS);
 
         (new Summary)
-            ->addTransaction($this->prophesizeTransaction(new Amount('5'))->reveal())
+            ->addAmount(new Amount('5'))
             ->getMagnitude();
     }
 
@@ -155,8 +155,8 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary;
 
-        $summary->addTransaction($this->prophesizeTransaction(new Amount('5'))->reveal());
-        $summary->addTransaction($this->prophesizeTransaction(new Amount('-5'))->reveal());
+        $summary->addAmount(new Amount('5'));
+        $summary->addAmount(new Amount('-5'));
 
         $this->assertEquals(
             new Amount('0'),
@@ -190,21 +190,5 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(Exception\RuntimeException::CLASS);
         (new Summary)->getMagnitude();
-    }
-
-    public function testGetTransactions()
-    {
-        $summary = new Summary;
-
-        $transA = $this->prophesizeTransaction(new Amount('5'))->reveal();
-        $transB = $this->prophesizeTransaction(new Amount('-5'))->reveal();
-
-        $summary->addTransaction($transA);
-        $summary->addTransaction($transB);
-
-        $this->assertEquals(
-            [$transA, $transB],
-            $summary->getTransactions()
-        );
     }
 }

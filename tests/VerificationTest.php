@@ -145,18 +145,17 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
 
     public function testCastToString()
     {
-        $transA = $this->prophesize(Transaction::CLASS);
+        $transA = $this->prophesizeTransaction();
         $transA->__toString()->willReturn('1234: 100');
 
-        $transB = $this->prophesize(Transaction::CLASS);
+        $transB = $this->prophesizeTransaction();
         $transB->__toString()->willReturn('4321: -100');
-
-        $summary = $this->prophesize(Summary::CLASS);
-        $summary->getTransactions()->willReturn([$transA->reveal(), $transB->reveal()]);
 
         $this->assertSame(
             "[20170208] Verification\n * 1234: 100\n * 4321: -100",
-            (string)(new Verification($summary->reveal()))
+            (string)(new Verification)
+                ->addTransaction($transA->reveal())
+                ->addTransaction($transB->reveal())
                 ->setDate(new \DateTime('20170208'))
                 ->setDescription('Verification')
         );

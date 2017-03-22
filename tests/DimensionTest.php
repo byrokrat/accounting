@@ -8,29 +8,6 @@ class DimensionTest extends \PHPUnit\Framework\TestCase
 {
     use utils\InterfaceAssertionsTrait;
 
-    public function testDefaultSummary()
-    {
-        $this->assertInstanceOf(Summary::CLASS, (new Dimension(''))->getSummary());
-    }
-
-    public function testSetSummary()
-    {
-        $summary = $this->prophesize(Summary::CLASS)->reveal();
-        $dimension = new Dimension('');
-        $dimension->resetSummary($summary);
-        $this->assertSame($summary, $dimension->getSummary());
-    }
-
-    public function testSetIncomingBalanceToSummary()
-    {
-        $balance = $this->prophesize(\byrokrat\amount\Amount::CLASS)->reveal();
-        $summary = $this->prophesize(Summary::CLASS);
-        $summary->initialize($balance)->shouldBeCalled();
-        $dimension = new Dimension('');
-        $dimension->setAttribute('incoming_balance', $balance);
-        $dimension->resetSummary($summary->reveal());
-    }
-
     public function testAttributable()
     {
         $this->assertAttributable(new Dimension('0', ''));

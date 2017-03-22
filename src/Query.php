@@ -137,7 +137,7 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
         $summary = new Summary;
 
         foreach ($this->transactions()->getIterator() as $transaction) {
-            $summary->addTransaction($transaction);
+            $summary->addAmount($transaction->getAmount());
         }
 
         return $summary;

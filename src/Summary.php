@@ -25,7 +25,7 @@ namespace byrokrat\accounting;
 use byrokrat\amount\Amount;
 
 /**
- * Create summaries for collections of transactions
+ * Calculate amount summaries
  */
 class Summary
 {
@@ -48,11 +48,6 @@ class Summary
      * @var Amount Current credit summary
      */
     private $credit;
-
-    /**
-     * @var Transaction[] Transactions included in summary
-     */
-    private $transactions = [];
 
     /**
      * Setup calculation starting points
@@ -88,20 +83,18 @@ class Summary
     /**
      * Add transaction to summary calculations
      */
-    public function addTransaction(Transaction $transaction): self
+    public function addAmount(Amount $amount): self
     {
         if (!$this->isInitialized()) {
-            $this->initialize($transaction->getAmount()->subtract($transaction->getAmount()));
+            $this->initialize($amount->subtract($amount));
         }
 
-        $this->transactions[] = $transaction;
+        $this->balance = $this->balance->add($amount);
 
-        $this->balance = $this->balance->add($transaction->getAmount());
-
-        if ($transaction->getAmount()->isPositive()) {
-            $this->debit = $this->debit->add($transaction->getAmount());
+        if ($amount->isPositive()) {
+            $this->debit = $this->debit->add($amount);
         } else {
-            $this->credit = $this->credit->add($transaction->getAmount()->getAbsolute());
+            $this->credit = $this->credit->add($amount->getAbsolute());
         }
 
         return $this;
@@ -166,22 +159,12 @@ class Summary
     }
 
     /**
-     * Get included transactions
-     *
-     * @return Transaction[]
-     */
-    public function getTransactions(): array
-    {
-        return $this->transactions;
-    }
-
-    /**
      * @throws Exception\RuntimeException if summaries are not initialized
      */
     private function checkState()
     {
         if (!$this->isInitialized()) {
-            throw new Exception\RuntimeException('Unable to calculate summaries on an empty set of transactions');
+            throw new Exception\RuntimeException('Unable to calculate, Summary not initialized');
         }
     }
 }

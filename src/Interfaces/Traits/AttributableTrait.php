@@ -47,7 +47,7 @@ trait AttributableTrait
         return isset($this->attributes[strtolower($name)]);
     }
 
-    public function getAttribute(string $name)
+    public function &getAttribute(string $name)
     {
         if (!$this->hasAttribute($name)) {
             throw new LogicException("Trying to read non-existing attribute $name");
