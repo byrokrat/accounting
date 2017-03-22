@@ -25,6 +25,7 @@ namespace byrokrat\accounting\Sie4\Parser;
 use byrokrat\accounting\Account;
 use byrokrat\accounting\Container;
 use byrokrat\accounting\Processor;
+use byrokrat\accounting\Interfaces\Attributable;
 use byrokrat\amount\Currency;
 
 /**
@@ -149,6 +150,20 @@ class AbstractParser
     protected function getProcessor(): Processor
     {
         return $this->processor;
+    }
+
+    /**
+     * Helper that writes an attribute to an attributable
+     */
+    protected function writeAttribute(Attributable $attributable, string $key, $value, string $year = '')
+    {
+        if ('' == $year || '0' == $year) {
+            $attributable->setAttribute($key, $value);
+        }
+
+        if ('' != $year) {
+            $attributable->setAttribute("{$key}[$year]", $value);
+        }
     }
 
     /**

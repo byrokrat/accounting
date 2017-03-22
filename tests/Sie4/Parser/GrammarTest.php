@@ -150,7 +150,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertAttributes(
             [
-                'FLAGGA' => $boolval
+                'flag' => $boolval
             ],
             $this->parse("
                 #FLAGGA $raw
@@ -165,7 +165,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertAttributes(
             [
-                'OMFATTN' => $date
+                'period_end_date' => $date
             ],
             $this->parse("
                 #FLAGGA 1
@@ -181,7 +181,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertAttributes(
             [
-                'SIETYP' => $intval
+                'sie_version' => $intval
             ],
             $this->parse("
                 #FLAGGA 1
@@ -197,7 +197,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertAttributes(
             [
-                'FNAMN' => $parsed
+                'company_name' => $parsed
             ],
             $this->parse("
                 #FLAGGA 1
@@ -238,7 +238,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertAttributes(
             [
-                'KSUMMA' => 1234
+                'checksum' => 1234
             ],
             $this->parse("
                 #FLAGGA 1
@@ -252,23 +252,23 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertAttributes(
             [
-                'BKOD' => 1234,
-                'ADRESS' => ['A', 'B', 'C', 'D'],
-                'FNAMN' => 'name',
-                'FNR' => 'X',
-                'FORMAT' => 'PC8',
-                'FTYP' => 'AB',
-                'GEN' => [new \DateTimeImmutable('20160824'), 'HF'],
-                'KPTYP' => 'BAS95',
-                'OMFATTN' => new \DateTimeImmutable('20160101'),
-                'ORGNR' => ['123456-1234', 0, 0],
-                'PROGRAM' => ['byrokrat', '1.0'],
-                'PROSA' => 'foo bar baz',
-                'RAR[0]' =>[new \DateTimeImmutable('20160101'), new \DateTimeImmutable('20161231')],
-                'RAR[-1]' =>[new \DateTimeImmutable('20150101'), new \DateTimeImmutable('20151231')],
-                'SIETYP' => 4,
-                'TAXAR' => 2016,
-                'VALUTA' => 'EUR',
+                'company_sni_code' => 1234,
+                'company_address' => ['A', 'B', 'C', 'D'],
+                'company_name' => 'name',
+                'company_id' => 'X',
+                'charset' => 'PC8',
+                'company_type' => 'AB',
+                'generation_date' => [new \DateTimeImmutable('20160824'), 'HF'],
+                'account_plan_type' => 'BAS95',
+                'period_end_date' => new \DateTimeImmutable('20160101'),
+                'company_org_nr' => ['123456-1234', 0, 0],
+                'program' => ['byrokrat', '1.0'],
+                'free_text' => 'foo bar baz',
+                'financial_year[0]' =>[new \DateTimeImmutable('20160101'), new \DateTimeImmutable('20161231')],
+                'financial_year[-1]' =>[new \DateTimeImmutable('20150101'), new \DateTimeImmutable('20151231')],
+                'sie_version' => 4,
+                'taxation_year' => 2016,
+                'currency' => 'EUR',
             ],
             $this->parse("
                 #FLAGGA 1
@@ -648,8 +648,13 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         ")->select()->getAccount('1920');
 
         $this->assertEquals(
-            $account->getAttribute('PBUDGET[0][201608]'),
-            [new SEK('100'), new Amount('1')]
+            $account->getAttribute('period_budget_balance[0.201608]'),
+            new SEK('100')
+        );
+
+        $this->assertEquals(
+            $account->getAttribute('period_budget_quantity[0.201608]'),
+            new Amount('1')
         );
     }
 
@@ -661,8 +666,13 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         ")->select()->getAccount('1920');
 
         $this->assertEquals(
-            $account->getAttribute('PSALDO[0][201608]'),
-            [new SEK('100'), new Amount('1')]
+            $account->getAttribute('period_balance[0.201608]'),
+            new SEK('100')
+        );
+
+        $this->assertEquals(
+            $account->getAttribute('period_quantity[0.201608]'),
+            new Amount('1')
         );
     }
 }

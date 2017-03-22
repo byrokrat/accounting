@@ -360,7 +360,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$flag) {
                 if ($this->assertBool($flag)) {
-                    $this->getContainer()->setAttribute('FLAGGA', $flag);
+                    $this->getContainer()->setAttribute('flag', $flag);
                 }
             });
         }
@@ -500,7 +500,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$checksum) {
                 if ($this->assertInt($checksum, 'Expected checksum')) {
-                    $this->getContainer()->setAttribute('KSUMMA', $checksum);
+                    $this->getContainer()->setAttribute('checksum', $checksum);
                     $this->getLogger()->notice('Checksum detected but currently not handled');
                 }
             });
@@ -855,7 +855,7 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$contact, &$address, &$location, &$phone) {
-                $this->getContainer()->setAttribute('ADRESS', [(string)$contact, (string)$address, (string)$location, (string)$phone]);
+                $this->getContainer()->setAttribute('company_address', [(string)$contact, (string)$address, (string)$location, (string)$phone]);
             });
         }
 
@@ -948,7 +948,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$sni) {
                 if ($this->assertInt($sni, 'Expected SNI code')) {
-                    $this->getContainer()->setAttribute('BKOD', $sni);
+                    $this->getContainer()->setAttribute('company_sni_code', $sni);
                 }
             });
         }
@@ -1042,7 +1042,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$name) {
                 if ($this->assertString($name, 'Expected company name')) {
-                    $this->getContainer()->setAttribute('FNAMN', $name);
+                    $this->getContainer()->setAttribute('company_name', $name);
                 }
             });
         }
@@ -1136,7 +1136,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$id) {
                 if ($this->assertString($id, 'Expected company identifier')) {
-                    $this->getContainer()->setAttribute('FNR', $id);
+                    $this->getContainer()->setAttribute('company_id', $id);
                 }
             });
         }
@@ -1234,7 +1234,7 @@ class Grammar extends AbstractParser
                         $this->getLogger()->warning("Unknown charset $charset defined using #FORMAT");
                     }
 
-                    $this->getContainer()->setAttribute('FORMAT', $charset);
+                    $this->getContainer()->setAttribute('charset', $charset);
                 }
             });
         }
@@ -1328,7 +1328,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$type) {
                 if ($this->assertString($type, 'Expected company type identifier')) {
-                    $this->getContainer()->setAttribute('FTYP', $type);
+                    $this->getContainer()->setAttribute('company_type', $type);
                 }
             });
         }
@@ -1444,7 +1444,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$date, &$sign) {
                 if ($this->assertDate($date)) {
-                    $this->getContainer()->setAttribute('GEN', [$date, strval($sign)]);
+                    $this->getContainer()->setAttribute('generation_date', [$date, strval($sign)]);
                 }
             });
         }
@@ -1538,7 +1538,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$type) {
                 if ($this->assertString($type, 'Expected account plan type identifier')) {
-                    $this->getContainer()->setAttribute('KPTYP', $type);
+                    $this->getContainer()->setAttribute('account_plan_type', $type);
                 }
             });
         }
@@ -1632,7 +1632,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$date) {
                 if ($this->assertDate($date)) {
-                    $this->getContainer()->setAttribute('OMFATTN', $date);
+                    $this->getContainer()->setAttribute('period_end_date', $date);
                 }
             });
         }
@@ -1770,7 +1770,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$number, &$acquisition, &$operation) {
                 if ($this->assertString($number, 'Expected organisation number')) {
-                    $this->getContainer()->setAttribute('ORGNR', [$number, intval($acquisition), intval($operation)]);
+                    $this->getContainer()->setAttribute('company_org_nr', [$number, intval($acquisition), intval($operation)]);
                 }
             });
         }
@@ -1886,7 +1886,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$name, &$version) {
                 if ($this->assertString($name, 'Expected name') && $this->assertString($version, 'Expected version')) {
-                    $this->getContainer()->setAttribute('PROGRAM', [$name, $version]);
+                    $this->getContainer()->setAttribute('program', [$name, $version]);
                 }
             });
         }
@@ -1989,7 +1989,7 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$text) {
-                $this->getContainer()->setAttribute('PROSA', implode(' ', $text));
+                $this->getContainer()->setAttribute('free_text', implode(' ', $text));
             });
         }
 
@@ -2126,7 +2126,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$startDate, &$endDate) {
                 if ($this->assertInt($year) && $this->assertDate($startDate) && $this->assertDate($endDate)) {
-                    $this->getContainer()->setAttribute("RAR[$year]", [$startDate, $endDate]);
+                    $this->writeAttribute($this->getContainer(), "financial_year", [$startDate, $endDate], $year);
                 }
             });
         }
@@ -2220,7 +2220,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$ver) {
                 if ($this->assertInt($ver, 'Expected SIE version')) {
-                    $this->getContainer()->setAttribute('SIETYP', $ver);
+                    $this->getContainer()->setAttribute('sie_version', $ver);
                 }
             });
         }
@@ -2302,7 +2302,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year) {
                 if ($this->assertInt($year)) {
-                    $this->getContainer()->setAttribute("TAXAR", $year);
+                    $this->getContainer()->setAttribute("taxation_year", $year);
                 }
             });
         }
@@ -2396,7 +2396,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$currency) {
                 if ($this->assertString($currency, 'Expected currency name')) {
-                    $this->getContainer()->setAttribute('VALUTA', $currency);
+                    $this->getContainer()->setAttribute('currency', $currency);
                     $this->getCurrencyBuilder()->setCurrencyClass($currency);
                 }
             });
@@ -3573,12 +3573,9 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
-                    if (0 == $year) {
-                        $account->setAttribute("incoming_balance", $balance);
-                        $account->setAttribute("incoming_quantity", $quantity ?: new Amount('0'));
-                    }
-                    $account->setAttribute("incoming_balance[$year]", $balance);
-                    $account->setAttribute("incoming_quantity[$year]", $quantity ?: new Amount('0'));
+                    $quantity = $quantity ?: new Amount('0');
+                    $this->writeAttribute($account, "incoming_balance", $balance, $year);
+                    $this->writeAttribute($account, "incoming_quantity", $quantity, $year);
                 }
             });
         }
@@ -3738,7 +3735,9 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
-                    $account->setAttribute("UB[$year]", [$balance, $quantity ?: null]);
+                    $quantity = $quantity ?: new Amount('0');
+                    $this->writeAttribute($account, "outgoing_balance", $balance, $year);
+                    $this->writeAttribute($account, "outgoing_quantity", $quantity, $year);
                 }
             });
         }
@@ -3920,13 +3919,10 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$objects, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+                    $quantity = $quantity ?: new Amount('0');
                     foreach ($objects as $object) {
-                        if (0 == $year) {
-                            $object->setAttribute("incoming_balance", $balance);
-                            $object->setAttribute("incoming_quantity", $quantity ?: new Amount('0'));
-                        }
-                        $object->setAttribute("incoming_balance[$year]", $balance);
-                        $object->setAttribute("incoming_quantity[$year]", $quantity ?: new Amount('0'));
+                        $this->writeAttribute($object, "incoming_balance", $balance, $year);
+                        $this->writeAttribute($object, "incoming_quantity", $quantity, $year);
                     }
                 }
             });
@@ -4109,8 +4105,10 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$objects, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+                    $quantity = $quantity ?: new Amount('0');
                     foreach ($objects as $object) {
-                        $object->setAttribute("UB[$year]", [$balance, $quantity ?: null]);
+                        $this->writeAttribute($object, "outgoing_balance", $balance, $year);
+                        $this->writeAttribute($object, "outgoing_quantity", $quantity, $year);
                     }
                 }
             });
@@ -4315,11 +4313,15 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$period, &$account, &$objects, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
-                    $key = "PBUDGET[$year][{$period->format('Ym')}]";
-                    $account->setAttribute($key, [$balance, $quantity ?: null]);
+                    $key = "$year.{$period->format('Ym')}";
+                    $quantity = $quantity ?: new Amount('0');
+
+                    $this->writeAttribute($account, "period_budget_balance", $balance, $key);
+                    $this->writeAttribute($account, "period_budget_quantity", $quantity, $key);
 
                     foreach ($objects as $object) {
-                        $object->setAttribute($key, [$balance, $quantity ?: null]);
+                        $this->writeAttribute($object, "period_budget_balance", $balance, $key);
+                        $this->writeAttribute($object, "period_budget_quantity", $quantity, $key);
                     }
                 }
             });
@@ -4524,11 +4526,15 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$period, &$account, &$objects, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
-                    $key = "PSALDO[$year][{$period->format('Ym')}]";
-                    $account->setAttribute($key, [$balance, $quantity ?: null]);
+                    $key = "$year.{$period->format('Ym')}";
+                    $quantity = $quantity ?: new Amount('0');
+
+                    $this->writeAttribute($account, "period_balance", $balance, $key);
+                    $this->writeAttribute($account, "period_quantity", $quantity, $key);
 
                     foreach ($objects as $object) {
-                        $object->setAttribute($key, [$balance, $quantity ?: null]);
+                        $this->writeAttribute($object, "period_balance", $balance, $key);
+                        $this->writeAttribute($object, "period_quantity", $quantity, $key);
                     }
                 }
             });
@@ -4689,7 +4695,9 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
-                    $account->setAttribute("RES[$year]", [$balance, $quantity ?: null]);
+                    $quantity = $quantity ?: new Amount('0');
+                    $this->writeAttribute($account, "result_balance", $balance, $year);
+                    $this->writeAttribute($account, "result_quantity", $quantity, $year);
                 }
             });
         }

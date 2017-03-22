@@ -27,7 +27,7 @@ $content = $parser->parse("
 ");
 
 // Outputs '1'
-echo $content->getAttribute('FLAGGA');
+echo $content->getAttribute('flag');
 
 /** @var \byrokrat\accounting\Verification[] $verifications */
 $verifications = $content->select()->verifications()->asArray();

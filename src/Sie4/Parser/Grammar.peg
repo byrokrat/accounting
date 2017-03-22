@@ -50,7 +50,7 @@ grammar Grammar extends AbstractParser
 
     FLAGGA_POST = ROW_START 'FLAGGA' ^ flag:BOOLEAN? ROW_END {
         if ($this->assertBool($flag)) {
-            $this->getContainer()->setAttribute('FLAGGA', $flag);
+            $this->getContainer()->setAttribute('flag', $flag);
         }
     };
 
@@ -58,7 +58,7 @@ grammar Grammar extends AbstractParser
 
     KSUMMA_END_POST = ROW_START 'KSUMMA' checksum:INT? ROW_END {
         if ($this->assertInt($checksum, 'Expected checksum')) {
-            $this->getContainer()->setAttribute('KSUMMA', $checksum);
+            $this->getContainer()->setAttribute('checksum', $checksum);
             $this->getLogger()->notice('Checksum detected but currently not handled');
         }
     };
@@ -92,24 +92,24 @@ grammar Grammar extends AbstractParser
         / VOID_ROW;
 
     ADRESS_POST = ROW_START 'ADRESS' ^ contact:STRING? address:STRING? location:STRING? phone:STRING? ROW_END {
-        $this->getContainer()->setAttribute('ADRESS', [(string)$contact, (string)$address, (string)$location, (string)$phone]);
+        $this->getContainer()->setAttribute('company_address', [(string)$contact, (string)$address, (string)$location, (string)$phone]);
     };
 
     BKOD_POST = ROW_START 'BKOD' ^ sni:INT? ROW_END {
         if ($this->assertInt($sni, 'Expected SNI code')) {
-            $this->getContainer()->setAttribute('BKOD', $sni);
+            $this->getContainer()->setAttribute('company_sni_code', $sni);
         }
     };
 
     FNAMN_POST = ROW_START 'FNAMN' ^ name:STRING? ROW_END {
         if ($this->assertString($name, 'Expected company name')) {
-            $this->getContainer()->setAttribute('FNAMN', $name);
+            $this->getContainer()->setAttribute('company_name', $name);
         }
     };
 
     FNR_POST = ROW_START 'FNR' ^ id:STRING? ROW_END {
         if ($this->assertString($id, 'Expected company identifier')) {
-            $this->getContainer()->setAttribute('FNR', $id);
+            $this->getContainer()->setAttribute('company_id', $id);
         }
     };
 
@@ -119,71 +119,71 @@ grammar Grammar extends AbstractParser
                 $this->getLogger()->warning("Unknown charset $charset defined using #FORMAT");
             }
 
-            $this->getContainer()->setAttribute('FORMAT', $charset);
+            $this->getContainer()->setAttribute('charset', $charset);
         }
     };
 
     FTYP_POST = ROW_START 'FTYP' ^ type:STRING? ROW_END {
         if ($this->assertString($type, 'Expected company type identifier')) {
-            $this->getContainer()->setAttribute('FTYP', $type);
+            $this->getContainer()->setAttribute('company_type', $type);
         }
     };
 
     GEN_POST = ROW_START 'GEN' ^ date:DATE? sign:STRING? ROW_END {
         if ($this->assertDate($date)) {
-            $this->getContainer()->setAttribute('GEN', [$date, strval($sign)]);
+            $this->getContainer()->setAttribute('generation_date', [$date, strval($sign)]);
         }
     };
 
     KPTYP_POST = ROW_START 'KPTYP' ^ type:STRING? ROW_END {
         if ($this->assertString($type, 'Expected account plan type identifier')) {
-            $this->getContainer()->setAttribute('KPTYP', $type);
+            $this->getContainer()->setAttribute('account_plan_type', $type);
         }
     };
 
     OMFATTN_POST = ROW_START 'OMFATTN' ^ date:DATE? ROW_END {
         if ($this->assertDate($date)) {
-            $this->getContainer()->setAttribute('OMFATTN', $date);
+            $this->getContainer()->setAttribute('period_end_date', $date);
         }
     };
 
     ORGNR_POST = ROW_START 'ORGNR' ^ number:STRING? acquisition:INT? operation:INT? ROW_END {
         if ($this->assertString($number, 'Expected organisation number')) {
-            $this->getContainer()->setAttribute('ORGNR', [$number, intval($acquisition), intval($operation)]);
+            $this->getContainer()->setAttribute('company_org_nr', [$number, intval($acquisition), intval($operation)]);
         }
     };
 
     PROGRAM_POST = ROW_START 'PROGRAM' ^ name:STRING? version:STRING? ROW_END {
         if ($this->assertString($name, 'Expected name') && $this->assertString($version, 'Expected version')) {
-            $this->getContainer()->setAttribute('PROGRAM', [$name, $version]);
+            $this->getContainer()->setAttribute('program', [$name, $version]);
         }
     };
 
     PROSA_POST = ROW_START 'PROSA' ^ text:STRING* ROW_END {
-        $this->getContainer()->setAttribute('PROSA', implode(' ', $text));
+        $this->getContainer()->setAttribute('free_text', implode(' ', $text));
     };
 
     RAR_POST = ROW_START 'RAR' ^ year:INT? startDate:DATE? endDate:DATE? ROW_END {
         if ($this->assertInt($year) && $this->assertDate($startDate) && $this->assertDate($endDate)) {
-            $this->getContainer()->setAttribute("RAR[$year]", [$startDate, $endDate]);
+            $this->writeAttribute($this->getContainer(), "financial_year", [$startDate, $endDate], $year);
         }
     };
 
     SIETYP_POST = ROW_START 'SIETYP' ^ ver:INT? ROW_END {
         if ($this->assertInt($ver, 'Expected SIE version')) {
-            $this->getContainer()->setAttribute('SIETYP', $ver);
+            $this->getContainer()->setAttribute('sie_version', $ver);
         }
     };
 
     TAXAR_POST = ROW_START 'TAXAR' ^ year:INT ROW_END {
         if ($this->assertInt($year)) {
-            $this->getContainer()->setAttribute("TAXAR", $year);
+            $this->getContainer()->setAttribute("taxation_year", $year);
         }
     };
 
     VALUTA_POST = ROW_START 'VALUTA' ^ currency:STRING? ROW_END {
         if ($this->assertString($currency, 'Expected currency name')) {
-            $this->getContainer()->setAttribute('VALUTA', $currency);
+            $this->getContainer()->setAttribute('currency', $currency);
             $this->getCurrencyBuilder()->setCurrencyClass($currency);
         }
     };
@@ -259,67 +259,75 @@ grammar Grammar extends AbstractParser
 
     IB_POST = ROW_START 'IB' ^ year:INT? account:ACCOUNT? balance:AMOUNT? quantity:FLOAT? ROW_END {
         if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
-            if (0 == $year) {
-                $account->setAttribute("incoming_balance", $balance);
-                $account->setAttribute("incoming_quantity", $quantity ?: new Amount('0'));
-            }
-            $account->setAttribute("incoming_balance[$year]", $balance);
-            $account->setAttribute("incoming_quantity[$year]", $quantity ?: new Amount('0'));
+            $quantity = $quantity ?: new Amount('0');
+            $this->writeAttribute($account, "incoming_balance", $balance, $year);
+            $this->writeAttribute($account, "incoming_quantity", $quantity, $year);
         }
     };
 
     UB_POST = ROW_START 'UB' ^ year:INT? account:ACCOUNT? balance:AMOUNT? quantity:FLOAT? ROW_END {
         if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
-            $account->setAttribute("UB[$year]", [$balance, $quantity ?: null]);
+            $quantity = $quantity ?: new Amount('0');
+            $this->writeAttribute($account, "outgoing_balance", $balance, $year);
+            $this->writeAttribute($account, "outgoing_quantity", $quantity, $year);
         }
     };
 
     OIB_POST = ROW_START 'OIB' ^ year:INT? account:ACCOUNT? objects:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
         if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+            $quantity = $quantity ?: new Amount('0');
             foreach ($objects as $object) {
-                if (0 == $year) {
-                    $object->setAttribute("incoming_balance", $balance);
-                    $object->setAttribute("incoming_quantity", $quantity ?: new Amount('0'));
-                }
-                $object->setAttribute("incoming_balance[$year]", $balance);
-                $object->setAttribute("incoming_quantity[$year]", $quantity ?: new Amount('0'));
+                $this->writeAttribute($object, "incoming_balance", $balance, $year);
+                $this->writeAttribute($object, "incoming_quantity", $quantity, $year);
             }
         }
     };
 
     OUB_POST = ROW_START 'OUB' ^ year:INT? account:ACCOUNT? objects:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
         if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+            $quantity = $quantity ?: new Amount('0');
             foreach ($objects as $object) {
-                $object->setAttribute("UB[$year]", [$balance, $quantity ?: null]);
+                $this->writeAttribute($object, "outgoing_balance", $balance, $year);
+                $this->writeAttribute($object, "outgoing_quantity", $quantity, $year);
             }
         }
     };
 
     PBUDGET_POST = ROW_START 'PBUDGET' ^ year:INT? period:DATE? account:ACCOUNT? objects:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
         if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
-            $key = "PBUDGET[$year][{$period->format('Ym')}]";
-            $account->setAttribute($key, [$balance, $quantity ?: null]);
+            $key = "$year.{$period->format('Ym')}";
+            $quantity = $quantity ?: new Amount('0');
+
+            $this->writeAttribute($account, "period_budget_balance", $balance, $key);
+            $this->writeAttribute($account, "period_budget_quantity", $quantity, $key);
 
             foreach ($objects as $object) {
-                $object->setAttribute($key, [$balance, $quantity ?: null]);
+                $this->writeAttribute($object, "period_budget_balance", $balance, $key);
+                $this->writeAttribute($object, "period_budget_quantity", $quantity, $key);
             }
         }
     };
 
     PSALDO_POST = ROW_START 'PSALDO' ^ year:INT? period:DATE? account:ACCOUNT? objects:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
         if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
-            $key = "PSALDO[$year][{$period->format('Ym')}]";
-            $account->setAttribute($key, [$balance, $quantity ?: null]);
+            $key = "$year.{$period->format('Ym')}";
+            $quantity = $quantity ?: new Amount('0');
+
+            $this->writeAttribute($account, "period_balance", $balance, $key);
+            $this->writeAttribute($account, "period_quantity", $quantity, $key);
 
             foreach ($objects as $object) {
-                $object->setAttribute($key, [$balance, $quantity ?: null]);
+                $this->writeAttribute($object, "period_balance", $balance, $key);
+                $this->writeAttribute($object, "period_quantity", $quantity, $key);
             }
         }
     };
 
     RES_POST = ROW_START 'RES' ^ year:INT? account:ACCOUNT? balance:AMOUNT? quantity:FLOAT? ROW_END {
         if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
-            $account->setAttribute("RES[$year]", [$balance, $quantity ?: null]);
+            $quantity = $quantity ?: new Amount('0');
+            $this->writeAttribute($account, "result_balance", $balance, $year);
+            $this->writeAttribute($account, "result_quantity", $quantity, $year);
         }
     };
 
