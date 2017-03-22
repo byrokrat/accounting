@@ -108,4 +108,18 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             (string)$transaction
         );
     }
+
+    public function testIsAdded()
+    {
+        $this->assertFalse(
+            $this->createTransaction()->isAdded()
+        );
+    }
+
+    public function testIsDeleted()
+    {
+        $this->assertFalse(
+            $this->createTransaction()->isDeleted()
+        );
+    }
 }

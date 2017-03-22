@@ -1,9 +1,8 @@
 # TODO
 
-## Transaktioner
+## Strukna och tillagda transaktioner
 
-1. En transaction ska kunna vara struken, och ska i så fall inte räknas i arithmetiken...
-1. Här ingår även stöd för BTRANS och RTRANS till sie4
+Lägg till stöd för BTRANS och RTRANS i sie4 parser
 
 ## Template
 

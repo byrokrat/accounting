@@ -16,7 +16,7 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(
             [
                 $transA = $this->prophesizeTransaction()->reveal(),
-                $transB = $this->prophesizeTransaction()->reveal()
+                $transB = $this->prophesizeDeletedTransaction()->reveal()
             ],
             (new Verification)->addTransaction($transA)->addTransaction($transB)->getTransactions()
         );
@@ -133,6 +133,17 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         if ($balanced) {
             $this->assertEquals($magnitude, $verification->getMagnitude());
         }
+    }
+
+    public function testDeletedTransactionsDoesNotCount()
+    {
+        $verification = new Verification;
+
+        $verification->addTransaction(
+            $this->prophesizeDeletedTransaction(new Amount('100'))->reveal()
+        );
+
+        $this->assertSame(0, $verification->getMagnitude()->getInt());
     }
 
     public function testExceptionOnGetMagnitudeWithUnbalancedVerification()

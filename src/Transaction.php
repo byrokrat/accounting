@@ -125,8 +125,27 @@ class Transaction implements Attributable, Dateable, Describable, Queryable, Sig
         }
     }
 
+    /**
+     * Generate a simple string representation of transaction
+     */
     public function __toString(): string
     {
         return sprintf('%s: %s', $this->getAccount(), $this->getAmount());
+    }
+
+    /**
+     * Check if this is an added transaction
+     */
+    public function isAdded(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Check if this is a deleted transaction
+     */
+    public function isDeleted(): bool
+    {
+        return false;
     }
 }

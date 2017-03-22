@@ -116,13 +116,20 @@ class Verification implements Attributable, Dateable, Describable, Queryable, Si
     }
 
     /**
-     * Add transaction to verifications
+     * Add a transaction to verification
      */
     public function addTransaction(Transaction $transaction): self
     {
         $transaction->setAttribute('ver_num', $this->getId());
-        $this->summary->addAmount($transaction->getAmount());
         $this->transactions[] = $transaction;
+
+        $this->summary->addAmount(
+            $transaction->getAmount()->subtract($transaction->getAmount())
+        );
+
+        if (!$transaction->isDeleted()) {
+            $this->summary->addAmount($transaction->getAmount());
+        }
 
         return $this;
     }
@@ -171,6 +178,9 @@ class Verification implements Attributable, Dateable, Describable, Queryable, Si
         return $this->summary->getMagnitude();
     }
 
+    /**
+     * Generate a simple string representation of transaction
+     */
     public function __toString(): string
     {
         $delim = "\n * ";

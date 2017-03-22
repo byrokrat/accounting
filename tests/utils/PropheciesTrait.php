@@ -54,6 +54,7 @@ trait PropheciesTrait
         $account->getDescription()->willReturn($desc);
         $account->getAttributes()->willReturn($attr);
         $account->select()->willReturn(new Query);
+        $account->__toString()->willReturn('');
 
         return $account;
     }
@@ -63,7 +64,10 @@ trait PropheciesTrait
      */
     public function prophesizeAmount(): ObjectProphecy
     {
-        return $this->prophesize(Amount::CLASS);
+        $amount = $this->prophesize(Amount::CLASS);
+        $amount->getString()->willReturn('');
+
+        return $amount;
     }
 
     /**
@@ -107,9 +111,24 @@ trait PropheciesTrait
         $transaction->getAmount()->willReturn($amount ?: new Amount('0'));
         $transaction->getAccount()->willReturn($account ?: $this->prophesizeAccount()->reveal());
         $transaction->setAttribute('ver_num', Argument::any());
+        $transaction->isDeleted()->willReturn(false);
         $transaction->select()->will(function () use ($amount, $account) {
             return new Query([$amount, $account]);
         });
+
+        return $transaction;
+    }
+
+    /**
+     * Create deleted transaction prophecy
+     *
+     * @param  Amount  $amount  Will be returned by getAmount()
+     * @param  Account $account Will be returned by getAccount()
+     */
+    public function prophesizeDeletedTransaction(Amount $amount = null, Account $account = null): ObjectProphecy
+    {
+        $transaction = $this->prophesizeTransaction($amount, $account);
+        $transaction->isDeleted()->willReturn(true);
 
         return $transaction;
     }
