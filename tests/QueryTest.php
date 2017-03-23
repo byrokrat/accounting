@@ -601,14 +601,17 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     public function testExceptionWhenOverwritingMethodWithMacro()
     {
         $this->expectException(Exception\LogicException::CLASS);
-        Query::macro('filter', function(){});
+        Query::macro('filter', function () {
+        });
     }
 
     public function testExceptionWhenOverwritingMacro()
     {
         $this->expectException(Exception\LogicException::CLASS);
-        Query::macro('thisRareMacroNameIsCreated', function(){});
-        Query::macro('thisRareMacroNameIsCreated', function(){});
+        Query::macro('thisRareMacroNameIsCreated', function () {
+        });
+        Query::macro('thisRareMacroNameIsCreated', function () {
+        });
     }
 
     public function testExceptionOnUndefinedMethodCall()

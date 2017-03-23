@@ -318,13 +318,13 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
         $count = 0;
 
         return $this->filter(function () use ($length, $offset, &$index, &$count) {
-        	$index++;
+            $index++;
 
-        	if ($offset <= $index && $count < $length) {
-        		return !!++$count;
-        	}
+            if ($offset <= $index && $count < $length) {
+                return !!++$count;
+            }
 
-        	return false;
+            return false;
         });
     }
 

@@ -13,3 +13,9 @@
 ```php
 class EUBAS97 implements AccountPlan {...}
 ```
+
+## Cleanup repo
+
+1. `bin` kan gå bort
+1. `res` kan gå bort
+1. `integrations` ska antagligen heta någonting annat...
