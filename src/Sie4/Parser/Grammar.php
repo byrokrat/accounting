@@ -2,6 +2,8 @@
 
 namespace byrokrat\accounting\Sie4\Parser;
 
+use byrokrat\accounting\AddedTransaction;
+use byrokrat\accounting\DeletedTransaction;
 use byrokrat\accounting\Transaction;
 use byrokrat\amount\Amount;
 
@@ -3856,7 +3858,7 @@ class Grammar extends AbstractParser
             $this->cut = $_cut162;
 
             if ($_success) {
-                $objects = $this->value;
+                $dims = $this->value;
             }
         }
 
@@ -3917,12 +3919,12 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $this->value = call_user_func(function () use (&$year, &$account, &$objects, &$balance, &$quantity) {
-                if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+            $this->value = call_user_func(function () use (&$year, &$account, &$dims, &$balance, &$quantity) {
+                if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($balance)) {
                     $quantity = $quantity ?: new Amount('0');
-                    foreach ($objects as $object) {
-                        $this->writeAttribute($object, "incoming_balance", $balance, $year);
-                        $this->writeAttribute($object, "incoming_quantity", $quantity, $year);
+                    foreach ($dims as $dim) {
+                        $this->writeAttribute($dim, "incoming_balance", $balance, $year);
+                        $this->writeAttribute($dim, "incoming_quantity", $quantity, $year);
                     }
                 }
             });
@@ -4042,7 +4044,7 @@ class Grammar extends AbstractParser
             $this->cut = $_cut173;
 
             if ($_success) {
-                $objects = $this->value;
+                $dims = $this->value;
             }
         }
 
@@ -4103,12 +4105,12 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $this->value = call_user_func(function () use (&$year, &$account, &$objects, &$balance, &$quantity) {
-                if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+            $this->value = call_user_func(function () use (&$year, &$account, &$dims, &$balance, &$quantity) {
+                if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($balance)) {
                     $quantity = $quantity ?: new Amount('0');
-                    foreach ($objects as $object) {
-                        $this->writeAttribute($object, "outgoing_balance", $balance, $year);
-                        $this->writeAttribute($object, "outgoing_quantity", $quantity, $year);
+                    foreach ($dims as $dim) {
+                        $this->writeAttribute($dim, "outgoing_balance", $balance, $year);
+                        $this->writeAttribute($dim, "outgoing_quantity", $quantity, $year);
                     }
                 }
             });
@@ -4250,7 +4252,7 @@ class Grammar extends AbstractParser
             $this->cut = $_cut186;
 
             if ($_success) {
-                $objects = $this->value;
+                $dims = $this->value;
             }
         }
 
@@ -4311,17 +4313,17 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $this->value = call_user_func(function () use (&$year, &$period, &$account, &$objects, &$balance, &$quantity) {
-                if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+            $this->value = call_user_func(function () use (&$year, &$period, &$account, &$dims, &$balance, &$quantity) {
+                if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($balance)) {
                     $key = "$year.{$period->format('Ym')}";
                     $quantity = $quantity ?: new Amount('0');
 
                     $this->writeAttribute($account, "period_budget_balance", $balance, $key);
                     $this->writeAttribute($account, "period_budget_quantity", $quantity, $key);
 
-                    foreach ($objects as $object) {
-                        $this->writeAttribute($object, "period_budget_balance", $balance, $key);
-                        $this->writeAttribute($object, "period_budget_quantity", $quantity, $key);
+                    foreach ($dims as $dim) {
+                        $this->writeAttribute($dim, "period_budget_balance", $balance, $key);
+                        $this->writeAttribute($dim, "period_budget_quantity", $quantity, $key);
                     }
                 }
             });
@@ -4463,7 +4465,7 @@ class Grammar extends AbstractParser
             $this->cut = $_cut199;
 
             if ($_success) {
-                $objects = $this->value;
+                $dims = $this->value;
             }
         }
 
@@ -4524,17 +4526,17 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $this->value = call_user_func(function () use (&$year, &$period, &$account, &$objects, &$balance, &$quantity) {
-                if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+            $this->value = call_user_func(function () use (&$year, &$period, &$account, &$dims, &$balance, &$quantity) {
+                if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($balance)) {
                     $key = "$year.{$period->format('Ym')}";
                     $quantity = $quantity ?: new Amount('0');
 
                     $this->writeAttribute($account, "period_balance", $balance, $key);
                     $this->writeAttribute($account, "period_quantity", $quantity, $key);
 
-                    foreach ($objects as $object) {
-                        $this->writeAttribute($object, "period_balance", $balance, $key);
-                        $this->writeAttribute($object, "period_quantity", $quantity, $key);
+                    foreach ($dims as $dim) {
+                        $this->writeAttribute($dim, "period_balance", $balance, $key);
+                        $this->writeAttribute($dim, "period_quantity", $quantity, $key);
                     }
                 }
             });
@@ -5118,7 +5120,7 @@ class Grammar extends AbstractParser
             $this->cut = $_cut235;
 
             if ($_success) {
-                $objects = $this->value;
+                $dims = $this->value;
             }
         }
 
@@ -5245,17 +5247,34 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $this->value = call_user_func(function () use (&$account, &$objects, &$amount, &$date, &$desc, &$quantity, &$sign) {
-                if ($this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($amount)) {
-                    return $this->getVerificationBuilder()->createTransaction(
-                        $account,
-                        $objects,
-                        $amount,
-                        $date ?: null,
-                        $desc ?: '',
-                        $quantity ?: null,
-                        $sign ?: ''
-                    );
+            $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
+                if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
+                    // TODO remove
+                    #return $this->getVerificationBuilder()->createTransaction(
+                        #$account,
+                        #$dims,
+                        #$amount,
+                        #$date,
+                        #$desc ?: '',
+                        #$quantity,
+                        #$sign ?: ''
+                    #);
+
+                    $trans = new Transaction($account, $amount, $quantity, ...$dims);
+
+                    if ($date) {
+                        $trans->setDate($date);
+                    }
+
+                    if ($desc) {
+                        $trans->setDescription($desc);
+                    }
+
+                    if ($sign) {
+                        $trans->setSignature($sign);
+                    }
+
+                    return $trans;
                 }
             });
         }
@@ -5352,7 +5371,7 @@ class Grammar extends AbstractParser
             $this->cut = $_cut250;
 
             if ($_success) {
-                $objects = $this->value;
+                $dims = $this->value;
             }
         }
 
@@ -5479,9 +5498,21 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $this->value = call_user_func(function () use (&$account, &$objects, &$amount, &$date, &$desc, &$quantity, &$sign) {
-                if ($this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($amount)) {
-                    $this->getLogger()->notice('Detected a BTRANS post, removed transactions are not supported yet..');
+            $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
+                if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
+                    $sign = $sign ?: '';
+
+                    $trans = new DeletedTransaction($account, $amount, $sign, $quantity, ...$dims);
+
+                    if ($date) {
+                        $trans->setDate($date);
+                    }
+
+                    if ($desc) {
+                        $trans->setDescription($desc);
+                    }
+
+                    return $trans;
                 }
             });
         }
@@ -5578,7 +5609,7 @@ class Grammar extends AbstractParser
             $this->cut = $_cut265;
 
             if ($_success) {
-                $objects = $this->value;
+                $dims = $this->value;
             }
         }
 
@@ -5701,13 +5732,31 @@ class Grammar extends AbstractParser
         if ($_success) {
             $_value276[] = $this->value;
 
+            $_success = $this->parseTRANS_POST();
+        }
+
+        if ($_success) {
+            $_value276[] = $this->value;
+
             $this->value = $_value276;
         }
 
         if ($_success) {
-            $this->value = call_user_func(function () use (&$account, &$objects, &$amount, &$date, &$desc, &$quantity, &$sign) {
-                if ($this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($amount)) {
-                    $this->getLogger()->notice('Detected a RTRANS post, added transactions are not supported yet..');
+            $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
+                if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
+                    $sign = $sign ?: '';
+
+                    $trans = new AddedTransaction($account, $amount, $sign, $quantity, ...$dims);
+
+                    if ($date) {
+                        $trans->setDate($date);
+                    }
+
+                    if ($desc) {
+                        $trans->setDescription($desc);
+                    }
+
+                    return $trans;
                 }
             });
         }
@@ -6874,7 +6923,7 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$date) {
-                return $date;
+                return $date ?: null;
             });
         }
 

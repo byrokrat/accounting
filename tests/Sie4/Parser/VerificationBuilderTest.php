@@ -17,53 +17,6 @@ class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
 {
     use \byrokrat\accounting\utils\PropheciesTrait;
 
-    public function testCreateTransaction()
-    {
-        $verificationBuilder = new VerificationBuilder(
-            $this->createMock(LoggerInterface::CLASS)
-        );
-
-        $transaction = $verificationBuilder->createTransaction(
-            $account = $this->prophesizeAccount()->reveal(),
-            $dimensions = [$this->prophesizeDimension()->reveal()],
-            $amount = $this->createMock(Currency::CLASS),
-            $date = new \DateTime,
-            $desc = 'desc',
-            $quantity = new Amount('10'),
-            $sign = 'HF'
-        );
-
-        $this->assertSame(
-            $account,
-            $transaction->getAccount()
-        );
-
-        $this->assertSame(
-            $dimensions,
-            $transaction->getDimensions()
-        );
-
-        $this->assertSame(
-            $date,
-            $transaction->getDate()
-        );
-
-        $this->assertSame(
-            $desc,
-            $transaction->getDescription()
-        );
-
-        $this->assertSame(
-            $quantity,
-            $transaction->getQuantity()
-        );
-
-        $this->assertSame(
-            $sign,
-            $transaction->getSignature()
-        );
-    }
-
     public function testCreateVerification()
     {
         $verificationBuilder = new VerificationBuilder(

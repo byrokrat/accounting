@@ -541,6 +541,55 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testAddedTransactions()
+    {
+        $ver = $this->parse("
+            #FLAGGA 1
+            #VER \"\" \"\" 20110104 \"Ver A\"
+            {
+                #TRANS  3010 {} -100.00
+                #RTRANS 1920 {} 100.00
+                #TRANS  1920 {} 100.00
+            }
+        ")->select()->verifications()->getFirst();
+
+        $this->assertInstanceOf(
+            \byrokrat\accounting\AddedTransaction::CLASS,
+            $ver->getTransactions()[1]
+        );
+
+        $this->assertCount(
+            2,
+            $ver->getTransactions(),
+            'Transaction count should be 2 as #TRANS post following an #RTRANS should not count'
+        );
+    }
+
+    public function testDeletedTransaction()
+    {
+        $ver = $this->parse("
+            #FLAGGA 1
+            #VER \"\" \"\" 20110104 \"Ver A\"
+            {
+                #TRANS  3010 {} -100.00
+                #BTRANS 1910 {} 100.00
+                #RTRANS 1920 {} 100.00
+                #TRANS  1920 {} 100.00
+            }
+        ")->select()->verifications()->getFirst();
+
+        $this->assertInstanceOf(
+            \byrokrat\accounting\DeletedTransaction::CLASS,
+            $ver->getTransactions()[1]
+        );
+
+        $this->assertCount(
+            3,
+            $ver->getTransactions(),
+            'Transaction count should be 3 as #TRANS post following an #RTRANS should not count'
+        );
+    }
+
     public function testParserResetsBetweenRuns()
     {
         $parser = (new ParserFactory)->createParser(ParserFactory::FAIL_ON_ERROR);

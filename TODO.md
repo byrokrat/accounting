@@ -1,9 +1,5 @@
 # TODO
 
-## Strukna och tillagda transaktioner
-
-Lägg till stöd för BTRANS och RTRANS i sie4 parser
-
 ## Template
 
 1. Template skapar verifikationer med vanlit amount-objekt. Ska vara SEK eller annan inställd valuta.

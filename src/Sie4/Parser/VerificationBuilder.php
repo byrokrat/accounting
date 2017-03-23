@@ -51,43 +51,6 @@ class VerificationBuilder
     /**
      * Create a new transaction object
      *
-     * @param  Account            $account    Account this transaction concerns
-     * @param  Dimension[]        $dimensions Other dimensions this transaction concerns
-     * @param  Currency           $amount     Transacted amounts
-     * @param  \DateTimeInterface $date       Date of accounting action
-     * @param  string             $desc       Free text description
-     * @param  Amount             $quantity   Quantity if defined
-     * @param  string             $sign       Signature
-     */
-    public function createTransaction(
-        Account $account,
-        array $dimensions,
-        Currency $amount,
-        \DateTimeInterface $date = null,
-        string $desc = '',
-        Amount $quantity = null,
-        string $sign = ''
-    ): Transaction {
-        $transaction = new Transaction($account, $amount, $quantity, ...$dimensions);
-
-        if ($date) {
-            $transaction->setDate($date);
-        }
-
-        if ($desc) {
-            $transaction->setDescription($desc);
-        }
-
-        if ($sign) {
-            $transaction->setSignature($sign);
-        }
-
-        return $transaction;
-    }
-
-    /**
-     * Create a new transaction object
-     *
      * @param string             $series       The series verification should be a part of
      * @param string             $number       Verification number
      * @param \DateTimeInterface $date         Date of accounting action

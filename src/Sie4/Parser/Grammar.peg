@@ -20,6 +20,8 @@
 
 namespace byrokrat\accounting\Sie4\Parser;
 
+use byrokrat\accounting\AddedTransaction;
+use byrokrat\accounting\DeletedTransaction;
 use byrokrat\accounting\Transaction;
 use byrokrat\amount\Amount;
 
@@ -273,52 +275,52 @@ grammar Grammar extends AbstractParser
         }
     };
 
-    OIB_POST = ROW_START 'OIB' ^ year:INT? account:ACCOUNT? objects:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
-        if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+    OIB_POST = ROW_START 'OIB' ^ year:INT? account:ACCOUNT? dims:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
+        if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($balance)) {
             $quantity = $quantity ?: new Amount('0');
-            foreach ($objects as $object) {
-                $this->writeAttribute($object, "incoming_balance", $balance, $year);
-                $this->writeAttribute($object, "incoming_quantity", $quantity, $year);
+            foreach ($dims as $dim) {
+                $this->writeAttribute($dim, "incoming_balance", $balance, $year);
+                $this->writeAttribute($dim, "incoming_quantity", $quantity, $year);
             }
         }
     };
 
-    OUB_POST = ROW_START 'OUB' ^ year:INT? account:ACCOUNT? objects:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
-        if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+    OUB_POST = ROW_START 'OUB' ^ year:INT? account:ACCOUNT? dims:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
+        if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($balance)) {
             $quantity = $quantity ?: new Amount('0');
-            foreach ($objects as $object) {
-                $this->writeAttribute($object, "outgoing_balance", $balance, $year);
-                $this->writeAttribute($object, "outgoing_quantity", $quantity, $year);
+            foreach ($dims as $dim) {
+                $this->writeAttribute($dim, "outgoing_balance", $balance, $year);
+                $this->writeAttribute($dim, "outgoing_quantity", $quantity, $year);
             }
         }
     };
 
-    PBUDGET_POST = ROW_START 'PBUDGET' ^ year:INT? period:DATE? account:ACCOUNT? objects:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
-        if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+    PBUDGET_POST = ROW_START 'PBUDGET' ^ year:INT? period:DATE? account:ACCOUNT? dims:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
+        if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($balance)) {
             $key = "$year.{$period->format('Ym')}";
             $quantity = $quantity ?: new Amount('0');
 
             $this->writeAttribute($account, "period_budget_balance", $balance, $key);
             $this->writeAttribute($account, "period_budget_quantity", $quantity, $key);
 
-            foreach ($objects as $object) {
-                $this->writeAttribute($object, "period_budget_balance", $balance, $key);
-                $this->writeAttribute($object, "period_budget_quantity", $quantity, $key);
+            foreach ($dims as $dim) {
+                $this->writeAttribute($dim, "period_budget_balance", $balance, $key);
+                $this->writeAttribute($dim, "period_budget_quantity", $quantity, $key);
             }
         }
     };
 
-    PSALDO_POST = ROW_START 'PSALDO' ^ year:INT? period:DATE? account:ACCOUNT? objects:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
-        if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($balance)) {
+    PSALDO_POST = ROW_START 'PSALDO' ^ year:INT? period:DATE? account:ACCOUNT? dims:OBJECT_LIST? balance:AMOUNT? quantity:FLOAT? ROW_END {
+        if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($balance)) {
             $key = "$year.{$period->format('Ym')}";
             $quantity = $quantity ?: new Amount('0');
 
             $this->writeAttribute($account, "period_balance", $balance, $key);
             $this->writeAttribute($account, "period_quantity", $quantity, $key);
 
-            foreach ($objects as $object) {
-                $this->writeAttribute($object, "period_balance", $balance, $key);
-                $this->writeAttribute($object, "period_quantity", $quantity, $key);
+            foreach ($dims as $dim) {
+                $this->writeAttribute($dim, "period_balance", $balance, $key);
+                $this->writeAttribute($dim, "period_quantity", $quantity, $key);
             }
         }
     };
@@ -356,29 +358,59 @@ grammar Grammar extends AbstractParser
         );
     };
 
-    TRANS_POST = ROW_START 'TRANS' ^ account:ACCOUNT? objects:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END {
-        if ($this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($amount)) {
-            return $this->getVerificationBuilder()->createTransaction(
-                $account,
-                $objects,
-                $amount,
-                $date ?: null,
-                $desc ?: '',
-                $quantity ?: null,
-                $sign ?: ''
-            );
+    TRANS_POST = ROW_START 'TRANS' ^ account:ACCOUNT? dims:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END {
+        if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
+            $trans = new Transaction($account, $amount, $quantity, ...$dims);
+
+            if ($date) {
+                $trans->setDate($date);
+            }
+
+            if ($desc) {
+                $trans->setDescription($desc);
+            }
+
+            if ($sign) {
+                $trans->setSignature($sign);
+            }
+
+            return $trans;
         }
     };
 
-    BTRANS_POST = ROW_START 'BTRANS' ^ account:ACCOUNT? objects:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END {
-        if ($this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($amount)) {
-            $this->getLogger()->notice('Detected a BTRANS post, removed transactions are not supported yet..');
+    BTRANS_POST = ROW_START 'BTRANS' ^ account:ACCOUNT? dims:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END {
+        if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
+            $sign = $sign ?: '';
+
+            $trans = new DeletedTransaction($account, $amount, $sign, $quantity, ...$dims);
+
+            if ($date) {
+                $trans->setDate($date);
+            }
+
+            if ($desc) {
+                $trans->setDescription($desc);
+            }
+
+            return $trans;
         }
     };
 
-    RTRANS_POST = ROW_START 'RTRANS' ^ account:ACCOUNT? objects:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END {
-        if ($this->assertAccount($account) && $this->assertArray($objects) && $this->assertAmount($amount)) {
-            $this->getLogger()->notice('Detected a RTRANS post, added transactions are not supported yet..');
+    RTRANS_POST = ROW_START 'RTRANS' ^ account:ACCOUNT? dims:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END TRANS_POST {
+        if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
+            $sign = $sign ?: '';
+
+            $trans = new AddedTransaction($account, $amount, $sign, $quantity, ...$dims);
+
+            if ($date) {
+                $trans->setDate($date);
+            }
+
+            if ($desc) {
+                $trans->setDescription($desc);
+            }
+
+            return $trans;
         }
     };
 
@@ -464,7 +496,7 @@ grammar Grammar extends AbstractParser
     // Date
 
     OPTIONAL_DATE = date:(DATE / EMPTY_STRING) {
-        return $date;
+        return $date ?: null;
     };
 
     DATE = _ date:(RAW_DATE / QUOTED_DATE) _ {
