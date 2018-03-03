@@ -1,6 +1,6 @@
 {
     "name": "byrokrat/accounting",
-    "description": "Classes for working with bookkeeping data",
+    "description": "Analysis and generation of bookkeeping data according to Swedish standards",
     "keywords": ["accounting", "bookkeeping", "SIE"],
     "homepage": "https://github.com/byrokrat/accounting",
     "type": "library",
