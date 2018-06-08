@@ -119,16 +119,26 @@ For more examples see the documentation.
 
 Install dependencies
 
-    composer install
+```shell
+composer install
+```
 
-Install global development tools
+Install development tools
 
-    bob install_dev_tools
+```shell
+composer global require chh/bob:1.0@alpha
+export PATH=$PATH:$HOME/.composer/vendor/bin/
+bob install_dev_tools
+```
 
 Build and run tests
 
-    bob
+```shell
+bob
+```
 
 Check the contents of an sie4 file
 
-    bob check_sie4_file name=[filename]
+```shell
+bob check_sie4_file name=[filename]
+```

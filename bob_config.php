@@ -29,7 +29,7 @@ task('integrations', function() {
 
 desc('Run statical analysis using phpstan');
 task('phpstan', function() {
-    sh('phpstan analyze -c phpstan.neon -l 7 src', null, ['failOnError' => true]);
+    sh('phpstan analyze -c phpstan.neon -l 7 src', null, ['failOnError' => false]);
     println('Phpstan analysis passed');
 });
 
@@ -50,10 +50,12 @@ fileTask('src/Sie4/Parser/Grammar.php', ['src/Sie4/Parser/Grammar.peg'], functio
 
 desc('Globally install development tools');
 task('install_dev_tools', function() {
+    sh('composer global require consolidation/cgr', null, ['failOnError' => true]);
     sh('cgr scato/phpeg:^1.0', null, ['failOnError' => true]);
     sh('cgr phpstan/phpstan', null, ['failOnError' => true]);
     sh('cgr phpunit/phpunit', null, ['failOnError' => true]);
     sh('cgr squizlabs/php_codesniffer', null, ['failOnError' => true]);
+    sh('cgr hanneskod/readme-tester:^1.0@beta', null, ['failOnError' => true]);
 });
 
 desc('Validate the contents of a SIE4 file');

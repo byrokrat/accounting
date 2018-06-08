@@ -2,20 +2,16 @@ sudo: false
 
 language: php
 
-matrix:
-    include:
-        - php: 7.2
-        - php: 7.1
-        - php: 7.0
-        - php: nightly
-    allow_failures:
-        - php: nightly
-    fast_finish: true
+php:
+  - 7.2
+  - 7.1
+  - 7.0
 
 install:
-    - composer require hanneskod/readme-tester:^1.0@beta --no-interaction
+  - composer install
+  - composer global require chh/bob:1.0@alpha
+  - export PATH=$PATH:$HOME/.composer/vendor/bin/
+  - bob install_dev_tools
 
 script:
-    - phpunit --verbose
-    - phpunit integrations --verbose
-    - vendor/bin/readme-tester test README.md docs -v
+  - bob
