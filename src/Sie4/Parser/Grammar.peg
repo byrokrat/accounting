@@ -28,7 +28,7 @@ use byrokrat\amount\Amount;
 /**
  * Grammar for generating a SIE version 4 compliant parser using scato/phpeg
  *
- * @see "bin/build_sie_parser" To rebuild the parser
+ * @see "bob build_sie_parser" to rebuild the parser
  */
 grammar Grammar extends AbstractParser
 {

@@ -4,20 +4,19 @@
 [![license](https://img.shields.io/github/license/byrokrat/accounting.svg?maxAge=2592000&style=flat-square)](LICENSE)
 [![Build Status](https://img.shields.io/travis/byrokrat/accounting/master.svg?style=flat-square)](https://travis-ci.org/byrokrat/accounting)
 [![Quality Score](https://img.shields.io/scrutinizer/g/byrokrat/accounting.svg?style=flat-square)](https://scrutinizer-ci.com/g/byrokrat/accounting)
-[![Dependency Status](https://img.shields.io/gemnasium/byrokrat/accounting.svg?style=flat-square)](https://gemnasium.com/byrokrat/accounting)
 
 > NOTE! This package is under development and the API subject to change.
 
 Analysis and generation of bookkeeping data according to Swedish standards.
 
-Installation
-------------
+## Installation
+
 ```shell
 composer require byrokrat/accounting:dev-master
 ```
 
-Usage
------
+## Usage
+
 [Read the documentation here.](docs)
 
 Although it would be possible to build a general bookkeeping application on top
@@ -50,7 +49,7 @@ To build verifications using our template we need an account plan
 
 <!--
     @example accounts
-    @extends template
+    @include template
 -->
 ```php
 $accountFactory = new byrokrat\accounting\AccountFactory;
@@ -67,7 +66,7 @@ account plan.
 
 <!--
     @example verifications
-    @extends accounts
+    @include accounts
 -->
 ```php
 $verA = $template->build(
@@ -97,7 +96,7 @@ We then query our generated accounting data using something like
 
 <!--
     @example query
-    @extends verifications
+    @include verifications
     @expectOutput "sales"
 -->
 ```php
@@ -109,9 +108,27 @@ echo $data->select()->verifications()->whereAccount('3010')->getFirst()->getDesc
 
 For more examples see the documentation.
 
-Documentation
--------------
+## Documentation
+
 - [Start](docs)
 - [Querying accounting data](docs/01-querying.md)
 - [Parsing and writing SIE files](docs/02-sie.md)
 - [Generating verifications using templates](docs/03-templates.md)
+
+## Hacking
+
+Install dependencies
+
+    composer install
+
+Install global development tools
+
+    bob install_dev_tools
+
+Build and run tests
+
+    bob
+
+Check the contents of an sie4 file
+
+    bob check_sie4_file name=[filename]

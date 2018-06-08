@@ -68,7 +68,8 @@ a container.
 
 <!--
     @example listAccounts
-    @extends container
+    @include container
+    @include macro
 -->
 ```php
 $container->select()->accounts()->whereUnique()->orderById()->asArray();
@@ -81,7 +82,8 @@ An example of how Accounting may be used to sort transactions inte a ledger
 
 <!--
     @example huvudbok
-    @extends container
+    @include container
+    @include macro
     @expectOutput "/Outgoing balance 1000.00/"
 -->
 ```php

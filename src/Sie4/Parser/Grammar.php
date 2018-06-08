@@ -5249,17 +5249,6 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
                 if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
-                    // TODO remove
-                    #return $this->getVerificationBuilder()->createTransaction(
-                        #$account,
-                        #$dims,
-                        #$amount,
-                        #$date,
-                        #$desc ?: '',
-                        #$quantity,
-                        #$sign ?: ''
-                    #);
-
                     $trans = new Transaction($account, $amount, $quantity, ...$dims);
 
                     if ($date) {

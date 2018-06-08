@@ -11,9 +11,9 @@
 
 ## Cleanup repo
 
-1. `bin` kan gå bort
 1. `res` kan gå bort
 1. `integrations` ska antagligen heta någonting annat...
+1. Drop psr/log ??
 
 ## Parser
 
