@@ -51,15 +51,15 @@ class CurrencyBuilder
     /**
      * Set the currency classname
      *
-     * @param  string $currency The iso-4217 currency code
-     * @return void
+     * @param string $currency The iso-4217 currency code
      */
-    public function setCurrencyClass(string $currency)
+    public function setCurrencyClass(string $currency): void
     {
         $currencyClassname = "byrokrat\\amount\\Currency\\$currency";
 
         if (!class_exists($currencyClassname)) {
-            return $this->logger->warning("Unknown currency $currency");
+            $this->logger->warning("Unknown currency $currency");
+            return;
         }
 
         $this->currencyClassname = $currencyClassname;

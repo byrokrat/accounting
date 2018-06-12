@@ -501,7 +501,8 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     public function testExceptionOnUnknownAccountNumber()
     {
         $this->expectException(Exception\RuntimeException::CLASS);
-        (new Query)->getAccount('1234');
+        $dimension = $this->prophesizeDimension('1234')->reveal();
+        (new Query([$dimension]))->getAccount('1234');
     }
 
     public function testGetDimension()

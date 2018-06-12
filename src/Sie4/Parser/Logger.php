@@ -104,11 +104,10 @@ class Logger extends AbstractLogger
      *
      * Defaults to LogLevel::WARNING
      *
-     * @param  string $level Desired error reporting level
-     * @return void
-     * @see    \Psr\Log\LogLevel For the list of relevant log levels
+     * @param string $level Desired error reporting level
+     * @see   \Psr\Log\LogLevel For the list of relevant log levels
      */
-    public function setLogLevel(string $level)
+    public function setLogLevel(string $level): void
     {
         $this->level = $level;
     }
@@ -116,7 +115,7 @@ class Logger extends AbstractLogger
     /**
      * Increment current line count
      */
-    public function incrementLineCount()
+    public function incrementLineCount(): void
     {
         $this->lineCount++;
     }
@@ -127,9 +126,8 @@ class Logger extends AbstractLogger
      * @param mixed $level
      * @param string $message
      * @param array $context
-     * @return null
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         if (in_array($this->level, self::$logLevelsMap[$level])) {
             $this->log[] = $this->format($level, $message, $context);

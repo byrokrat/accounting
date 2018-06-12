@@ -63,10 +63,8 @@ class DimensionBuilder
 
     /**
      * Create a new accounting dimension
-     *
-     * @return void
      */
-    public function addDimension(string $dimId, string $desc, string $super = '')
+    public function addDimension(string $dimId, string $desc, string $super = ''): void
     {
         if (isset($this->dims[$dimId])) {
             $this->logger->warning("Overwriting previously created dimension $dimId");
@@ -81,10 +79,8 @@ class DimensionBuilder
 
     /**
      * Create a new accounting object
-     *
-     * @return void
      */
-    public function addObject(string $super, string $objectId, string $desc)
+    public function addObject(string $super, string $objectId, string $desc): void
     {
         if (isset($this->dims["$super.$objectId"])) {
             $this->logger->warning("Overwriting previously created object $super.$objectId");

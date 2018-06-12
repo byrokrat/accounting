@@ -38,7 +38,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     private $iteratorFactory;
 
     /**
-     * @var \Closure Registerad macros
+     * @var \Closure[] Registerad macros
      */
     private static $macros = [];
 
@@ -169,7 +169,17 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      */
     public function count(): int
     {
-        return iterator_count($this->getIterator());
+        $iter = $this->getIterator();
+
+        if ($iter instanceof \Traversable) {
+            return iterator_count($iter);
+        }
+
+        if (is_array($iter)) {
+            return count($iter);
+        }
+
+        return 0;
     }
 
     /**
@@ -228,7 +238,13 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      */
     public function getAccount(string $accountId): AccountInterface
     {
-        return $this->accounts()->getDimension($accountId);
+        $account = $this->accounts()->getDimension($accountId);
+
+        if (!$account instanceof AccountInterface) {
+            throw new Exception\RuntimeException("Account $accountId does not exist");
+        }
+
+        return $account;
     }
 
     /**
