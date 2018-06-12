@@ -22,9 +22,9 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\accounting\Transaction\Transaction;
 use byrokrat\accounting\Interfaces\Attributable;
 use byrokrat\accounting\Interfaces\Describable;
-use byrokrat\accounting\Interfaces\Queryable;
 use byrokrat\accounting\Interfaces\Traits\AttributableTrait;
 use byrokrat\accounting\Interfaces\Traits\DescribableTrait;
 use byrokrat\amount\Amount;
@@ -81,12 +81,12 @@ class Template implements Attributable, Describable
     /**
      * Create verification from template data
      *
-     * @param string[]  $translationMap Substitution key-value-pairs
-     * @param Queryable $container      Queryable object containing account data
+     * @param string[]           $translationMap Substitution key-value-pairs
+     * @param QueryableInterface $container      Queryable object containing account data
      *
      * @throws Exception\RuntimeException If any key is NOT translated
      */
-    public function build(array $translationMap, Queryable $container): Verification
+    public function build(array $translationMap, QueryableInterface $container): Verification
     {
         $container = $container->select();
         $filter = $this->createTranslationFilter($translationMap);

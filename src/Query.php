@@ -22,12 +22,13 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\amount\Amount;
 
 /**
  * Filter and iterate over collections of accounting objects
  */
-class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
+class Query implements QueryableInterface, \IteratorAggregate, \Countable
 {
     /**
      * @var callable Internal factory for creating the query iterator
@@ -56,8 +57,8 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
     /**
      * Load data to query
      *
-     * @param array|\Traversable|\Closure $data Items to query. If items is a
-     *     Closure it is expected to take no parameters and return a generator.
+     * @param iterable|\Closure $data Items to query. If items is a
+     *     Closure it is expected to take no parameters and return an iterable.
      */
     public function __construct($data = [])
     {
@@ -66,12 +67,14 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
             return;
         }
 
-        $this->validateTraversability($data);
+        if (!is_iterable($data)) {
+            throw new Exception\LogicException('Query source must be iterable');
+        }
 
         $this->iteratorFactory = function () use ($data) {
             foreach ($data as $item) {
                 yield $item;
-                if ($item instanceof Interfaces\Queryable) {
+                if ($item instanceof QueryableInterface) {
                     yield from $item->select();
                 }
             }
@@ -103,7 +106,7 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
     /**
      * Get all items matched by query
      *
-     * As the result set is constructed by multiple generators the probability
+     * As the result may be constructed by multiple generators the probability
      * of having multiple items with the same native key is high, which in turn
      * triggers unexpected behaviour in iterator_to_array(). For that reason
      * this method should be used instead of iterator_to_array.
@@ -261,7 +264,7 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
     /**
      * Get iterator for items filtered by query
      */
-    public function getIterator(): \Generator
+    public function getIterator(): iterable
     {
         return ($this->iteratorFactory)();
     }
@@ -336,14 +339,17 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
      */
     public function load($data): Query
     {
-        $this->validateTraversability($data);
+        if (!is_iterable($data)) {
+            throw new Exception\LogicException('Query source must be iterable');
+        }
+
         $outerIterator = ($this->iteratorFactory)();
 
         return new Query(function () use ($outerIterator, $data) {
             yield from $outerIterator;
             foreach ($data as $item) {
                 yield $item;
-                if ($item instanceof Interfaces\Queryable) {
+                if ($item instanceof QueryableInterface) {
                     yield from $item->select();
                 }
             }
@@ -402,20 +408,17 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
         return $initial;
     }
 
-    /**
-     * Implements the Queryable interface
-     */
     public function select(): Query
     {
         return $this;
     }
 
     /**
-     * Filter that returns only Transaction objects
+     * Filter that returns only transaction objects
      */
     public function transactions(): Query
     {
-        return $this->filterType(Transaction::CLASS);
+        return $this->filterType(TransactionInterface::CLASS);
     }
 
     /**
@@ -470,7 +473,7 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
                 return $item->getMagnitude()->$comp($amount);
             }
 
-            if ($item instanceof Transaction) {
+            if ($item instanceof TransactionInterface) {
                 return $item->getAmount()->$comp($amount);
             }
 
@@ -518,17 +521,6 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
     }
 
     /**
-     * Filter those objects that contain a description matching $regexp
-     */
-    public function whereDescription(string $regexp): Query
-    {
-        return $this->where(function ($item) use ($regexp) {
-            return $item instanceof Interfaces\Describable
-                && preg_match($regexp, $item->getDescription());
-        });
-    }
-
-    /**
      * Filter unique items in query
      */
     public function whereUnique(): Query
@@ -544,20 +536,5 @@ class Query implements Interfaces\Queryable, \IteratorAggregate, \Countable
 
             return true;
         });
-    }
-
-    /**
-     * Validate that data can be traversed using a foreach loop
-     *
-     * @param  mixed $data
-     * @throws Exception\LogicException if $data is not traversable
-     */
-    private function validateTraversability($data)
-    {
-        if (!is_array($data) && !$data instanceof \Traversable) {
-            throw new Exception\LogicException(
-                "Unexpected query source (" . gettype($data) . '), expecting array or Traversable.'
-            );
-        }
     }
 }

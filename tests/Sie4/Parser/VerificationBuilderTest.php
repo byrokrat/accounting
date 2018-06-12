@@ -9,6 +9,7 @@ use byrokrat\accounting\Exception;
 use byrokrat\amount\Amount;
 use byrokrat\amount\Currency;
 use Psr\Log\LoggerInterface;
+use Prophecy\Argument;
 
 /**
  * @covers \byrokrat\accounting\Sie4\VerificationBuilder
@@ -23,7 +24,7 @@ class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
             $this->createMock(LoggerInterface::CLASS)
         );
 
-        $date = new \DateTime;
+        $date = new \DateTimeImmutable;
         $desc = 'description';
 
         $transA = $this->prophesizeTransaction(new Currency\SEK('100'));
@@ -31,19 +32,21 @@ class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
         $transA->setDate($date)->shouldBeCalled();
         $transA->getDescription()->willReturn('')->shouldBeCalled();
         $transA->setDescription($desc)->shouldBeCalled();
+        $transA->setAttribute('ver_num', Argument::any())->shouldBeCalled();
 
         $transB = $this->prophesizeTransaction(new Currency\SEK('-100'));
         $transB->hasDate()->willReturn(false)->shouldBeCalled();
         $transB->setDate($date)->shouldBeCalled();
         $transB->getDescription()->willReturn('')->shouldBeCalled();
         $transB->setDescription($desc)->shouldBeCalled();
+        $transB->setAttribute('ver_num', Argument::any())->shouldBeCalled();
 
         $verification = $verificationBuilder->createVerification(
             $series = 'A',
             $number = '10',
             $date,
             $desc,
-            $regdate = new \DateTime,
+            $regdate = new \DateTimeImmutable,
             $sign = 'HF',
             $transactions = [$transA->reveal(), $transB->reveal()]
         );
@@ -95,11 +98,12 @@ class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
         $transA = $this->prophesizeTransaction(new Currency\SEK('100'));
         $transA->hasDate()->willReturn(true)->shouldBeCalled();
         $transA->getDescription()->willReturn('desc')->shouldBeCalled();
+        $transA->setAttribute('ver_num', Argument::any())->shouldBeCalled();
 
         $verification = $verificationBuilder->createVerification(
             '',
             '',
-            new \DateTime,
+            new \DateTimeImmutable,
             '',
             null,
             '',

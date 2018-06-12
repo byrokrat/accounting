@@ -47,8 +47,8 @@ echo (new Sie4\Writer\Writer)->generate(
     (new Sie4\Writer\Settings)->setTargetCompany('my-company'),
     new Query([
         (new Verification)
-            ->addTransaction(new Transaction(new Account\Asset('1920', 'Bank'), new Amount('100')))
-            ->addTransaction(new Transaction(new Account\Earning('3000', 'Intänk'), new Amount('-100')))
+            ->addTransaction(new Transaction\Transaction(new Account\Asset('1920', 'Bank'), new Amount('100')))
+            ->addTransaction(new Transaction\Transaction(new Account\Earning('3000', 'Intänk'), new Amount('-100')))
     ])
 );
 ```

@@ -2,13 +2,24 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting;
+namespace byrokrat\accounting\Transaction;
 
+use byrokrat\accounting\utils;
+use byrokrat\accounting\Account;
 use byrokrat\amount\Amount;
 
 class TransactionTest extends \PHPUnit\Framework\TestCase
 {
-    use utils\InterfaceAssertionsTrait, utils\PropheciesTrait;
+    use utils\PropheciesTrait,
+        utils\AttributableTestsTrait,
+        utils\DateTestsTrait,
+        utils\DescriptionTestsTrait,
+        utils\SignatureTestsTrait;
+
+    protected function getObjectToTest()
+    {
+        return $this->createTransaction();
+    }
 
     private function createTransaction(&$account = null, &$amount = null, &$quantity = null, &$dimensions = null)
     {
@@ -33,31 +44,6 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($dimensions, $transaction->getDimensions());
     }
 
-    public function testAttributable()
-    {
-        $this->assertAttributable($this->createTransaction());
-    }
-
-    public function testDateable()
-    {
-        $transaction = $this->createTransaction();
-
-        $this->assertDateableDateNotSet($transaction);
-
-        $this->assertDateable(
-            $date = new \DateTime,
-            $transaction->setDate($date)
-        );
-    }
-
-    public function testDescribable()
-    {
-        $this->assertDescribable(
-            '',
-            $this->createTransaction()
-        );
-    }
-
     public function testIterable()
     {
         $transaction = $this->createTransaction($account, $amount, $void, $dimensions);
@@ -75,18 +61,6 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(
             array_merge([$account, $amount], $dimensions),
             $transaction->select()->asArray()
-        );
-    }
-
-    public function testSignable()
-    {
-        $transaction = $this->createTransaction();
-
-        $this->assertSignableSignatureNotSet($transaction);
-
-        $this->assertSignable(
-            $signature = 'signature',
-            $transaction->setSignature($signature)
         );
     }
 

@@ -24,14 +24,13 @@ namespace byrokrat\accounting;
 
 use byrokrat\accounting\Interfaces\Attributable;
 use byrokrat\accounting\Interfaces\Describable;
-use byrokrat\accounting\Interfaces\Queryable;
 use byrokrat\accounting\Interfaces\Traits\AttributableTrait;
 use byrokrat\accounting\Interfaces\Traits\DescribableTrait;
 
 /**
  * Defines an entity through which transactions can be channeled
  */
-class Dimension implements Attributable, Describable, Queryable
+class Dimension implements Attributable, Describable, QueryableInterface
 {
     use AttributableTrait, DescribableTrait;
 
@@ -119,9 +118,6 @@ class Dimension implements Attributable, Describable, Queryable
         return $this->getParent()->inDimension($dimension);
     }
 
-    /**
-     * Implements the Queryable interface
-     */
     public function select(): Query
     {
         return $this->hasParent() ? new Query([$this->getParent()]) : new Query;

@@ -6,6 +6,7 @@ namespace byrokrat\accounting;
 
 use byrokrat\amount\Amount;
 use byrokrat\amount\Currency\SEK;
+use Prophecy\Argument;
 
 class VerificationTest extends \PHPUnit\Framework\TestCase
 {
@@ -13,11 +14,16 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
 
     public function testAccessingTransactions()
     {
+        $transA = $this->prophesizeTransaction();
+        $transA->setAttribute('ver_num', Argument::any())->shouldBeCalled();
+        $transA = $transA->reveal();
+
+        $transB = $this->prophesizeTransaction();
+        $transB->setAttribute('ver_num', Argument::any())->shouldBeCalled();
+        $transB = $transB->reveal();
+
         $this->assertSame(
-            [
-                $transA = $this->prophesizeTransaction()->reveal(),
-                $transB = $this->prophesizeDeletedTransaction()->reveal()
-            ],
+            [$transA, $transB],
             (new Verification)->addTransaction($transA)->addTransaction($transB)->getTransactions()
         );
     }
@@ -79,11 +85,14 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
 
     public function testQueryable()
     {
+        $trans = $this->prophesizeTransaction();
+        $trans->setAttribute('ver_num', Argument::any())->shouldBeCalled();
+
         $this->assertSame(
             2,
             (new Verification)
-                ->addTransaction($this->prophesizeTransaction()->reveal())
-                ->addTransaction($this->prophesizeTransaction()->reveal())
+                ->addTransaction($trans->reveal())
+                ->addTransaction($trans->reveal())
                 ->select()->transactions()->count()
         );
     }
@@ -123,9 +132,9 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         $verification = new Verification;
 
         foreach ($amounts as $amount) {
-            $verification->addTransaction(
-                $this->prophesizeTransaction($amount)->reveal()
-            );
+            $trans = $this->prophesizeTransaction($amount);
+            $trans->setAttribute('ver_num', Argument::any())->shouldBeCalled();
+            $verification->addTransaction($trans->reveal());
         }
 
         $this->assertSame($balanced, $verification->isBalanced());
@@ -139,27 +148,34 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
     {
         $verification = new Verification;
 
-        $verification->addTransaction(
-            $this->prophesizeDeletedTransaction(new Amount('100'))->reveal()
-        );
+        $trans = $this->prophesizeDeletedTransaction(new Amount('100'));
+        $trans->setAttribute('ver_num', Argument::any())->shouldBeCalled();
+
+        $verification->addTransaction($trans->reveal());
 
         $this->assertSame(0, $verification->getMagnitude()->getInt());
     }
 
     public function testExceptionOnGetMagnitudeWithUnbalancedVerification()
     {
+        $verification = new Verification;
+        $verification->setId(1234);
+
+        $trans = $this->prophesizeTransaction(new Amount('100'));
+        $trans->setAttribute('ver_num', 1234)->shouldBeCalled();
+
         $this->expectException(Exception\RuntimeException::CLASS);
-        (new Verification)
-            ->addTransaction($this->prophesizeTransaction(new Amount('100'))->reveal())
-            ->getMagnitude();
+        $verification->addTransaction($trans->reveal())->getMagnitude();
     }
 
     public function testCastToString()
     {
         $transA = $this->prophesizeTransaction();
+        $transA->setAttribute('ver_num', Argument::any())->shouldBeCalled();
         $transA->__toString()->willReturn('1234: 100');
 
         $transB = $this->prophesizeTransaction();
+        $transB->setAttribute('ver_num', Argument::any())->shouldBeCalled();
         $transB->__toString()->willReturn('4321: -100');
 
         $this->assertSame(

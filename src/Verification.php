@@ -22,11 +22,11 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Interfaces\Attributable;
 use byrokrat\accounting\Interfaces\Dateable;
 use byrokrat\accounting\Interfaces\Describable;
 use byrokrat\accounting\Interfaces\Signable;
-use byrokrat\accounting\Interfaces\Queryable;
 use byrokrat\accounting\Interfaces\Traits\AttributableTrait;
 use byrokrat\accounting\Interfaces\Traits\DateableTrait;
 use byrokrat\accounting\Interfaces\Traits\DescribableTrait;
@@ -36,7 +36,7 @@ use byrokrat\amount\Amount;
 /**
  * Simple verification value object wrapping a list of transactions
  */
-class Verification implements Attributable, Dateable, Describable, Queryable, Signable, \IteratorAggregate
+class Verification implements Attributable, Dateable, Describable, QueryableInterface, Signable, \IteratorAggregate
 {
     use AttributableTrait, DateableTrait, DescribableTrait, SignableTrait;
 
@@ -56,7 +56,7 @@ class Verification implements Attributable, Dateable, Describable, Queryable, Si
     private $summary;
 
     /**
-     * @var Transaction[] Included transactions
+     * @var TransactionInterface[] Included transactions
      */
     private $transactions = [];
 
@@ -118,7 +118,7 @@ class Verification implements Attributable, Dateable, Describable, Queryable, Si
     /**
      * Add a transaction to verification
      */
-    public function addTransaction(Transaction $transaction): self
+    public function addTransaction(TransactionInterface $transaction): self
     {
         $transaction->setAttribute('ver_num', $this->getId());
         $this->transactions[] = $transaction;
@@ -137,7 +137,7 @@ class Verification implements Attributable, Dateable, Describable, Queryable, Si
     /**
      * Get included transactions
      *
-     * @return Transaction[]
+     * @return TransactionInterface[]
      */
     public function getTransactions(): array
     {
@@ -146,8 +146,10 @@ class Verification implements Attributable, Dateable, Describable, Queryable, Si
 
     /**
      * Implements the IteratorAggregate interface
+     *
+     * TODO propper phpatsn return statement...
      */
-    public function getIterator(): \Generator
+    public function getIterator(): iterable
     {
         foreach ($this->getTransactions() as $transaction) {
             yield $transaction;

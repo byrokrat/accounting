@@ -2,8 +2,6 @@
 
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\accounting\AddedTransaction;
-use byrokrat\accounting\DeletedTransaction;
 use byrokrat\accounting\Transaction;
 use byrokrat\amount\Amount;
 
@@ -5022,7 +5020,7 @@ class Grammar extends AbstractParser
                 return array_filter(
                     $trans,
                     function ($item) {
-                        return $item instanceof Transaction;
+                        return $item instanceof Transaction\TransactionInterface;
                     }
                 );
             });
@@ -5249,7 +5247,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
                 if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
-                    $trans = new Transaction($account, $amount, $quantity, ...$dims);
+                    $trans = new Transaction\Transaction($account, $amount, $quantity, ...$dims);
 
                     if ($date) {
                         $trans->setDate($date);
@@ -5491,7 +5489,7 @@ class Grammar extends AbstractParser
                 if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
                     $sign = $sign ?: '';
 
-                    $trans = new DeletedTransaction($account, $amount, $sign, $quantity, ...$dims);
+                    $trans = new Transaction\DeletedTransaction($account, $amount, $sign, $quantity, ...$dims);
 
                     if ($date) {
                         $trans->setDate($date);
@@ -5735,7 +5733,7 @@ class Grammar extends AbstractParser
                 if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
                     $sign = $sign ?: '';
 
-                    $trans = new AddedTransaction($account, $amount, $sign, $quantity, ...$dims);
+                    $trans = new Transaction\AddedTransaction($account, $amount, $sign, $quantity, ...$dims);
 
                     if ($date) {
                         $trans->setDate($date);

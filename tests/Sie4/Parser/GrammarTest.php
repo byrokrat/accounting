@@ -554,7 +554,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         ")->select()->verifications()->getFirst();
 
         $this->assertInstanceOf(
-            \byrokrat\accounting\AddedTransaction::CLASS,
+            \byrokrat\accounting\Transaction\AddedTransaction::CLASS,
             $ver->getTransactions()[1]
         );
 
@@ -579,7 +579,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         ")->select()->verifications()->getFirst();
 
         $this->assertInstanceOf(
-            \byrokrat\accounting\DeletedTransaction::CLASS,
+            \byrokrat\accounting\Transaction\DeletedTransaction::CLASS,
             $ver->getTransactions()[1]
         );
 

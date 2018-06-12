@@ -22,7 +22,7 @@
         }
     },
     "require": {
-        "php": "^7",
+        "php": "^7.1",
         "byrokrat/amount": "^2",
         "psr/log": "^1.0"
     }

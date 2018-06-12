@@ -20,14 +20,16 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting;
+namespace byrokrat\accounting\Transaction;
 
+use byrokrat\accounting\Account;
+use byrokrat\accounting\Dimension;
 use byrokrat\amount\Amount;
 
 /**
- * Represents a transaction that has been added to an existing verification
+ * Represents a transaction that has been deleted from an existing verification
  */
-class AddedTransaction extends Transaction
+class DeletedTransaction extends Transaction
 {
     public function __construct(
         Account $account,
@@ -40,13 +42,13 @@ class AddedTransaction extends Transaction
         $this->setSignature($signature);
     }
 
-    public function __toString(): string
-    {
-        return '(ADDED) ' . parent::__toString();
-    }
-
-    public function isAdded(): bool
+    public function isDeleted(): bool
     {
         return true;
+    }
+
+    public function __toString(): string
+    {
+        return '(DELETED) ' . parent::__toString();
     }
 }

@@ -2,18 +2,23 @@
 
 ## Klass-struktur
 
-* `TransactionInterface`, och flytta klasser till `Transaction` namespace
 * `DimensionInterface` och Account mf till `Dimension` namespace.
 * Även `AccountInterface`??
 * Rename `Summary` => `Balance` (glöm inte getSummary)
 * Interfaces should not be in an `Interfaces` namespace, this is just silly..
-* phpstan...
+
+* Phpstan errors
+    sätt failOnError igen i bob när allt är fixat..
+
+* DateTimeInterface???
+
+* TODOs i kod...
+
+* Ta bort så många som möjligt av hasDate() osv från Helpers...
 
 ## Cleanup repo
 
-1. `res` kan gå bort
 1. `integrations` ska antagligen heta någonting annat...
-1. Drop psr/log ??
 
 ## Parser
 
@@ -23,5 +28,6 @@ i hur attributes skrivits. Se om det är något jag kan rätta till...
 ## Template
 
 1. Template skapar verifikationer med vanlit amount-objekt. Ska vara SEK eller annan inställd valuta.
+   Finns CurrencyFactory i parser som kanske kan användas..
 1. Där är också dålig kod med skumma array strukturer som behöver utvecklas...
 1. Template skriver inte heller något datum till varken transaction eller verifikat.

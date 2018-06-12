@@ -2,8 +2,10 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting;
+namespace byrokrat\accounting\Transaction;
 
+use byrokrat\accounting\utils;
+use byrokrat\accounting\Account;
 use byrokrat\amount\Amount;
 
 class DeletedTransactionTest extends \PHPUnit\Framework\TestCase

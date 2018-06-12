@@ -24,7 +24,7 @@ namespace byrokrat\accounting\Sie4\Writer;
 
 use byrokrat\accounting\Account;
 use byrokrat\accounting\Exception;
-use byrokrat\accounting\Transaction;
+use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Verification;
 use byrokrat\accounting\Query;
 
@@ -119,7 +119,7 @@ class Writer
     /**
      * Write transaction to output
      */
-    public function writeTransaction(Transaction $transaction, Output $output)
+    public function writeTransaction(TransactionInterface $transaction, Output $output)
     {
         $output->writeln(
             "\t#TRANS %s {} %s",

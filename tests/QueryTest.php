@@ -388,7 +388,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [$foo],
-            (new Query([$foo, $bar]))->filterType(Interfaces\Queryable::CLASS)->where(function ($item) {
+            (new Query([$foo, $bar]))->filterType(QueryableInterface::CLASS)->where(function ($item) {
                 return is_string($item) && $item == 'foo';
             })->asArray(),
             '$bar should be removed as it does not contain the subitem foo'
@@ -405,7 +405,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [$bar],
-            (new Query([$foo, $bar]))->filterType(Interfaces\Queryable::CLASS)->whereNot(function ($item) {
+            (new Query([$foo, $bar]))->filterType(QueryableInterface::CLASS)->whereNot(function ($item) {
                 return is_string($item) && $item == 'foo';
             })->asArray(),
             '$bar should be kept as it does not contain the subitem foo'
@@ -487,24 +487,6 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(
             2,
             (new Query($testItems))->whereAmountIsLessThan(new Amount('3'))->asArray()
-        );
-    }
-
-    /**
-     * @depends testWhere
-     */
-    public function testWhereDescription()
-    {
-        $fooProphecy = $this->prophesize(Interfaces\Describable::CLASS);
-        $fooProphecy->getDescription()->willReturn('foo');
-
-        $barProphecy = $this->prophesize(Interfaces\Describable::CLASS);
-        $barProphecy->getDescription()->willReturn('bar');
-
-        $this->assertSame(
-            [$foo = $fooProphecy->reveal()],
-            (new Query([$foo, $barProphecy->reveal()]))->whereDescription('/foo/')->asArray(),
-            'Array should only contain foo as regexp does not match bar'
         );
     }
 

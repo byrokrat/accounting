@@ -18,17 +18,25 @@
  * Copyright 2016-18 Hannes Forsgård
  */
 
-namespace byrokrat\accounting\Interfaces;
-
-use byrokrat\accounting\Query;
+namespace byrokrat\accounting\Helper;
 
 /**
- * Defines an object with queryable content
+ * Basic implementation of a describable object
  */
-interface Queryable
+trait DescribableTrait
 {
     /**
-     * Get a query object loaded with queryable content
+     * @var string
      */
-    public function select(): Query;
+    private $description = '';
+
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
 }

@@ -23,13 +23,12 @@ declare(strict_types = 1);
 namespace byrokrat\accounting;
 
 use byrokrat\accounting\Interfaces\Attributable;
-use byrokrat\accounting\Interfaces\Queryable;
 use byrokrat\accounting\Interfaces\Traits\AttributableTrait;
 
 /**
  * A container is a queryable and attributable keeper of bookkeeping objects
  */
-class Container implements Attributable, Queryable, \IteratorAggregate
+class Container implements Attributable, QueryableInterface, \IteratorAggregate
 {
     use AttributableTrait;
 
@@ -79,16 +78,13 @@ class Container implements Attributable, Queryable, \IteratorAggregate
     /**
      * Implements the IteratorAggregate interface
      */
-    public function getIterator(): \Generator
+    public function getIterator(): iterable
     {
         foreach ($this->getItems() as $item) {
             yield $item;
         }
     }
 
-    /**
-     * Implements the Queryable interface
-     */
     public function select(): Query
     {
         return new Query($this->getIterator());

@@ -24,7 +24,7 @@ namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Account;
 use byrokrat\accounting\Dimension;
-use byrokrat\accounting\Transaction;
+use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Verification;
 use byrokrat\amount\Amount;
 use byrokrat\amount\Currency;
@@ -51,13 +51,13 @@ class VerificationBuilder
     /**
      * Create a new transaction object
      *
-     * @param string             $series       The series verification should be a part of
-     * @param string             $number       Verification number
-     * @param \DateTimeInterface $date         Date of accounting action
-     * @param string             $desc         Free text description
-     * @param \DateTimeInterface $regdate      Date of registration (defaults to $date)
-     * @param string             $sign         Signature
-     * @param Transaction[]      $transactions List of included transactions
+     * @param string                 $series       The series verification should be a part of
+     * @param string                 $number       Verification number
+     * @param \DateTimeInterface     $date         Date of accounting action
+     * @param string                 $desc         Free text description
+     * @param \DateTimeInterface     $regdate      Date of registration (defaults to $date)
+     * @param string                 $sign         Signature
+     * @param TransactionInterface[] $transactions List of included transactions
      */
     public function createVerification(
         string $series,

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\accounting\Transaction\Transaction;
 use byrokrat\amount\Amount;
 
 class ProcessorTest extends \PHPUnit\Framework\TestCase

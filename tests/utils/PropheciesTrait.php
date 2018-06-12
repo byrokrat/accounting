@@ -9,7 +9,8 @@ use byrokrat\accounting\AccountFactory;
 use byrokrat\accounting\Dimension;
 use byrokrat\accounting\Interfaces;
 use byrokrat\accounting\Query;
-use byrokrat\accounting\Transaction;
+use byrokrat\accounting\QueryableInterface;
+use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Verification;
 use byrokrat\amount\Amount;
 use Prophecy\Argument;
@@ -91,7 +92,7 @@ trait PropheciesTrait
      */
     public function prophesizeQueryable(array $content = []): ObjectProphecy
     {
-        $queryable = $this->prophesize(Interfaces\Queryable::CLASS);
+        $queryable = $this->prophesize(QueryableInterface::CLASS);
         $queryable->select()->will(function () use ($content) {
             return new Query($content);
         });
@@ -107,11 +108,14 @@ trait PropheciesTrait
      */
     public function prophesizeTransaction(Amount $amount = null, Account $account = null): ObjectProphecy
     {
-        $transaction = $this->prophesize(Transaction::CLASS);
-        $transaction->getAmount()->willReturn($amount ?: new Amount('0'));
-        $transaction->getAccount()->willReturn($account ?: $this->prophesizeAccount()->reveal());
-        $transaction->setAttribute('ver_num', Argument::any());
+        $account = $account ?: $this->prophesizeAccount()->reveal();
+        $amount = $amount ?: new Amount('0');
+
+        $transaction = $this->prophesize(TransactionInterface::CLASS);
+        $transaction->getAmount()->willReturn($amount);
+        $transaction->getAccount()->willReturn($account);
         $transaction->isDeleted()->willReturn(false);
+        $transaction->getIterator()->willReturn([$amount, $account]);
         $transaction->select()->will(function () use ($amount, $account) {
             return new Query([$amount, $account]);
         });
