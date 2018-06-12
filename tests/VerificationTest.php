@@ -183,7 +183,7 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
             (string)(new Verification)
                 ->addTransaction($transA->reveal())
                 ->addTransaction($transB->reveal())
-                ->setDate(new \DateTime('20170208'))
+                ->setDate(new \DateTimeImmutable('20170208'))
                 ->setDescription('Verification')
         );
     }

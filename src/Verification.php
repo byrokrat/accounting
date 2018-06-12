@@ -50,7 +50,7 @@ class Verification implements
     private $idNumber = 0;
 
     /**
-     * @var \DateTimeInterface Date verification was entered inte the registry
+     * @var \DateTimeImmutable Date verification was entered inte the registry
      */
     private $registrationDate;
 
@@ -102,7 +102,7 @@ class Verification implements
     /**
      * Set the date verification was entered inte the registry
      */
-    public function setRegistrationDate(\DateTimeInterface $date): self
+    public function setRegistrationDate(\DateTimeImmutable $date): self
     {
         $this->registrationDate = $date;
 
@@ -114,7 +114,7 @@ class Verification implements
      *
      * If no registration date is set the regular verification date is returned.
      */
-    public function getRegistrationDate(): \DateTimeInterface
+    public function getRegistrationDate(): \DateTimeImmutable
     {
         return $this->registrationDate ?: $this->getDate();
     }

@@ -48,7 +48,7 @@ trait InterfaceAssertionsTrait
     /**
      * Assert the behaviour of the Dateable implementation
      */
-    public function assertDateable(\DateTimeInterface $expected, Dateable $dateable)
+    public function assertDateable(\DateTimeImmutable $expected, Dateable $dateable)
     {
         $this->assertTrue($dateable->hasDate());
 
@@ -57,7 +57,7 @@ trait InterfaceAssertionsTrait
             $dateable->getDate()
         );
 
-        $newDate = new \DateTime;
+        $newDate = new \DateTimeImmutable;
 
         $dateable->setDate($newDate);
 

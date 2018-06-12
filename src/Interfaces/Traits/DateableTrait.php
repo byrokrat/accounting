@@ -29,11 +29,11 @@ use byrokrat\accounting\Exception\LogicException;
 trait DateableTrait
 {
     /**
-     * @var \DateTimeInterface
+     * @var \DateTimeImmutable
      */
     private $date;
 
-    public function setDate(\DateTimeInterface $date): Dateable
+    public function setDate(\DateTimeImmutable $date): Dateable
     {
         $this->date = $date;
 
@@ -45,7 +45,7 @@ trait DateableTrait
         return isset($this->date);
     }
 
-    public function getDate(): \DateTimeInterface
+    public function getDate(): \DateTimeImmutable
     {
         if (!$this->hasDate()) {
             throw new LogicException('Trying to get date when date is not set');

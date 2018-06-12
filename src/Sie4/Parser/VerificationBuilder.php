@@ -51,18 +51,18 @@ class VerificationBuilder
      *
      * @param string                 $series       The series verification should be a part of
      * @param string                 $number       Verification number
-     * @param \DateTimeInterface     $date         Date of accounting action
+     * @param \DateTimeImmutable     $date         Date of accounting action
      * @param string                 $desc         Free text description
-     * @param \DateTimeInterface     $regdate      Date of registration (defaults to $date)
+     * @param \DateTimeImmutable     $regdate      Date of registration (defaults to $date)
      * @param string                 $sign         Signature
      * @param TransactionInterface[] $transactions List of included transactions
      */
     public function createVerification(
         string $series,
         string $number,
-        \DateTimeInterface $date,
+        \DateTimeImmutable $date,
         string $desc = '',
-        \DateTimeInterface $regdate = null,
+        \DateTimeImmutable $regdate = null,
         string $sign = '',
         array $transactions = []
     ): Verification {

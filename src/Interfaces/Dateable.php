@@ -30,7 +30,7 @@ interface Dateable
     /**
      * Set date
      */
-    public function setDate(\DateTimeInterface $date): self;
+    public function setDate(\DateTimeImmutable $date): self;
 
     /**
      * Check if a date is set
@@ -42,5 +42,5 @@ interface Dateable
      *
      * @throws LogicException if date is not set
      */
-    public function getDate(): \DateTimeInterface;
+    public function getDate(): \DateTimeImmutable;
 }

@@ -8,8 +8,6 @@
 * Phpstan errors
     sätt failOnError igen i bob när allt är fixat..
 
-* DateTimeInterface???
-
 * TODOs i kod...
 
 * Ta bort så många som möjligt av hasDate() osv från Helpers...

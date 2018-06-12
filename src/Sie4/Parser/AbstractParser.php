@@ -237,6 +237,6 @@ class AbstractParser
      */
     protected function assertDate($expr, $failureMessage = 'Expected date'): bool
     {
-        return $this->assert(is_object($expr) && $expr instanceof \DateTimeInterface, $failureMessage);
+        return $this->assert(is_object($expr) && $expr instanceof \DateTimeImmutable, $failureMessage);
     }
 }

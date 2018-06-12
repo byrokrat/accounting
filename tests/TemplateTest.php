@@ -112,7 +112,7 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
             $template->setAttribute($name, $value);
         }
 
-        $ignoredDate = new \DateTime;
+        $ignoredDate = new \DateTimeImmutable;
 
         $this->assertEquals(
             $expected->setDate($ignoredDate),
