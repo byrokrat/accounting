@@ -57,16 +57,17 @@ class Parser extends Grammar
             $this->getLogger()->error($e->getMessage());
         }
 
-        $this->getContainer()
-            ->addItems($this->getAccountBuilder()->getAccounts())
-            ->addItems($this->getDimensionBuilder()->getDimensions());
+        $container = $this->getContainer();
+
+        $container->addItems($this->getAccountBuilder()->getAccounts());
+        $container->addItems($this->getDimensionBuilder()->getDimensions());
 
         if ($this->getLogger()->getLog()) {
             throw new Exception\ParserException($this->getLogger()->getLog());
         }
 
-        $this->getProcessor()->processContainer($this->getContainer());
+        $this->getProcessor()->processContainer($container);
 
-        return $this->getContainer();
+        return $container;
     }
 }

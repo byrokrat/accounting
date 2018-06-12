@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
+use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Container;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Exception;
@@ -17,7 +18,7 @@ use byrokrat\amount\Currency\SEK;
  */
 class GrammarTest extends \PHPUnit\Framework\TestCase
 {
-    use \byrokrat\accounting\utils\InterfaceAssertionsTrait, TypeProviderTrait;
+    use TypeProviderTrait;
 
     /**
      * Parse content and get resulting container
@@ -723,5 +724,19 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             $account->getAttribute('period_quantity[0.201608]'),
             new Amount('1')
         );
+    }
+
+    /**
+     * Assert that attributes are set
+     */
+    private function assertAttributes(array $expectedAttr, AttributableInterface $attributable)
+    {
+        foreach ($expectedAttr as $key => $value) {
+            $this->assertEquals(
+                $value,
+                $attributable->getAttribute($key),
+                "Failed asserting that attributable contains attribute $key equal to " . var_export($value, true)
+            );
+        }
     }
 }

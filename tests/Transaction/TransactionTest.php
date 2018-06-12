@@ -6,13 +6,13 @@ namespace byrokrat\accounting\Transaction;
 
 use byrokrat\accounting\utils;
 use byrokrat\accounting\Dimension\AccountInterface;
+use byrokrat\accounting\Exception\LogicException;
 use byrokrat\amount\Amount;
 
 class TransactionTest extends \PHPUnit\Framework\TestCase
 {
     use utils\PropheciesTrait,
         utils\AttributableTestsTrait,
-        utils\DateTestsTrait,
         utils\DescriptionTestsTrait,
         utils\SignatureTestsTrait;
 
@@ -42,6 +42,22 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($amount, $transaction->getAmount());
         $this->assertSame($quantity, $transaction->getQuantity());
         $this->assertSame($dimensions, $transaction->getDimensions());
+    }
+
+    public function testDate()
+    {
+        $trans = $this->createTransaction();
+        $this->assertFalse($trans->hasDate());
+        $date = new \DateTimeImmutable;
+        $trans->setDate($date);
+        $this->assertTrue($trans->hasDate());
+        $this->assertSame($date, $trans->getDate());
+    }
+
+    public function testExceptionWhenDateNotSet()
+    {
+        $this->expectException(LogicException::CLASS);
+        $this->createTransaction()->getDate();
     }
 
     public function testIterable()

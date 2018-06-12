@@ -23,16 +23,14 @@ declare(strict_types = 1);
 namespace byrokrat\accounting;
 
 use byrokrat\accounting\Transaction\Transaction;
-use byrokrat\accounting\Interfaces\Describable;
-use byrokrat\accounting\Interfaces\Traits\DescribableTrait;
 use byrokrat\amount\Amount;
 
 /**
  * Build verifications from preconstructed templates
  */
-class Template implements AttributableInterface, Describable
+class Template implements AttributableInterface
 {
-    use Helper\AttributableTrait, DescribableTrait;
+    use Helper\AttributableTrait, Helper\DescribableTrait;
 
     /**
      * @var string Template identifier
@@ -69,11 +67,13 @@ class Template implements AttributableInterface, Describable
      *
      * Substitution variables with the form {var} can be used
      */
-    public function addTransaction(string $number, string $amount, string $quantity = '0', array $dimensions = []): self
-    {
+    public function addTransaction(
+        string $number,
+        string $amount,
+        string $quantity = '0',
+        array $dimensions = []
+    ): void {
         $this->transactions[] = [$number, $amount, $quantity, $dimensions];
-
-        return $this;
     }
 
     /**
@@ -89,9 +89,8 @@ class Template implements AttributableInterface, Describable
         $container = $container->select();
         $filter = $this->createTranslationFilter($translationMap);
 
-        $ver = (new Verification)->setDescription(
-            $filter($this->getDescription())
-        );
+        $ver = new Verification;
+        $ver->setDescription($filter($this->getDescription()));
 
         foreach ($this->transactions as list($number, $amount, $quantity, $dimensions)) {
             $dimensions = array_map(

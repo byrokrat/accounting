@@ -45,23 +45,19 @@ class Container implements AttributableInterface, QueryableInterface, \IteratorA
     /**
      * Add additional item
      */
-    public function addItem($item): self
+    public function addItem($item): void
     {
         $this->items[] = $item;
-
-        return $this;
     }
 
     /**
      * Add multiple additional item
      */
-    public function addItems(array $items): self
+    public function addItems(array $items): void
     {
         foreach ($items as $item) {
             $this->addItem($item);
         }
-
-        return $this;
     }
 
     /**

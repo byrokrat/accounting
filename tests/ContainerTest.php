@@ -54,9 +54,12 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
 
     public function testAddItems()
     {
+        $container = new Container('foo');
+        $container->addItems(['bar', 'baz']);
+
         $this->assertSame(
             ['foo', 'bar', 'baz'],
-            (new Container('foo'))->addItems(['bar', 'baz'])->getItems()
+            $container->getItems()
         );
     }
 }

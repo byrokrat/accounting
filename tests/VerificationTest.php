@@ -10,7 +10,7 @@ use Prophecy\Argument;
 
 class VerificationTest extends \PHPUnit\Framework\TestCase
 {
-    use utils\AttributableTestsTrait, utils\InterfaceAssertionsTrait, utils\PropheciesTrait;
+    use utils\AttributableTestsTrait, utils\DescriptionTestsTrait, utils\SignatureTestsTrait, utils\PropheciesTrait;
 
     protected function getObjectToTest()
     {
@@ -33,18 +33,19 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testDateable()
+    public function testDate()
     {
-        $date = new \DateTimeImmutable();
+        $ver = new Verification;
 
-        $this->assertDateable(
-            $date,
-            (new Verification)->setDate($date)
-        );
+        $this->assertTrue($ver->hasDate());
 
-        $this->assertTrue(
-            (new Verification)->getDate() >= $date
-        );
+        $date = new \DateTimeImmutable;
+
+        $ver->setDate($date);
+
+        $this->assertTrue($ver->hasDate());
+
+        $this->assertSame($date, $ver->getDate());
     }
 
     public function testRegistrationDateable()
@@ -55,19 +56,19 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
             $date,
             (new Verification)->setRegistrationDate($date)->getRegistrationDate()
         );
+    }
+
+    public function testUsingRegularDateWhenRegistrationIsNotSet()
+    {
+        $date = new \DateTimeImmutable();
+
+        $ver = new Verification;
+        $ver->setDate($date);
 
         $this->assertSame(
             $date,
-            (new Verification)->setDate($date)->getRegistrationDate(),
+            $ver->getRegistrationDate(),
             'If registration date is not set the regular date should be returned'
-        );
-    }
-
-    public function testDescribable()
-    {
-        $this->assertDescribable(
-            'foobar',
-            (new Verification)->setDescription('foobar')
         );
     }
 
@@ -94,16 +95,6 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
                 ->addTransaction($trans->reveal())
                 ->addTransaction($trans->reveal())
                 ->select()->transactions()->count()
-        );
-    }
-
-    public function testSignable()
-    {
-        $this->assertSignableSignatureNotSet(new Verification);
-
-        $this->assertSignable(
-            $signature = 'signature',
-            (new Verification)->setSignature($signature)
         );
     }
 
@@ -178,13 +169,15 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         $transB->setAttribute('ver_num', Argument::any())->shouldBeCalled();
         $transB->__toString()->willReturn('4321: -100');
 
+        $ver = new Verification;
+        $ver->addTransaction($transA->reveal());
+        $ver->addTransaction($transB->reveal());
+        $ver->setDate(new \DateTimeImmutable('20170208'));
+        $ver->setDescription('Verification');
+
         $this->assertSame(
             "[20170208] Verification\n * 1234: 100\n * 4321: -100",
-            (string)(new Verification)
-                ->addTransaction($transA->reveal())
-                ->addTransaction($transB->reveal())
-                ->setDate(new \DateTimeImmutable('20170208'))
-                ->setDescription('Verification')
+            (string)$ver
         );
     }
 }

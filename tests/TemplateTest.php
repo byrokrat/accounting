@@ -12,7 +12,7 @@ use byrokrat\amount\Amount;
  */
 class TemplateTest extends \PHPUnit\Framework\TestCase
 {
-    use utils\AttributableTestsTrait, utils\InterfaceAssertionsTrait;
+    use utils\AttributableTestsTrait, utils\DescriptionTestsTrait;
 
     static private $translations;
 
@@ -134,14 +134,6 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
         $this->expectException(Exception\RuntimeException::CLASS);
         $template = new Template('', '{not-substituted}');
         $template->build([], new Query);
-    }
-
-    public function testDescribable()
-    {
-        $this->assertDescribable(
-            'description',
-            new Template('', 'description')
-        );
     }
 
     public function testTemplateId()

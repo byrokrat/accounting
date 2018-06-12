@@ -7,7 +7,6 @@ namespace byrokrat\accounting\utils;
 use byrokrat\accounting\Dimension\AccountFactory;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
-use byrokrat\accounting\Interfaces;
 use byrokrat\accounting\Query;
 use byrokrat\accounting\QueryableInterface;
 use byrokrat\accounting\Transaction\TransactionInterface;

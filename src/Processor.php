@@ -29,7 +29,7 @@ use byrokrat\accounting\Dimension\DimensionInterface;
  */
 class Processor
 {
-    public function processContainer(Container $container)
+    public function processContainer(Container $container): void
     {
         $container->select()->filterType(DimensionInterface::CLASS)->whereUnique()->each(function ($dim) {
             $dim->setAttribute('transactions', []);

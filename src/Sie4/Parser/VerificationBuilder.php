@@ -24,8 +24,6 @@ namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Verification;
-use byrokrat\amount\Amount;
-use byrokrat\amount\Currency;
 use Psr\Log\LoggerInterface;
 
 /**

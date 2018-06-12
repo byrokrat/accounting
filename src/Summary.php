@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\accounting\Exception\RuntimeException;
 use byrokrat\amount\Amount;
 
 /**
@@ -30,46 +31,30 @@ use byrokrat\amount\Amount;
 class Summary
 {
     /**
-     * @var Amount Incoming balance
+     * @var Amount
      */
     private $incoming;
 
     /**
-     * @var Amount Current balance
+     * @var Amount
      */
     private $balance;
 
     /**
-     * @var Amount Current debit summary
+     * @var Amount
      */
     private $debit;
 
     /**
-     * @var Amount Current credit summary
+     * @var Amount
      */
     private $credit;
 
-    /**
-     * Setup calculation starting points
-     *
-     * @param Amount  $incoming Incoming balance
-     */
     public function __construct(Amount $incoming = null)
     {
         if ($incoming) {
             $this->initialize($incoming);
         }
-    }
-
-    /**
-     * Set calculation starting points
-     */
-    public function initialize(Amount $incoming)
-    {
-        $this->incoming = $incoming;
-        $this->balance = $incoming;
-        $this->debit = $incoming->subtract($incoming);
-        $this->credit = $this->debit;
     }
 
     /**
@@ -83,7 +68,7 @@ class Summary
     /**
      * Add transaction to summary calculations
      */
-    public function addAmount(Amount $amount): self
+    public function addAmount(Amount $amount): void
     {
         if (!$this->isInitialized()) {
             $this->initialize($amount->subtract($amount));
@@ -96,12 +81,10 @@ class Summary
         } else {
             $this->credit = $this->credit->add($amount->getAbsolute());
         }
-
-        return $this;
     }
 
     /**
-     * Get calculated incoming balance
+     * Get incoming balance
      */
     public function getIncomingBalance(): Amount
     {
@@ -110,7 +93,7 @@ class Summary
     }
 
     /**
-     * Get calculated outgoing balance
+     * Get current balance
      */
     public function getOutgoingBalance(): Amount
     {
@@ -119,7 +102,7 @@ class Summary
     }
 
     /**
-     * Get calculated debit summary
+     * Get current debit summary
      */
     public function getDebit(): Amount
     {
@@ -128,7 +111,7 @@ class Summary
     }
 
     /**
-     * Get calculated credit summary
+     * Get current credit summary
      */
     public function getCredit(): Amount
     {
@@ -146,25 +129,28 @@ class Summary
 
     /**
      * Get collection magnitude (absolute value of debit or credit for balanced collections)
-     *
-     * @throws Exception\RuntimeException if summary is not balanced
      */
-    public function getMagnitude()
+    public function getMagnitude(): Amount
     {
         if (!$this->isBalanced()) {
-            throw new Exception\RuntimeException('Unable to calculate magnitude of unbalanced collection');
+            throw new RuntimeException('Unable to calculate magnitude of unbalanced collection');
         }
 
         return $this->getDebit();
     }
 
-    /**
-     * @throws Exception\RuntimeException if summaries are not initialized
-     */
-    private function checkState()
+    private function initialize(Amount $incoming): void
+    {
+        $this->incoming = $incoming;
+        $this->balance = $incoming;
+        $this->debit = $incoming->subtract($incoming);
+        $this->credit = $this->debit;
+    }
+
+    private function checkState(): void
     {
         if (!$this->isInitialized()) {
-            throw new Exception\RuntimeException('Unable to calculate, Summary not initialized');
+            throw new RuntimeException('Unable to calculate, summary not initialized');
         }
     }
 }
