@@ -22,7 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\accounting\Dimension;
+use byrokrat\accounting\Dimension\DimensionInterface;
+use byrokrat\accounting\Dimension\Dimension;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -43,7 +44,7 @@ class DimensionBuilder
     ];
 
     /**
-     * @var Dimension[] Created dimensions
+     * @var DimensionInterface[] Created dimensions
      */
     private $dims = [];
 
@@ -98,7 +99,7 @@ class DimensionBuilder
      * If dimension is not defined a new dimension is created, using one of the
      * reserved sie dimension description if applicable.
      */
-    public function getDimension(string $dimId): Dimension
+    public function getDimension(string $dimId): DimensionInterface
     {
         if (isset($this->dims[$dimId])) {
             return $this->dims[$dimId];
@@ -121,7 +122,7 @@ class DimensionBuilder
     /**
      * Get accounting object from internal store using number and super as key
      */
-    public function getObject(string $super, string $objectId): Dimension
+    public function getObject(string $super, string $objectId): DimensionInterface
     {
         if (isset($this->dims["$super.$objectId"])) {
             return $this->dims["$super.$objectId"];
@@ -137,7 +138,7 @@ class DimensionBuilder
     /**
      * Get created dimensions
      *
-     * @return Dimension[]
+     * @return DimensionInterface[]
      */
     public function getDimensions(): array
     {

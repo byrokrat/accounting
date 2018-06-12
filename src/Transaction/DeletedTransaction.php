@@ -22,8 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Transaction;
 
-use byrokrat\accounting\Account;
-use byrokrat\accounting\Dimension;
+use byrokrat\accounting\Dimension\AccountInterface;
+use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\amount\Amount;
 
 /**
@@ -32,11 +32,11 @@ use byrokrat\amount\Amount;
 class DeletedTransaction extends Transaction
 {
     public function __construct(
-        Account $account,
+        AccountInterface $account,
         Amount $amount,
         string $signature,
         Amount $quantity = null,
-        Dimension ...$dimensions
+        DimensionInterface ...$dimensions
     ) {
         parent::__construct($account, $amount, $quantity, ...$dimensions);
         $this->setSignature($signature);

@@ -192,7 +192,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testWhereAttribute()
     {
-        $attributableProphecy = $this->prophesize(Interfaces\Attributable::CLASS);
+        $attributableProphecy = $this->prophesize(AttributableInterface::CLASS);
 
         $attributableProphecy->hasAttribute('A')->willReturn(true);
         $attributableProphecy->getAttribute('A')->willReturn('foobar');

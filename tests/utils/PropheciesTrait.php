@@ -4,9 +4,9 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\utils;
 
-use byrokrat\accounting\Account;
-use byrokrat\accounting\AccountFactory;
-use byrokrat\accounting\Dimension;
+use byrokrat\accounting\Dimension\AccountFactory;
+use byrokrat\accounting\Dimension\AccountInterface;
+use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Interfaces;
 use byrokrat\accounting\Query;
 use byrokrat\accounting\QueryableInterface;
@@ -50,7 +50,7 @@ trait PropheciesTrait
         string $desc = '',
         array $attr = []
     ): ObjectProphecy {
-        $account = $this->prophesize(Account::CLASS);
+        $account = $this->prophesize(AccountInterface::CLASS);
         $account->getId()->willReturn($number);
         $account->getDescription()->willReturn($desc);
         $account->getAttributes()->willReturn($attr);
@@ -78,7 +78,7 @@ trait PropheciesTrait
      */
     public function prophesizeDimension(string $number = '0'): ObjectProphecy
     {
-        $dim = $this->prophesize(Dimension::CLASS);
+        $dim = $this->prophesize(DimensionInterface::CLASS);
         $dim->getId()->willReturn($number);
         $dim->select()->willReturn(new Query);
 
@@ -103,10 +103,10 @@ trait PropheciesTrait
     /**
      * Create transaction prophecy
      *
-     * @param  Amount  $amount  Will be returned by getAmount()
-     * @param  Account $account Will be returned by getAccount()
+     * @param  Amount           $amount  Will be returned by getAmount()
+     * @param  AccountInterface $account Will be returned by getAccount()
      */
-    public function prophesizeTransaction(Amount $amount = null, Account $account = null): ObjectProphecy
+    public function prophesizeTransaction(Amount $amount = null, AccountInterface $account = null): ObjectProphecy
     {
         $account = $account ?: $this->prophesizeAccount()->reveal();
         $amount = $amount ?: new Amount('0');
@@ -126,11 +126,13 @@ trait PropheciesTrait
     /**
      * Create deleted transaction prophecy
      *
-     * @param  Amount  $amount  Will be returned by getAmount()
-     * @param  Account $account Will be returned by getAccount()
+     * @param  Amount           $amount  Will be returned by getAmount()
+     * @param  AccountInterface $account Will be returned by getAccount()
      */
-    public function prophesizeDeletedTransaction(Amount $amount = null, Account $account = null): ObjectProphecy
-    {
+    public function prophesizeDeletedTransaction(
+        Amount $amount = null,
+        AccountInterface $account = null
+    ): ObjectProphecy {
         $transaction = $this->prophesizeTransaction($amount, $account);
         $transaction->isDeleted()->willReturn(true);
 

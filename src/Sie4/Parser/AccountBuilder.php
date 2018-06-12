@@ -22,8 +22,12 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\accounting\Account;
-use byrokrat\accounting\AccountFactory;
+use byrokrat\accounting\Dimension\AccountFactory;
+use byrokrat\accounting\Dimension\AccountInterface;
+use byrokrat\accounting\Dimension\AssetAccount;
+use byrokrat\accounting\Dimension\DebtAccount;
+use byrokrat\accounting\Dimension\CostAccount;
+use byrokrat\accounting\Dimension\EarningAccount;
 use byrokrat\accounting\Exception;
 use Psr\Log\LoggerInterface;
 
@@ -36,14 +40,14 @@ class AccountBuilder
      * @var string[] Map of account type identifier to class name
      */
     private static $accountTypeMap = [
-        'T' => Account\Asset::CLASS,
-        'S' => Account\Debt::CLASS,
-        'K' => Account\Cost::CLASS,
-        'I' => Account\Earning::CLASS
+        'T' => AssetAccount::CLASS,
+        'S' => DebtAccount::CLASS,
+        'K' => CostAccount::CLASS,
+        'I' => EarningAccount::CLASS
     ];
 
     /**
-     * @var Account[] Created account objects
+     * @var AccountInterface[] Created account objects
      */
     private $accounts = [];
 
@@ -69,11 +73,10 @@ class AccountBuilder
     /**
      * Create a new account object
      *
-     * @param  string $number      Number of account
-     * @param  string $description Free text description of account
-     * @return void
+     * @param string $number      Number of account
+     * @param string $description Free text description of account
      */
-    public function addAccount(string $number, string $description)
+    public function addAccount(string $number, string $description): void
     {
         if (isset($this->accounts[$number])) {
             $this->logger->warning("Overwriting previously created account $number");
@@ -89,11 +92,10 @@ class AccountBuilder
     /**
      * Set a new type of account
      *
-     * @param  string $number  Number of account
-     * @param  string $type    Type of account (T, S, I or K)
-     * @return void
+     * @param string $number Number of account
+     * @param string $type   Type of account (T, S, I or K)
      */
-    public function setAccountType(string $number, string $type)
+    public function setAccountType(string $number, string $type): void
     {
         if (!isset(self::$accountTypeMap[$type])) {
             $this->logger->warning("Unknown type $type for account number $number");
@@ -112,7 +114,7 @@ class AccountBuilder
      *
      * @throws Exception\RuntimeException If account does not exist and can not be created
      */
-    public function getAccount(string $number): Account
+    public function getAccount(string $number): AccountInterface
     {
         if (!isset($this->accounts[$number])) {
             $this->logger->warning("Account number $number not defined", ['_addToLineCount' => 1]);
@@ -129,7 +131,7 @@ class AccountBuilder
     /**
      * Get creaated accounts
      *
-     * @return Account[]
+     * @return AccountInterface[]
      */
     public function getAccounts(): array
     {

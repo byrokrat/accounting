@@ -22,8 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\accounting\Account;
-use byrokrat\accounting\Dimension;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Verification;
 use byrokrat\amount\Amount;
@@ -68,7 +66,9 @@ class VerificationBuilder
         string $sign = '',
         array $transactions = []
     ): Verification {
-        $verification = (new Verification)->setAttribute('series', $series)->setDate($date);
+        $verification = new Verification;
+        $verification->setAttribute('series', $series);
+        $verification->setDate($date);
 
         if ($number) {
             $verification->setId(intval($number));

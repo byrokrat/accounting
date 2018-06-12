@@ -20,14 +20,11 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Account;
+namespace byrokrat\accounting\Dimension;
 
-/**
- * Defines an asset account
- */
-class Asset extends \byrokrat\accounting\Account
+class DebtAccount extends AbstractAccount
 {
-    public function isAsset(): bool
+    public function isDebt(): bool
     {
         return true;
     }

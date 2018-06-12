@@ -12,7 +12,7 @@ use byrokrat\amount\Amount;
  */
 class TemplateTest extends \PHPUnit\Framework\TestCase
 {
-    use utils\InterfaceAssertionsTrait;
+    use utils\AttributableTestsTrait, utils\InterfaceAssertionsTrait;
 
     static private $translations;
 
@@ -30,42 +30,48 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
         ];
 
         self::$container = new Query([
-            new Account\Asset('1920', 'Bank'),
-            new Account\Earning('3000', 'Incomes'),
-            new Dimension('1'),
-            new Dimension('2')
+            new Dimension\AssetAccount('1920', 'Bank'),
+            new Dimension\EarningAccount('3000', 'Incomes'),
+            new Dimension\Dimension('1'),
+            new Dimension\Dimension('2')
         ]);
     }
 
     public function translationsProvider()
     {
+        $verWithAttrFooBar = new Verification;
+        $verWithAttrFooBar->setAttribute('foo', 'bar');
+
+        $verWithAttrFoobarFoobar = new Verification;
+        $verWithAttrFoobarFoobar->setAttribute('foobar', 'foobar');
+
         return [
             [
                 (new Verification)->addTransaction(
-                    new Transaction(new Account\Earning('3000', 'Incomes'), new Amount('-400'))
+                    new Transaction(new Dimension\EarningAccount('3000', 'Incomes'), new Amount('-400'))
                 ),
                 [['{in}', '-400']],
             ],
             [
                 (new Verification)->addTransaction(
-                    new Transaction(new Account\Asset('1920', 'Bank'), new Amount('400'))
+                    new Transaction(new Dimension\AssetAccount('1920', 'Bank'), new Amount('400'))
                 ),
                 [['1920', '{amount}']],
             ],
             [
                 (new Verification)->addTransaction(
-                    new Transaction(new Account\Asset('1920', 'Bank'), new Amount('100'), new Amount('10'))
+                    new Transaction(new Dimension\AssetAccount('1920', 'Bank'), new Amount('100'), new Amount('10'))
                 ),
                 [['1920', '100', '{quantity}']],
             ],
             [
                 (new Verification)->addTransaction(
                     new Transaction(
-                        new Account\Asset('1920', 'Bank'),
+                        new Dimension\AssetAccount('1920', 'Bank'),
                         new Amount('100'),
                         new Amount('1'),
-                        new Dimension('1'),
-                        new Dimension('2')
+                        new Dimension\Dimension('1'),
+                        new Dimension\Dimension('2')
                     )
                 ),
                 [['1920', '100', '1', ['1', '2']]],
@@ -73,21 +79,21 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
             [
                 (new Verification)->addTransaction(
                     new Transaction(
-                        new Account\Asset('1920', 'Bank'),
+                        new Dimension\AssetAccount('1920', 'Bank'),
                         new Amount('100'),
                         new Amount('1'),
-                        new Dimension('1')
+                        new Dimension\Dimension('1')
                     )
                 ),
                 [['1920', '100', '1', ['{dim}']]],
             ],
             [
-                (new Verification)->setAttribute('foo', 'bar'),
+                $verWithAttrFooBar,
                 [],
                 ['foo' => 'bar']
             ],
             [
-                (new Verification)->setAttribute('foobar', 'foobar'),
+                $verWithAttrFoobarFoobar,
                 [],
                 ['{attr}' => '{attr}']
             ],
@@ -130,11 +136,6 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
         $template->build([], new Query);
     }
 
-    public function testAttributable()
-    {
-        $this->assertAttributable(new Template('', ''));
-    }
-
     public function testDescribable()
     {
         $this->assertDescribable(
@@ -149,5 +150,10 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
             'id',
             (new Template('id', ''))->getTemplateId()
         );
+    }
+
+    protected function getObjectToTest()
+    {
+        return new Template('', '');
     }
 }

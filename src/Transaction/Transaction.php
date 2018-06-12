@@ -22,8 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Transaction;
 
-use byrokrat\accounting\Account;
-use byrokrat\accounting\Dimension;
+use byrokrat\accounting\Dimension\AccountInterface;
+use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Helper\AttributableTrait;
 use byrokrat\accounting\Helper\DateableTrait;
 use byrokrat\accounting\Helper\DescribableTrait;
@@ -39,7 +39,7 @@ class Transaction implements TransactionInterface
     use AttributableTrait, DateableTrait, DescribableTrait, QueryableTrait, SignableTrait;
 
     /**
-     * @var Account
+     * @var AccountInterface
      */
     private $account;
 
@@ -54,19 +54,23 @@ class Transaction implements TransactionInterface
     private $quantity;
 
     /**
-     * @var Dimension[]
+     * @var DimensionInterface[]
      */
     private $dimensions;
 
-    public function __construct(Account $account, Amount $amount, Amount $quantity = null, Dimension ...$dimensions)
-    {
+    public function __construct(
+        AccountInterface $account,
+        Amount $amount,
+        Amount $quantity = null,
+        DimensionInterface ...$dimensions
+    ) {
         $this->account = $account;
         $this->amount = $amount;
         $this->quantity = $quantity ?: new Amount('0');
         $this->dimensions = $dimensions;
     }
 
-    public function getAccount(): Account
+    public function getAccount(): AccountInterface
     {
         return $this->account;
     }

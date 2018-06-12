@@ -20,24 +20,16 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting;
+namespace byrokrat\accounting\Dimension;
 
-/**
- * Account value object containing a number and a description
- */
-abstract class Account extends Dimension
+use byrokrat\accounting\Exception\RuntimeException;
+
+abstract class AbstractAccount extends Dimension implements AccountInterface
 {
-    /**
-     * Load account values at construct
-     *
-     * @param string $number      Numerical string identifying account
-     * @param string $description Free text description of account
-     * @param array  $attributes  Optional list of attributes
-     */
     public function __construct(string $number, string $description = '', array $attributes = [])
     {
         if (!is_numeric($number)) {
-            throw new Exception\RuntimeException('Account number must be a numeric string');
+            throw new RuntimeException('Account number must be a numeric string');
         }
 
         parent::__construct($number, $description);
@@ -47,33 +39,21 @@ abstract class Account extends Dimension
         }
     }
 
-    /**
-     * Check if object represents an asset account
-     */
     public function isAsset(): bool
     {
         return false;
     }
 
-    /**
-     * Check if object represents a cost account
-     */
     public function isCost(): bool
     {
         return false;
     }
 
-    /**
-     * Check if object represents a debt account
-     */
     public function isDebt(): bool
     {
         return false;
     }
 
-    /**
-     * Check if object represents an earnings account
-     */
     public function isEarning(): bool
     {
         return false;

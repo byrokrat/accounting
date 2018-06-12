@@ -18,17 +18,35 @@
  * Copyright 2016-18 Hannes Forsgård
  */
 
-declare(strict_types = 1);
-
-namespace byrokrat\accounting\Account;
+namespace byrokrat\accounting\Dimension;
 
 /**
- * Defines a cost account
+ * Dimension representing a bookkeeping account
  */
-class Cost extends \byrokrat\accounting\Account
+interface AccountInterface extends DimensionInterface
 {
-    public function isCost(): bool
-    {
-        return true;
-    }
+    /**
+     * Check if object represents an asset account
+     */
+    public function isAsset(): bool;
+
+    /**
+     * Check if object represents a cost account
+     */
+    public function isCost(): bool;
+
+    /**
+     * Check if object represents a debt account
+     */
+    public function isDebt(): bool;
+
+    /**
+     * Check if object represents an earnings account
+     */
+    public function isEarning(): bool;
+
+    /**
+     * Convert account to string
+     */
+    public function __toString(): string;
 }

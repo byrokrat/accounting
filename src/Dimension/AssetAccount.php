@@ -20,38 +20,12 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Exception;
+namespace byrokrat\accounting\Dimension;
 
-/**
- * Exception thrown when a parsing action fails
- */
-class ParserException extends RuntimeException
+class AssetAccount extends AbstractAccount
 {
-    /**
-     * @var string[] Registered log messages
-     */
-    private $log = [];
-
-    /**
-     * Load log messages at construct
-     *
-     * @param string[] $log
-     */
-    public function __construct(array $log)
+    public function isAsset(): bool
     {
-        $this->log = $log;
-        parent::__construct(
-            "Parsing failed due to the following issues:\n" . implode("\n", $this->getLog())
-        );
-    }
-
-    /**
-     * Get registered messages
-     *
-     * @return string[]
-     */
-    public function getLog(): array
-    {
-        return $this->log;
+        return true;
     }
 }

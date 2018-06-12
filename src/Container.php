@@ -22,15 +22,12 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
-use byrokrat\accounting\Interfaces\Attributable;
-use byrokrat\accounting\Interfaces\Traits\AttributableTrait;
-
 /**
  * A container is a queryable and attributable keeper of bookkeeping objects
  */
-class Container implements Attributable, QueryableInterface, \IteratorAggregate
+class Container implements AttributableInterface, QueryableInterface, \IteratorAggregate
 {
-    use AttributableTrait;
+    use Helper\AttributableTrait;
 
     /**
      * @var array Contained items

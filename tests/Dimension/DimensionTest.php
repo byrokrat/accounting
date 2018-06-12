@@ -2,23 +2,18 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting;
+namespace byrokrat\accounting\Dimension;
+
+use byrokrat\accounting\Exception\LogicException;
+use byrokrat\accounting\utils;
 
 class DimensionTest extends \PHPUnit\Framework\TestCase
 {
-    use utils\InterfaceAssertionsTrait;
+    use utils\AttributableTestsTrait, utils\DescriptionTestsTrait;
 
-    public function testAttributable()
+    protected function getObjectToTest()
     {
-        $this->assertAttributable(new Dimension('0', ''));
-    }
-
-    public function testDescribable()
-    {
-        $this->assertDescribable(
-            'foobar',
-            new Dimension('0', 'foobar')
-        );
+        return new Dimension('');
     }
 
     public function testGetId()
@@ -61,13 +56,13 @@ class DimensionTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionWhenNoParentIsSet()
     {
-        $this->expectException(Exception\LogicException::CLASS);
+        $this->expectException(LogicException::CLASS);
         (new Dimension('0'))->getParent();
     }
 
     public function testExceptionOnInvalidArgumentInDimension()
     {
-        $this->expectException(Exception\LogicException::CLASS);
+        $this->expectException(LogicException::CLASS);
         (new Dimension('0'))->inDimension(0);
     }
 

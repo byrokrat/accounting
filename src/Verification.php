@@ -23,11 +23,9 @@ declare(strict_types = 1);
 namespace byrokrat\accounting;
 
 use byrokrat\accounting\Transaction\TransactionInterface;
-use byrokrat\accounting\Interfaces\Attributable;
 use byrokrat\accounting\Interfaces\Dateable;
 use byrokrat\accounting\Interfaces\Describable;
 use byrokrat\accounting\Interfaces\Signable;
-use byrokrat\accounting\Interfaces\Traits\AttributableTrait;
 use byrokrat\accounting\Interfaces\Traits\DateableTrait;
 use byrokrat\accounting\Interfaces\Traits\DescribableTrait;
 use byrokrat\accounting\Interfaces\Traits\SignableTrait;
@@ -36,9 +34,15 @@ use byrokrat\amount\Amount;
 /**
  * Simple verification value object wrapping a list of transactions
  */
-class Verification implements Attributable, Dateable, Describable, QueryableInterface, Signable, \IteratorAggregate
+class Verification implements
+    AttributableInterface,
+    Dateable,
+    Describable,
+    QueryableInterface,
+    Signable,
+    \IteratorAggregate
 {
-    use AttributableTrait, DateableTrait, DescribableTrait, SignableTrait;
+    use Helper\AttributableTrait, DateableTrait, DescribableTrait, SignableTrait;
 
     /**
      * @var int Verification id number

@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\utils;
 
-use byrokrat\accounting\Interfaces\Attributable;
+use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Interfaces\Describable;
 use byrokrat\accounting\Interfaces\Dateable;
 use byrokrat\accounting\Interfaces\Signable;
@@ -13,55 +13,9 @@ use byrokrat\accounting\Exception\LogicException;
 trait InterfaceAssertionsTrait
 {
     /**
-     * Assert the behaviour of the Attributable implementation
-     */
-    public function assertAttributable(Attributable $attributable)
-    {
-        $key = '___attribute-assumed-not-to-be-set___';
-        $value = 'foobarbaz';
-
-        $this->assertFalse($attributable->hasAttribute($key));
-
-        $attributable->setAttribute($key, $value);
-
-        $this->assertTrue($attributable->hasAttribute($key));
-
-        $this->assertSame(
-            $value,
-            $attributable->getAttribute($key),
-            'Getting a set attribute should return it'
-        );
-
-        $this->assertSame(
-            $value,
-            $attributable->getAttribute(str_replace('a', 'A', $key)),
-            'Getting a set attribute should base case-insensitive'
-        );
-
-        $this->assertSame(
-            $value,
-            $attributable->getAttributes()[$key],
-            'Getting all attributes should return attribute i small case'
-        );
-
-        $exceptionThrown = false;
-
-        try {
-            $attributable->getAttribute('___assumed-not-to-exist___');
-        } catch (LogicException $e) {
-            $exceptionThrown = true;
-        }
-
-        $this->assertTrue(
-            $exceptionThrown,
-            'Reading a non-existing attribute should throw a LogicException'
-        );
-    }
-
-    /**
      * Assert that attributes are set on attributable
      */
-    public function assertAttributes(array $expectedAttr, Attributable $attributable)
+    public function assertAttributes(array $expectedAttr, AttributableInterface $attributable)
     {
         foreach ($expectedAttr as $key => $value) {
             $this->assertEquals(

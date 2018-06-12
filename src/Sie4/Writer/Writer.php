@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Writer;
 
-use byrokrat\accounting\Account;
+use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Exception;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Verification;
@@ -102,7 +102,7 @@ class Writer
     /**
      * Write account to output
      */
-    public function writeAccount(Account $account, Output $output)
+    public function writeAccount(AccountInterface $account, Output $output)
     {
         $output->writeln(
             '#KONTO %s %s',
@@ -164,7 +164,7 @@ class Writer
     /**
      * Translate account into one character account type identifier
      */
-    private function translateAccountType(Account $account): string
+    private function translateAccountType(AccountInterface $account): string
     {
         // TODO Bryt loss allt översättande från class till typ osv...
         if ($account->isAsset()) {

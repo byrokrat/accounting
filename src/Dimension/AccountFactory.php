@@ -20,15 +20,29 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Account;
+namespace byrokrat\accounting\Dimension;
 
 /**
- * Defines a debt account
+ * Facilitates the creation of account objects
  */
-class Debt extends \byrokrat\accounting\Account
+class AccountFactory
 {
-    public function isDebt(): bool
+    public function createAccount(string $number, string $description = ''): AccountInterface
     {
-        return true;
+        $iNumber = intval($number);
+
+        if ($iNumber < 2000) {
+            return new AssetAccount($number, $description);
+        }
+
+        if ($iNumber < 3000) {
+            return new DebtAccount($number, $description);
+        }
+
+        if ($iNumber < 4000) {
+            return new EarningAccount($number, $description);
+        }
+
+        return new CostAccount($number, $description);
     }
 }

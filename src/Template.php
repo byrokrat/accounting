@@ -23,18 +23,16 @@ declare(strict_types = 1);
 namespace byrokrat\accounting;
 
 use byrokrat\accounting\Transaction\Transaction;
-use byrokrat\accounting\Interfaces\Attributable;
 use byrokrat\accounting\Interfaces\Describable;
-use byrokrat\accounting\Interfaces\Traits\AttributableTrait;
 use byrokrat\accounting\Interfaces\Traits\DescribableTrait;
 use byrokrat\amount\Amount;
 
 /**
  * Build verifications from preconstructed templates
  */
-class Template implements Attributable, Describable
+class Template implements AttributableInterface, Describable
 {
-    use AttributableTrait, DescribableTrait;
+    use Helper\AttributableTrait, DescribableTrait;
 
     /**
      * @var string Template identifier

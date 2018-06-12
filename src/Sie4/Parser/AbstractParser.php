@@ -22,10 +22,10 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\accounting\Account;
+use byrokrat\accounting\AttributableInterface;
+use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Container;
 use byrokrat\accounting\Processor;
-use byrokrat\accounting\Interfaces\Attributable;
 use byrokrat\amount\Currency;
 
 /**
@@ -155,7 +155,7 @@ class AbstractParser
     /**
      * Helper that writes an attribute to an attributable
      */
-    protected function writeAttribute(Attributable $attributable, string $key, $value, string $year = '')
+    protected function writeAttribute(AttributableInterface $attributable, string $key, $value, string $year = '')
     {
         if ('' == $year || '0' == $year) {
             $attributable->setAttribute($key, $value);
@@ -221,7 +221,7 @@ class AbstractParser
      */
     protected function assertAccount($expr, $failureMessage = 'Expected account'): bool
     {
-        return $this->assert(is_object($expr) && $expr instanceof Account, $failureMessage);
+        return $this->assert(is_object($expr) && $expr instanceof AccountInterface, $failureMessage);
     }
 
     /**

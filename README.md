@@ -52,7 +52,7 @@ To build verifications using our template we need an account plan
     @include template
 -->
 ```php
-$accountFactory = new byrokrat\accounting\AccountFactory;
+$accountFactory = new byrokrat\accounting\Dimension\AccountFactory;
 
 $accounts = new byrokrat\accounting\Container(
     $accountFactory->createAccount('1920', 'Bank'),

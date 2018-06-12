@@ -22,6 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\accounting\Dimension\DimensionInterface;
+
 /**
  * Calculate transaction summaries for registered dimensions
  */
@@ -29,7 +31,7 @@ class Processor
 {
     public function processContainer(Container $container)
     {
-        $container->select()->filterType(Dimension::CLASS)->whereUnique()->each(function ($dim) {
+        $container->select()->filterType(DimensionInterface::CLASS)->whereUnique()->each(function ($dim) {
             $dim->setAttribute('transactions', []);
 
             $dim->setAttribute(

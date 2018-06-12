@@ -10,7 +10,12 @@ use Prophecy\Argument;
 
 class VerificationTest extends \PHPUnit\Framework\TestCase
 {
-    use utils\InterfaceAssertionsTrait, utils\PropheciesTrait;
+    use utils\AttributableTestsTrait, utils\InterfaceAssertionsTrait, utils\PropheciesTrait;
+
+    protected function getObjectToTest()
+    {
+        return new Verification;
+    }
 
     public function testAccessingTransactions()
     {
@@ -26,11 +31,6 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
             [$transA, $transB],
             (new Verification)->addTransaction($transA)->addTransaction($transB)->getTransactions()
         );
-    }
-
-    public function testAttributable()
-    {
-        $this->assertAttributable(new Verification);
     }
 
     public function testDateable()

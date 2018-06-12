@@ -2,8 +2,6 @@
 
 ## Klass-struktur
 
-* `DimensionInterface` och Account mf till `Dimension` namespace.
-* Även `AccountInterface`??
 * Rename `Summary` => `Balance` (glöm inte getSummary)
 * Interfaces should not be in an `Interfaces` namespace, this is just silly..
 
@@ -31,3 +29,7 @@ i hur attributes skrivits. Se om det är något jag kan rätta till...
    Finns CurrencyFactory i parser som kanske kan användas..
 1. Där är också dålig kod med skumma array strukturer som behöver utvecklas...
 1. Template skriver inte heller något datum till varken transaction eller verifikat.
+
+## Writer
+
+Inte alls up to scratch...

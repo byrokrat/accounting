@@ -20,9 +20,9 @@
 
 namespace byrokrat\accounting\Transaction;
 
-use byrokrat\accounting\Account;
 use byrokrat\accounting\AttributableInterface;
-use byrokrat\accounting\Dimension;
+use byrokrat\accounting\Dimension\AccountInterface;
+use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\QueryableInterface;
 use byrokrat\amount\Amount;
 
@@ -34,7 +34,7 @@ interface TransactionInterface extends AttributableInterface, QueryableInterface
     /**
      * Get Account this transaction concerns
      */
-    public function getAccount(): Account;
+    public function getAccount(): AccountInterface;
 
     /**
      * Get amount of money moved to or from account
@@ -69,7 +69,7 @@ interface TransactionInterface extends AttributableInterface, QueryableInterface
     /**
      * Get registered dimensions
      *
-     * @return Dimension[]
+     * @return DimensionInterface[]
      */
     public function getDimensions(): array;
 

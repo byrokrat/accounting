@@ -2,20 +2,20 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting;
+namespace byrokrat\accounting\Dimension;
 
 /**
- * @covers \byrokrat\accounting\AccountFactory
+ * @covers \byrokrat\accounting\Dimension\AccountFactory
  */
 class AccountFactoryTest extends \PHPUnit\Framework\TestCase
 {
     public function accountTypesProvider()
     {
         return [
-            ['1999', 'desc', Account\Asset::CLASS],
-            ['2999', 'desc', Account\Debt::CLASS],
-            ['3999', 'desc', Account\Earning::CLASS],
-            ['4000', 'desc', Account\Cost::CLASS]
+            ['1999', 'desc', AssetAccount::CLASS],
+            ['2999', 'desc', DebtAccount::CLASS],
+            ['3999', 'desc', EarningAccount::CLASS],
+            ['4000', 'desc', CostAccount::CLASS]
         ];
     }
 

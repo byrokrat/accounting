@@ -20,12 +20,9 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Account;
+namespace byrokrat\accounting\Dimension;
 
-/**
- * Defines an earning account
- */
-class Earning extends \byrokrat\accounting\Account
+class EarningAccount extends AbstractAccount
 {
     public function isEarning(): bool
     {

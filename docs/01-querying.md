@@ -17,12 +17,15 @@ $template = new byrokrat\accounting\Template(
     ['3000', '{income_amount}']
 );
 
-$accountFactory = new byrokrat\accounting\AccountFactory;
+$accountFactory = new byrokrat\accounting\Dimension\AccountFactory;
 
-$accounts = new byrokrat\accounting\Container(
-    $accountFactory->createAccount('1920', 'Bank')->setAttribute('incoming_balance', new byrokrat\amount\Amount('0')),
-    $accountFactory->createAccount('3000', 'Incomes')->setAttribute('incoming_balance', new byrokrat\amount\Amount('0'))
-);
+$bank = $accountFactory->createAccount('1920', 'Bank');
+$bank->setAttribute('incoming_balance', new byrokrat\amount\Amount('0'));
+
+$incomes = $accountFactory->createAccount('3000', 'Incomes');
+$incomes->setAttribute('incoming_balance', new byrokrat\amount\Amount('0'));
+
+$accounts = new byrokrat\accounting\Container($bank, $incomes);
 
 $container = new byrokrat\accounting\Container(
     $template->build(

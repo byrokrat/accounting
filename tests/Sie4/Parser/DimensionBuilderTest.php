@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\accounting\Dimension;
 use Psr\Log\LoggerInterface;
 
 /**

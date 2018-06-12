@@ -22,6 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\accounting\Dimension\AccountInterface;
+use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\amount\Amount;
 
@@ -100,7 +102,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      */
     public function accounts(): Query
     {
-        return $this->filterType(Account::CLASS);
+        return $this->filterType(AccountInterface::CLASS);
     }
 
     /**
@@ -224,7 +226,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      *
      * @throws Exception\RuntimeException If account does not exist
      */
-    public function getAccount(string $accountId): Account
+    public function getAccount(string $accountId): AccountInterface
     {
         return $this->accounts()->getDimension($accountId);
     }
@@ -234,10 +236,10 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      *
      * @throws Exception\RuntimeException If dimension does not exist
      */
-    public function getDimension(string $dimensionId): Dimension
+    public function getDimension(string $dimensionId): DimensionInterface
     {
         $dimension = $this->filter(function ($item) use ($dimensionId) {
-            return $item instanceof Dimension && $item->getId() == $dimensionId;
+            return $item instanceof DimensionInterface && $item->getId() == $dimensionId;
         })->getFirst();
 
         if ($dimension) {
@@ -459,7 +461,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     public function whereAccount(string $accountId): Query
     {
         return $this->where(function ($item) use ($accountId) {
-            return $item instanceof Account && $item->getId() == $accountId;
+            return $item instanceof AccountInterface && $item->getId() == $accountId;
         });
     }
 
@@ -514,7 +516,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     public function whereAttribute(string $name, $value = null): Query
     {
         return $this->filter(function ($item) use ($name, $value) {
-            return $item instanceof Interfaces\Attributable
+            return $item instanceof AttributableInterface
                 && $item->hasAttribute($name)
                 && (is_null($value) || $item->getAttribute($name) == $value);
         });

@@ -2,24 +2,26 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting;
+namespace byrokrat\accounting\Dimension;
+
+use byrokrat\accounting\Exception\RuntimeException;
 
 class AccountTest extends \PHPUnit\Framework\TestCase
 {
     public function testExceptionOnNonNumericAccountNumber()
     {
-        $this->expectException(Exception\RuntimeException::CLASS);
-        new Account\Asset('this-is-not-a-numerical-string');
+        $this->expectException(RuntimeException::CLASS);
+        new AssetAccount('this-is-not-a-numerical-string');
     }
 
     public function testIsAsset()
     {
         $this->assertTrue(
-            (new Account\Asset('1000'))->isAsset(),
+            (new AssetAccount('1000'))->isAsset(),
             'Asset objects should identify themselves using isAsset'
         );
         $this->assertFalse(
-            (new Account\Cost('1000'))->isAsset(),
+            (new CostAccount('1000'))->isAsset(),
             'Non-Asset objects should not identify themselves using isAsset'
         );
     }
@@ -27,11 +29,11 @@ class AccountTest extends \PHPUnit\Framework\TestCase
     public function testIsCost()
     {
         $this->assertTrue(
-            (new Account\Cost('1000'))->isCost(),
+            (new CostAccount('1000'))->isCost(),
             'Cost objects should identify themselves using isCost'
         );
         $this->assertFalse(
-            (new Account\Debt('1000'))->isCost(),
+            (new DebtAccount('1000'))->isCost(),
             'Non-Cost objects should not identify themselves using isCost'
         );
     }
@@ -39,11 +41,11 @@ class AccountTest extends \PHPUnit\Framework\TestCase
     public function testIsDebt()
     {
         $this->assertTrue(
-            (new Account\Debt('1000'))->isDebt(),
+            (new DebtAccount('1000'))->isDebt(),
             'Debt objects should identify themselves using isDebt'
         );
         $this->assertFalse(
-            (new Account\Earning('1000'))->isDebt(),
+            (new EarningAccount('1000'))->isDebt(),
             'Non-Debt objects should not identify themselves using isDebt'
         );
     }
@@ -51,11 +53,11 @@ class AccountTest extends \PHPUnit\Framework\TestCase
     public function testIsEarning()
     {
         $this->assertTrue(
-            (new Account\Earning('1000'))->isEarning(),
+            (new EarningAccount('1000'))->isEarning(),
             'Earning objects should identify themselves using isEarning'
         );
         $this->assertFalse(
-            (new Account\Asset('1000'))->isEarning(),
+            (new AssetAccount('1000'))->isEarning(),
             'Non-Earning objects should not identify themselves using isEarning'
         );
     }
@@ -64,7 +66,7 @@ class AccountTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             'bar',
-            (new Account\Asset('1234', '', ['foo' => 'bar']))->getAttribute('foo')
+            (new AssetAccount('1234', '', ['foo' => 'bar']))->getAttribute('foo')
         );
     }
 
@@ -72,7 +74,7 @@ class AccountTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             '1000',
-            (new Account\Asset('1000'))->getId()
+            (new AssetAccount('1000'))->getId()
         );
     }
 
@@ -80,7 +82,7 @@ class AccountTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             '1000 (desc)',
-            (string)new Account\Asset('1000', 'desc')
+            (string)new AssetAccount('1000', 'desc')
         );
     }
 }

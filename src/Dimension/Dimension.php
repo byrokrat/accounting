@@ -20,69 +20,48 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting;
+namespace byrokrat\accounting\Dimension;
 
-use byrokrat\accounting\Interfaces\Attributable;
-use byrokrat\accounting\Interfaces\Describable;
-use byrokrat\accounting\Interfaces\Traits\AttributableTrait;
-use byrokrat\accounting\Interfaces\Traits\DescribableTrait;
+use byrokrat\accounting\Exception\LogicException;
+use byrokrat\accounting\Helper\AttributableTrait;
+use byrokrat\accounting\Helper\DescribableTrait;
+use byrokrat\accounting\Query;
 
-/**
- * Defines an entity through which transactions can be channeled
- */
-class Dimension implements Attributable, Describable, QueryableInterface
+class Dimension implements DimensionInterface
 {
     use AttributableTrait, DescribableTrait;
 
     /**
-     * @var string Dimension identification
+     * @var string
      */
     private $dimensionId;
 
     /**
-     * @var Dimension Parent dimension
+     * @var ?DimensionInterface
      */
     private $parent;
 
-    /**
-     * Load values at construct
-     *
-     * @param string    $dimensionId Dimension identification
-     * @param string    $description Free text description
-     * @param Dimension $parent      Optional parent dimension
-     */
-    public function __construct(string $dimensionId, string $description = '', Dimension $parent = null)
+    public function __construct(string $dimensionId, string $description = '', DimensionInterface $parent = null)
     {
         $this->dimensionId = $dimensionId;
         $this->setDescription($description);
         $this->parent = $parent;
     }
 
-    /**
-     * Get dimension identification
-     */
     public function getId(): string
     {
         return $this->dimensionId;
     }
 
-    /**
-     * Check if dimension has a parent
-     */
     public function hasParent(): bool
     {
         return isset($this->parent);
     }
 
-    /**
-     * Get dimension parent
-     *
-     * @throws Exception\LogicException If parent is not set
-     */
-    public function getParent(): Dimension
+    public function getParent(): DimensionInterface
     {
-        if (!$this->hasParent()) {
-            throw new Exception\LogicException(
+        if (!isset($this->parent)) {
+            throw new LogicException(
                 'Unable to read parent dimension, did you check if parent is set using hasParent()?'
             );
         }
@@ -90,20 +69,15 @@ class Dimension implements Attributable, Describable, QueryableInterface
         return $this->parent;
     }
 
-    /**
-     * Check if this dimension is contained in $dimension
-     *
-     * @param  Dimension|string $dimension
-     */
     public function inDimension($dimension): bool
     {
-        if ($dimension instanceof Dimension) {
+        if ($dimension instanceof DimensionInterface) {
             $dimension = $dimension->getId();
         }
 
         if (!is_string($dimension)) {
-            throw new Exception\LogicException(
-                '$dimension must be a string or a Dimension object, found: ' . gettype($dimension)
+            throw new LogicException(
+                '$dimension must be a string or a dimension object, found: ' . gettype($dimension)
             );
         }
 

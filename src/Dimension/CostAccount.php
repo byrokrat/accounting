@@ -20,35 +20,12 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting;
+namespace byrokrat\accounting\Dimension;
 
-/**
- * Facilitates the creation of account objects
- */
-class AccountFactory
+class CostAccount extends AbstractAccount
 {
-    /**
-     * Create a new account object
-     *
-     * @param string $number      Account number
-     * @param string $description Description of account
-     */
-    public function createAccount(string $number, string $description = ''): Account
+    public function isCost(): bool
     {
-        $iNumber = intval($number);
-
-        if ($iNumber < 2000) {
-            return new Account\Asset($number, $description);
-        }
-
-        if ($iNumber < 3000) {
-            return new Account\Debt($number, $description);
-        }
-
-        if ($iNumber < 4000) {
-            return new Account\Earning($number, $description);
-        }
-
-        return new Account\Cost($number, $description);
+        return true;
     }
 }

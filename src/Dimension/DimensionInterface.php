@@ -18,44 +18,43 @@
  * Copyright 2016-18 Hannes Forsgård
  */
 
-namespace byrokrat\accounting\Interfaces;
+namespace byrokrat\accounting\Dimension;
 
+use byrokrat\accounting\AttributableInterface;
+use byrokrat\accounting\QueryableInterface;
 use byrokrat\accounting\Exception\LogicException;
 
 /**
- * Defines methods for reading and writing attributes
+ * A dimension is an entity through which transactions can be channeled
  */
-interface Attributable
+interface DimensionInterface extends AttributableInterface, QueryableInterface
 {
     /**
-     * Register attribute
-     *
-     * @param  string $name  Case-insensitive name of attribute
-     * @param  mixed  $value Value to register
+     * Get dimension identification
      */
-    public function setAttribute(string $name, $value): self;
+    public function getId(): string;
 
     /**
-     * Check if attribute has been set
-     *
-     * @param  string  $name Case-insensitive name of attribute
-     * @return boolean
+     * Get free text description
      */
-    public function hasAttribute(string $name): bool;
+    public function getDescription(): string;
 
     /**
-     * Read registered attribute
-     *
-     * @param  string $name Case-insensitive name of attribute
-     * @return mixed
-     * @throws LogicException if attriute is not set
+     * Check if dimension has a parent
      */
-    public function getAttribute(string $name);
+    public function hasParent(): bool;
 
     /**
-     * Get the array of all registered attributes
+     * Get dimension parent
      *
-     * @return array
+     * @throws LogicException If parent is not set
      */
-    public function getAttributes(): array;
+    public function getParent(): DimensionInterface;
+
+    /**
+     * Check if this dimension is contained in $dimension
+     *
+     * @param DimensionInterface|string $dimension Object or dimension id
+     */
+    public function inDimension($dimension): bool;
 }

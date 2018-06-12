@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\Transaction;
 
 use byrokrat\accounting\utils;
-use byrokrat\accounting\Account;
+use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\amount\Amount;
 
 class TransactionTest extends \PHPUnit\Framework\TestCase
@@ -66,7 +66,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
 
     public function testCastToString()
     {
-        $account = $this->prophesize(Account::CLASS);
+        $account = $this->prophesize(AccountInterface::CLASS);
         $account->__toString()->willReturn('account');
 
         $amount = $this->prophesize(Amount::CLASS);

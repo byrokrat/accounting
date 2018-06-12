@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\Transaction;
 
 use byrokrat\accounting\utils;
-use byrokrat\accounting\Account;
+use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\amount\Amount;
 
 class DeletedTransactionTest extends \PHPUnit\Framework\TestCase
@@ -16,7 +16,7 @@ class DeletedTransactionTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertTrue(
             (new DeletedTransaction(
-                $this->createMock(Account::CLASS),
+                $this->createMock(AccountInterface::CLASS),
                 $this->createMock(Amount::CLASS),
                 ''
             ))->isDeleted()
@@ -26,7 +26,7 @@ class DeletedTransactionTest extends \PHPUnit\Framework\TestCase
     public function testMandatorySignature()
     {
         $trans = new DeletedTransaction(
-            $this->createMock(Account::CLASS),
+            $this->createMock(AccountInterface::CLASS),
             $this->createMock(Amount::CLASS),
             'sign'
         );

@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\accounting\Account;
+use byrokrat\accounting\Dimension\DebtAccount;
 use byrokrat\accounting\Exception;
 use Psr\Log\LoggerInterface;
 
@@ -112,12 +112,12 @@ class AccountBuilderTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertNotInstanceOf(
-            Account\Debt::CLASS,
+            DebtAccount::CLASS,
             $originalAccount
         );
 
         $this->assertInstanceOf(
-            Account\Debt::CLASS,
+            DebtAccount::CLASS,
             $newAccount
         );
 

@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Container;
-use byrokrat\accounting\Dimension;
+use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Exception;
 use byrokrat\amount\Amount;
 use byrokrat\amount\Currency\SEK;
@@ -424,7 +424,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     public function testObjectListType(string $list, string $objId)
     {
         $this->assertInstanceOf(
-            Dimension::CLASS,
+            DimensionInterface::CLASS,
             $this->parse("
                 #FLAGGA 1
                 #OIB 0 0 $list 0 0

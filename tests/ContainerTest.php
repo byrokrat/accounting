@@ -6,11 +6,11 @@ namespace byrokrat\accounting;
 
 class ContainerTest extends \PHPUnit\Framework\TestCase
 {
-    use utils\InterfaceAssertionsTrait;
+    use utils\AttributableTestsTrait;
 
-    public function testAttributable()
+    protected function getObjectToTest()
     {
-        $this->assertAttributable(new Container);
+        return new Container;
     }
 
     public function testItems()
