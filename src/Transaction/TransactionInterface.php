@@ -29,7 +29,7 @@ use byrokrat\amount\Amount;
 /**
  * A pure transaction is an amount moved to or from an account
  */
-interface TransactionInterface extends AttributableInterface, QueryableInterface, \IteratorAggregate
+interface TransactionInterface extends AttributableInterface, QueryableInterface
 {
     /**
      * Get Account this transaction concerns

@@ -27,8 +27,8 @@ use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Helper\AttributableTrait;
 use byrokrat\accounting\Helper\DateableTrait;
 use byrokrat\accounting\Helper\DescribableTrait;
-use byrokrat\accounting\Helper\QueryableTrait;
 use byrokrat\accounting\Helper\SignableTrait;
+use byrokrat\accounting\Query;
 use byrokrat\amount\Amount;
 
 /**
@@ -36,7 +36,7 @@ use byrokrat\amount\Amount;
  */
 class Transaction implements TransactionInterface
 {
-    use AttributableTrait, DateableTrait, DescribableTrait, QueryableTrait, SignableTrait;
+    use AttributableTrait, DateableTrait, DescribableTrait, SignableTrait;
 
     /**
      * @var AccountInterface
@@ -85,15 +85,6 @@ class Transaction implements TransactionInterface
         return $this->dimensions;
     }
 
-    public function getIterator(): iterable
-    {
-        yield $this->getAccount();
-        yield $this->getAmount();
-        foreach ($this->getDimensions() as $dim) {
-            yield $dim;
-        }
-    }
-
     public function getQuantity(): Amount
     {
         return $this->quantity;
@@ -112,5 +103,14 @@ class Transaction implements TransactionInterface
     public function __toString(): string
     {
         return sprintf('%s: %s', $this->getAccount(), $this->getAmount());
+    }
+
+    public function select(): Query
+    {
+        return new Query(function () {
+            yield $this->getAccount();
+            yield $this->getAmount();
+            yield from $this->getDimensions();
+        });
     }
 }

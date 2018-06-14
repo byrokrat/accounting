@@ -60,16 +60,6 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
         $this->createTransaction()->getDate();
     }
 
-    public function testIterable()
-    {
-        $transaction = $this->createTransaction($account, $amount, $void, $dimensions);
-
-        $this->assertSame(
-            array_merge([$account, $amount], $dimensions),
-            iterator_to_array($transaction)
-        );
-    }
-
     public function testQueryable()
     {
         $transaction = $this->createTransaction($account, $amount, $void, $dimensions);

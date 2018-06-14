@@ -114,7 +114,6 @@ trait PropheciesTrait
         $transaction->getAmount()->willReturn($amount);
         $transaction->getAccount()->willReturn($account);
         $transaction->isDeleted()->willReturn(false);
-        $transaction->getIterator()->willReturn([$amount, $account]);
         $transaction->select()->will(function () use ($amount, $account) {
             return new Query([$amount, $account]);
         });
