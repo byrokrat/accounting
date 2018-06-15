@@ -29,7 +29,7 @@ $content = $parser->parse("
 // Outputs '1'
 echo $content->getAttribute('flag');
 
-/** @var \byrokrat\accounting\Verification[] $verifications */
+/** @var \byrokrat\accounting\Verification\VerificationInterface[] $verifications */
 $verifications = $content->select()->verifications()->asArray();
 
 // Outputs '100.00'
@@ -47,9 +47,15 @@ use byrokrat\amount\Amount;
 echo (new Sie4\Writer\Writer)->generate(
     (new Sie4\Writer\Settings)->setTargetCompany('my-company'),
     new Query([
-        (new Verification)
-            ->addTransaction(new Transaction\Transaction(new Dimension\AssetAccount('1920', 'Bank'), new Amount('100')))
-            ->addTransaction(new Transaction\Transaction(new Dimension\EarningAccount('3000', 'Intänk'), new Amount('-100')))
+        new Verification\Verification(
+            1,
+            new \DateTimeImmutable,
+            new \DateTimeImmutable,
+            '',
+            '',
+            new Transaction\Transaction(new Dimension\AssetAccount('1920', 'Bank'), new Amount('100')),
+            new Transaction\Transaction(new Dimension\EarningAccount('3000', 'Intänk'), new Amount('-100'))
+        )
     ])
 );
 ```

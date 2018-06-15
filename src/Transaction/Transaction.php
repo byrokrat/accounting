@@ -107,10 +107,11 @@ class Transaction implements TransactionInterface
 
     public function select(): Query
     {
-        return new Query(function () {
-            yield $this->getAccount();
-            yield $this->getAmount();
-            yield from $this->getDimensions();
-        });
+        return new Query(
+            array_merge(
+                [$this->getAccount(), $this->getAmount()],
+                $this->getDimensions()
+            )
+        );
     }
 }

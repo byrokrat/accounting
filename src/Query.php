@@ -25,6 +25,7 @@ namespace byrokrat\accounting;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Transaction\TransactionInterface;
+use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\amount\Amount;
 
 /**
@@ -351,16 +352,9 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
 
     /**
      * Create a new Query including addtional data
-     *
-     * @param  array|\Traversable $data Items to include
-     * @throws Exception\LogicException if $data is not traversable
      */
-    public function load($data): Query
+    public function load(iterable $data): Query
     {
-        if (!is_iterable($data)) {
-            throw new Exception\LogicException('Query source must be iterable');
-        }
-
         $outerIterator = ($this->iteratorFactory)();
 
         return new Query(function () use ($outerIterator, $data) {
@@ -399,11 +393,14 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      */
     public function orderBy(callable $comparator): Query
     {
+        // Kan inte detta göras i closure
         $outerIterator = ($this->iteratorFactory)();
 
         return new Query(function () use ($outerIterator, $comparator) {
+            // TODO måste vara en bugg ifall generator ger flera objekt med samma key...
             $data = iterator_to_array($outerIterator);
             usort($data, $comparator);
+            // yeild from..
             foreach ($data as $item) {
                 yield $item;
             }
@@ -440,11 +437,11 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     }
 
     /**
-     * Filter that returns only Verification objects
+     * Filter that returns only verification objects
      */
     public function verifications(): Query
     {
-        return $this->filterType(Verification::CLASS);
+        return $this->filterType(VerificationInterface::CLASS);
     }
 
     /**
@@ -487,7 +484,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     public function whereAmount(string $comp, Amount $amount): Query
     {
         return $this->where(function ($item) use ($comp, $amount) {
-            if ($item instanceof Verification) {
+            if ($item instanceof VerificationInterface) {
                 return $item->getMagnitude()->$comp($amount);
             }
 
@@ -546,7 +543,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
         $uniqueItems = [];
 
         return $this->filter(function ($item) use (&$uniqueItems) {
-            if (in_array($item, $uniqueItems, true)) {
+            if (array_search($item, $uniqueItems, true) !== false) {
                 return false;
             }
 

@@ -4,10 +4,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\accounting\Account;
-use byrokrat\accounting\Exception;
+use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\amount\Amount;
-use byrokrat\amount\Currency;
 use Psr\Log\LoggerInterface;
 use Prophecy\Argument;
 
@@ -16,8 +14,6 @@ use Prophecy\Argument;
  */
 class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
 {
-    use \byrokrat\accounting\utils\PropheciesTrait;
-
     public function testCreateVerification()
     {
         $verificationBuilder = new VerificationBuilder(
@@ -27,19 +23,13 @@ class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
         $date = new \DateTimeImmutable;
         $desc = 'description';
 
-        $transA = $this->prophesizeTransaction(new Currency\SEK('100'));
-        $transA->hasDate()->willReturn(false)->shouldBeCalled();
-        $transA->setDate($date)->shouldBeCalled();
-        $transA->getDescription()->willReturn('')->shouldBeCalled();
-        $transA->setDescription($desc)->shouldBeCalled();
-        $transA->setAttribute('ver_num', Argument::any())->shouldBeCalled();
+        $transA = $this->prophesize(TransactionInterface::CLASS);
+        $transA->getAmount()->willReturn(new Amount('100'));
+        $transA->isDeleted()->willReturn(false);
 
-        $transB = $this->prophesizeTransaction(new Currency\SEK('-100'));
-        $transB->hasDate()->willReturn(false)->shouldBeCalled();
-        $transB->setDate($date)->shouldBeCalled();
-        $transB->getDescription()->willReturn('')->shouldBeCalled();
-        $transB->setDescription($desc)->shouldBeCalled();
-        $transB->setAttribute('ver_num', Argument::any())->shouldBeCalled();
+        $transB = $this->prophesize(TransactionInterface::CLASS);
+        $transB->getAmount()->willReturn(new Amount('-100'));
+        $transB->isDeleted()->willReturn(false);
 
         $verification = $verificationBuilder->createVerification(
             $series = 'A',
@@ -63,7 +53,7 @@ class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             $date,
-            $verification->getDate()
+            $verification->getTransactionDate()
         );
 
         $this->assertSame(
@@ -95,10 +85,9 @@ class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
             $logger->reveal()
         );
 
-        $transA = $this->prophesizeTransaction(new Currency\SEK('100'));
-        $transA->hasDate()->willReturn(true)->shouldBeCalled();
-        $transA->getDescription()->willReturn('desc')->shouldBeCalled();
-        $transA->setAttribute('ver_num', Argument::any())->shouldBeCalled();
+        $transA = $this->prophesize(TransactionInterface::CLASS);
+        $transA->getAmount()->willReturn(new Amount('100'));
+        $transA->isDeleted()->willReturn(false);
 
         $verification = $verificationBuilder->createVerification(
             '',

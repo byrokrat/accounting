@@ -94,6 +94,9 @@ An example of how Accounting may be used to sort transactions inte a ledger
 
 $container->select()->accounts()->whereUnique()->orderById()->each('formatAccount');
 
+// TODO här går det inte längre att läsa ver_num från transaction.
+// Kanske är det verifications som ska sparas till account vid process för att göra detta..
+
 function formatAccount($account)
 {
     echo "$account\n";
@@ -102,7 +105,8 @@ function formatAccount($account)
     $currentBalance = $account->getAttribute('summary')->getIncomingBalance();
 
     foreach ($account->getAttribute('transactions') as $trans) {
-        echo $trans->getAttribute('ver_num'),
+        // echo $trans->getAttribute('ver_num'),
+        echo '',
             ' ',
             $trans->getDescription(),
             ' ',

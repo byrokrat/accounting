@@ -6,7 +6,9 @@ namespace byrokrat\accounting\Transaction;
 
 use byrokrat\accounting\utils;
 use byrokrat\accounting\Dimension\AccountInterface;
+use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Exception\LogicException;
+use byrokrat\accounting\Query;
 use byrokrat\amount\Amount;
 
 class TransactionTest extends \PHPUnit\Framework\TestCase
@@ -62,11 +64,17 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
 
     public function testQueryable()
     {
-        $transaction = $this->createTransaction($account, $amount, $void, $dimensions);
+        $transaction = new Transaction(
+            $account = $this->createMock(AccountInterface::CLASS),
+            $amount = new Amount('100'),
+            new Amount('0'),
+            $dimA = $this->createMock(DimensionInterface::CLASS),
+            $dimB = $this->createMock(DimensionInterface::CLASS)
+        );
 
-        $this->assertSame(
-            array_merge([$account, $amount], $dimensions),
-            $transaction->select()->asArray()
+        $this->assertEquals(
+            new Query([$account, $amount, $dimA, $dimB]),
+            $transaction->select()
         );
     }
 

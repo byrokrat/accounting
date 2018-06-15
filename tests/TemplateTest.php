@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace byrokrat\accounting;
 
 use byrokrat\accounting\Transaction\Transaction;
+use byrokrat\accounting\Verification\Verification;
 use byrokrat\amount\Amount;
 
 /**
@@ -39,33 +40,53 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
 
     public function translationsProvider()
     {
-        $verWithAttrFooBar = new Verification;
+        $verWithAttrFooBar = new Verification(0, new \DateTimeImmutable, new \DateTimeImmutable, '', '');
         $verWithAttrFooBar->setAttribute('foo', 'bar');
 
-        $verWithAttrFoobarFoobar = new Verification;
+        $verWithAttrFoobarFoobar = new Verification(0, new \DateTimeImmutable, new \DateTimeImmutable, '', '');
         $verWithAttrFoobarFoobar->setAttribute('foobar', 'foobar');
 
         return [
             [
-                (new Verification)->addTransaction(
+                new Verification(
+                    0,
+                    new \DateTimeImmutable,
+                    new \DateTimeImmutable,
+                    '',
+                    '',
                     new Transaction(new Dimension\EarningAccount('3000', 'Incomes'), new Amount('-400'))
                 ),
                 [['{in}', '-400']],
             ],
             [
-                (new Verification)->addTransaction(
+                new Verification(
+                    0,
+                    new \DateTimeImmutable,
+                    new \DateTimeImmutable,
+                    '',
+                    '',
                     new Transaction(new Dimension\AssetAccount('1920', 'Bank'), new Amount('400'))
                 ),
                 [['1920', '{amount}']],
             ],
             [
-                (new Verification)->addTransaction(
+                new Verification(
+                    0,
+                    new \DateTimeImmutable,
+                    new \DateTimeImmutable,
+                    '',
+                    '',
                     new Transaction(new Dimension\AssetAccount('1920', 'Bank'), new Amount('100'), new Amount('10'))
                 ),
                 [['1920', '100', '{quantity}']],
             ],
             [
-                (new Verification)->addTransaction(
+                new Verification(
+                    0,
+                    new \DateTimeImmutable,
+                    new \DateTimeImmutable,
+                    '',
+                    '',
                     new Transaction(
                         new Dimension\AssetAccount('1920', 'Bank'),
                         new Amount('100'),
@@ -77,7 +98,12 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
                 [['1920', '100', '1', ['1', '2']]],
             ],
             [
-                (new Verification)->addTransaction(
+                new Verification(
+                    0,
+                    new \DateTimeImmutable,
+                    new \DateTimeImmutable,
+                    '',
+                    '',
                     new Transaction(
                         new Dimension\AssetAccount('1920', 'Bank'),
                         new Amount('100'),
@@ -112,11 +138,16 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
             $template->setAttribute($name, $value);
         }
 
-        $ignoredDate = new \DateTimeImmutable;
+        // TODO non-obvious tests as we are missing a system clock...
 
         $this->assertEquals(
-            $expected->setDate($ignoredDate),
-            $template->build(self::$translations, self::$container)->setDate($ignoredDate)
+            $expected->getTransactions(),
+            $template->build(self::$translations, self::$container)->getTransactions()
+        );
+
+        $this->assertEquals(
+            $expected->getAttributes(),
+            $template->build(self::$translations, self::$container)->getAttributes()
         );
     }
 

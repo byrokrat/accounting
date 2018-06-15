@@ -68,18 +68,13 @@ class Container implements AttributableInterface, QueryableInterface, \IteratorA
         return $this->items;
     }
 
-    /**
-     * Implements the IteratorAggregate interface
-     */
     public function getIterator(): iterable
     {
-        foreach ($this->getItems() as $item) {
-            yield $item;
-        }
+        yield from $this->getItems();
     }
 
     public function select(): Query
     {
-        return new Query($this->getIterator());
+        return new Query($this->getItems());
     }
 }

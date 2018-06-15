@@ -25,7 +25,7 @@ namespace byrokrat\accounting\Sie4\Writer;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Exception;
 use byrokrat\accounting\Transaction\TransactionInterface;
-use byrokrat\accounting\Verification;
+use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\accounting\Query;
 
 /**
@@ -46,8 +46,8 @@ class Writer
     /*
     TODO Kontroll att transaktion hör till rätt år görs inte längre...
     if (
-        $verification->getDate() < $settings->getAccountingYearFirstDay()
-        || $verification->getDate() > $settings->getAccountingYearLastDay()
+        $verification->getTransactionDate() < $settings->getAccountingYearFirstDay()
+        || $verification->getTransactionDate() > $settings->getAccountingYearLastDay()
     ) {
         throw new Exception\RuntimeException("Verification date is outside of accounting year");
     }
@@ -131,13 +131,13 @@ class Writer
     /**
      * Write verification to output
      */
-    public function writeVerification(Verification $verification, Output $output)
+    public function writeVerification(VerificationInterface $verification, Output $output)
     {
         // TODO validate that verification is balanced...
         $output->writeln(
             '#VER "" "" %s %s',
             $verification->getDescription(),
-            $verification->getDate()->format('Ymd')
+            $verification->getTransactionDate()->format('Ymd')
         );
         $output->writeln('{');
         foreach ($verification->getTransactions() as $transaction) {

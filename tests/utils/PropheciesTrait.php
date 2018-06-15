@@ -10,7 +10,7 @@ use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Query;
 use byrokrat\accounting\QueryableInterface;
 use byrokrat\accounting\Transaction\TransactionInterface;
-use byrokrat\accounting\Verification;
+use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\amount\Amount;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -122,29 +122,13 @@ trait PropheciesTrait
     }
 
     /**
-     * Create deleted transaction prophecy
-     *
-     * @param  Amount           $amount  Will be returned by getAmount()
-     * @param  AccountInterface $account Will be returned by getAccount()
-     */
-    public function prophesizeDeletedTransaction(
-        Amount $amount = null,
-        AccountInterface $account = null
-    ): ObjectProphecy {
-        $transaction = $this->prophesizeTransaction($amount, $account);
-        $transaction->isDeleted()->willReturn(true);
-
-        return $transaction;
-    }
-
-    /**
      * Create verification prophecy
      *
      * @param  array $transactions Will be returned by getTransactions() and as select() content
      */
     public function prophesizeVerification(array $transactions = []): ObjectProphecy
     {
-        $verification = $this->prophesize(Verification::CLASS);
+        $verification = $this->prophesize(VerificationInterface::CLASS);
         $verification->isBalanced()->willReturn(true);
         $verification->getTransactions()->willReturn($transactions);
         $verification->select()->will(function () use ($transactions) {

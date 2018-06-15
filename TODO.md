@@ -1,12 +1,25 @@
 # TODO
 
+* @return phpstan statements till getIterator på alla ställen där det går..
+* kolla igenom alla yields så att jag använder yield from vid arrayer...
+
+* toString-grejjen är jag väldigt tveksom över också...
+
+* skippa allt det här med refs från transaction till verification
+
+* Arbeta bort så många av Helper som möjligt..
+    (+ test traits...)
+    Signature kan returnera '' om ingen finns satt
+    Samma med description såklart..
+
 * Kolla av vanliga TODOs i kod..
 
-## Verification
+## VerificationBuilder
 
-1. Ska ta värden till construct
-1. Bort med setters
-1. Ej return self
+* Vill vi ha en Verification namespace?
+    - Fundera på det...
+    - Att registrationDate kan vara transactionDate ska ställas in i VerificationBuilder
+        liksom allt annat som kan vara speciellt på något sätt...
 
 ## Parser
 

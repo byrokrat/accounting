@@ -23,7 +23,8 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Transaction\TransactionInterface;
-use byrokrat\accounting\Verification;
+use byrokrat\accounting\Verification\VerificationInterface;
+use byrokrat\accounting\Verification\Verification;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -47,56 +48,35 @@ class VerificationBuilder
     /**
      * Create a new transaction object
      *
-     * @param string                 $series       The series verification should be a part of
-     * @param string                 $number       Verification number
-     * @param \DateTimeImmutable     $date         Date of accounting action
-     * @param string                 $desc         Free text description
-     * @param \DateTimeImmutable     $regdate      Date of registration (defaults to $date)
-     * @param string                 $sign         Signature
-     * @param TransactionInterface[] $transactions List of included transactions
+     * @param string                 $series          The series verification should be a part of
+     * @param string                 $number          Verification number
+     * @param \DateTimeImmutable     $transactionDate Date of accounting action
+     * @param string                 $desc            Free text description
+     * @param \DateTimeImmutable     $regdate         Date of registration (defaults to $date)
+     * @param string                 $sign            Signature
+     * @param TransactionInterface[] $transactions    List of included transactions
      */
     public function createVerification(
         string $series,
         string $number,
-        \DateTimeImmutable $date,
+        \DateTimeImmutable $transactionDate,
         string $desc = '',
         \DateTimeImmutable $regdate = null,
         string $sign = '',
         array $transactions = []
-    ): Verification {
-        $verification = new Verification;
+    ): VerificationInterface {
+        $verification = new Verification(
+            intval($number),
+            $transactionDate,
+            $regdate ?: $transactionDate,
+            $desc,
+            $sign,
+            ...$transactions
+        );
+
         $verification->setAttribute('series', $series);
-        $verification->setDate($date);
 
-        if ($number) {
-            $verification->setId(intval($number));
-        }
-
-        if ($desc) {
-            $verification->setDescription($desc);
-        }
-
-        if ($regdate) {
-            $verification->setRegistrationDate($regdate);
-        }
-
-        if ($sign) {
-            $verification->setSignature($sign);
-        }
-
-        foreach ($transactions as $transaction) {
-            if (!$transaction->hasDate()) {
-                $transaction->setDate($verification->getDate());
-            }
-
-            if (!$transaction->getDescription()) {
-                $transaction->setDescription($verification->getDescription());
-            }
-
-            $verification->addTransaction($transaction);
-        }
-
-        if ($verification->getTransactions() && !$verification->isBalanced()) {
+        if ($transactions && !$verification->isBalanced()) {
             $this->logger->error('Trying to add an unbalanced verification');
         }
 

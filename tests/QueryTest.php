@@ -403,7 +403,10 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         $foo = $this->prophesizeQueryable(['', 'foo'])->reveal();
         $bar = $this->prophesizeQueryable(['', 'bar'])->reveal();
 
-        $this->assertSame(
+        $foo = new Query(['', 'foo']);
+        $bar = new Query(['', 'bar']);
+
+        $this->assertEquals(
             [$bar],
             (new Query([$foo, $bar]))->filterType(QueryableInterface::CLASS)->whereNot(function ($item) {
                 return is_string($item) && $item == 'foo';
@@ -556,12 +559,6 @@ class QueryTest extends \PHPUnit\Framework\TestCase
             [1, 2, 3, 4],
             (new Query([1, 2]))->load([3, 4])->asArray()
         );
-    }
-
-    public function testExceptionOnLoadingUnvalidData()
-    {
-        $this->expectException(Exception\LogicException::CLASS);
-        (new Query)->load(null);
     }
 
     /**

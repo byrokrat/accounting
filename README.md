@@ -126,7 +126,7 @@ composer install
 Install development tools
 
 ```shell
-composer global require chh/bob:1.0@alpha
+composer global require chh/bob:^1.0@alpha
 export PATH=$PATH:$HOME/.composer/vendor/bin/
 bob install_dev_tools
 ```

@@ -23,6 +23,8 @@ declare(strict_types = 1);
 namespace byrokrat\accounting;
 
 use byrokrat\accounting\Transaction\Transaction;
+use byrokrat\accounting\Verification\Verification;
+use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\amount\Amount;
 
 /**
@@ -84,13 +86,12 @@ class Template implements AttributableInterface
      *
      * @throws Exception\RuntimeException If any key is NOT translated
      */
-    public function build(array $translationMap, QueryableInterface $container): Verification
+    public function build(array $translationMap, QueryableInterface $container): VerificationInterface
     {
         $container = $container->select();
         $filter = $this->createTranslationFilter($translationMap);
 
-        $ver = new Verification;
-        $ver->setDescription($filter($this->getDescription()));
+        $transactions = [];
 
         foreach ($this->transactions as list($number, $amount, $quantity, $dimensions)) {
             $dimensions = array_map(
@@ -100,15 +101,22 @@ class Template implements AttributableInterface
                 $dimensions
             );
 
-            $ver->addTransaction(
-                new Transaction(
-                    $container->getAccount($filter($number)),
-                    new Amount($filter($amount)),
-                    new Amount($filter($quantity)),
-                    ...$dimensions
-                )
+            $transactions[] = new Transaction(
+                $container->getAccount($filter($number)),
+                new Amount($filter($amount)),
+                new Amount($filter($quantity)),
+                ...$dimensions
             );
         }
+
+        $ver = new Verification(
+            0,
+            new \DateTimeImmutable,
+            new \DateTimeImmutable,
+            $filter($this->getDescription()),
+            '',
+            ...$transactions
+        );
 
         foreach ($this->getAttributes() as $name => $value) {
             $ver->setAttribute(
