@@ -1,9 +1,9 @@
 # TODO
 
-* skriv id till transaction i parser...
-    det löser problemet med att vi inte kan göra en propper huvudbok just nu då ver_num ej är access..
-    skriv detta huvudbok exempel i egen fil under docs/ så att det blir enkelt att hitta...
-    se nu docs/01-querying
+* Att generera huvudbok
+    - har skrivit ett nytt förslag i docs/01-querying.md
+    - validera att detta funkar med parsed content... (ver id..)
+    - flytt exempel till egen fil under docs/ så att det blir enkelt att hitta...
 
 ## Template
 
@@ -25,6 +25,8 @@
 * Att köra print_r på $contet->getAttributes() efter parse visar en hel del konstigheter
   i hur attributes skrivits. Se om det är något jag kan rätta till...
 * Drop PSR/log. Skriv detta på något eget sätt i stället...
+* VerificationBuilder gör en massa saker som inte riktigt är testade.
+  Att skapa transactions borde vara mer genomtänkt...
 
 ## Writer
 

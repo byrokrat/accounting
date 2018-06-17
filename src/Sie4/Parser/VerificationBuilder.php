@@ -22,7 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\accounting\Verification\Verification;
 use Psr\Log\LoggerInterface;
@@ -48,13 +47,13 @@ class VerificationBuilder
     /**
      * Create a new transaction object
      *
-     * @param string                 $series          The series verification should be a part of
-     * @param string                 $number          Verification number
-     * @param \DateTimeImmutable     $transactionDate Date of accounting action
-     * @param string                 $desc            Free text description
-     * @param \DateTimeImmutable     $regdate         Date of registration (defaults to $date)
-     * @param string                 $sign            Signature
-     * @param TransactionInterface[] $transactions    List of included transactions
+     * @param string             $series          The series verification should be a part of
+     * @param string             $number          Verification number
+     * @param \DateTimeImmutable $transactionDate Date of accounting action
+     * @param string             $desc            Free text description
+     * @param \DateTimeImmutable $regdate         Date of registration (defaults to $date)
+     * @param string             $sign            Signature
+     * @param array              $transactionData Data to build transactions from
      */
     public function createVerification(
         string $series,
@@ -63,8 +62,23 @@ class VerificationBuilder
         string $desc = '',
         \DateTimeImmutable $regdate = null,
         string $sign = '',
-        array $transactions = []
+        array $transactionData = []
     ): VerificationInterface {
+        $transactions = [];
+
+        foreach ($transactionData as $data) {
+            $transactions[] = new $data['type'](
+                intval($number),
+                $data['date'] ?: $transactionDate,
+                $data['description'] ?: $desc,
+                $data['signature'] ?: $sign,
+                $data['amount'],
+                $data['quantity'],
+                $data['account'],
+                ...$data['dimensions']
+            );
+        }
+
         $verification = new Verification(
             intval($number),
             $transactionDate,

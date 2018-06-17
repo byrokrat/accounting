@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
+use byrokrat\accounting\Dimension\AccountInterface;
+use byrokrat\accounting\Transaction;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\amount\Amount;
 use Psr\Log\LoggerInterface;
@@ -23,13 +25,28 @@ class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
         $date = new \DateTimeImmutable;
         $desc = 'description';
 
-        $transA = $this->prophesize(TransactionInterface::CLASS);
-        $transA->getAmount()->willReturn(new Amount('100'));
-        $transA->isDeleted()->willReturn(false);
-
-        $transB = $this->prophesize(TransactionInterface::CLASS);
-        $transB->getAmount()->willReturn(new Amount('-100'));
-        $transB->isDeleted()->willReturn(false);
+        $transactionData = [
+            [
+                'type' => Transaction\Transaction::CLASS,
+                'account' => $this->createMock(AccountInterface::CLASS),
+                'dimensions' => [],
+                'amount' => new Amount('100'),
+                'date' => null,
+                'description' => null,
+                'quantity' => new Amount('0'),
+                'signature' => null,
+            ],
+            [
+                'type' => Transaction\Transaction::CLASS,
+                'account' => $this->createMock(AccountInterface::CLASS),
+                'dimensions' => [],
+                'amount' => new Amount('-100'),
+                'date' => null,
+                'description' => null,
+                'quantity' => new Amount('0'),
+                'signature' => null,
+            ],
+        ];
 
         $verification = $verificationBuilder->createVerification(
             $series = 'A',
@@ -38,7 +55,8 @@ class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
             $desc,
             $regdate = new \DateTimeImmutable,
             $sign = 'HF',
-            $transactions = [$transA->reveal(), $transB->reveal()]
+            $transactionData
+            #$transactions = [$transA->reveal(), $transB->reveal()]
         );
 
         $this->assertSame(
@@ -70,11 +88,6 @@ class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
             $sign,
             $verification->getSignature()
         );
-
-        $this->assertSame(
-            $transactions,
-            $verification->getTransactions()
-        );
     }
 
     public function testErrorOnUnbalancedVerification()
@@ -85,9 +98,18 @@ class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
             $logger->reveal()
         );
 
-        $transA = $this->prophesize(TransactionInterface::CLASS);
-        $transA->getAmount()->willReturn(new Amount('100'));
-        $transA->isDeleted()->willReturn(false);
+        $transactionData = [
+            [
+                'type' => Transaction\Transaction::CLASS,
+                'account' => $this->createMock(AccountInterface::CLASS),
+                'dimensions' => [],
+                'amount' => new Amount('100'),
+                'date' => null,
+                'description' => null,
+                'quantity' => new Amount('0'),
+                'signature' => null,
+            ],
+        ];
 
         $verification = $verificationBuilder->createVerification(
             '',
@@ -96,7 +118,7 @@ class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
             '',
             null,
             '',
-            [$transA->reveal()]
+            $transactionData
         );
 
         $logger->error(\Prophecy\Argument::type('string'))->shouldHaveBeenCalled();

@@ -5017,12 +5017,7 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$trans) {
-                return array_filter(
-                    $trans,
-                    function ($item) {
-                        return $item instanceof Transaction\TransactionInterface;
-                    }
-                );
+                return array_filter($trans);
             });
         }
 
@@ -5247,16 +5242,16 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
                 if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
-                    return new Transaction\Transaction(
-                        0,
-                        $date ?: new \DateTimeImmutable,
-                        $desc ?: '',
-                        $sign ?: '',
-                        $amount ?: $this->getCurrencyBuilder()->createMoney('0'),
-                        $quantity ?: new Amount('0'),
-                        $account,
-                        ...$dims
-                    );
+                    return [
+                        'type' => Transaction\Transaction::CLASS,
+                        'account' => $account,
+                        'dimensions' => $dims,
+                        'amount' => $amount,
+                        'date' => $date,
+                        'description' => $desc,
+                        'quantity' => $quantity ?: new Amount('0'),
+                        'signature' => $sign,
+                    ];
                 }
             });
         }
@@ -5482,16 +5477,16 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
                 if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
-                    return new Transaction\DeletedTransaction(
-                        0,
-                        $date ?: new \DateTimeImmutable,
-                        $desc ?: '',
-                        $sign ?: '',
-                        $amount ?: $this->getCurrencyBuilder()->createMoney('0'),
-                        $quantity ?: new Amount('0'),
-                        $account,
-                        ...$dims
-                    );
+                    return [
+                        'type' => Transaction\DeletedTransaction::CLASS,
+                        'account' => $account,
+                        'dimensions' => $dims,
+                        'amount' => $amount,
+                        'date' => $date,
+                        'description' => $desc,
+                        'quantity' => $quantity ?: new Amount('0'),
+                        'signature' => $sign,
+                    ];
                 }
             });
         }
@@ -5723,16 +5718,16 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
                 if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
-                    return new Transaction\AddedTransaction(
-                        0,
-                        $date ?: new \DateTimeImmutable,
-                        $desc ?: '',
-                        $sign ?: '',
-                        $amount ?: $this->getCurrencyBuilder()->createMoney('0'),
-                        $quantity ?: new Amount('0'),
-                        $account,
-                        ...$dims
-                    );
+                    return [
+                        'type' => Transaction\AddedTransaction::CLASS,
+                        'account' => $account,
+                        'dimensions' => $dims,
+                        'amount' => $amount,
+                        'date' => $date,
+                        'description' => $desc,
+                        'quantity' => $quantity ?: new Amount('0'),
+                        'signature' => $sign,
+                    ];
                 }
             });
         }

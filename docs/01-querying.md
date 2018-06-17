@@ -92,33 +92,26 @@ An example of how Accounting may be used to sort transactions inte a ledger
 ```php
 (new byrokrat\accounting\Processor)->processContainer($container);
 
-$container->select()->accounts()->whereUnique()->orderById()->each('formatAccount');
-
-// TODO här går det inte längre att läsa ver_num från transaction.
-// Kanske är det verifications som ska sparas till account vid process för att göra detta..
-
-function formatAccount($account)
-{
+$container->select()->accounts()->whereUnique()->orderById()->each(function ($account) {
     echo "{$account->getId()}: {$account->getDescription()}\n";
     echo "Incoming balance {$account->getAttribute('summary')->getIncomingBalance()}\n\n";
 
     $currentBalance = $account->getAttribute('summary')->getIncomingBalance();
 
     foreach ($account->getAttribute('transactions') as $trans) {
-        // echo $trans->getAttribute('ver_num'),
-        echo '',
-            ' ',
+        echo $trans->getVerificationId(),
+            "\t",
             $trans->getDescription(),
-            ' ',
+            "\t",
             $trans->getAmount(),
-            ' ',
+            "\t",
             $currentBalance = $currentBalance->add($trans->getAmount()),
             "\n";
     }
 
     echo "\nOutgoing balance {$account->getAttribute('summary')->getOutgoingBalance()}\n\n";
     echo "----------\n\n";
-}
+});
 ```
 
 [Parsing and writing SIE files](02-sie.md) &rarr;
