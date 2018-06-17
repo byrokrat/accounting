@@ -33,7 +33,7 @@ interface VerificationInterface extends AttributableInterface, QueryableInterfac
     /**
      * Get verification id number (may return 0 if verification does not contain a propper id)
      */
-    public function getId(): int;
+    public function getVerificationId(): int;
 
     /**
      * Get date when transactions occured
@@ -71,9 +71,4 @@ interface VerificationInterface extends AttributableInterface, QueryableInterfac
      * Get the sum of all positive transactions
      */
     public function getMagnitude(): Amount;
-
-    /**
-     * Generate a simple string representation of transaction
-     */
-    public function __toString(): string;
 }

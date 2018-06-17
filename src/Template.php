@@ -32,7 +32,7 @@ use byrokrat\amount\Amount;
  */
 class Template implements AttributableInterface
 {
-    use Helper\AttributableTrait, Helper\DescribableTrait;
+    use AttributableTrait;
 
     /**
      * @var string Template identifier
@@ -45,12 +45,17 @@ class Template implements AttributableInterface
     private $transactions = [];
 
     /**
+     * @var string
+     */
+    private $description;
+
+    /**
      * Set template values
      */
     public function __construct(string $templateId, string $description, array ...$transactions)
     {
         $this->templateId = $templateId;
-        $this->setDescription($description);
+        $this->description = $description;
         foreach ($transactions as $transactionData) {
             $this->addTransaction(...$transactionData);
         }
@@ -102,9 +107,13 @@ class Template implements AttributableInterface
             );
 
             $transactions[] = new Transaction(
-                $container->getAccount($filter($number)),
+                0,
+                new \DateTimeImmutable,
+                '',
+                '',
                 new Amount($filter($amount)),
                 new Amount($filter($quantity)),
+                $container->getAccount($filter($number)),
                 ...$dimensions
             );
         }
@@ -113,7 +122,7 @@ class Template implements AttributableInterface
             0,
             new \DateTimeImmutable,
             new \DateTimeImmutable,
-            $filter($this->getDescription()),
+            $filter($this->description),
             '',
             ...$transactions
         );

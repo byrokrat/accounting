@@ -77,12 +77,4 @@ class AccountTest extends \PHPUnit\Framework\TestCase
             (new AssetAccount('1000'))->getId()
         );
     }
-
-    public function testCastToString()
-    {
-        $this->assertSame(
-            '1000 (desc)',
-            (string)new AssetAccount('1000', 'desc')
-        );
-    }
 }

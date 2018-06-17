@@ -22,33 +22,13 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Transaction;
 
-use byrokrat\accounting\Dimension\AccountInterface;
-use byrokrat\accounting\Dimension\DimensionInterface;
-use byrokrat\amount\Amount;
-
 /**
  * Represents a transaction that has been added to an existing verification
  */
 class AddedTransaction extends Transaction
 {
-    public function __construct(
-        AccountInterface $account,
-        Amount $amount,
-        string $signature,
-        Amount $quantity = null,
-        DimensionInterface ...$dimensions
-    ) {
-        parent::__construct($account, $amount, $quantity, ...$dimensions);
-        $this->setSignature($signature);
-    }
-
     public function isAdded(): bool
     {
         return true;
-    }
-
-    public function __toString(): string
-    {
-        return '(ADDED) ' . parent::__toString();
     }
 }

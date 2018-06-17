@@ -6,9 +6,9 @@ namespace byrokrat\accounting;
 
 class ContainerTest extends \PHPUnit\Framework\TestCase
 {
-    use utils\AttributableTestsTrait;
+    use AttributableTestTrait;
 
-    protected function getObjectToTest()
+    protected function getAttributableToTest(): AttributableInterface
     {
         return new Container;
     }

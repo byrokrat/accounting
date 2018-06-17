@@ -13,7 +13,7 @@ use byrokrat\amount\Amount;
  */
 class TemplateTest extends \PHPUnit\Framework\TestCase
 {
-    use utils\AttributableTestsTrait, utils\DescriptionTestsTrait;
+    use AttributableTestTrait;
 
     static private $translations;
 
@@ -54,7 +54,15 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
                     new \DateTimeImmutable,
                     '',
                     '',
-                    new Transaction(new Dimension\EarningAccount('3000', 'Incomes'), new Amount('-400'))
+                    new Transaction(
+                        0,
+                        new \DateTimeImmutable,
+                        '',
+                        '',
+                        new Amount('-400'),
+                        new Amount('0'),
+                        new Dimension\EarningAccount('3000', 'Incomes')
+                    )
                 ),
                 [['{in}', '-400']],
             ],
@@ -65,7 +73,15 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
                     new \DateTimeImmutable,
                     '',
                     '',
-                    new Transaction(new Dimension\AssetAccount('1920', 'Bank'), new Amount('400'))
+                    new Transaction(
+                        0,
+                        new \DateTimeImmutable,
+                        '',
+                        '',
+                        new Amount('400'),
+                        new Amount('0'),
+                        new Dimension\AssetAccount('1920', 'Bank')
+                    )
                 ),
                 [['1920', '{amount}']],
             ],
@@ -76,7 +92,15 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
                     new \DateTimeImmutable,
                     '',
                     '',
-                    new Transaction(new Dimension\AssetAccount('1920', 'Bank'), new Amount('100'), new Amount('10'))
+                    new Transaction(
+                        0,
+                        new \DateTimeImmutable,
+                        '',
+                        '',
+                        new Amount('100'),
+                        new Amount('10'),
+                        new Dimension\AssetAccount('1920', 'Bank')
+                    )
                 ),
                 [['1920', '100', '{quantity}']],
             ],
@@ -88,9 +112,13 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
                     '',
                     '',
                     new Transaction(
-                        new Dimension\AssetAccount('1920', 'Bank'),
+                        0,
+                        new \DateTimeImmutable,
+                        '',
+                        '',
                         new Amount('100'),
                         new Amount('1'),
+                        new Dimension\AssetAccount('1920', 'Bank'),
                         new Dimension\Dimension('1'),
                         new Dimension\Dimension('2')
                     )
@@ -105,9 +133,13 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
                     '',
                     '',
                     new Transaction(
-                        new Dimension\AssetAccount('1920', 'Bank'),
+                        0,
+                        new \DateTimeImmutable,
+                        '',
+                        '',
                         new Amount('100'),
                         new Amount('1'),
+                        new Dimension\AssetAccount('1920', 'Bank'),
                         new Dimension\Dimension('1')
                     )
                 ),
@@ -141,8 +173,8 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
         // TODO non-obvious tests as we are missing a system clock...
 
         $this->assertEquals(
-            $expected->getTransactions(),
-            $template->build(self::$translations, self::$container)->getTransactions()
+            count($expected->getTransactions()),
+            count($template->build(self::$translations, self::$container)->getTransactions())
         );
 
         $this->assertEquals(
@@ -175,7 +207,7 @@ class TemplateTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function getObjectToTest()
+    protected function getAttributableToTest(): AttributableInterface
     {
         return new Template('', '');
     }

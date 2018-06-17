@@ -20,7 +20,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\Helper;
+namespace byrokrat\accounting;
 
 use byrokrat\accounting\Exception\LogicException;
 

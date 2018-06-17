@@ -2,42 +2,42 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting\utils;
+namespace byrokrat\accounting;
 
 use byrokrat\accounting\Exception\LogicException;
 
-trait AttributableTestsTrait
+trait AttributableTestTrait
 {
-    abstract protected function getObjectToTest();
+    abstract protected function getAttributableToTest(): AttributableInterface;
 
     public function testAttributes()
     {
-        $obj = $this->getObjectToTest();
+        $attributable = $this->getAttributableToTest();
 
         $key = '___attribute-assumed-not-to-be-set___';
         $value = 'foobarbaz';
 
-        $this->assertFalse($obj->hasAttribute($key));
+        $this->assertFalse($attributable->hasAttribute($key));
 
-        $obj->setAttribute($key, $value);
+        $attributable->setAttribute($key, $value);
 
-        $this->assertTrue($obj->hasAttribute($key));
+        $this->assertTrue($attributable->hasAttribute($key));
 
         $this->assertSame(
             $value,
-            $obj->getAttribute($key),
+            $attributable->getAttribute($key),
             'Getting a set attribute should return it'
         );
 
         $this->assertSame(
             $value,
-            $obj->getAttribute(str_replace('a', 'A', $key)),
+            $attributable->getAttribute(str_replace('a', 'A', $key)),
             'Getting a set attribute should base case-insensitive'
         );
 
         $this->assertSame(
             $value,
-            $obj->getAttributes()[$key],
+            $attributable->getAttributes()[$key],
             'Getting all attributes should return attribute i small case'
         );
     }
@@ -45,6 +45,6 @@ trait AttributableTestsTrait
     public function testExceptionWhenAttributeNotSet()
     {
         $this->expectException(LogicException::CLASS);
-        $this->getObjectToTest()->getAttribute('this-is-not-set');
+        $this->getAttributableToTest()->getAttribute('this-is-not-set');
     }
 }

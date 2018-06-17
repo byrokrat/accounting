@@ -27,7 +27,7 @@ namespace byrokrat\accounting;
  */
 class Container implements AttributableInterface, QueryableInterface, \IteratorAggregate
 {
-    use Helper\AttributableTrait;
+    use AttributableTrait;
 
     /**
      * @var array Contained items

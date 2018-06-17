@@ -22,19 +22,23 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Dimension;
 
+use byrokrat\accounting\AttributableTrait;
 use byrokrat\accounting\Exception\LogicException;
-use byrokrat\accounting\Helper\AttributableTrait;
-use byrokrat\accounting\Helper\DescribableTrait;
 use byrokrat\accounting\Query;
 
 class Dimension implements DimensionInterface
 {
-    use AttributableTrait, DescribableTrait;
+    use AttributableTrait;
 
     /**
      * @var string
      */
     private $dimensionId;
+
+    /**
+     * @var string
+     */
+    private $description;
 
     /**
      * @var ?DimensionInterface
@@ -44,13 +48,18 @@ class Dimension implements DimensionInterface
     public function __construct(string $dimensionId, string $description = '', DimensionInterface $parent = null)
     {
         $this->dimensionId = $dimensionId;
-        $this->setDescription($description);
+        $this->description = $description;
         $this->parent = $parent;
     }
 
     public function getId(): string
     {
         return $this->dimensionId;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
     }
 
     public function hasParent(): bool

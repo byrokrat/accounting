@@ -8,8 +8,6 @@ use byrokrat\amount\Amount;
 
 class SummaryTest extends \PHPUnit\Framework\TestCase
 {
-    use utils\PropheciesTrait;
-
     public function testBasicSummary()
     {
         $summary = new Summary(new Amount('10'));

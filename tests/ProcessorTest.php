@@ -16,10 +16,12 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
         $account = new CostAccount('1000');
         $dim = new Dimension('2000');
 
-        $container = new Container(
-            $transA = new Transaction($account, new Amount('100'), null, $dim),
-            $transB = new Transaction($account, new Amount('100'), null, $dim)
-        );
+        $date = new \DateTimeImmutable;
+
+        $transA = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, $dim);
+        $transB = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, $dim);
+
+        $container = new Container($transA, $transB);
 
         (new Processor)->processContainer($container);
 
@@ -44,12 +46,14 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
     public function testProcessAmount()
     {
         $account = new CostAccount('1000');
-        $dimension = new Dimension('2000');
+        $dim = new Dimension('2000');
 
-        $container = new Container(
-            new Transaction($account, new Amount('100'), null, $dimension),
-            new Transaction($account, new Amount('100'), null, $dimension)
-        );
+        $date = new \DateTimeImmutable;
+
+        $transA = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, $dim);
+        $transB = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, $dim);
+
+        $container = new Container($transA, $transB);
 
         (new Processor)->processContainer($container);
 
@@ -60,7 +64,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             new Amount('200'),
-            $dimension->getAttribute('summary')->getOutgoingBalance()
+            $dim->getAttribute('summary')->getOutgoingBalance()
         );
 
         (new Processor)->processContainer($container);
@@ -74,12 +78,14 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
     public function testProcessQuantity()
     {
         $account = new CostAccount('1000');
-        $dimension = new Dimension('2000');
+        $dim = new Dimension('2000');
 
-        $container = new Container(
-            new Transaction($account, new Amount('0'), new Amount('1'), $dimension),
-            new Transaction($account, new Amount('0'), new Amount('1'), $dimension)
-        );
+        $date = new \DateTimeImmutable;
+
+        $transA = new Transaction(0, $date, '', '', new Amount('0'), new Amount('1'), $account, $dim);
+        $transB = new Transaction(0, $date, '', '', new Amount('0'), new Amount('1'), $account, $dim);
+
+        $container = new Container($transA, $transB);
 
         (new Processor)->processContainer($container);
 
@@ -90,7 +96,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             new Amount('2'),
-            $dimension->getAttribute('quantity_summary')->getOutgoingBalance()
+            $dim->getAttribute('quantity_summary')->getOutgoingBalance()
         );
 
         (new Processor)->processContainer($container);

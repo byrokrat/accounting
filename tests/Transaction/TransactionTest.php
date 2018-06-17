@@ -4,110 +4,179 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Transaction;
 
-use byrokrat\accounting\utils;
+use byrokrat\accounting\AttributableTestTrait;
+use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
-use byrokrat\accounting\Exception\LogicException;
 use byrokrat\accounting\Query;
 use byrokrat\amount\Amount;
 
 class TransactionTest extends \PHPUnit\Framework\TestCase
 {
-    use utils\PropheciesTrait,
-        utils\AttributableTestsTrait,
-        utils\DescriptionTestsTrait,
-        utils\SignatureTestsTrait;
+    use AttributableTestTrait;
 
-    protected function getObjectToTest()
-    {
-        return $this->createTransaction();
-    }
-
-    private function createTransaction(&$account = null, &$amount = null, &$quantity = null, &$dimensions = null)
+    protected function getAttributableToTest(): AttributableInterface
     {
         return new Transaction(
-            $account = $this->prophesizeAccount()->reveal(),
-            $amount = $this->prophesizeAmount()->reveal(),
-            $quantity = $this->prophesizeAmount()->reveal(),
-            ...$dimensions = [
-                $this->prophesizeDimension()->reveal(),
-                $this->prophesizeDimension()->reveal()
-            ]
+            0,
+            new \DateTimeImmutable,
+            '',
+            '',
+            new Amount('0'),
+            new Amount('0'),
+            $this->createMock(AccountInterface::CLASS)
         );
     }
 
-    public function testAccessingContent()
+    public function testGetVerificationId()
     {
-        $transaction = $this->createTransaction($account, $amount, $quantity, $dimensions);
+        $trans = new Transaction(
+            999,
+            new \DateTimeImmutable,
+            '',
+            '',
+            new Amount('0'),
+            new Amount('0'),
+            $this->createMock(AccountInterface::CLASS)
+        );
 
-        $this->assertSame($account, $transaction->getAccount());
-        $this->assertSame($amount, $transaction->getAmount());
-        $this->assertSame($quantity, $transaction->getQuantity());
-        $this->assertSame($dimensions, $transaction->getDimensions());
+        $this->assertSame(999, $trans->getVerificationId());
     }
 
-    public function testDate()
+    public function testGetTransactionDate()
     {
-        $trans = $this->createTransaction();
-        $this->assertFalse($trans->hasDate());
-        $date = new \DateTimeImmutable;
-        $trans->setDate($date);
-        $this->assertTrue($trans->hasDate());
-        $this->assertSame($date, $trans->getDate());
+        $trans = new Transaction(
+            999,
+            $date = new \DateTimeImmutable,
+            '',
+            '',
+            new Amount('0'),
+            new Amount('0'),
+            $this->createMock(AccountInterface::CLASS)
+        );
+
+        $this->assertSame($date, $trans->getTransactionDate());
     }
 
-    public function testExceptionWhenDateNotSet()
+    public function testGetDescription()
     {
-        $this->expectException(LogicException::CLASS);
-        $this->createTransaction()->getDate();
+        $trans = new Transaction(
+            0,
+            new \DateTimeImmutable,
+            'desc',
+            '',
+            new Amount('0'),
+            new Amount('0'),
+            $this->createMock(AccountInterface::CLASS)
+        );
+
+        $this->assertSame('desc', $trans->getDescription());
+    }
+
+    public function testGetSignature()
+    {
+        $trans = new Transaction(
+            0,
+            new \DateTimeImmutable,
+            '',
+            'sign',
+            new Amount('0'),
+            new Amount('0'),
+            $this->createMock(AccountInterface::CLASS)
+        );
+
+        $this->assertSame('sign', $trans->getSignature());
+    }
+
+    public function testGetAmount()
+    {
+        $trans = new Transaction(
+            0,
+            new \DateTimeImmutable,
+            '',
+            '',
+            $amount = new Amount('100'),
+            new Amount('0'),
+            $this->createMock(AccountInterface::CLASS)
+        );
+
+        $this->assertSame($amount, $trans->getAmount());
+    }
+
+    public function testGetQuantity()
+    {
+        $trans = new Transaction(
+            0,
+            new \DateTimeImmutable,
+            '',
+            '',
+            new Amount('0'),
+            $quantity = new Amount('100'),
+            $this->createMock(AccountInterface::CLASS)
+        );
+
+        $this->assertSame($quantity, $trans->getQuantity());
+    }
+
+    public function testGetAccount()
+    {
+        $trans = new Transaction(
+            0,
+            new \DateTimeImmutable,
+            '',
+            '',
+            new Amount('0'),
+            new Amount('0'),
+            $account = $this->createMock(AccountInterface::CLASS)
+        );
+
+        $this->assertSame($account, $trans->getAccount());
+    }
+
+    public function testGetDimensions()
+    {
+        $trans = new Transaction(
+            0,
+            new \DateTimeImmutable,
+            '',
+            '',
+            new Amount('0'),
+            new Amount('0'),
+            $this->createMock(AccountInterface::CLASS),
+            $dimA = $this->createMock(DimensionInterface::CLASS),
+            $dimB = $this->createMock(DimensionInterface::CLASS)
+        );
+
+        $this->assertSame([$dimA, $dimB], $trans->getDimensions());
     }
 
     public function testQueryable()
     {
-        $transaction = new Transaction(
-            $account = $this->createMock(AccountInterface::CLASS),
-            $amount = new Amount('100'),
+        $trans = new Transaction(
+            0,
+            new \DateTimeImmutable,
+            '',
+            '',
+            $amount = new Amount('0'),
             new Amount('0'),
+            $account = $this->createMock(AccountInterface::CLASS),
             $dimA = $this->createMock(DimensionInterface::CLASS),
             $dimB = $this->createMock(DimensionInterface::CLASS)
         );
 
         $this->assertEquals(
             new Query([$account, $amount, $dimA, $dimB]),
-            $transaction->select()
-        );
-    }
-
-    public function testCastToString()
-    {
-        $account = $this->prophesize(AccountInterface::CLASS);
-        $account->__toString()->willReturn('account');
-
-        $amount = $this->prophesize(Amount::CLASS);
-        $amount->getString()->willReturn('amount');
-
-        $transaction = new Transaction(
-            $account->reveal(),
-            $amount->reveal()
-        );
-
-        $this->assertSame(
-            'account: amount',
-            (string)$transaction
+            $trans->select()
         );
     }
 
     public function testIsAdded()
     {
-        $this->assertFalse(
-            $this->createTransaction()->isAdded()
-        );
+        $this->assertFalse($this->getAttributableToTest()->isAdded());
     }
 
     public function testIsDeleted()
     {
-        $this->assertFalse(
-            $this->createTransaction()->isDeleted()
-        );
+        $this->assertFalse($this->getAttributableToTest()->isDeleted());
     }
 }

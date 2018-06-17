@@ -48,7 +48,7 @@ class VerificationBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             intval($number),
-            $verification->getId()
+            $verification->getVerificationId()
         );
 
         $this->assertSame(

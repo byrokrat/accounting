@@ -4,7 +4,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Verification;
 
-use byrokrat\accounting\utils;
+use byrokrat\accounting\AttributableTestTrait;
+use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Exception\RuntimeException;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Query;
@@ -14,16 +15,19 @@ use Prophecy\Argument;
 
 class VerificationTest extends \PHPUnit\Framework\TestCase
 {
-    use utils\AttributableTestsTrait;
+    use AttributableTestTrait;
 
-    protected function getObjectToTest()
+    protected function getAttributableToTest(): AttributableInterface
     {
         return new Verification(0, new \DateTimeImmutable, new \DateTimeImmutable, '', '');
     }
 
     public function testId()
     {
-        $this->assertSame(1, (new Verification(1, new \DateTimeImmutable, new \DateTimeImmutable, '', ''))->getId());
+        $this->assertSame(
+            1,
+            (new Verification(1, new \DateTimeImmutable, new \DateTimeImmutable, '', ''))->getVerificationId()
+        );
     }
 
     public function testDates()
@@ -127,34 +131,6 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
 
         $this->expectException(RuntimeException::CLASS);
         $verification->getMagnitude();
-    }
-
-    public function testCastToString()
-    {
-        $transA = $this->prophesize(TransactionInterface::CLASS);
-        $transA->getAmount()->willReturn(new Amount('0'));
-        $transA->isDeleted()->willReturn(false);
-        $transA->__toString()->willReturn('1234: 100');
-
-        $transB = $this->prophesize(TransactionInterface::CLASS);
-        $transB->getAmount()->willReturn(new Amount('0'));
-        $transB->isDeleted()->willReturn(false);
-        $transB->__toString()->willReturn('4321: -100');
-
-        $ver = new Verification(
-            0,
-            new \DateTimeImmutable('20170208'),
-            new \DateTimeImmutable,
-            'Verification',
-            '',
-            $transA->reveal(),
-            $transB->reveal()
-        );
-
-        $this->assertSame(
-            "[20170208] Verification\n * 1234: 100\n * 4321: -100",
-            (string)$ver
-        );
     }
 
     public function testQueryable()

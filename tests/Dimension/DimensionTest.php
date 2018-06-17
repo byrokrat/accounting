@@ -4,14 +4,15 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Dimension;
 
+use byrokrat\accounting\AttributableTestTrait;
+use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Exception\LogicException;
-use byrokrat\accounting\utils;
 
 class DimensionTest extends \PHPUnit\Framework\TestCase
 {
-    use utils\AttributableTestsTrait, utils\DescriptionTestsTrait;
+    use AttributableTestTrait;
 
-    protected function getObjectToTest()
+    protected function getAttributableToTest(): AttributableInterface
     {
         return new Dimension('');
     }
@@ -22,6 +23,11 @@ class DimensionTest extends \PHPUnit\Framework\TestCase
             '1234',
             (new Dimension('1234'))->getId()
         );
+    }
+
+    public function testDescription()
+    {
+        $this->assertSame('foo', (new Dimension('', 'foo'))->getDescription());
     }
 
     public function testParent()

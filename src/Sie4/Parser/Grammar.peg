@@ -358,57 +358,46 @@ grammar Grammar extends AbstractParser
 
     TRANS_POST = ROW_START 'TRANS' ^ account:ACCOUNT? dims:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END {
         if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
-            $trans = new Transaction\Transaction($account, $amount, $quantity, ...$dims);
-
-            if ($date) {
-                $trans->setDate($date);
-            }
-
-            if ($desc) {
-                $trans->setDescription($desc);
-            }
-
-            if ($sign) {
-                $trans->setSignature($sign);
-            }
-
-            return $trans;
+            return new Transaction\Transaction(
+                0,
+                $date ?: new \DateTimeImmutable,
+                $desc ?: '',
+                $sign ?: '',
+                $amount ?: $this->getCurrencyBuilder()->createMoney('0'),
+                $quantity ?: new Amount('0'),
+                $account,
+                ...$dims
+            );
         }
     };
 
     BTRANS_POST = ROW_START 'BTRANS' ^ account:ACCOUNT? dims:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END {
         if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
-            $sign = $sign ?: '';
-
-            $trans = new Transaction\DeletedTransaction($account, $amount, $sign, $quantity, ...$dims);
-
-            if ($date) {
-                $trans->setDate($date);
-            }
-
-            if ($desc) {
-                $trans->setDescription($desc);
-            }
-
-            return $trans;
+            return new Transaction\DeletedTransaction(
+                0,
+                $date ?: new \DateTimeImmutable,
+                $desc ?: '',
+                $sign ?: '',
+                $amount ?: $this->getCurrencyBuilder()->createMoney('0'),
+                $quantity ?: new Amount('0'),
+                $account,
+                ...$dims
+            );
         }
     };
 
     RTRANS_POST = ROW_START 'RTRANS' ^ account:ACCOUNT? dims:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END TRANS_POST {
         if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
-            $sign = $sign ?: '';
-
-            $trans = new Transaction\AddedTransaction($account, $amount, $sign, $quantity, ...$dims);
-
-            if ($date) {
-                $trans->setDate($date);
-            }
-
-            if ($desc) {
-                $trans->setDescription($desc);
-            }
-
-            return $trans;
+            return new Transaction\AddedTransaction(
+                0,
+                $date ?: new \DateTimeImmutable,
+                $desc ?: '',
+                $sign ?: '',
+                $amount ?: $this->getCurrencyBuilder()->createMoney('0'),
+                $quantity ?: new Amount('0'),
+                $account,
+                ...$dims
+            );
         }
     };
 

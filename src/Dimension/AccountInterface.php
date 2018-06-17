@@ -44,9 +44,4 @@ interface AccountInterface extends DimensionInterface
      * Check if object represents an earnings account
      */
     public function isEarning(): bool;
-
-    /**
-     * Convert account to string
-     */
-    public function __toString(): string;
 }

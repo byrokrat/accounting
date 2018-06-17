@@ -22,12 +22,9 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Transaction;
 
+use byrokrat\accounting\AttributableTrait;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
-use byrokrat\accounting\Helper\AttributableTrait;
-use byrokrat\accounting\Helper\DateableTrait;
-use byrokrat\accounting\Helper\DescribableTrait;
-use byrokrat\accounting\Helper\SignableTrait;
 use byrokrat\accounting\Query;
 use byrokrat\amount\Amount;
 
@@ -36,12 +33,27 @@ use byrokrat\amount\Amount;
  */
 class Transaction implements TransactionInterface
 {
-    use AttributableTrait, DateableTrait, DescribableTrait, SignableTrait;
+    use AttributableTrait;
 
     /**
-     * @var AccountInterface
+     * @var int
      */
-    private $account;
+    private $verId;
+
+    /**
+     * @var \DateTimeImmutable
+     */
+    private $transactionDate;
+
+    /**
+     * @var string
+     */
+    private $description;
+
+    /**
+     * @var string
+     */
+    private $signature;
 
     /**
      * @var Amount
@@ -54,25 +66,53 @@ class Transaction implements TransactionInterface
     private $quantity;
 
     /**
+     * @var AccountInterface
+     */
+    private $account;
+
+    /**
      * @var DimensionInterface[]
      */
     private $dimensions;
 
     public function __construct(
-        AccountInterface $account,
+        int $verId,
+        \DateTimeImmutable $transactionDate,
+        string $description,
+        string $signature,
         Amount $amount,
-        Amount $quantity = null,
+        Amount $quantity,
+        AccountInterface $account,
         DimensionInterface ...$dimensions
     ) {
-        $this->account = $account;
+        $this->verId = $verId;
+        $this->transactionDate = $transactionDate;
+        $this->description = $description;
+        $this->signature = $signature;
         $this->amount = $amount;
-        $this->quantity = $quantity ?: new Amount('0');
+        $this->quantity = $quantity;
+        $this->account = $account;
         $this->dimensions = $dimensions;
     }
 
-    public function getAccount(): AccountInterface
+    public function getVerificationId(): int
     {
-        return $this->account;
+        return $this->verId;
+    }
+
+    public function getTransactionDate(): \DateTimeImmutable
+    {
+        return $this->transactionDate;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function getSignature(): string
+    {
+        return $this->signature;
     }
 
     public function getAmount(): Amount
@@ -80,14 +120,19 @@ class Transaction implements TransactionInterface
         return $this->amount;
     }
 
-    public function getDimensions(): array
-    {
-        return $this->dimensions;
-    }
-
     public function getQuantity(): Amount
     {
         return $this->quantity;
+    }
+
+    public function getAccount(): AccountInterface
+    {
+        return $this->account;
+    }
+
+    public function getDimensions(): array
+    {
+        return $this->dimensions;
     }
 
     public function isAdded(): bool
@@ -98,11 +143,6 @@ class Transaction implements TransactionInterface
     public function isDeleted(): bool
     {
         return false;
-    }
-
-    public function __toString(): string
-    {
-        return sprintf('%s: %s', $this->getAccount(), $this->getAmount());
     }
 
     public function select(): Query

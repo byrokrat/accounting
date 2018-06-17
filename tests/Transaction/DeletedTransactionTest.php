@@ -4,45 +4,23 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Transaction;
 
-use byrokrat\accounting\utils;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\amount\Amount;
 
 class DeletedTransactionTest extends \PHPUnit\Framework\TestCase
 {
-    use utils\PropheciesTrait;
-
     public function testIsDeleted()
     {
         $this->assertTrue(
             (new DeletedTransaction(
-                $this->createMock(AccountInterface::CLASS),
-                $this->createMock(Amount::CLASS),
-                ''
+                0,
+                new \DateTimeImmutable,
+                '',
+                '',
+                new Amount('0'),
+                new Amount('0'),
+                $this->createMock(AccountInterface::CLASS)
             ))->isDeleted()
-        );
-    }
-
-    public function testMandatorySignature()
-    {
-        $trans = new DeletedTransaction(
-            $this->createMock(AccountInterface::CLASS),
-            $this->createMock(Amount::CLASS),
-            'sign'
-        );
-
-        $this->assertSame('sign', $trans->getSignature());
-    }
-
-    public function testCastToString()
-    {
-        $this->assertRegExp(
-            '/^\(DELETED\)/',
-            (string)(new DeletedTransaction(
-                $this->prophesizeAccount()->reveal(),
-                $this->prophesizeAmount()->reveal(),
-                ''
-            ))
         );
     }
 }

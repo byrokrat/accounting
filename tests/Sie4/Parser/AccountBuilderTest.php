@@ -4,45 +4,55 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
+use byrokrat\accounting\Dimension\AccountFactory;
+use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DebtAccount;
 use byrokrat\accounting\Exception;
 use Psr\Log\LoggerInterface;
+use Prophecy\Argument;
 
 /**
  * @covers \byrokrat\accounting\Sie4\Parser\AccountBuilder
  */
 class AccountBuilderTest extends \PHPUnit\Framework\TestCase
 {
-    use \byrokrat\accounting\utils\PropheciesTrait;
-
     public function testCreateAccount()
     {
-        $accountFactoryProphecy = $this->prophesizeAccountFactory();
+        $account = $this->createMock(AccountInterface::CLASS);
 
-        $accountBuilder = new AccountBuilder(
-            $accountFactoryProphecy->reveal(),
-            $this->createMock(LoggerInterface::CLASS)
-        );
+        $accountFactory = $this->prophesize(AccountFactory::CLASS);
+        $accountFactory->createAccount('1234', 'foobar')->willReturn($account);
 
+        $logger = $this->prophesize(LoggerInterface::CLASS);
+
+        $accountBuilder = new AccountBuilder($accountFactory->reveal(), $logger->reveal());
         $accountBuilder->addAccount('1234', 'foobar');
-        $accountFactoryProphecy->createAccount('1234', 'foobar')->shouldHaveBeenCalled();
 
         $this->assertCount(1, $accountBuilder->getAccounts());
+        $this->assertSame($account, $accountBuilder->getAccount('1234'));
+    }
+
+    public function testCreateUnspecifiedAccount()
+    {
+        $account = $this->createMock(AccountInterface::CLASS);
+
+        $accountFactory = $this->prophesize(AccountFactory::CLASS);
+        $accountFactory->createAccount('1234', 'UNSPECIFIED')->willReturn($account);
+
+        $logger = $this->prophesize(LoggerInterface::CLASS);
+        $accountBuilder = new AccountBuilder($accountFactory->reveal(), $logger->reveal());
+
+        $this->assertSame($account, $accountBuilder->getAccount('1234'));
     }
 
     public function testWarningOnFailureCreatingAccount()
     {
-        $accountFactoryProphecy = $this->prophesizeAccountFactory();
-
-        $accountFactoryProphecy->createAccount('1234', 'foobar')->willThrow(new Exception\RuntimeException);
+        $accountFactory = $this->prophesize(AccountFactory::CLASS);
+        $accountFactory->createAccount('1234', 'foobar')->willThrow(new Exception\RuntimeException);
 
         $logger = $this->prophesize(LoggerInterface::CLASS);
 
-        $accountBuilder = new AccountBuilder(
-            $accountFactoryProphecy->reveal(),
-            $logger->reveal()
-        );
-
+        $accountBuilder = new AccountBuilder($accountFactory->reveal(), $logger->reveal());
         $accountBuilder->addAccount('1234', 'foobar');
 
         $logger->warning(\Prophecy\Argument::type('string'))->shouldHaveBeenCalled();
@@ -50,118 +60,67 @@ class AccountBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionOnFailureGettingAccount()
     {
-        $accountFactoryProphecy = $this->prophesizeAccountFactory();
+        $accountFactory = $this->prophesize(AccountFactory::CLASS);
+        $accountFactory->createAccount('1234', 'UNSPECIFIED')->willThrow(new Exception\RuntimeException);
 
-        $accountFactoryProphecy->createAccount('1234', 'UNSPECIFIED')->willThrow(new Exception\RuntimeException);
+        $logger = $this->prophesize(LoggerInterface::CLASS);
 
-        $accountBuilder = new AccountBuilder(
-            $accountFactoryProphecy->reveal(),
-            $this->createMock(LoggerInterface::CLASS)
-        );
+        $accountBuilder = new AccountBuilder($accountFactory->reveal(), $logger->reveal());
 
         $this->expectException(Exception\RuntimeException::CLASS);
         $accountBuilder->getAccount('1234');
     }
 
-    public function testGetAccount()
+    public function testCreateAccountOOO()
     {
-        $accountBuilder = new AccountBuilder(
-            $this->prophesizeAccountFactory()->reveal(),
-            $this->createMock(LoggerInterface::CLASS)
-        );
+        $account = $this->createMock(AccountInterface::CLASS);
 
+        $accountFactory = $this->prophesize(AccountFactory::CLASS);
+        $accountFactory->createAccount('1234', 'foobar')->willReturn($account);
+
+        $logger = $this->prophesize(LoggerInterface::CLASS);
+
+        $accountBuilder = new AccountBuilder($accountFactory->reveal(), $logger->reveal());
         $accountBuilder->addAccount('1234', 'foobar');
 
-        $this->assertSame(
-            $accountBuilder->getAccount('1234'),
-            $accountBuilder->getAccount('1234')
-        );
-    }
-
-    public function testGetUnspecifiedAccount()
-    {
-        $accountBuilder = new AccountBuilder(
-            $this->prophesizeAccountFactory()->reveal(),
-            $this->createMock(LoggerInterface::CLASS)
-        );
-
-        $this->assertSame(
-            'UNSPECIFIED',
-            $accountBuilder->getAccount('1234')->getDescription()
-        );
+        $this->assertCount(1, $accountBuilder->getAccounts());
+        $this->assertSame($account, $accountBuilder->getAccount('1234'));
     }
 
     public function testSetAccountType()
     {
-        $accountProphecies = [];
+        $account = $this->prophesize(AccountInterface::CLASS);
+        $account->getDescription()->willReturn('foobar');
+        $account->getAttributes()->willReturn(['foo' => 'bar']);
 
-        $accountBuilder = new AccountBuilder(
-            $this->prophesizeAccountFactory($accountProphecies)->reveal(),
-            $this->createMock(LoggerInterface::CLASS)
-        );
+        $accountFactory = $this->prophesize(AccountFactory::CLASS);
+        $accountFactory->createAccount('1234', 'UNSPECIFIED')->willReturn($account);
 
-        $originalAccount = $accountBuilder->getAccount('1234');
+        $logger = $this->prophesize(LoggerInterface::CLASS);
+        $accountBuilder = new AccountBuilder($accountFactory->reveal(), $logger->reveal());
 
+        // Creates the unspecified account
+        $accountBuilder->getAccount('1234');
+
+        // Set type of previously unspecified account
         $accountBuilder->setAccountType('1234', 'S');
 
         $newAccount = $accountBuilder->getAccount('1234');
 
-        $this->assertNotSame(
-            $originalAccount,
-            $newAccount
-        );
-
-        $this->assertNotInstanceOf(
-            DebtAccount::CLASS,
-            $originalAccount
-        );
-
-        $this->assertInstanceOf(
-            DebtAccount::CLASS,
-            $newAccount
-        );
-
-        $this->assertSame(
-            $originalAccount->getId(),
-            $newAccount->getId()
-        );
-
-        $this->assertSame(
-            $originalAccount->getDescription(),
-            $newAccount->getDescription()
-        );
-
-        $accountProphecies['1234']->getAttributes()->shouldHaveBeenCalled();
-
-        $this->assertSame(
-            $originalAccount->getAttributes(),
-            $newAccount->getAttributes()
-        );
-
-        $this->assertSame(
-            $newAccount,
-            $accountBuilder->getAccount('1234')
-        );
+        $this->assertInstanceOf(DebtAccount::CLASS, $newAccount);
+        $this->assertSame('1234', $newAccount->getId());
+        $this->assertSame('foobar', $newAccount->getDescription());
+        $this->assertSame(['foo' => 'bar'], $newAccount->getAttributes());
     }
 
     public function testSetUnvalidAccountType()
     {
+        $accountFactory = $this->prophesize(AccountFactory::CLASS);
         $logger = $this->prophesize(LoggerInterface::CLASS);
 
-        $accountBuilder = new AccountBuilder(
-            $this->prophesizeAccountFactory()->reveal(),
-            $logger->reveal()
-        );
+        $accountBuilder = new AccountBuilder($accountFactory->reveal(), $logger->reveal());
 
-        $originalAccount = $accountBuilder->getAccount('1234');
         $accountBuilder->setAccountType('1234', 'not-a-valid-account-type-identifier');
-        $newAccount = $accountBuilder->getAccount('1234');
-
-        $logger->warning('Account number 1234 not defined', ["_addToLineCount" => 1])->shouldHaveBeenCalled();
-
-        $this->assertSame(
-            $originalAccount,
-            $newAccount
-        );
+        $logger->warning(Argument::any())->shouldHaveBeenCalled();
     }
 }

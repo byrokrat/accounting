@@ -32,29 +32,14 @@ use byrokrat\amount\Amount;
 interface TransactionInterface extends AttributableInterface, QueryableInterface
 {
     /**
-     * Get Account this transaction concerns
+     * Get the id of the verification this transaction is a part of
      */
-    public function getAccount(): AccountInterface;
-
-    /**
-     * Get amount of money moved to or from account
-     */
-    public function getAmount(): Amount;
+    public function getVerificationId(): int;
 
     /**
      * Get transaction date
      */
-    public function getDate(): \DateTimeImmutable;
-
-    /**
-     * Check if a transaction date has been set
-     */
-    public function hasDate(): bool;
-
-    /**
-     * Set a new transaction date
-     */
-    public function setDate(\DateTimeImmutable $date): void;
+    public function getTransactionDate(): \DateTimeImmutable;
 
     /**
      * Get free text description
@@ -62,16 +47,14 @@ interface TransactionInterface extends AttributableInterface, QueryableInterface
     public function getDescription(): string;
 
     /**
-     * Set free text description
+     * Get transaction signature
      */
-    public function setDescription(string $description): void;
+    public function getSignature(): string;
 
     /**
-     * Get registered dimensions
-     *
-     * @return DimensionInterface[]
+     * Get amount of money moved to or from account
      */
-    public function getDimensions(): array;
+    public function getAmount(): Amount;
 
     /**
      * Get quantity of stuff moved to or from account
@@ -79,9 +62,16 @@ interface TransactionInterface extends AttributableInterface, QueryableInterface
     public function getQuantity(): Amount;
 
     /**
-     * Get transaction signature
+     * Get Account this transaction concerns
      */
-    public function getSignature(): string;
+    public function getAccount(): AccountInterface;
+
+    /**
+     * Get registered dimensions
+     *
+     * @return DimensionInterface[]
+     */
+    public function getDimensions(): array;
 
     /**
      * Check if this is an added transaction
@@ -92,9 +82,4 @@ interface TransactionInterface extends AttributableInterface, QueryableInterface
      * Check if this is a deleted transaction
      */
     public function isDeleted(): bool;
-
-    /**
-     * Get a simple string representation of transaction
-     */
-    public function __toString(): string;
 }

@@ -165,8 +165,6 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
 
     /**
      * Count the items currently in iterator
-     *
-     * Implements the Countable interface
      */
     public function count(): int
     {
@@ -211,10 +209,8 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      */
     public function filter(callable $filter): Query
     {
-        $outerIterator = ($this->iteratorFactory)();
-
-        return new Query(function () use ($outerIterator, $filter) {
-            foreach ($outerIterator as $item) {
+        return new Query(function () use ($filter) {
+            foreach ($this->getIterator() as $item) {
                 if ($filter($item)) {
                     yield $item;
                 }
@@ -281,7 +277,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     }
 
     /**
-     * Get iterator for items filtered by query
+     * Get iterator for items currently in query
      */
     public function getIterator(): iterable
     {
@@ -355,10 +351,8 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      */
     public function load(iterable $data): Query
     {
-        $outerIterator = ($this->iteratorFactory)();
-
-        return new Query(function () use ($outerIterator, $data) {
-            yield from $outerIterator;
+        return new Query(function () use ($data) {
+            yield from $this->getIterator();
             foreach ($data as $item) {
                 yield $item;
                 if ($item instanceof QueryableInterface) {
@@ -375,10 +369,8 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      */
     public function map(callable $callback): Query
     {
-        $outerIterator = ($this->iteratorFactory)();
-
-        return new Query(function () use ($outerIterator, $callback) {
-            foreach ($outerIterator as $item) {
+        return new Query(function () use ($callback) {
+            foreach ($this->getIterator() as $item) {
                 yield $callback($item);
             }
         });
@@ -393,17 +385,10 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      */
     public function orderBy(callable $comparator): Query
     {
-        // Kan inte detta göras i closure
-        $outerIterator = ($this->iteratorFactory)();
-
-        return new Query(function () use ($outerIterator, $comparator) {
-            // TODO måste vara en bugg ifall generator ger flera objekt med samma key...
-            $data = iterator_to_array($outerIterator);
+        return new Query(function () use ($comparator) {
+            $data = $this->asArray();
             usort($data, $comparator);
-            // yeild from..
-            foreach ($data as $item) {
-                yield $item;
-            }
+            yield from $data;
         });
     }
 

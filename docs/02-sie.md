@@ -53,8 +53,24 @@ echo (new Sie4\Writer\Writer)->generate(
             new \DateTimeImmutable,
             '',
             '',
-            new Transaction\Transaction(new Dimension\AssetAccount('1920', 'Bank'), new Amount('100')),
-            new Transaction\Transaction(new Dimension\EarningAccount('3000', 'Intänk'), new Amount('-100'))
+            new Transaction\Transaction(
+                0,
+                new \DateTimeImmutable,
+                '',
+                '',
+                new Amount('100'),
+                new Amount('0'),
+                new Dimension\AssetAccount('1920', 'Bank')
+            ),
+            new Transaction\Transaction(
+                0,
+                new \DateTimeImmutable,
+                '',
+                '',
+                new Amount('-100'),
+                new Amount('0'),
+                new Dimension\AssetAccount('3000', 'Intänk')
+            )
         )
     ])
 );

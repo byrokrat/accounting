@@ -5247,21 +5247,16 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
                 if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
-                    $trans = new Transaction\Transaction($account, $amount, $quantity, ...$dims);
-
-                    if ($date) {
-                        $trans->setDate($date);
-                    }
-
-                    if ($desc) {
-                        $trans->setDescription($desc);
-                    }
-
-                    if ($sign) {
-                        $trans->setSignature($sign);
-                    }
-
-                    return $trans;
+                    return new Transaction\Transaction(
+                        0,
+                        $date ?: new \DateTimeImmutable,
+                        $desc ?: '',
+                        $sign ?: '',
+                        $amount ?: $this->getCurrencyBuilder()->createMoney('0'),
+                        $quantity ?: new Amount('0'),
+                        $account,
+                        ...$dims
+                    );
                 }
             });
         }
@@ -5487,19 +5482,16 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
                 if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
-                    $sign = $sign ?: '';
-
-                    $trans = new Transaction\DeletedTransaction($account, $amount, $sign, $quantity, ...$dims);
-
-                    if ($date) {
-                        $trans->setDate($date);
-                    }
-
-                    if ($desc) {
-                        $trans->setDescription($desc);
-                    }
-
-                    return $trans;
+                    return new Transaction\DeletedTransaction(
+                        0,
+                        $date ?: new \DateTimeImmutable,
+                        $desc ?: '',
+                        $sign ?: '',
+                        $amount ?: $this->getCurrencyBuilder()->createMoney('0'),
+                        $quantity ?: new Amount('0'),
+                        $account,
+                        ...$dims
+                    );
                 }
             });
         }
@@ -5731,19 +5723,16 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
                 if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
-                    $sign = $sign ?: '';
-
-                    $trans = new Transaction\AddedTransaction($account, $amount, $sign, $quantity, ...$dims);
-
-                    if ($date) {
-                        $trans->setDate($date);
-                    }
-
-                    if ($desc) {
-                        $trans->setDescription($desc);
-                    }
-
-                    return $trans;
+                    return new Transaction\AddedTransaction(
+                        0,
+                        $date ?: new \DateTimeImmutable,
+                        $desc ?: '',
+                        $sign ?: '',
+                        $amount ?: $this->getCurrencyBuilder()->createMoney('0'),
+                        $quantity ?: new Amount('0'),
+                        $account,
+                        ...$dims
+                    );
                 }
             });
         }

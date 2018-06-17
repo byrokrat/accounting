@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Verification;
 
-use byrokrat\accounting\Helper\AttributableTrait;
+use byrokrat\accounting\AttributableTrait;
 use byrokrat\accounting\Query;
 use byrokrat\accounting\Summary;
 use byrokrat\accounting\Transaction\TransactionInterface;
@@ -99,7 +99,7 @@ class Verification implements VerificationInterface
         }
     }
 
-    public function getId(): int
+    public function getVerificationId(): int
     {
         return $this->id;
     }
@@ -137,19 +137,6 @@ class Verification implements VerificationInterface
     public function getMagnitude(): Amount
     {
         return $this->summary->getMagnitude();
-    }
-
-    public function __toString(): string
-    {
-        $delim = "\n * ";
-
-        return sprintf(
-            "[%s] %s%s%s",
-            $this->getTransactionDate()->format('Ymd'),
-            $this->getDescription(),
-            $delim,
-            implode($delim, $this->getTransactions())
-        );
     }
 
     public function select(): Query

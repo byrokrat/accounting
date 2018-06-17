@@ -99,7 +99,7 @@ $container->select()->accounts()->whereUnique()->orderById()->each('formatAccoun
 
 function formatAccount($account)
 {
-    echo "$account\n";
+    echo "{$account->getId()}: {$account->getDescription()}\n";
     echo "Incoming balance {$account->getAttribute('summary')->getIncomingBalance()}\n\n";
 
     $currentBalance = $account->getAttribute('summary')->getIncomingBalance();
