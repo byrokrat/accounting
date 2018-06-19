@@ -65,8 +65,7 @@ class ParserFactory
             $logger,
             new AccountBuilder(new AccountFactory, $logger),
             new CurrencyBuilder($logger),
-            new DimensionBuilder($logger),
-            new VerificationBuilder($logger)
+            new DimensionBuilder($logger)
         );
     }
 }

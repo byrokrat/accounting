@@ -334,7 +334,7 @@ grammar Grammar extends AbstractParser
     VER_POST = ROW_START 'VER' ^ series:STRING? number:STRING? date:DATE? desc:STRING? regdate:DATE? sign:STRING? ROW_END SUBROW_START trans:TRANS_LIST SUBROW_END {
         if ($this->assertString($series) && $this->assertString($number) && $this->assertDate($date)) {
             $this->getContainer()->addItem(
-                $this->getVerificationBuilder()->createVerification(
+                $this->createVerification(
                     $series,
                     $number,
                     $date,

@@ -25,42 +25,36 @@ namespace byrokrat\accounting\Sie4\Parser;
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Container;
+use byrokrat\accounting\Verification\VerificationInterface;
+use byrokrat\accounting\Verification\Verification;
 use byrokrat\amount\Currency;
 
-/**
- * Manage parser dependencies
- */
 class AbstractParser
 {
     /**
-     * @var AccountBuilder Builder for account objects
+     * @var AccountBuilder
      */
     private $accountBuilder;
 
     /**
-     * @var Container Container for parsed data
+     * @var Container
      */
     private $container;
 
     /**
-     * @var Logger Internal error log
+     * @var Logger
      */
     private $logger;
 
     /**
-     * @var CurrencyBuilder Builder for monetary objects
+     * @var CurrencyBuilder
      */
     private $currencyBuilder;
 
     /**
-     * @var DimensionBuilder Builder for dimension objects
+     * @var DimensionBuilder
      */
     private $dimensionBuilder;
-
-    /**
-     * @var VerificationBuilder Builder for verificationi objects
-     */
-    private $verificationBuilder;
 
     /**
      * Inject dependencies at construct
@@ -69,14 +63,12 @@ class AbstractParser
         Logger $logger,
         AccountBuilder $accountBuilder,
         CurrencyBuilder $currencyBuilder,
-        DimensionBuilder $dimensionBuilder,
-        VerificationBuilder $verificationBuilder
+        DimensionBuilder $dimensionBuilder
     ) {
         $this->logger = $logger;
         $this->accountBuilder = $accountBuilder;
         $this->currencyBuilder = $currencyBuilder;
         $this->dimensionBuilder = $dimensionBuilder;
-        $this->verificationBuilder = $verificationBuilder;
         $this->resetContainer();
     }
 
@@ -129,11 +121,52 @@ class AbstractParser
     }
 
     /**
-     * Get builder of verification objects
+     * Create a new verification object
+     *
+     * @param string             $series          The series verification should be a part of
+     * @param string             $number          Verification number
+     * @param \DateTimeImmutable $transactionDate Date of accounting action
+     * @param string             $desc            Free text description
+     * @param \DateTimeImmutable $regdate         Date of registration (defaults to $date)
+     * @param string             $sign            Signature
+     * @param array              $transactionData Data to build transactions from
      */
-    protected function getVerificationBuilder(): VerificationBuilder
-    {
-        return $this->verificationBuilder;
+    public function createVerification(
+        string $series,
+        string $number,
+        \DateTimeImmutable $transactionDate,
+        string $desc = '',
+        \DateTimeImmutable $regdate = null,
+        string $sign = '',
+        array $transactionData = []
+    ): VerificationInterface {
+        $transactions = [];
+
+        foreach ($transactionData as $data) {
+            $transactions[] = new $data['type'](
+                intval($number),
+                $data['date'] ?: $transactionDate,
+                $data['description'] ?: $desc,
+                $data['signature'] ?: $sign,
+                $data['amount'],
+                $data['quantity'],
+                $data['account'],
+                ...$data['dimensions']
+            );
+        }
+
+        $verification = new Verification(
+            intval($number),
+            $transactionDate,
+            $regdate ?: $transactionDate,
+            $desc,
+            $sign,
+            ...$transactions
+        );
+
+        $verification->setAttribute('series', $series);
+
+        return $verification;
     }
 
     /**

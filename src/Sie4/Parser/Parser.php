@@ -66,6 +66,10 @@ class Parser extends Grammar
             throw new Exception\ParserException($this->getLogger()->getLog());
         }
 
+        if (!$container->select()->unbalancedVerifications()->isEmpty()) {
+            throw new Exception\ParserException(['Trying to add an unbalanced verification']);
+        }
+
         return $container;
     }
 }

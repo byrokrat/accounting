@@ -278,6 +278,27 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @depends testFilter
+     */
+    public function testUnbalancedVerifications()
+    {
+        $balanced = $this->prophesize(VerificationInterface::CLASS);
+        $balanced->isBalanced()->willReturn(true);
+        $balanced->select()->willReturn(new Query);
+        $balanced = $balanced->reveal();
+
+        $unbalanced = $this->prophesize(VerificationInterface::CLASS);
+        $unbalanced->isBalanced()->willReturn(false);
+        $unbalanced->select()->willReturn(new Query);
+        $unbalanced = $unbalanced->reveal();
+
+        $this->assertSame(
+            [$unbalanced],
+            (new Query([1, $balanced, $unbalanced, 3]))->unbalancedVerifications()->asArray()
+        );
+    }
+
     public function testEach()
     {
         $str = '';

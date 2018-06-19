@@ -430,6 +430,16 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     }
 
     /**
+     * Filter that returns only unbalanced verification objects
+     */
+    public function unbalancedVerifications(): Query
+    {
+        return $this->verifications()->filter(function (VerificationInterface $ver) {
+            return !$ver->isBalanced();
+        });
+    }
+
+    /**
      * Filter that returns only verification objects
      */
     public function verifications(): Query

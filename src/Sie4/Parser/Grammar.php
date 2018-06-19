@@ -4924,7 +4924,7 @@ class Grammar extends AbstractParser
             $this->value = call_user_func(function () use (&$series, &$number, &$date, &$desc, &$regdate, &$sign, &$trans) {
                 if ($this->assertString($series) && $this->assertString($number) && $this->assertDate($date)) {
                     $this->getContainer()->addItem(
-                        $this->getVerificationBuilder()->createVerification(
+                        $this->createVerification(
                             $series,
                             $number,
                             $date,
