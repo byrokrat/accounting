@@ -182,6 +182,14 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     }
 
     /**
+     * Filter that returns only dimension objects
+     */
+    public function dimensions(): Query
+    {
+        return $this->filterType(DimensionInterface::CLASS);
+    }
+
+    /**
      * Immediately execute callback for all items in query
      *
      * @param callable $callback Executed for all items matching query

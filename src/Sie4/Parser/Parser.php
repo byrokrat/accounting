@@ -66,8 +66,6 @@ class Parser extends Grammar
             throw new Exception\ParserException($this->getLogger()->getLog());
         }
 
-        $this->getProcessor()->processContainer($container);
-
         return $container;
     }
 }

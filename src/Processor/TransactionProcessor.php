@@ -20,18 +20,25 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting;
+namespace byrokrat\accounting\Processor;
 
-use byrokrat\accounting\Dimension\DimensionInterface;
+use byrokrat\accounting\Container;
+use byrokrat\accounting\Summary;
 
 /**
  * Calculate transaction summaries for registered dimensions
+ *
+ * On all dimensions in container the following attributes are created
+ *
+ * - transactions     array filled with transaction objects
+ * - summary          Summary object on amount
+ * - quantity_summary Summary object on quantity
  */
-class Processor
+class TransactionProcessor implements ProcessorInterface
 {
     public function processContainer(Container $container): void
     {
-        $container->select()->filterType(DimensionInterface::CLASS)->whereUnique()->each(function ($dim) {
+        $container->select()->dimensions()->whereUnique()->each(function ($dim) {
             $dim->setAttribute('transactions', []);
 
             $dim->setAttribute(

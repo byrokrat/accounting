@@ -206,6 +206,17 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @depends testFilter
+     */
+    public function testDimensions()
+    {
+        $this->assertSame(
+            [$dim = $this->createMock(DimensionInterface::CLASS)],
+            (new Query([1, $dim, 3]))->dimensions()->asArray()
+        );
+    }
+
     public function testWhereAttribute()
     {
         $attributableProphecy = $this->prophesize(AttributableInterface::CLASS);

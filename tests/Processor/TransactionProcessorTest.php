@@ -2,14 +2,15 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\accounting;
+namespace byrokrat\accounting\Processor;
 
+use byrokrat\accounting\Container;
 use byrokrat\accounting\Dimension\CostAccount;
 use byrokrat\accounting\Dimension\Dimension;
 use byrokrat\accounting\Transaction\Transaction;
 use byrokrat\amount\Amount;
 
-class ProcessorTest extends \PHPUnit\Framework\TestCase
+class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
 {
     public function testCollectTransactions()
     {
@@ -23,7 +24,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
 
         $container = new Container($transA, $transB);
 
-        (new Processor)->processContainer($container);
+        (new TransactionProcessor)->processContainer($container);
 
         $this->assertEquals(
             [$transA, $transB],
@@ -35,7 +36,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
             $dim->getAttribute('transactions')
         );
 
-        (new Processor)->processContainer($container);
+        (new TransactionProcessor)->processContainer($container);
 
         $this->assertEquals(
             [$transA, $transB],
@@ -55,7 +56,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
 
         $container = new Container($transA, $transB);
 
-        (new Processor)->processContainer($container);
+        (new TransactionProcessor)->processContainer($container);
 
         $this->assertEquals(
             new Amount('200'),
@@ -67,7 +68,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
             $dim->getAttribute('summary')->getOutgoingBalance()
         );
 
-        (new Processor)->processContainer($container);
+        (new TransactionProcessor)->processContainer($container);
 
         $this->assertEquals(
             new Amount('200'),
@@ -87,7 +88,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
 
         $container = new Container($transA, $transB);
 
-        (new Processor)->processContainer($container);
+        (new TransactionProcessor)->processContainer($container);
 
         $this->assertEquals(
             new Amount('2'),
@@ -99,7 +100,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
             $dim->getAttribute('quantity_summary')->getOutgoingBalance()
         );
 
-        (new Processor)->processContainer($container);
+        (new TransactionProcessor)->processContainer($container);
 
         $this->assertEquals(
             new Amount('2'),

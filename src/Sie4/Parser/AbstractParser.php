@@ -25,7 +25,6 @@ namespace byrokrat\accounting\Sie4\Parser;
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Container;
-use byrokrat\accounting\Processor;
 use byrokrat\amount\Currency;
 
 /**
@@ -64,11 +63,6 @@ class AbstractParser
     private $verificationBuilder;
 
     /**
-     * @var Processor Summarize transactions after parse
-     */
-    private $processor;
-
-    /**
      * Inject dependencies at construct
      */
     public function __construct(
@@ -76,15 +70,13 @@ class AbstractParser
         AccountBuilder $accountBuilder,
         CurrencyBuilder $currencyBuilder,
         DimensionBuilder $dimensionBuilder,
-        VerificationBuilder $verificationBuilder,
-        Processor $processor
+        VerificationBuilder $verificationBuilder
     ) {
         $this->logger = $logger;
         $this->accountBuilder = $accountBuilder;
         $this->currencyBuilder = $currencyBuilder;
         $this->dimensionBuilder = $dimensionBuilder;
         $this->verificationBuilder = $verificationBuilder;
-        $this->processor = $processor;
         $this->resetContainer();
     }
 
@@ -142,14 +134,6 @@ class AbstractParser
     protected function getVerificationBuilder(): VerificationBuilder
     {
         return $this->verificationBuilder;
-    }
-
-    /**
-     * Get transaction processor
-     */
-    protected function getProcessor(): Processor
-    {
-        return $this->processor;
     }
 
     /**

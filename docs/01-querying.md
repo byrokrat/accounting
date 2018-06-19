@@ -90,7 +90,7 @@ An example of how Accounting may be used to sort transactions inte a ledger
     @expectOutput "/Outgoing balance 1000.00/"
 -->
 ```php
-(new byrokrat\accounting\Processor)->processContainer($container);
+(new byrokrat\accounting\Processor\TransactionProcessor)->processContainer($container);
 
 $container->select()->accounts()->whereUnique()->orderById()->each(function ($account) {
     echo "{$account->getId()}: {$account->getDescription()}\n";
