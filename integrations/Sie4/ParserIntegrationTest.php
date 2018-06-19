@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Container;
-use byrokrat\accounting\Exception\ParserException;
 
 /**
  * Validate that all example files in integration/Sie4 can be parsed
@@ -54,18 +53,9 @@ class Sie4IntegrationTest extends \PHPUnit\Framework\TestCase
 
     private function parse(string $content): array
     {
-        $parser = (new ParserFactory)->createParser(ParserFactory::FAIL_ON_NOTICE);
-        $errors = [];
+        $parser = (new ParserFactory)->createParser();
 
-        try {
-            $parser->parse($content);
-        } catch (ParserException $exception) {
-            $errors = $exception->getLog();
-        } catch (\Exception $exception) {
-            $errors = [$exception->getMessage()];
-        }
-
-        return [$parser->getContainer(), $errors];
+        return [$parser->parse($content), $parser->getErrorLog()];
     }
 
     private function markFailure(string $fname, string $msg)

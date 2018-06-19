@@ -13,17 +13,15 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
         return new Container;
     }
 
-    public function testItems()
+    public function testGetItems()
     {
         $container = new Container(
             $a = 'foo',
             $b = 'bar'
         );
 
-        $container->addItem($c = 'baz');
-
         $this->assertSame(
-            [$a, $b, $c],
+            [$a, $b],
             $container->getItems()
         );
     }
@@ -49,17 +47,6 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
                 $b = 'bar'
             ],
             (new Container($a, $b))->select()->asArray()
-        );
-    }
-
-    public function testAddItems()
-    {
-        $container = new Container('foo');
-        $container->addItems(['bar', 'baz']);
-
-        $this->assertSame(
-            ['foo', 'bar', 'baz'],
-            $container->getItems()
         );
     }
 }

@@ -360,7 +360,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$flag) {
                 if ($this->assertBool($flag)) {
-                    $this->getContainer()->setAttribute('flag', $flag);
+                    $this->parsedAttributes['flag'] = $flag;
                 }
             });
         }
@@ -500,7 +500,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$checksum) {
                 if ($this->assertInt($checksum, 'Expected checksum')) {
-                    $this->getContainer()->setAttribute('checksum', $checksum);
+                    $this->parsedAttributes['checksum'] = $checksum;
                     $this->getLogger()->notice('Checksum detected but currently not handled');
                 }
             });
@@ -855,7 +855,7 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$contact, &$address, &$location, &$phone) {
-                $this->getContainer()->setAttribute('company_address', [(string)$contact, (string)$address, (string)$location, (string)$phone]);
+                $this->parsedAttributes['company_address'] = [(string)$contact, (string)$address, (string)$location, (string)$phone];
             });
         }
 
@@ -948,7 +948,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$sni) {
                 if ($this->assertInt($sni, 'Expected SNI code')) {
-                    $this->getContainer()->setAttribute('company_sni_code', $sni);
+                    $this->parsedAttributes['company_sni_code'] = $sni;
                 }
             });
         }
@@ -1042,7 +1042,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$name) {
                 if ($this->assertString($name, 'Expected company name')) {
-                    $this->getContainer()->setAttribute('company_name', $name);
+                    $this->parsedAttributes['company_name'] = $name;
                 }
             });
         }
@@ -1136,7 +1136,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$id) {
                 if ($this->assertString($id, 'Expected company identifier')) {
-                    $this->getContainer()->setAttribute('company_id', $id);
+                    $this->parsedAttributes['company_id'] = $id;
                 }
             });
         }
@@ -1234,7 +1234,7 @@ class Grammar extends AbstractParser
                         $this->getLogger()->warning("Unknown charset $charset defined using #FORMAT");
                     }
 
-                    $this->getContainer()->setAttribute('charset', $charset);
+                    $this->parsedAttributes['charset'] = $charset;
                 }
             });
         }
@@ -1328,7 +1328,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$type) {
                 if ($this->assertString($type, 'Expected company type identifier')) {
-                    $this->getContainer()->setAttribute('company_type', $type);
+                    $this->parsedAttributes['company_type'] = $type;
                 }
             });
         }
@@ -1444,7 +1444,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$date, &$sign) {
                 if ($this->assertDate($date)) {
-                    $this->getContainer()->setAttribute('generation_date', [$date, strval($sign)]);
+                    $this->parsedAttributes['generation_date'] = [$date, strval($sign)];
                 }
             });
         }
@@ -1538,7 +1538,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$type) {
                 if ($this->assertString($type, 'Expected account plan type identifier')) {
-                    $this->getContainer()->setAttribute('account_plan_type', $type);
+                    $this->parsedAttributes['account_plan_type'] = $type;
                 }
             });
         }
@@ -1632,7 +1632,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$date) {
                 if ($this->assertDate($date)) {
-                    $this->getContainer()->setAttribute('period_end_date', $date);
+                    $this->parsedAttributes['period_end_date'] = $date;
                 }
             });
         }
@@ -1770,7 +1770,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$number, &$acquisition, &$operation) {
                 if ($this->assertString($number, 'Expected organisation number')) {
-                    $this->getContainer()->setAttribute('company_org_nr', [$number, intval($acquisition), intval($operation)]);
+                    $this->parsedAttributes['company_org_nr'] = [$number, intval($acquisition), intval($operation)];
                 }
             });
         }
@@ -1886,7 +1886,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$name, &$version) {
                 if ($this->assertString($name, 'Expected name') && $this->assertString($version, 'Expected version')) {
-                    $this->getContainer()->setAttribute('program', [$name, $version]);
+                    $this->parsedAttributes['program'] = [$name, $version];
                 }
             });
         }
@@ -1989,7 +1989,7 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$text) {
-                $this->getContainer()->setAttribute('free_text', implode(' ', $text));
+                $this->parsedAttributes['free_text'] = implode(' ', $text);
             });
         }
 
@@ -2126,7 +2126,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$startDate, &$endDate) {
                 if ($this->assertInt($year) && $this->assertDate($startDate) && $this->assertDate($endDate)) {
-                    $this->writeAttribute($this->getContainer(), "financial_year", [$startDate, $endDate], $year);
+                    $this->parsedAttributes["financial_year[$year]"] = [$startDate, $endDate];
                 }
             });
         }
@@ -2220,7 +2220,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$ver) {
                 if ($this->assertInt($ver, 'Expected SIE version')) {
-                    $this->getContainer()->setAttribute('sie_version', $ver);
+                    $this->parsedAttributes['sie_version'] = $ver;
                 }
             });
         }
@@ -2302,7 +2302,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year) {
                 if ($this->assertInt($year)) {
-                    $this->getContainer()->setAttribute("taxation_year", $year);
+                    $this->parsedAttributes["taxation_year"] = $year;
                 }
             });
         }
@@ -2396,7 +2396,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$currency) {
                 if ($this->assertString($currency, 'Expected currency name')) {
-                    $this->getContainer()->setAttribute('currency', $currency);
+                    $this->parsedAttributes['currency'] = $currency;
                     $this->getCurrencyBuilder()->setCurrencyClass($currency);
                 }
             });
@@ -4923,16 +4923,14 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$series, &$number, &$date, &$desc, &$regdate, &$sign, &$trans) {
                 if ($this->assertString($series) && $this->assertString($number) && $this->assertDate($date)) {
-                    $this->getContainer()->addItem(
-                        $this->createVerification(
-                            $series,
-                            $number,
-                            $date,
-                            $desc ?: '',
-                            $regdate ?: null,
-                            $sign ?: '',
-                            $trans
-                        )
+                    $this->parsedItems[] = $this->createVerification(
+                        $series,
+                        $number,
+                        $date,
+                        $desc ?: '',
+                        $regdate ?: null,
+                        $sign ?: '',
+                        $trans
                     );
                 }
             });

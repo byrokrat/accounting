@@ -23,23 +23,15 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Container;
-use byrokrat\accounting\Exception;
 
-/**
- * Callbacks for parsing expressions found in Grammar
- */
 class Parser extends Grammar
 {
     /**
      * Parse SIE content
      *
      * Please note that content should be passed in the PC8 charset (code page 437)
-     *
-     * @param  string $content Raw SIE content to parse (code page 437)
-     * @return Container The parsed content (utf 8)
-     * @throws Exception\ParserException If parsing fails
      */
-    public function parse($content)
+    public function parse($content): Container
     {
         $content = preg_replace(
             '/[\xFF]/',
@@ -47,7 +39,9 @@ class Parser extends Grammar
             iconv('CP437', 'UTF-8//IGNORE', $content)
         );
 
-        $this->resetContainer();
+        $this->parsedItems = [];
+        $this->parsedAttributes = [];
+
         $this->getLogger()->resetLog($content);
 
         try {
@@ -57,19 +51,24 @@ class Parser extends Grammar
             $this->getLogger()->error($e->getMessage());
         }
 
-        $container = $this->getContainer();
+        $container = new Container(
+            ...array_values($this->getAccountBuilder()->getAccounts()),
+            ...array_values($this->getDimensionBuilder()->getDimensions()),
+            ...$this->parsedItems
+        );
 
-        $container->addItems($this->getAccountBuilder()->getAccounts());
-        $container->addItems($this->getDimensionBuilder()->getDimensions());
-
-        if ($this->getLogger()->getLog()) {
-            throw new Exception\ParserException($this->getLogger()->getLog());
-        }
-
-        if (!$container->select()->unbalancedVerifications()->isEmpty()) {
-            throw new Exception\ParserException(['Trying to add an unbalanced verification']);
+        foreach ($this->parsedAttributes as $key => $value) {
+            $container->setAttribute($key, $value);
         }
 
         return $container;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getErrorLog(): array
+    {
+        return $this->getLogger()->getLog();
     }
 }

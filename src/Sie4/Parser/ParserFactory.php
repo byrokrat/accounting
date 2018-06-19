@@ -25,41 +25,13 @@ namespace byrokrat\accounting\Sie4\Parser;
 use byrokrat\accounting\Dimension\AccountFactory;
 use Psr\Log\LogLevel;
 
-/**
- * Simplifies the creation of parser objects
- */
 class ParserFactory
 {
-    /**
-     * Flag implying that all log events should be ignored
-     */
-    const IGNORE_ERRORS = '';
-
-    /**
-     * Flag implying that parsing should fail when an error occurs
-     */
-    const FAIL_ON_ERROR = LogLevel::ERROR;
-
-    /**
-     * Flag implying that parsing should fail when at least a warning occurs
-     */
-    const FAIL_ON_WARNING = LogLevel::WARNING;
-
-    /**
-     * Flag implying that parsing should fail when at least a notice occurs
-     */
-    const FAIL_ON_NOTICE = LogLevel::NOTICE;
-
-    /**
-     * Create a new parser
-     *
-     * @param string $logLevel Set when parsing should fail using one of the logging constants
-     */
-    public function createParser(string $logLevel = self::FAIL_ON_WARNING): Parser
+    public function createParser(): Parser
     {
         $logger = new Logger;
 
-        $logger->setLogLevel($logLevel);
+        $logger->setLogLevel(LogLevel::NOTICE);
 
         return new Parser(
             $logger,

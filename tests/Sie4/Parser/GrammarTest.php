@@ -7,7 +7,6 @@ namespace byrokrat\accounting\Sie4\Parser;
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Container;
 use byrokrat\accounting\Dimension\DimensionInterface;
-use byrokrat\accounting\Exception;
 use byrokrat\amount\Amount;
 use byrokrat\amount\Currency\SEK;
 
@@ -23,9 +22,9 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     /**
      * Parse content and get resulting container
      */
-    private function parse(string $content, string $logLevel = ParserFactory::FAIL_ON_ERROR): Container
+    private function parse(string $content): Container
     {
-        return (new ParserFactory)->createParser($logLevel)->parse($content);
+        return (new ParserFactory)->createParser()->parse($content);
     }
 
     /**
@@ -33,15 +32,16 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
      */
     public function testLabelRequired()
     {
-        $this->expectException(Exception\ParserException::CLASS);
-        $this->expectExceptionMessageRegExp("/invalid line/");
-        $this->parse(
+        $parser = (new ParserFactory)->createParser();
+
+        $parser->parse(
             "
                 #FLAGGA 1
                 this-is-not-a-label
-            ",
-            ParserFactory::FAIL_ON_WARNING
+            "
         );
+
+        $this->assertRegExp('/invalid line/', implode($parser->getErrorLog()));
     }
 
     /**
@@ -120,12 +120,13 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
      */
     public function testUnknownFieldsAtEndOfLine()
     {
-        $this->expectException(Exception\ParserException::CLASS);
-        $this->expectExceptionMessageRegExp("/unknown field/");
-        $this->parse(
-            "#FLAGGA 1 unknown-field-at-end-of-line\n",
-            ParserFactory::FAIL_ON_NOTICE
+        $parser = (new ParserFactory)->createParser();
+
+        $parser->parse(
+            "#FLAGGA 1 unknown-field-at-end-of-line\n"
         );
+
+        $this->assertRegExp('/unknown field/', implode($parser->getErrorLog()));
     }
 
     /**
@@ -133,15 +134,16 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
      */
     public function testUnknownLabels()
     {
-        $this->expectException(Exception\ParserException::CLASS);
-        $this->expectExceptionMessageRegExp("/unknown statement/");
-        $this->parse(
+        $parser = (new ParserFactory)->createParser();
+
+        $parser->parse(
             "
                 #FLAGGA 1
                 #UNKNOWN foo bar
-            ",
-            ParserFactory::FAIL_ON_NOTICE
+            "
         );
+
+        $this->assertRegExp('/unknown statement/', implode($parser->getErrorLog()));
     }
 
     /**
@@ -214,25 +216,29 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
      */
     public function testStringTypeInvalidChars(string $char)
     {
-        $this->expectException(Exception\ParserException::CLASS);
-        $this->parse("
+        $parser = (new ParserFactory)->createParser();
+
+        $parser->parse("
             #FLAGGA 1
             #VALUTA \"bar{$char}baz\"
         ");
+
+        $this->assertRegExp('/expecting end of file/', implode($parser->getErrorLog()));
     }
 
     public function testNoticeOnKsumma()
     {
-        $this->expectException(Exception\ParserException::CLASS);
-        $this->expectExceptionMessageRegExp("/Checksum detected but currently not handled/");
-        $this->parse(
+        $parser = (new ParserFactory)->createParser();
+
+        $parser->parse(
             "
                 #FLAGGA 1
                 #KSUMMA
                 #KSUMMA 1234
-            ",
-            ParserFactory::FAIL_ON_NOTICE
+            "
         );
+
+        $this->assertRegExp('/Checksum detected but currently not handled/', implode($parser->getErrorLog()));
     }
 
     public function testKsumm()
@@ -297,17 +303,18 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     /**
      * Only charset PC8 is supported
      */
-    public function testExceptionOnInvalidCharset()
+    public function testErrorOnInvalidCharset()
     {
-        $this->expectException(Exception\ParserException::CLASS);
-        $this->expectExceptionMessageRegExp("/Unknown charset/");
-        $this->parse(
+        $parser = (new ParserFactory)->createParser();
+
+        $parser->parse(
             "
                 #FLAGGA 1
                 #FORMAT not-PC8
-            ",
-            ParserFactory::FAIL_ON_WARNING
+            "
         );
+
+        $this->assertRegExp('/Unknown charset/', implode($parser->getErrorLog()));
     }
 
     /**
@@ -330,16 +337,17 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
     public function testWarningOnAccountDuplication()
     {
-        $this->expectException(Exception\ParserException::CLASS);
-        $this->expectExceptionMessageRegExp('/Overwriting previously created account/');
-        $this->parse(
+        $parser = (new ParserFactory)->createParser();
+
+        $parser->parse(
             "
                 #FLAGGA 1
                 #KONTO 1920 bank
                 #KONTO 1920 bank
-            ",
-            ParserFactory::FAIL_ON_WARNING
+            "
         );
+
+        $this->assertRegExp('/Overwriting previously created account/', implode($parser->getErrorLog()));
     }
 
     public function testEnhet()
@@ -370,28 +378,30 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
     public function testWarningOnMissingSruAccount()
     {
-        $this->expectException(Exception\ParserException::CLASS);
-        $this->expectExceptionMessageRegExp("/Expected account/");
-        $this->parse(
+        $parser = (new ParserFactory)->createParser();
+
+        $parser->parse(
             "
                 #FLAGGA 1
                 #SRU
-            ",
-            ParserFactory::FAIL_ON_WARNING
+            "
         );
+
+        $this->assertRegExp('/Expected account/', implode($parser->getErrorLog()));
     }
 
     public function testWarningOnMissingSruNumber()
     {
-        $this->expectException(Exception\ParserException::CLASS);
-        $this->expectExceptionMessageRegExp("/Expected SRU code/");
-        $this->parse(
+        $parser = (new ParserFactory)->createParser();
+
+        $parser->parse(
             "
                 #FLAGGA 1
                 #SRU 1920
-            ",
-            ParserFactory::FAIL_ON_WARNING
+            "
         );
+
+        $this->assertRegExp('/Expected SRU code/', implode($parser->getErrorLog()));
     }
 
     public function testObjectType()
@@ -435,30 +445,32 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
     public function testWarningOnDimensionDuplication()
     {
-        $this->expectException(Exception\ParserException::CLASS);
-        $this->expectExceptionMessageRegExp('/Overwriting previously created dimension/');
-        $this->parse(
+        $parser = (new ParserFactory)->createParser();
+
+        $parser->parse(
             "
                 #FLAGGA 1
                 #DIM 1 name
                 #UNDERDIM 1 name 1
-            ",
-            ParserFactory::FAIL_ON_WARNING
+            "
         );
+
+        $this->assertRegExp('/Overwriting previously created dimension/', implode($parser->getErrorLog()));
     }
 
     public function testWarningOnObjectDuplication()
     {
-        $this->expectException(Exception\ParserException::CLASS);
-        $this->expectExceptionMessageRegExp('/Overwriting previously created object/');
-        $this->parse(
+        $parser = (new ParserFactory)->createParser();
+
+        $parser->parse(
             "
                 #FLAGGA 1
                 #OBJEKT 1 obj desc
                 #OBJEKT 1 obj desc
-            ",
-            ParserFactory::FAIL_ON_WARNING
+            "
         );
+
+        $this->assertRegExp('/Overwriting previously created object/', implode($parser->getErrorLog()));
     }
 
     /**
@@ -593,7 +605,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
     public function testParserResetsBetweenRuns()
     {
-        $parser = (new ParserFactory)->createParser(ParserFactory::FAIL_ON_ERROR);
+        $parser = (new ParserFactory)->createParser();
 
         $parser->parse("
             #FLAGGA 1
@@ -604,7 +616,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             }
         ");
 
-        $parser->parse("
+        $container = $parser->parse("
             #FLAGGA 1
             #VER \"\" \"\" 20110104 \"Ver B\"
             {
@@ -613,7 +625,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             }
         ");
 
-        $this->assertCount(1, $parser->getContainer()->select()->verifications()->asArray());
+        $this->assertCount(1, $container->select()->verifications()->asArray());
     }
 
     public function testCreateVerificationSeries()
@@ -640,33 +652,21 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testExceptionOnUnbalancedVerification()
-    {
-        $this->expectException(Exception\ParserException::CLASS);
-        $this->expectExceptionMessageRegExp("/Trying to add an unbalanced verification/");
-        $this->parse("
-            #FLAGGA 1
-            #VER \"\" \"\" 20110104
-            {
-                #TRANS  3010 {} -100.00
-            }
-        ");
-    }
-
     public function testWarningOnMissingTransactionAmont()
     {
-        $this->expectException(Exception\ParserException::CLASS);
-        $this->expectExceptionMessageRegExp("/Expected monetary amount/");
-        $this->parse(
+        $parser = (new ParserFactory)->createParser();
+
+        $parser->parse(
             "
                 #FLAGGA 1
                 #VER \"A\" \"\" 20110104
                 {
                     #TRANS  1920 {}
                 }
-            ",
-            ParserFactory::FAIL_ON_WARNING
+            "
         );
+
+        $this->assertRegExp('/Expected monetary amount/', implode($parser->getErrorLog()));
     }
 
     public function testSkippingOverOptionalArguments()
@@ -680,8 +680,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
                     #TRANS  1920 {} 100 \"\" \"\" 2.5
                     #TRANS  1920 {} -100
                 }
-            ",
-            ParserFactory::FAIL_ON_NOTICE
+            "
         )->select()->transactions()->asArray();
 
         $this->assertEquals(

@@ -24,7 +24,6 @@ namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
-use byrokrat\accounting\Container;
 use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\accounting\Verification\Verification;
 use byrokrat\amount\Currency;
@@ -35,11 +34,6 @@ class AbstractParser
      * @var AccountBuilder
      */
     private $accountBuilder;
-
-    /**
-     * @var Container
-     */
-    private $container;
 
     /**
      * @var Logger
@@ -57,8 +51,15 @@ class AbstractParser
     private $dimensionBuilder;
 
     /**
-     * Inject dependencies at construct
+     * @var array
      */
+    protected $parsedItems = [];
+
+    /**
+     * @var array
+     */
+    protected $parsedAttributes = [];
+
     public function __construct(
         Logger $logger,
         AccountBuilder $accountBuilder,
@@ -69,60 +70,29 @@ class AbstractParser
         $this->accountBuilder = $accountBuilder;
         $this->currencyBuilder = $currencyBuilder;
         $this->dimensionBuilder = $dimensionBuilder;
-        $this->resetContainer();
     }
 
-    /**
-     * Get container with parsed data
-     */
-    public function getContainer(): Container
-    {
-        return $this->container;
-    }
-
-    /**
-     * Reset container to empty state
-     */
-    protected function resetContainer()
-    {
-        $this->container = new Container;
-    }
-
-    /**
-     * Get builder of account objects
-     */
     protected function getAccountBuilder(): AccountBuilder
     {
         return $this->accountBuilder;
     }
 
-    /**
-     * Get builder of monetary objects
-     */
     protected function getCurrencyBuilder(): CurrencyBuilder
     {
         return $this->currencyBuilder;
     }
 
-    /**
-     * Get builder of dimension objects
-     */
     protected function getDimensionBuilder(): DimensionBuilder
     {
         return $this->dimensionBuilder;
     }
 
-    /**
-     * Get internal error log
-     */
     protected function getLogger(): Logger
     {
         return $this->logger;
     }
 
     /**
-     * Create a new verification object
-     *
      * @param string             $series          The series verification should be a part of
      * @param string             $number          Verification number
      * @param \DateTimeImmutable $transactionDate Date of accounting action
@@ -185,10 +155,6 @@ class AbstractParser
 
     /**
      * Assert that $expr is thruthy and log a warning if not
-     *
-     * @param  mixed  $expr
-     * @param  string $failureMessage
-     * @return bool   The thruthiness of $expr
      */
     protected function assert($expr, string $failureMessage): bool
     {

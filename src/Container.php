@@ -30,39 +30,15 @@ class Container implements AttributableInterface, QueryableInterface, \IteratorA
     use AttributableTrait;
 
     /**
-     * @var array Contained items
+     * @var array
      */
     private $items;
 
-    /**
-     * Load items at construct
-     */
     public function __construct(...$items)
     {
         $this->items = $items;
     }
 
-    /**
-     * Add additional item
-     */
-    public function addItem($item): void
-    {
-        $this->items[] = $item;
-    }
-
-    /**
-     * Add multiple additional item
-     */
-    public function addItems(array $items): void
-    {
-        foreach ($items as $item) {
-            $this->addItem($item);
-        }
-    }
-
-    /**
-     * Get loaded items
-     */
     public function getItems(): array
     {
         return $this->items;

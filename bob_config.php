@@ -62,12 +62,9 @@ desc('Validate the contents of a SIE4 file');
 task('check_sie4_file', function() {
     println('Usage: bob check_sie4_file name=[filename]');
     require_once __DIR__ . '/vendor/autoload.php';
-    try {
-        (new ParserFactory)->createParser(ParserFactory::FAIL_ON_NOTICE)->parse(
-            file_get_contents($_ENV['name'] ?? '')
-        );
-        println('valid');
-    } catch (\Exception $e) {
-        println($e->getMessage());
-    }
+    $parser = (new ParserFactory)->createParser();
+    $parser->parse(
+        file_get_contents($_ENV['name'] ?? '')
+    );
+    print_r($parser->getErrorLog());
 });
