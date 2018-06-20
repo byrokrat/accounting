@@ -23,15 +23,12 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Dimension\AccountFactory;
-use Psr\Log\LogLevel;
 
 class ParserFactory
 {
     public function createParser(): Parser
     {
         $logger = new Logger;
-
-        $logger->setLogLevel(LogLevel::NOTICE);
 
         return new Parser(
             $logger,

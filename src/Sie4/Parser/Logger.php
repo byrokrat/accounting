@@ -23,74 +23,26 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Exception;
-use Psr\Log\AbstractLogger;
-use Psr\Log\LogLevel;
 
-/**
- * Internal error log
- */
-class Logger extends AbstractLogger
+class Logger
 {
     /**
-     * @var array Definitions of under what reporting levels an event should be logged
-     */
-    private static $logLevelsMap = [
-        LogLevel::EMERGENCY => [
-            LogLevel::DEBUG,     LogLevel::INFO,      LogLevel::NOTICE,
-            LogLevel::WARNING,   LogLevel::ERROR,     LogLevel::CRITICAL,
-            LogLevel::ALERT,     LogLevel::EMERGENCY
-        ],
-        LogLevel::ALERT => [
-            LogLevel::DEBUG,     LogLevel::INFO,      LogLevel::NOTICE,
-            LogLevel::WARNING,   LogLevel::ERROR,     LogLevel::CRITICAL,
-            LogLevel::ALERT
-        ],
-        LogLevel::CRITICAL => [
-            LogLevel::DEBUG,     LogLevel::INFO,      LogLevel::NOTICE,
-            LogLevel::WARNING,   LogLevel::ERROR,     LogLevel::CRITICAL
-        ],
-        LogLevel::ERROR => [
-            LogLevel::DEBUG,     LogLevel::INFO,      LogLevel::NOTICE,
-            LogLevel::WARNING,   LogLevel::ERROR
-        ],
-        LogLevel::WARNING => [
-            LogLevel::DEBUG,     LogLevel::INFO,      LogLevel::NOTICE,
-            LogLevel::WARNING
-        ],
-        LogLevel::NOTICE => [
-            LogLevel::DEBUG,     LogLevel::INFO,      LogLevel::NOTICE
-        ],
-        LogLevel::INFO => [
-            LogLevel::DEBUG,     LogLevel::INFO
-        ],
-        LogLevel::DEBUG => [
-            LogLevel::DEBUG
-        ],
-    ];
-
-    /**
-     * @var array Logged messages
-     */
-    private $log = [];
-
-    /**
-     * @var string Error reporting level
-     */
-    private $level = LogLevel::WARNING;
-
-    /**
-     * @var integer Count lines for better error reporting
+     * @var integer
      */
     private $lineCount = 0;
 
     /**
-     * [$lines description]
-     * @var string[] The loaded lines of content logged events are related to
+     * @var string[]
      */
     private $lines = [];
 
     /**
-     * Clear log
+     * @var string[]
+     */
+    private $log = [];
+
+    /**
+     * @param string $content The content logged events are related to
      */
     public function resetLog(string $content = '')
     {
@@ -99,66 +51,26 @@ class Logger extends AbstractLogger
         $this->lines = explode("\n", $content);
     }
 
-    /**
-     * Set error reporting level using one of the LogLevel constants
-     *
-     * Defaults to LogLevel::WARNING
-     *
-     * @param string $level Desired error reporting level
-     * @see   \Psr\Log\LogLevel For the list of relevant log levels
-     */
-    public function setLogLevel(string $level): void
-    {
-        $this->level = $level;
-    }
-
-    /**
-     * Increment current line count
-     */
-    public function incrementLineCount(): void
-    {
-        $this->lineCount++;
-    }
-
-    /**
-     * Logs with an arbitrary level.
-     *
-     * @param mixed $level
-     * @param string $message
-     * @param array $context
-     */
-    public function log($level, $message, array $context = []): void
-    {
-        if (in_array($this->level, self::$logLevelsMap[$level])) {
-            $this->log[] = $this->format($level, $message, $context);
-        }
-    }
-
-    /**
-     * Get logged messages
-     */
     public function getLog(): array
     {
         return $this->log;
     }
 
-    /**
-     * Format a logged event
-     */
-    private function format(string $level, string $msg, array $context): string
+    public function incrementLineCount(): void
     {
-        $lineCount = $this->lineCount;
-        $lineCount += $context['_addToLineCount'] ?? 0;
+        $this->lineCount++;
+    }
 
-        unset($context['_addToLineCount']);
+    public function log(string $level, string $message, int $addToLineCount = 0): void
+    {
+        $lineCount = $this->lineCount + $addToLineCount;
 
-        return sprintf(
-            '[%s] %s (%s: %s) %s',
+        $this->log[] = sprintf(
+            '[%s] %s (%s: %s)',
             strtoupper($level),
-            $msg,
+            $message,
             $lineCount,
-            trim($this->lines[$lineCount - 1] ?? ''),
-            json_encode((object)$context)
+            trim($this->lines[$lineCount - 1] ?? '')
         );
     }
 }

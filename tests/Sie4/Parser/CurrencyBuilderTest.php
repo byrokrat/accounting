@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\amount\Currency;
-use Psr\Log\LoggerInterface;
 
 /**
  * @covers \byrokrat\accounting\Sie4\Parser\CurrencyBuilder
@@ -15,7 +14,7 @@ class CurrencyBuilderTest extends \PHPUnit\Framework\TestCase
     public function testCreateMoney()
     {
         $currencyBuilder = new CurrencyBuilder(
-            $this->prophesize(LoggerInterface::CLASS)->reveal()
+            $this->prophesize(Logger::CLASS)->reveal()
         );
 
         $this->assertEquals(
@@ -35,13 +34,13 @@ class CurrencyBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testUnvalidCurrencyClass()
     {
-        $logger = $this->prophesize(LoggerInterface::CLASS);
+        $logger = $this->prophesize(Logger::CLASS);
 
         $currencyBuilder = new CurrencyBuilder($logger->reveal());
 
         $currencyBuilder->setCurrencyClass('not-a-valid-currency');
 
-        $logger->warning('Unknown currency not-a-valid-currency')->shouldHaveBeenCalled();
+        $logger->log('warning', 'Unknown currency not-a-valid-currency')->shouldHaveBeenCalled();
 
         $this->assertEquals(
             new Currency\SEK('100'),

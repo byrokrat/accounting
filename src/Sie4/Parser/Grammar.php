@@ -501,7 +501,7 @@ class Grammar extends AbstractParser
             $this->value = call_user_func(function () use (&$checksum) {
                 if ($this->assertInt($checksum, 'Expected checksum')) {
                     $this->parsedAttributes['checksum'] = $checksum;
-                    $this->getLogger()->notice('Checksum detected but currently not handled');
+                    $this->getLogger()->log('notice', 'Checksum detected but currently not handled');
                 }
             });
         }
@@ -535,7 +535,7 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () {
-                $this->getLogger()->warning('Misplaced identification post');
+                $this->getLogger()->log('warning', 'Misplaced identification post');
             });
         }
 
@@ -568,7 +568,7 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () {
-                $this->getLogger()->warning('Misplaced account plan post');
+                $this->getLogger()->log('warning', 'Misplaced account plan post');
             });
         }
 
@@ -1231,7 +1231,7 @@ class Grammar extends AbstractParser
             $this->value = call_user_func(function () use (&$charset) {
                 if ($this->assertString($charset, 'Expected charset identifier')) {
                     if ($charset != 'PC8') {
-                        $this->getLogger()->warning("Unknown charset $charset defined using #FORMAT");
+                        $this->getLogger()->log('warning', "Unknown charset $charset defined using #FORMAT");
                     }
 
                     $this->parsedAttributes['charset'] = $charset;
@@ -5882,7 +5882,7 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$fields) {
-                $this->getLogger()->warning('Ignored invalid line "' . implode(' ', $fields) . '"');
+                $this->getLogger()->log('warning', 'Ignored invalid line "' . implode(' ', $fields) . '"');
             });
         }
 
@@ -6000,7 +6000,8 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$label, &$vars) {
-                $this->getLogger()->notice(
+                $this->getLogger()->log(
+                    'notice',
                     array_reduce(
                         $vars,
                         function ($carry, $var) {
@@ -6842,7 +6843,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$fields) {
                 foreach ($fields as $field) {
-                    $this->getLogger()->notice("Ignored unknown field $field at end of line");
+                    $this->getLogger()->log('notice', "Ignored unknown field $field at end of line");
                 }
             });
         }

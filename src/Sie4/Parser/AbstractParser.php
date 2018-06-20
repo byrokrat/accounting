@@ -162,7 +162,7 @@ class AbstractParser
             return true;
         }
 
-        $this->getLogger()->warning($failureMessage);
+        $this->getLogger()->log('warning', $failureMessage);
 
         return false;
     }

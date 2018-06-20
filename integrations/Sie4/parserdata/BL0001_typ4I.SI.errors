@@ -1,7 +1,7 @@
-[WARNING] Expected date (7: #RAR 0) {}
-[WARNING] Account number 1510 not defined (13: #TRANS 1510  {} 1063 20110824 "") {}
-[WARNING] Account number 1680 not defined (17: #TRANS 1680  {} -1000 20110824 "[2455] ALL-EL") {}
-[WARNING] Account number 2610 not defined (18: #TRANS 2610  {} -212.5 20110824 "") {}
-[WARNING] Account number 3010 not defined (19: #TRANS 3010  {} -1000 20110824 "[2452] ENTREPRISE BENGTSSON") {}
-[WARNING] Account number 3101 not defined (21: #TRANS 3101  {} -850 20110824 "") {}
-[WARNING] Account number 3740 not defined (22: #TRANS 3740  {} -0.5 20110824 "") {}
+[WARNING] Expected date (7: #RAR 0)
+[WARNING] Account number 1510 not defined (13: #TRANS 1510  {} 1063 20110824 "")
+[WARNING] Account number 1680 not defined (17: #TRANS 1680  {} -1000 20110824 "[2455] ALL-EL")
+[WARNING] Account number 2610 not defined (18: #TRANS 2610  {} -212.5 20110824 "")
+[WARNING] Account number 3010 not defined (19: #TRANS 3010  {} -1000 20110824 "[2452] ENTREPRISE BENGTSSON")
+[WARNING] Account number 3101 not defined (21: #TRANS 3101  {} -850 20110824 "")
+[WARNING] Account number 3740 not defined (22: #TRANS 3740  {} -0.5 20110824 "")

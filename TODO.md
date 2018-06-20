@@ -24,7 +24,6 @@
 
 * Att köra print_r på $contet->getAttributes() efter parse visar en hel del konstigheter
   i hur attributes skrivits. Se om det är något jag kan rätta till...
-* Drop PSR/log. Skriv detta på något eget sätt i stället...
 
 ## Writer
 

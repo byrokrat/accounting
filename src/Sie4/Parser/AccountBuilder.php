@@ -29,7 +29,6 @@ use byrokrat\accounting\Dimension\DebtAccount;
 use byrokrat\accounting\Dimension\CostAccount;
 use byrokrat\accounting\Dimension\EarningAccount;
 use byrokrat\accounting\Exception;
-use Psr\Log\LoggerInterface;
 
 /**
  * Builder that creates and keeps track of account objects
@@ -57,14 +56,14 @@ class AccountBuilder
     private $factory;
 
     /**
-     * @var LoggerInterface
+     * @var Logger
      */
     private $logger;
 
     /**
      * Inject account factory and logger att construct
      */
-    public function __construct(AccountFactory $factory, LoggerInterface $logger)
+    public function __construct(AccountFactory $factory, Logger $logger)
     {
         $this->factory = $factory;
         $this->logger = $logger;
@@ -79,13 +78,13 @@ class AccountBuilder
     public function addAccount(string $number, string $description): void
     {
         if (isset($this->accounts[$number])) {
-            $this->logger->warning("Overwriting previously created account $number");
+            $this->logger->log('warning', "Overwriting previously created account $number");
         }
 
         try {
             $this->accounts[$number] = $this->factory->createAccount($number, $description);
         } catch (Exception\RuntimeException $e) {
-            $this->logger->warning("Unable to create account $number ($description): {$e->getMessage()}");
+            $this->logger->log('warning', "Unable to create account $number ($description): {$e->getMessage()}");
         }
     }
 
@@ -98,7 +97,7 @@ class AccountBuilder
     public function setAccountType(string $number, string $type): void
     {
         if (!isset(self::$accountTypeMap[$type])) {
-            $this->logger->warning("Unknown type $type for account number $number");
+            $this->logger->log('warning', "Unknown type $type for account number $number");
             return;
         }
 
@@ -117,7 +116,7 @@ class AccountBuilder
     public function getAccount(string $number): AccountInterface
     {
         if (!isset($this->accounts[$number])) {
-            $this->logger->warning("Account number $number not defined", ['_addToLineCount' => 1]);
+            $this->logger->log('warning', "Account number $number not defined", 1);
             $this->addAccount($number, 'UNSPECIFIED');
         }
 

@@ -1,5 +1,5 @@
-[WARNING] Object number 1.0 not defined (329: #PBUDGET 0 200801 3010 {1 "0"} -208000.00) {}
-[WARNING] Dimension number 1 not defined (329: #PBUDGET 0 200801 3010 {1 "0"} -208000.00) {}
-[WARNING] Object number 1.11 not defined (341: #PSALDO 0 200801 3010 {1 "11"} -128000.00) {}
-[WARNING] Object number 1.12 not defined (353: #PSALDO 0 200801 3010 {1 "12"} -80000.00) {}
-[WARNING] Object number 1.13 not defined (567: #PSALDO 0 200801 7210 {1 "13"} 33000.00) {}
+[WARNING] Object number 1.0 not defined (329: #PBUDGET 0 200801 3010 {1 "0"} -208000.00)
+[WARNING] Dimension number 1 not defined (329: #PBUDGET 0 200801 3010 {1 "0"} -208000.00)
+[WARNING] Object number 1.11 not defined (341: #PSALDO 0 200801 3010 {1 "11"} -128000.00)
+[WARNING] Object number 1.12 not defined (353: #PSALDO 0 200801 3010 {1 "12"} -80000.00)
+[WARNING] Object number 1.13 not defined (567: #PSALDO 0 200801 7210 {1 "13"} 33000.00)

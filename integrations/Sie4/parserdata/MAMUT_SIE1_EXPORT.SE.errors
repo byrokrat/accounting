@@ -1,718 +1,718 @@
-[WARNING] Misplaced account plan post (234: #KONTO 1512 "Belånade fordringar") {}
-[WARNING] Misplaced account plan post (235: #SRU 1512 0) {}
-[WARNING] Misplaced account plan post (238: #KONTO 1513 "Kundfordringar - delad faktura") {}
-[WARNING] Misplaced account plan post (239: #SRU 1513 0) {}
-[WARNING] Misplaced account plan post (242: #KONTO 1515 "Osäkra kundfordringar") {}
-[WARNING] Misplaced account plan post (243: #SRU 1515 0) {}
-[WARNING] Misplaced account plan post (246: #KONTO 1580 "Kontokort och kuponger") {}
-[WARNING] Misplaced account plan post (247: #SRU 1580 0) {}
-[WARNING] Misplaced account plan post (250: #KONTO 1610 "Förskott") {}
-[WARNING] Misplaced account plan post (251: #SRU 1610 0) {}
-[WARNING] Misplaced account plan post (254: #KONTO 1611 "Reseförskott") {}
-[WARNING] Misplaced account plan post (255: #SRU 1611 0) {}
-[WARNING] Misplaced account plan post (258: #KONTO 1613 "Övriga förskott") {}
-[WARNING] Misplaced account plan post (259: #SRU 1613 0) {}
-[WARNING] Misplaced account plan post (262: #KONTO 1619 "Övr fordringar hos anställda") {}
-[WARNING] Misplaced account plan post (263: #SRU 1619 0) {}
-[WARNING] Misplaced account plan post (266: #KONTO 1630 "Avräkn skatter och avgifter") {}
-[WARNING] Misplaced account plan post (267: #SRU 1630 0) {}
-[WARNING] Misplaced account plan post (270: #KONTO 1640 "Skattefordringar") {}
-[WARNING] Misplaced account plan post (271: #SRU 1640 0) {}
-[WARNING] Misplaced account plan post (274: #KONTO 1650 "Fordran moms") {}
-[WARNING] Misplaced account plan post (275: #SRU 1650 0) {}
-[WARNING] Misplaced account plan post (278: #KONTO 1680 "Övr kortfristiga fordr") {}
-[WARNING] Misplaced account plan post (279: #SRU 1680 0) {}
-[WARNING] Misplaced account plan post (282: #KONTO 1684 "Fordring hos leverantör") {}
-[WARNING] Misplaced account plan post (283: #SRU 1684 0) {}
-[WARNING] Misplaced account plan post (286: #KONTO 1685 "Fordring hos närstående") {}
-[WARNING] Misplaced account plan post (287: #SRU 1685 0) {}
-[WARNING] Misplaced account plan post (290: #KONTO 1710 "Förutbetalda hyror") {}
-[WARNING] Misplaced account plan post (291: #SRU 1710 0) {}
-[WARNING] Misplaced account plan post (294: #KONTO 1740 "Förutbet ränteutgifter") {}
-[WARNING] Misplaced account plan post (295: #SRU 1740 0) {}
-[WARNING] Misplaced account plan post (298: #KONTO 1750 "Upplupna hyresinkomster") {}
-[WARNING] Misplaced account plan post (299: #SRU 1750 0) {}
-[WARNING] Misplaced account plan post (302: #KONTO 1760 "Upplupna inkomsträntor") {}
-[WARNING] Misplaced account plan post (303: #SRU 1760 0) {}
-[WARNING] Misplaced account plan post (306: #KONTO 1790 "Övr interimsfordringar") {}
-[WARNING] Misplaced account plan post (307: #SRU 1790 0) {}
-[WARNING] Misplaced account plan post (310: #KONTO 1795 "Varer levererade, faktura ej skickad") {}
-[WARNING] Misplaced account plan post (311: #SRU 1795 0) {}
-[WARNING] Misplaced account plan post (314: #KONTO 1820 "Obligationer, värdepapper") {}
-[WARNING] Misplaced account plan post (315: #SRU 1820 0) {}
-[WARNING] Misplaced account plan post (318: #KONTO 1860 "Finansiella instrument") {}
-[WARNING] Misplaced account plan post (319: #SRU 1860 0) {}
-[WARNING] Misplaced account plan post (322: #KONTO 1869 "Värderegl finans instr") {}
-[WARNING] Misplaced account plan post (323: #SRU 1869 0) {}
-[WARNING] Misplaced account plan post (326: #KONTO 1910 "Kassa") {}
-[WARNING] Misplaced account plan post (327: #SRU 1910 0) {}
-[WARNING] Misplaced account plan post (334: #KONTO 1920 "Plusgiro") {}
-[WARNING] Misplaced account plan post (335: #SRU 1920 0) {}
-[WARNING] Misplaced account plan post (342: #KONTO 1930 "Checkräkningskonto") {}
-[WARNING] Misplaced account plan post (343: #SRU 1930 0) {}
-[WARNING] Misplaced account plan post (350: #KONTO 1940 "Övriga bankkonton") {}
-[WARNING] Misplaced account plan post (351: #SRU 1940 0) {}
-[WARNING] Misplaced account plan post (354: #KONTO 1950 "Kreditkort") {}
-[WARNING] Misplaced account plan post (355: #SRU 1950 0) {}
-[WARNING] Misplaced account plan post (358: #KONTO 2081 "Aktiekapital") {}
-[WARNING] Misplaced account plan post (359: #SRU 2081 0) {}
-[WARNING] Misplaced account plan post (366: #KONTO 2086 "Reservfond") {}
-[WARNING] Misplaced account plan post (367: #SRU 2086 0) {}
-[WARNING] Misplaced account plan post (370: #KONTO 2091 "Balanserad vinst/förlust") {}
-[WARNING] Misplaced account plan post (371: #SRU 2091 0) {}
-[WARNING] Misplaced account plan post (374: #KONTO 2094 "Egna aktier") {}
-[WARNING] Misplaced account plan post (375: #SRU 2094 0) {}
-[WARNING] Misplaced account plan post (378: #KONTO 2098 "Vinst/förlust föreg år") {}
-[WARNING] Misplaced account plan post (379: #SRU 2098 0) {}
-[WARNING] Misplaced account plan post (382: #KONTO 2099 "Redovisat resultat") {}
-[WARNING] Misplaced account plan post (383: #SRU 2099 0) {}
-[WARNING] Misplaced account plan post (390: #KONTO 2116 "Periodiseringsfond TAX 1996") {}
-[WARNING] Misplaced account plan post (391: #SRU 2116 0) {}
-[WARNING] Misplaced account plan post (394: #KONTO 2117 "Periodiseringsfond TAX 1997") {}
-[WARNING] Misplaced account plan post (395: #SRU 2117 0) {}
-[WARNING] Misplaced account plan post (398: #KONTO 2118 "Periodiseringsfond TAX 1998") {}
-[WARNING] Misplaced account plan post (399: #SRU 2118 0) {}
-[WARNING] Misplaced account plan post (402: #KONTO 2119 "Periodiseringsfond TAX 1999") {}
-[WARNING] Misplaced account plan post (403: #SRU 2119 0) {}
-[WARNING] Misplaced account plan post (406: #KONTO 2120 "Periodiseringsfond TAX 2000") {}
-[WARNING] Misplaced account plan post (407: #SRU 2120 0) {}
-[WARNING] Misplaced account plan post (410: #KONTO 2121 "Periodiseringsfond TAX 2001") {}
-[WARNING] Misplaced account plan post (411: #SRU 2121 0) {}
-[WARNING] Misplaced account plan post (414: #KONTO 2150 "Ack överavskrivningar") {}
-[WARNING] Misplaced account plan post (415: #SRU 2150 0) {}
-[WARNING] Misplaced account plan post (418: #KONTO 2151 "Ack överavskr imm anl.tillg") {}
-[WARNING] Misplaced account plan post (419: #SRU 2151 0) {}
-[WARNING] Misplaced account plan post (422: #KONTO 2152 "Ack överavskr på byggn/markanl") {}
-[WARNING] Misplaced account plan post (423: #SRU 2152 0) {}
-[WARNING] Misplaced account plan post (426: #KONTO 2153 "Ack överavskr maskiner/inv") {}
-[WARNING] Misplaced account plan post (427: #SRU 2153 0) {}
-[WARNING] Misplaced account plan post (430: #KONTO 2190 "Övr obeskattade reserver") {}
-[WARNING] Misplaced account plan post (431: #SRU 2190 0) {}
-[WARNING] Misplaced account plan post (434: #KONTO 2195 "Valutakursreserv") {}
-[WARNING] Misplaced account plan post (435: #SRU 2195 0) {}
-[WARNING] Misplaced account plan post (438: #KONTO 2196 "Lagerreserv") {}
-[WARNING] Misplaced account plan post (439: #SRU 2196 0) {}
-[WARNING] Misplaced account plan post (442: #KONTO 2210 "Avsatt till pensioner") {}
-[WARNING] Misplaced account plan post (443: #SRU 2210 0) {}
-[WARNING] Misplaced account plan post (446: #KONTO 2211 "Avsättningar för PRI-pensioner") {}
-[WARNING] Misplaced account plan post (447: #SRU 2211 0) {}
-[WARNING] Misplaced account plan post (450: #KONTO 2219 "Avsättningar för övr pensioner") {}
-[WARNING] Misplaced account plan post (451: #SRU 2219 0) {}
-[WARNING] Misplaced account plan post (454: #KONTO 2220 "Garantiskulder") {}
-[WARNING] Misplaced account plan post (455: #SRU 2220 0) {}
-[WARNING] Misplaced account plan post (458: #KONTO 2280 "Avsättning, faktura ej mottagen") {}
-[WARNING] Misplaced account plan post (459: #SRU 2280 0) {}
-[WARNING] Misplaced account plan post (462: #KONTO 2330 "Checkräkningskredit") {}
-[WARNING] Misplaced account plan post (463: #SRU 2330 0) {}
-[WARNING] Misplaced account plan post (466: #KONTO 2350 "Reverslån") {}
-[WARNING] Misplaced account plan post (467: #SRU 2350 0) {}
-[WARNING] Misplaced account plan post (470: #KONTO 2355 "Lån i utländsk valuta") {}
-[WARNING] Misplaced account plan post (471: #SRU 2355 0) {}
-[WARNING] Misplaced account plan post (474: #KONTO 2393 "Lån från aktieägare") {}
-[WARNING] Misplaced account plan post (475: #SRU 2393 0) {}
-[WARNING] Misplaced account plan post (478: #KONTO 2395 "Andra lån i utl valuta") {}
-[WARNING] Misplaced account plan post (479: #SRU 2395 0) {}
-[WARNING] Misplaced account plan post (482: #KONTO 2399 "Övr långfristiga skulder") {}
-[WARNING] Misplaced account plan post (483: #SRU 2399 0) {}
-[WARNING] Misplaced account plan post (486: #KONTO 2420 "Förskott från kunder") {}
-[WARNING] Misplaced account plan post (487: #SRU 2420 0) {}
-[WARNING] Misplaced account plan post (490: #KONTO 2440 "Leverantörskulder") {}
-[WARNING] Misplaced account plan post (491: #SRU 2440 0) {}
-[WARNING] Misplaced account plan post (497: #KONTO 2510 "Skatteskulder") {}
-[WARNING] Misplaced account plan post (498: #SRU 2510 0) {}
-[WARNING] Misplaced account plan post (501: #KONTO 2611 "Utg moms försäljning 25%") {}
-[WARNING] Misplaced account plan post (502: #SRU 2611 0) {}
-[WARNING] Misplaced account plan post (509: #KONTO 2612 "Utg moms egna uttag 25%") {}
-[WARNING] Misplaced account plan post (510: #SRU 2612 0) {}
-[WARNING] Misplaced account plan post (513: #KONTO 2613 "Utg moms uthyrning ored") {}
-[WARNING] Misplaced account plan post (514: #SRU 2613 0) {}
-[WARNING] Misplaced account plan post (517: #KONTO 2614 "Ber moms tjförv 25% utl") {}
-[WARNING] Misplaced account plan post (518: #SRU 2614 0) {}
-[WARNING] Misplaced account plan post (521: #KONTO 2615 "Ber moms varuförv") {}
-[WARNING] Misplaced account plan post (522: #SRU 2615 0) {}
-[WARNING] Misplaced account plan post (525: #KONTO 2617 "Utg moms omvänd skattskyldighet Sverige 25%") {}
-[WARNING] Misplaced account plan post (526: #SRU 2617 0) {}
-[WARNING] Misplaced account plan post (529: #KONTO 2621 "Utg moms försäljning 12%") {}
-[WARNING] Misplaced account plan post (530: #SRU 2621 0) {}
-[WARNING] Misplaced account plan post (533: #KONTO 2622 "Utg moms egna uttag 12%") {}
-[WARNING] Misplaced account plan post (534: #SRU 2622 0) {}
-[WARNING] Misplaced account plan post (537: #KONTO 2623 "Utg moms för uthyrning 12%") {}
-[WARNING] Misplaced account plan post (538: #SRU 2623 0) {}
-[WARNING] Misplaced account plan post (541: #KONTO 2624 "Ber moms tjförv 12% utl") {}
-[WARNING] Misplaced account plan post (542: #SRU 2624 0) {}
-[WARNING] Misplaced account plan post (545: #KONTO 2625 "Ber moms varuförv från EG-land 12%") {}
-[WARNING] Misplaced account plan post (546: #SRU 2625 0) {}
-[WARNING] Misplaced account plan post (549: #KONTO 2627 "Utg moms omvänd skattskyldighet Sverige 12%") {}
-[WARNING] Misplaced account plan post (550: #SRU 2627 0) {}
-[WARNING] Misplaced account plan post (553: #KONTO 2631 "Utg moms försäljning 6%") {}
-[WARNING] Misplaced account plan post (554: #SRU 2631 0) {}
-[WARNING] Misplaced account plan post (557: #KONTO 2632 "Utg moms egna uttag 6%") {}
-[WARNING] Misplaced account plan post (558: #SRU 2632 0) {}
-[WARNING] Misplaced account plan post (561: #KONTO 2633 "Utg moms för uthyrning 6%") {}
-[WARNING] Misplaced account plan post (562: #SRU 2633 0) {}
-[WARNING] Misplaced account plan post (565: #KONTO 2634 "Ber moms tjförv 6% utl") {}
-[WARNING] Misplaced account plan post (566: #SRU 2634 0) {}
-[WARNING] Misplaced account plan post (569: #KONTO 2635 "Ber moms varuförv från EG-land 6%") {}
-[WARNING] Misplaced account plan post (570: #SRU 2635 0) {}
-[WARNING] Misplaced account plan post (573: #KONTO 2637 "Utg moms omvänd skattskyldighet Sverige 6%") {}
-[WARNING] Misplaced account plan post (574: #SRU 2637 0) {}
-[WARNING] Misplaced account plan post (577: #KONTO 2641 "Ingående moms") {}
-[WARNING] Misplaced account plan post (578: #SRU 2641 0) {}
-[WARNING] Misplaced account plan post (584: #KONTO 2645 "Ingående moms utland") {}
-[WARNING] Misplaced account plan post (585: #SRU 2645 0) {}
-[WARNING] Misplaced account plan post (588: #KONTO 2646 "Ingående moms uth. verksamhetslokaler") {}
-[WARNING] Misplaced account plan post (589: #SRU 2646 0) {}
-[WARNING] Misplaced account plan post (592: #KONTO 2647 "Ingående moms omvänd skattskyldighet Sverige") {}
-[WARNING] Misplaced account plan post (593: #SRU 2647 0) {}
-[WARNING] Misplaced account plan post (596: #KONTO 2648 "Fördelningskonto 1") {}
-[WARNING] Misplaced account plan post (597: #SRU 2648 0) {}
-[WARNING] Misplaced account plan post (600: #KONTO 2649 "Fördelningskonto 2 (motkontering)") {}
-[WARNING] Misplaced account plan post (601: #SRU 2649 0) {}
-[WARNING] Misplaced account plan post (604: #KONTO 2650 "Moms redovisningskonto") {}
-[WARNING] Misplaced account plan post (605: #SRU 2650 0) {}
-[WARNING] Misplaced account plan post (612: #KONTO 2660 "Särskilda punktskatter") {}
-[WARNING] Misplaced account plan post (613: #SRU 2660 0) {}
-[WARNING] Misplaced account plan post (616: #KONTO 2710 "Personalens källskatt") {}
-[WARNING] Misplaced account plan post (617: #SRU 2710 0) {}
-[WARNING] Misplaced account plan post (620: #KONTO 2731 "Avräkn sociala avgifter") {}
-[WARNING] Misplaced account plan post (621: #SRU 2731 0) {}
-[WARNING] Misplaced account plan post (624: #KONTO 2732 "Avräkn särsk lönesk pens") {}
-[WARNING] Misplaced account plan post (625: #SRU 2732 0) {}
-[WARNING] Misplaced account plan post (628: #KONTO 2750 "Utmätning i lön mm") {}
-[WARNING] Misplaced account plan post (629: #SRU 2750 0) {}
-[WARNING] Misplaced account plan post (632: #KONTO 2790 "Övriga löneavdrag") {}
-[WARNING] Misplaced account plan post (633: #SRU 2790 0) {}
-[WARNING] Misplaced account plan post (636: #KONTO 2792 "Lönsparande") {}
-[WARNING] Misplaced account plan post (637: #SRU 2792 0) {}
-[WARNING] Misplaced account plan post (640: #KONTO 2793 "Kollektivförsäkring mm") {}
-[WARNING] Misplaced account plan post (641: #SRU 2793 0) {}
-[WARNING] Misplaced account plan post (644: #KONTO 2794 "Fackföreningsavgifter") {}
-[WARNING] Misplaced account plan post (645: #SRU 2794 0) {}
-[WARNING] Misplaced account plan post (648: #KONTO 2795 "Granskningsavgifter") {}
-[WARNING] Misplaced account plan post (649: #SRU 2795 0) {}
-[WARNING] Misplaced account plan post (652: #KONTO 2840 "Låneskulder") {}
-[WARNING] Misplaced account plan post (653: #SRU 2840 0) {}
-[WARNING] Misplaced account plan post (656: #KONTO 2850 "Avräkn skatter/avgifter") {}
-[WARNING] Misplaced account plan post (657: #SRU 2850 0) {}
-[WARNING] Misplaced account plan post (660: #KONTO 2890 "Övr kortfr skulder") {}
-[WARNING] Misplaced account plan post (661: #SRU 2890 0) {}
-[WARNING] Misplaced account plan post (664: #KONTO 2893 "Skulder närstående personer") {}
-[WARNING] Misplaced account plan post (665: #SRU 2893 0) {}
-[WARNING] Misplaced account plan post (668: #KONTO 2910 "Upplupna löner") {}
-[WARNING] Misplaced account plan post (669: #SRU 2910 0) {}
-[WARNING] Misplaced account plan post (672: #KONTO 2920 "Upplupna semlöner") {}
-[WARNING] Misplaced account plan post (673: #SRU 2920 0) {}
-[WARNING] Misplaced account plan post (676: #KONTO 2921 "Upplupna soc.avg sem.lön") {}
-[WARNING] Misplaced account plan post (677: #SRU 2921 0) {}
-[WARNING] Misplaced account plan post (680: #KONTO 2941 "Upplupna sociala avgifter") {}
-[WARNING] Misplaced account plan post (681: #SRU 2941 0) {}
-[WARNING] Misplaced account plan post (684: #KONTO 2950 "Upplupna avtalade soc avg") {}
-[WARNING] Misplaced account plan post (685: #SRU 2950 0) {}
-[WARNING] Misplaced account plan post (688: #KONTO 2960 "Upplupna utgiftsräntor") {}
-[WARNING] Misplaced account plan post (689: #SRU 2960 0) {}
-[WARNING] Misplaced account plan post (692: #KONTO 2970 "Förutbetalda hyresinkomster") {}
-[WARNING] Misplaced account plan post (693: #SRU 2970 0) {}
-[WARNING] Misplaced account plan post (696: #KONTO 2990 "Övr interimsskulder") {}
-[WARNING] Misplaced account plan post (697: #SRU 2990 0) {}
-[WARNING] Misplaced account plan post (700: #KONTO 2995 "Skuld inkomna följesedlar") {}
-[WARNING] Misplaced account plan post (701: #SRU 2995 0) {}
-[WARNING] Misplaced account plan post (704: #KONTO 2999 "Övr uppl kostn/förutbet intäkter") {}
-[WARNING] Misplaced account plan post (705: #SRU 2999 0) {}
-[WARNING] Misplaced account plan post (708: #KONTO 3020 "Försäljning VMB varor") {}
-[WARNING] Misplaced account plan post (709: #SRU 3020 0) {}
-[WARNING] Misplaced account plan post (712: #KONTO 3028 "Positiv VM omföringskonto") {}
-[WARNING] Misplaced account plan post (713: #SRU 3028 0) {}
-[WARNING] Misplaced account plan post (716: #KONTO 3030 "Positiv VM") {}
-[WARNING] Misplaced account plan post (717: #SRU 3030 0) {}
-[WARNING] Misplaced account plan post (720: #KONTO 3041 "Försäljn tjänst 25% sv") {}
-[WARNING] Misplaced account plan post (721: #SRU 3041 0) {}
-[WARNING] Misplaced account plan post (724: #KONTO 3042 "Försäljn tjänst 12% sv") {}
-[WARNING] Misplaced account plan post (725: #SRU 3042 0) {}
-[WARNING] Misplaced account plan post (728: #KONTO 3043 "Försäljn tjänst 6% sv") {}
-[WARNING] Misplaced account plan post (729: #SRU 3043 0) {}
-[WARNING] Misplaced account plan post (732: #KONTO 3044 "Försäljn tjänst sv momsfri") {}
-[WARNING] Misplaced account plan post (733: #SRU 3044 0) {}
-[WARNING] Misplaced account plan post (736: #KONTO 3045 "Försälj tjänst utanför EU") {}
-[WARNING] Misplaced account plan post (737: #SRU 3045 0) {}
-[WARNING] Misplaced account plan post (740: #KONTO 3046 "Försäljn tjänst till EU") {}
-[WARNING] Misplaced account plan post (741: #SRU 3046 0) {}
-[WARNING] Misplaced account plan post (744: #KONTO 3048 "Försäljn tjänst EU momsfri") {}
-[WARNING] Misplaced account plan post (745: #SRU 3048 0) {}
-[WARNING] Misplaced account plan post (748: #KONTO 3051 "Försäljn varor 25% sv") {}
-[WARNING] Misplaced account plan post (749: #SRU 3051 0) {}
-[WARNING] Misplaced account plan post (754: #KONTO 3052 "Försäljn varor 12% sv") {}
-[WARNING] Misplaced account plan post (755: #SRU 3052 0) {}
-[WARNING] Misplaced account plan post (758: #KONTO 3053 "Försäljn varor 6% sv") {}
-[WARNING] Misplaced account plan post (759: #SRU 3053 0) {}
-[WARNING] Misplaced account plan post (762: #KONTO 3054 "Försäljn varor sv momsfri") {}
-[WARNING] Misplaced account plan post (763: #SRU 3054 0) {}
-[WARNING] Misplaced account plan post (768: #KONTO 3055 "Försäljn varor utanför EU") {}
-[WARNING] Misplaced account plan post (769: #SRU 3055 0) {}
-[WARNING] Misplaced account plan post (772: #KONTO 3056 "Försäljn varor till EU") {}
-[WARNING] Misplaced account plan post (773: #SRU 3056 0) {}
-[WARNING] Misplaced account plan post (776: #KONTO 3058 "Försäljn varor EU momsfri") {}
-[WARNING] Misplaced account plan post (777: #SRU 3058 0) {}
-[WARNING] Misplaced account plan post (780: #KONTO 3059 "Momspl uttag av fast.tj") {}
-[WARNING] Misplaced account plan post (781: #SRU 3059 0) {}
-[WARNING] Misplaced account plan post (784: #KONTO 3062 "Förs varor närst företag") {}
-[WARNING] Misplaced account plan post (785: #SRU 3062 0) {}
-[WARNING] Misplaced account plan post (788: #KONTO 3066 "Försäljn till närstående företag inom EU") {}
-[WARNING] Misplaced account plan post (789: #SRU 3066 0) {}
-[WARNING] Misplaced account plan post (792: #KONTO 3100 "Hyresintäkt skattepl") {}
-[WARNING] Misplaced account plan post (793: #SRU 3100 0) {}
-[WARNING] Misplaced account plan post (796: #KONTO 3231 "Försäljning inom byggsektorn,omvänd skattskyldighetmoms") {}
-[WARNING] Misplaced account plan post (797: #SRU 3231 0) {}
-[WARNING] Misplaced account plan post (800: #KONTO 3510 "Emballage") {}
-[WARNING] Misplaced account plan post (801: #SRU 3510 0) {}
-[WARNING] Misplaced account plan post (804: #KONTO 3520 "Frakter") {}
-[WARNING] Misplaced account plan post (805: #SRU 3520 0) {}
-[WARNING] Misplaced account plan post (808: #KONTO 3521 "Frakter export") {}
-[WARNING] Misplaced account plan post (809: #SRU 3521 0) {}
-[WARNING] Misplaced account plan post (812: #KONTO 3522 "Frakter EU") {}
-[WARNING] Misplaced account plan post (813: #SRU 3522 0) {}
-[WARNING] Misplaced account plan post (816: #KONTO 3530 "Fakt tull och spedition") {}
-[WARNING] Misplaced account plan post (817: #SRU 3530 0) {}
-[WARNING] Misplaced account plan post (820: #KONTO 3540 "Faktureringsavgifter") {}
-[WARNING] Misplaced account plan post (821: #SRU 3540 0) {}
-[WARNING] Misplaced account plan post (824: #KONTO 3541 "Faktureringsavgifter export") {}
-[WARNING] Misplaced account plan post (825: #SRU 3541 0) {}
-[WARNING] Misplaced account plan post (828: #KONTO 3542 "Faktureringsavgifter EU") {}
-[WARNING] Misplaced account plan post (829: #SRU 3542 0) {}
-[WARNING] Misplaced account plan post (832: #KONTO 3550 "Fakt resekostnader") {}
-[WARNING] Misplaced account plan post (833: #SRU 3550 0) {}
-[WARNING] Misplaced account plan post (836: #KONTO 3590 "Övr fakt kostnader") {}
-[WARNING] Misplaced account plan post (837: #SRU 3590 0) {}
-[WARNING] Misplaced account plan post (840: #KONTO 3610 "Försäljning material") {}
-[WARNING] Misplaced account plan post (841: #SRU 3610 0) {}
-[WARNING] Misplaced account plan post (844: #KONTO 3731 "Kassarabatter") {}
-[WARNING] Misplaced account plan post (845: #SRU 3731 0) {}
-[WARNING] Misplaced account plan post (848: #KONTO 3736 "Kassarabatter export") {}
-[WARNING] Misplaced account plan post (849: #SRU 3736 0) {}
-[WARNING] Misplaced account plan post (852: #KONTO 3737 "Kassarabatter EU") {}
-[WARNING] Misplaced account plan post (853: #SRU 3737 0) {}
-[WARNING] Misplaced account plan post (856: #KONTO 3740 "Öresutjämning") {}
-[WARNING] Misplaced account plan post (857: #SRU 3740 0) {}
-[WARNING] Misplaced account plan post (862: #KONTO 3840 "Aktiverat arbete (material)") {}
-[WARNING] Misplaced account plan post (863: #SRU 3840 0) {}
-[WARNING] Misplaced account plan post (866: #KONTO 3850 "Aktiverat arbete (omkostnader)") {}
-[WARNING] Misplaced account plan post (867: #SRU 3850 0) {}
-[WARNING] Misplaced account plan post (870: #KONTO 3870 "Aktiverat arbete (löner)") {}
-[WARNING] Misplaced account plan post (871: #SRU 3870 0) {}
-[WARNING] Misplaced account plan post (874: #KONTO 3911 "Hyresintäkter") {}
-[WARNING] Misplaced account plan post (875: #SRU 3911 0) {}
-[WARNING] Misplaced account plan post (878: #KONTO 3921 "Provisionsintäkter") {}
-[WARNING] Misplaced account plan post (879: #SRU 3921 0) {}
-[WARNING] Misplaced account plan post (882: #KONTO 3950 "Återvunna kundförluster") {}
-[WARNING] Misplaced account plan post (883: #SRU 3950 0) {}
-[WARNING] Misplaced account plan post (886: #KONTO 3960 "Kursvinst rörelsen") {}
-[WARNING] Misplaced account plan post (887: #SRU 3960 0) {}
-[WARNING] Misplaced account plan post (890: #KONTO 3970 "Vinst avyttr imm/mat anl.tillg") {}
-[WARNING] Misplaced account plan post (891: #SRU 3970 0) {}
-[WARNING] Misplaced account plan post (894: #KONTO 3972 "Vinst avyttr fastigheter") {}
-[WARNING] Misplaced account plan post (895: #SRU 3972 0) {}
-[WARNING] Misplaced account plan post (898: #KONTO 3973 "Vinst avyttr maskiner/inv") {}
-[WARNING] Misplaced account plan post (899: #SRU 3973 0) {}
-[WARNING] Misplaced account plan post (902: #KONTO 3985 "Erhållna statliga bidrag") {}
-[WARNING] Misplaced account plan post (903: #SRU 3985 0) {}
-[WARNING] Misplaced account plan post (906: #KONTO 3987 "Erhållna kommunala bidrag") {}
-[WARNING] Misplaced account plan post (907: #SRU 3987 0) {}
-[WARNING] Misplaced account plan post (910: #KONTO 3989 "Övriga erhållna bidrag") {}
-[WARNING] Misplaced account plan post (911: #SRU 3989 0) {}
-[WARNING] Misplaced account plan post (914: #KONTO 3990 "Övriga sidintäkter") {}
-[WARNING] Misplaced account plan post (915: #SRU 3990 0) {}
-[WARNING] Misplaced account plan post (918: #KONTO 3994 "Försäkringsersättningar") {}
-[WARNING] Misplaced account plan post (919: #SRU 3994 0) {}
-[WARNING] Misplaced account plan post (922: #KONTO 4011 "Inköp material och varor 25 %") {}
-[WARNING] Misplaced account plan post (923: #SRU 4011 0) {}
-[WARNING] Misplaced account plan post (928: #KONTO 4012 "Inköp material och varor 12 %") {}
-[WARNING] Misplaced account plan post (929: #SRU 4012 0) {}
-[WARNING] Misplaced account plan post (932: #KONTO 4013 "Inköp material och varor 6 %") {}
-[WARNING] Misplaced account plan post (933: #SRU 4013 0) {}
-[WARNING] Misplaced account plan post (936: #KONTO 4015 "Inköp material momsfritt") {}
-[WARNING] Misplaced account plan post (937: #SRU 4015 0) {}
-[WARNING] Misplaced account plan post (942: #KONTO 4020 "Inköp VMB varor") {}
-[WARNING] Misplaced account plan post (943: #SRU 4020 0) {}
-[WARNING] Misplaced account plan post (946: #KONTO 4028 "Negativ VMB varor") {}
-[WARNING] Misplaced account plan post (947: #SRU 4028 0) {}
-[WARNING] Misplaced account plan post (950: #KONTO 4030 "Negativ VM") {}
-[WARNING] Misplaced account plan post (951: #SRU 4030 0) {}
-[WARNING] Misplaced account plan post (954: #KONTO 4055 "Trepartsförv varor fr EU") {}
-[WARNING] Misplaced account plan post (955: #SRU 4055 0) {}
-[WARNING] Misplaced account plan post (958: #KONTO 4056 "Inköp varor 25% EU") {}
-[WARNING] Misplaced account plan post (959: #SRU 4056 0) {}
-[WARNING] Misplaced account plan post (962: #KONTO 4057 "Inköp varor EU 12%") {}
-[WARNING] Misplaced account plan post (963: #SRU 4057 0) {}
-[WARNING] Misplaced account plan post (966: #KONTO 4058 "Inköp varor EU 6%") {}
-[WARNING] Misplaced account plan post (967: #SRU 4058 0) {}
-[WARNING] Misplaced account plan post (970: #KONTO 4059 "Inköp varor EU momsfri") {}
-[WARNING] Misplaced account plan post (971: #SRU 4059 0) {}
-[WARNING] Misplaced account plan post (974: #KONTO 4100 "Kostn uthyrn lokal sk.pl") {}
-[WARNING] Misplaced account plan post (975: #SRU 4100 0) {}
-[WARNING] Misplaced account plan post (978: #KONTO 4415 "Inköpta varor i Sverige,omvänd skattskyldighet, 25%") {}
-[WARNING] Misplaced account plan post (979: #SRU 4415 0) {}
-[WARNING] Misplaced account plan post (982: #KONTO 4416 "Inköpta varor i Sverige,omvänd skattskyldighet, 12%") {}
-[WARNING] Misplaced account plan post (983: #SRU 4416 0) {}
-[WARNING] Misplaced account plan post (986: #KONTO 4417 "Inköpta varor i Sverige,omvänd skattskyldighet, 6%") {}
-[WARNING] Misplaced account plan post (987: #SRU 4417 0) {}
-[WARNING] Misplaced account plan post (990: #KONTO 4425 "Inköpta tjänster i Sverige,omvänd skattskyldighet, 25%") {}
-[WARNING] Misplaced account plan post (991: #SRU 4425 0) {}
-[WARNING] Misplaced account plan post (994: #KONTO 4426 "Inköpta tjänster i Sverige,omvänd skattskyldighet, 12%") {}
-[WARNING] Misplaced account plan post (995: #SRU 4426 0) {}
-[WARNING] Misplaced account plan post (998: #KONTO 4427 "Inköpta tjänster i Sverige,omvänd skattskyldighet, 6%") {}
-[WARNING] Misplaced account plan post (999: #SRU 4427 0) {}
-[WARNING] Misplaced account plan post (1002: #KONTO 4600 "Legoarbeten, underentrepr") {}
-[WARNING] Misplaced account plan post (1003: #SRU 4600 0) {}
-[WARNING] Misplaced account plan post (1006: #KONTO 4731 "Erhållna kassarabatter") {}
-[WARNING] Misplaced account plan post (1007: #SRU 4731 0) {}
-[WARNING] Misplaced account plan post (1010: #KONTO 4733 "Erhållet aktivitetsstöd") {}
-[WARNING] Misplaced account plan post (1011: #SRU 4733 0) {}
-[WARNING] Misplaced account plan post (1014: #KONTO 4940 "Förändr. produkter i arbete") {}
-[WARNING] Misplaced account plan post (1015: #SRU 4940 0) {}
-[WARNING] Misplaced account plan post (1018: #KONTO 4950 "Förändr. lager färdigvaror") {}
-[WARNING] Misplaced account plan post (1019: #SRU 4950 0) {}
-[WARNING] Misplaced account plan post (1022: #KONTO 4970 "Förändr. påg arbete") {}
-[WARNING] Misplaced account plan post (1023: #SRU 4970 0) {}
-[WARNING] Misplaced account plan post (1026: #KONTO 4990 "Lagerförändring") {}
-[WARNING] Misplaced account plan post (1027: #SRU 4990 0) {}
-[WARNING] Misplaced account plan post (1030: #KONTO 5010 "Lokalhyra") {}
-[WARNING] Misplaced account plan post (1031: #SRU 5010 0) {}
-[WARNING] Misplaced account plan post (1034: #KONTO 5020 "El hyrd lokal") {}
-[WARNING] Misplaced account plan post (1035: #SRU 5020 0) {}
-[WARNING] Misplaced account plan post (1038: #KONTO 5030 "Värme hyrd lokal") {}
-[WARNING] Misplaced account plan post (1039: #SRU 5030 0) {}
-[WARNING] Misplaced account plan post (1042: #KONTO 5050 "Lokaltillbehör hyrd lokal") {}
-[WARNING] Misplaced account plan post (1043: #SRU 5050 0) {}
-[WARNING] Misplaced account plan post (1046: #KONTO 5060 "Städning, renhållning hyrd lokal") {}
-[WARNING] Misplaced account plan post (1047: #SRU 5060 0) {}
-[WARNING] Misplaced account plan post (1050: #KONTO 5070 "Reparationer hyrd lokal") {}
-[WARNING] Misplaced account plan post (1051: #SRU 5070 0) {}
-[WARNING] Misplaced account plan post (1054: #KONTO 5090 "Övr kostnader hyrd lokal") {}
-[WARNING] Misplaced account plan post (1055: #SRU 5090 0) {}
-[WARNING] Misplaced account plan post (1058: #KONTO 5120 "Belysning") {}
-[WARNING] Misplaced account plan post (1059: #SRU 5120 0) {}
-[WARNING] Misplaced account plan post (1062: #KONTO 5130 "Värme") {}
-[WARNING] Misplaced account plan post (1063: #SRU 5130 0) {}
-[WARNING] Misplaced account plan post (1066: #KONTO 5132 "Sotning") {}
-[WARNING] Misplaced account plan post (1067: #SRU 5132 0) {}
-[WARNING] Misplaced account plan post (1070: #KONTO 5140 "Vatten och avlopp") {}
-[WARNING] Misplaced account plan post (1071: #SRU 5140 0) {}
-[WARNING] Misplaced account plan post (1074: #KONTO 5160 "Renhållning och städning") {}
-[WARNING] Misplaced account plan post (1075: #SRU 5160 0) {}
-[WARNING] Misplaced account plan post (1078: #KONTO 5170 "Rep och underhåll") {}
-[WARNING] Misplaced account plan post (1079: #SRU 5170 0) {}
-[WARNING] Misplaced account plan post (1082: #KONTO 5191 "Fastighetsskatt") {}
-[WARNING] Misplaced account plan post (1083: #SRU 5191 0) {}
-[WARNING] Misplaced account plan post (1086: #KONTO 5192 "Försäkringsprem fastighet") {}
-[WARNING] Misplaced account plan post (1087: #SRU 5192 0) {}
-[WARNING] Misplaced account plan post (1090: #KONTO 5199 "Övr fastighetskostnader") {}
-[WARNING] Misplaced account plan post (1091: #SRU 5199 0) {}
-[WARNING] Misplaced account plan post (1094: #KONTO 5210 "Hyra arbetsmaskiner") {}
-[WARNING] Misplaced account plan post (1095: #SRU 5210 0) {}
-[WARNING] Misplaced account plan post (1098: #KONTO 5220 "Hyra inventarier") {}
-[WARNING] Misplaced account plan post (1099: #SRU 5220 0) {}
-[WARNING] Misplaced account plan post (1102: #KONTO 5310 "El för drift") {}
-[WARNING] Misplaced account plan post (1103: #SRU 5310 0) {}
-[WARNING] Misplaced account plan post (1106: #KONTO 5380 "Vatten") {}
-[WARNING] Misplaced account plan post (1107: #SRU 5380 0) {}
-[WARNING] Misplaced account plan post (1110: #KONTO 5390 "Övriga bränslen") {}
-[WARNING] Misplaced account plan post (1111: #SRU 5390 0) {}
-[WARNING] Misplaced account plan post (1114: #KONTO 5410 "Förbrukningsinventarier") {}
-[WARNING] Misplaced account plan post (1115: #SRU 5410 0) {}
-[WARNING] Misplaced account plan post (1118: #KONTO 5420 "Dataprogram") {}
-[WARNING] Misplaced account plan post (1119: #SRU 5420 0) {}
-[WARNING] Misplaced account plan post (1122: #KONTO 5460 "Förbrukningsmaterial") {}
-[WARNING] Misplaced account plan post (1123: #SRU 5460 0) {}
-[WARNING] Misplaced account plan post (1126: #KONTO 5480 "Arbetskläder o skyddsmtrl") {}
-[WARNING] Misplaced account plan post (1127: #SRU 5480 0) {}
-[WARNING] Misplaced account plan post (1130: #KONTO 5500 "Reparation och underhåll") {}
-[WARNING] Misplaced account plan post (1131: #SRU 5500 0) {}
-[WARNING] Misplaced account plan post (1134: #KONTO 5611 "Drivmedel personbilar") {}
-[WARNING] Misplaced account plan post (1135: #SRU 5611 0) {}
-[WARNING] Misplaced account plan post (1138: #KONTO 5612 "Skatt försäkr personbilar") {}
-[WARNING] Misplaced account plan post (1139: #SRU 5612 0) {}
-[WARNING] Misplaced account plan post (1142: #KONTO 5613 "Reparation personbilar") {}
-[WARNING] Misplaced account plan post (1143: #SRU 5613 0) {}
-[WARNING] Misplaced account plan post (1146: #KONTO 5615 "Leasingavg personbilar") {}
-[WARNING] Misplaced account plan post (1147: #SRU 5615 0) {}
-[WARNING] Misplaced account plan post (1150: #KONTO 5690 "Övr transportmedel") {}
-[WARNING] Misplaced account plan post (1151: #SRU 5690 0) {}
-[WARNING] Misplaced account plan post (1154: #KONTO 5710 "Frakt och transport") {}
-[WARNING] Misplaced account plan post (1155: #SRU 5710 0) {}
-[WARNING] Misplaced account plan post (1158: #KONTO 5720 "Tull- och speditionskost") {}
-[WARNING] Misplaced account plan post (1159: #SRU 5720 0) {}
-[WARNING] Misplaced account plan post (1162: #KONTO 5800 "Resekostnader") {}
-[WARNING] Misplaced account plan post (1163: #SRU 5800 0) {}
-[WARNING] Misplaced account plan post (1166: #KONTO 5910 "Annonsering") {}
-[WARNING] Misplaced account plan post (1167: #SRU 5910 0) {}
-[WARNING] Misplaced account plan post (1172: #KONTO 5930 "Reklamtrycksaker") {}
-[WARNING] Misplaced account plan post (1173: #SRU 5930 0) {}
-[WARNING] Misplaced account plan post (1176: #KONTO 5940 "Utställning och mässor") {}
-[WARNING] Misplaced account plan post (1177: #SRU 5940 0) {}
-[WARNING] Misplaced account plan post (1180: #KONTO 5990 "Övrig reklam") {}
-[WARNING] Misplaced account plan post (1181: #SRU 5990 0) {}
-[WARNING] Misplaced account plan post (1184: #KONTO 6010 "Kataloger och prislistor") {}
-[WARNING] Misplaced account plan post (1185: #SRU 6010 0) {}
-[WARNING] Misplaced account plan post (1188: #KONTO 6040 "Kontokortsavgifter") {}
-[WARNING] Misplaced account plan post (1189: #SRU 6040 0) {}
-[WARNING] Misplaced account plan post (1192: #KONTO 6050 "Försäljningsprovision") {}
-[WARNING] Misplaced account plan post (1193: #SRU 6050 0) {}
-[WARNING] Misplaced account plan post (1196: #KONTO 6060 "Kreditförsäljningskostnad") {}
-[WARNING] Misplaced account plan post (1197: #SRU 6060 0) {}
-[WARNING] Misplaced account plan post (1200: #KONTO 6071 "Repr avdr.gill") {}
-[WARNING] Misplaced account plan post (1201: #SRU 6071 0) {}
-[WARNING] Misplaced account plan post (1204: #KONTO 6072 "Repr ej avdr.gill") {}
-[WARNING] Misplaced account plan post (1205: #SRU 6072 0) {}
-[WARNING] Misplaced account plan post (1208: #KONTO 6080 "Bankgarantier") {}
-[WARNING] Misplaced account plan post (1209: #SRU 6080 0) {}
-[WARNING] Misplaced account plan post (1212: #KONTO 6090 "Övr försäljningskostnader") {}
-[WARNING] Misplaced account plan post (1213: #SRU 6090 0) {}
-[WARNING] Misplaced account plan post (1216: #KONTO 6110 "Kontorsmaterial") {}
-[WARNING] Misplaced account plan post (1217: #SRU 6110 0) {}
-[WARNING] Misplaced account plan post (1220: #KONTO 6150 "Trycksaker") {}
-[WARNING] Misplaced account plan post (1221: #SRU 6150 0) {}
-[WARNING] Misplaced account plan post (1224: #KONTO 6211 "Telefon") {}
-[WARNING] Misplaced account plan post (1225: #SRU 6211 0) {}
-[WARNING] Misplaced account plan post (1228: #KONTO 6212 "Mobiltelefon") {}
-[WARNING] Misplaced account plan post (1229: #SRU 6212 0) {}
-[WARNING] Misplaced account plan post (1232: #KONTO 6213 "Mobilsökning") {}
-[WARNING] Misplaced account plan post (1233: #SRU 6213 0) {}
-[WARNING] Misplaced account plan post (1236: #KONTO 6214 "Fax") {}
-[WARNING] Misplaced account plan post (1237: #SRU 6214 0) {}
-[WARNING] Misplaced account plan post (1240: #KONTO 6230 "Datakommunikation") {}
-[WARNING] Misplaced account plan post (1241: #SRU 6230 0) {}
-[WARNING] Misplaced account plan post (1244: #KONTO 6250 "Porto") {}
-[WARNING] Misplaced account plan post (1245: #SRU 6250 0) {}
-[WARNING] Misplaced account plan post (1248: #KONTO 6310 "Företagsförsäkringar") {}
-[WARNING] Misplaced account plan post (1249: #SRU 6310 0) {}
-[WARNING] Misplaced account plan post (1252: #KONTO 6320 "Självrisker") {}
-[WARNING] Misplaced account plan post (1253: #SRU 6320 0) {}
-[WARNING] Misplaced account plan post (1256: #KONTO 6350 "Kundförluster") {}
-[WARNING] Misplaced account plan post (1257: #SRU 6350 0) {}
-[WARNING] Misplaced account plan post (1260: #KONTO 6390 "Övriga riskkostnader") {}
-[WARNING] Misplaced account plan post (1261: #SRU 6390 0) {}
-[WARNING] Misplaced account plan post (1264: #KONTO 6410 "Styrelsearvode") {}
-[WARNING] Misplaced account plan post (1265: #SRU 6410 0) {}
-[WARNING] Misplaced account plan post (1268: #KONTO 6420 "Revisionsarvode") {}
-[WARNING] Misplaced account plan post (1269: #SRU 6420 0) {}
-[WARNING] Misplaced account plan post (1272: #KONTO 6430 "Management fees") {}
-[WARNING] Misplaced account plan post (1273: #SRU 6430 0) {}
-[WARNING] Misplaced account plan post (1276: #KONTO 6440 "Årsredovisn, delårsrapporter") {}
-[WARNING] Misplaced account plan post (1277: #SRU 6440 0) {}
-[WARNING] Misplaced account plan post (1280: #KONTO 6450 "Bolagsstämma") {}
-[WARNING] Misplaced account plan post (1281: #SRU 6450 0) {}
-[WARNING] Misplaced account plan post (1284: #KONTO 6490 "Övr förvaltningskostnader") {}
-[WARNING] Misplaced account plan post (1285: #SRU 6490 0) {}
-[WARNING] Misplaced account plan post (1288: #KONTO 6530 "Redovisningstjänster") {}
-[WARNING] Misplaced account plan post (1289: #SRU 6530 0) {}
-[WARNING] Misplaced account plan post (1292: #KONTO 6540 "IT-tjänster") {}
-[WARNING] Misplaced account plan post (1293: #SRU 6540 0) {}
-[WARNING] Misplaced account plan post (1296: #KONTO 6550 "Konsultarvoden") {}
-[WARNING] Misplaced account plan post (1297: #SRU 6550 0) {}
-[WARNING] Misplaced account plan post (1300: #KONTO 6570 "Bankkostnader") {}
-[WARNING] Misplaced account plan post (1301: #SRU 6570 0) {}
-[WARNING] Misplaced account plan post (1304: #KONTO 6580 "Advokatkostnader") {}
-[WARNING] Misplaced account plan post (1305: #SRU 6580 0) {}
-[WARNING] Misplaced account plan post (1308: #KONTO 6590 "Övr främmande tjänster") {}
-[WARNING] Misplaced account plan post (1309: #SRU 6590 0) {}
-[WARNING] Misplaced account plan post (1312: #KONTO 6800 "Inhyrd personal") {}
-[WARNING] Misplaced account plan post (1313: #SRU 6800 0) {}
-[WARNING] Misplaced account plan post (1316: #KONTO 6904 "Tjänst förv utlandet") {}
-[WARNING] Misplaced account plan post (1317: #SRU 6904 0) {}
-[WARNING] Misplaced account plan post (1320: #KONTO 6909 "Fördelade förvärv") {}
-[WARNING] Misplaced account plan post (1321: #SRU 6909 0) {}
-[WARNING] Misplaced account plan post (1324: #KONTO 6970 "Tidningar, facklitteratur") {}
-[WARNING] Misplaced account plan post (1325: #SRU 6970 0) {}
-[WARNING] Misplaced account plan post (1328: #KONTO 6981 "Föreningsavg avdr gill") {}
-[WARNING] Misplaced account plan post (1329: #SRU 6981 0) {}
-[WARNING] Misplaced account plan post (1332: #KONTO 6982 "Föreningsavg ej avdr gill") {}
-[WARNING] Misplaced account plan post (1333: #SRU 6982 0) {}
-[WARNING] Misplaced account plan post (1336: #KONTO 6991 "Övr avdr gill kostn") {}
-[WARNING] Misplaced account plan post (1337: #SRU 6991 0) {}
-[WARNING] Misplaced account plan post (1340: #KONTO 6992 "Övr ej avdr gill kostn") {}
-[WARNING] Misplaced account plan post (1341: #SRU 6992 0) {}
-[WARNING] Misplaced account plan post (1344: #KONTO 6993 "Lämnade bidrag och gåvor") {}
-[WARNING] Misplaced account plan post (1345: #SRU 6993 0) {}
-[WARNING] Misplaced account plan post (1348: #KONTO 7010 "Lön kollektivanställda") {}
-[WARNING] Misplaced account plan post (1349: #SRU 7010 0) {}
-[WARNING] Misplaced account plan post (1352: #KONTO 7011 "Löner till kollektivanställda") {}
-[WARNING] Misplaced account plan post (1353: #SRU 7011 0) {}
-[WARNING] Misplaced account plan post (1356: #KONTO 7012 "Vinstandelar till kollektivanställda") {}
-[WARNING] Misplaced account plan post (1357: #SRU 7012 0) {}
-[WARNING] Misplaced account plan post (1360: #KONTO 7014 "Löner till kollektivanställda (65 år)") {}
-[WARNING] Misplaced account plan post (1361: #SRU 7014 0) {}
-[WARNING] Misplaced account plan post (1364: #KONTO 7015 "Löner till kollektivanställda (särskild löneskatt)") {}
-[WARNING] Misplaced account plan post (1365: #SRU 7015 0) {}
-[WARNING] Misplaced account plan post (1368: #KONTO 7016 "Vinstandelar till kollektivanställda (särskild löneskatt)") {}
-[WARNING] Misplaced account plan post (1369: #SRU 7016 0) {}
-[WARNING] Misplaced account plan post (1372: #KONTO 7017 "Avgångsvederlag till kollektivanställda") {}
-[WARNING] Misplaced account plan post (1373: #SRU 7017 0) {}
-[WARNING] Misplaced account plan post (1376: #KONTO 7081 "Sjuklön kollektivanställda") {}
-[WARNING] Misplaced account plan post (1377: #SRU 7081 0) {}
-[WARNING] Misplaced account plan post (1380: #KONTO 7082 "Semesterlön kollektivanställda") {}
-[WARNING] Misplaced account plan post (1381: #SRU 7082 0) {}
-[WARNING] Misplaced account plan post (1384: #KONTO 7090 "Förändr sem löneskuld") {}
-[WARNING] Misplaced account plan post (1385: #SRU 7090 0) {}
-[WARNING] Misplaced account plan post (1388: #KONTO 7210 "Lön tjänstemän") {}
-[WARNING] Misplaced account plan post (1389: #SRU 7210 0) {}
-[WARNING] Misplaced account plan post (1392: #KONTO 7211 "Löner till tjänstemän") {}
-[WARNING] Misplaced account plan post (1393: #SRU 7211 0) {}
-[WARNING] Misplaced account plan post (1396: #KONTO 7212 "Vinstandelar till tjänstemän") {}
-[WARNING] Misplaced account plan post (1397: #SRU 7212 0) {}
-[WARNING] Misplaced account plan post (1400: #KONTO 7214 "Löner till tjänstemän (65 år)") {}
-[WARNING] Misplaced account plan post (1401: #SRU 7214 0) {}
-[WARNING] Misplaced account plan post (1404: #KONTO 7215 "Löner till tjänstemän (särskild löneskatt)") {}
-[WARNING] Misplaced account plan post (1405: #SRU 7215 0) {}
-[WARNING] Misplaced account plan post (1408: #KONTO 7216 "Vinstandelar till tjänstemän (särskild löneskatt)") {}
-[WARNING] Misplaced account plan post (1409: #SRU 7216 0) {}
-[WARNING] Misplaced account plan post (1412: #KONTO 7217 "Avgångsvederlag till tjänstemän") {}
-[WARNING] Misplaced account plan post (1413: #SRU 7217 0) {}
-[WARNING] Misplaced account plan post (1416: #KONTO 7220 "Lön företagsledare") {}
-[WARNING] Misplaced account plan post (1417: #SRU 7220 0) {}
-[WARNING] Misplaced account plan post (1420: #KONTO 7221 "Löner till styrelse och företagsledning") {}
-[WARNING] Misplaced account plan post (1421: #SRU 7221 0) {}
-[WARNING] Misplaced account plan post (1424: #KONTO 7222 "Tantiem till företagsledare") {}
-[WARNING] Misplaced account plan post (1425: #SRU 7222 0) {}
-[WARNING] Misplaced account plan post (1428: #KONTO 7223 "Gratifikationer till företagsledare") {}
-[WARNING] Misplaced account plan post (1429: #SRU 7223 0) {}
-[WARNING] Misplaced account plan post (1432: #KONTO 7224 "Löner till företagsledare (65 år)") {}
-[WARNING] Misplaced account plan post (1433: #SRU 7224 0) {}
-[WARNING] Misplaced account plan post (1436: #KONTO 7227 "Avgångsvederlag till företagsledare") {}
-[WARNING] Misplaced account plan post (1437: #SRU 7227 0) {}
-[WARNING] Misplaced account plan post (1440: #KONTO 7281 "Sjuklön tjänstemän") {}
-[WARNING] Misplaced account plan post (1441: #SRU 7281 0) {}
-[WARNING] Misplaced account plan post (1444: #KONTO 7282 "Sjuklöner till ftgledare") {}
-[WARNING] Misplaced account plan post (1445: #SRU 7282 0) {}
-[WARNING] Misplaced account plan post (1448: #KONTO 7285 "Semester lön tjänstemän") {}
-[WARNING] Misplaced account plan post (1449: #SRU 7285 0) {}
-[WARNING] Misplaced account plan post (1452: #KONTO 7286 "Semesterlön ftgledare") {}
-[WARNING] Misplaced account plan post (1453: #SRU 7286 0) {}
-[WARNING] Misplaced account plan post (1456: #KONTO 7290 "Förändr sem löneskuld") {}
-[WARNING] Misplaced account plan post (1457: #SRU 7290 0) {}
-[WARNING] Misplaced account plan post (1460: #KONTO 7300 "Kostnadsersättningar och förmåner") {}
-[WARNING] Misplaced account plan post (1461: #SRU 7300 0) {}
-[WARNING] Misplaced account plan post (1464: #KONTO 7310 "Kontanta extra ersättn") {}
-[WARNING] Misplaced account plan post (1465: #SRU 7310 0) {}
-[WARNING] Misplaced account plan post (1468: #KONTO 7312 "Ersättningar för förlagsverksamhet och uppfinningar") {}
-[WARNING] Misplaced account plan post (1469: #SRU 7312 0) {}
-[WARNING] Misplaced account plan post (1472: #KONTO 7316 "Ersättningar för/bidrag till arbetskläder") {}
-[WARNING] Misplaced account plan post (1473: #SRU 7316 0) {}
-[WARNING] Misplaced account plan post (1476: #KONTO 7318 "Felräkningspengar") {}
-[WARNING] Misplaced account plan post (1477: #SRU 7318 0) {}
-[WARNING] Misplaced account plan post (1480: #KONTO 7319 "Övriga kontanta ersättningar") {}
-[WARNING] Misplaced account plan post (1481: #SRU 7319 0) {}
-[WARNING] Misplaced account plan post (1484: #KONTO 7321 "Skattefria trakt Sverige") {}
-[WARNING] Misplaced account plan post (1485: #SRU 7321 0) {}
-[WARNING] Misplaced account plan post (1488: #KONTO 7322 "Skattepl trakt Sverige") {}
-[WARNING] Misplaced account plan post (1489: #SRU 7322 0) {}
-[WARNING] Misplaced account plan post (1492: #KONTO 7323 "Skattefria trakt utland") {}
-[WARNING] Misplaced account plan post (1493: #SRU 7323 0) {}
-[WARNING] Misplaced account plan post (1496: #KONTO 7324 "Skattepl trakt utland") {}
-[WARNING] Misplaced account plan post (1497: #SRU 7324 0) {}
-[WARNING] Misplaced account plan post (1500: #KONTO 7331 "Skattefri bilersättning") {}
-[WARNING] Misplaced account plan post (1501: #SRU 7331 0) {}
-[WARNING] Misplaced account plan post (1504: #KONTO 7332 "Skattepl bilersättning") {}
-[WARNING] Misplaced account plan post (1505: #SRU 7332 0) {}
-[WARNING] Misplaced account plan post (1508: #KONTO 7381 "Kostn för fri bostad") {}
-[WARNING] Misplaced account plan post (1509: #SRU 7381 0) {}
-[WARNING] Misplaced account plan post (1512: #KONTO 7382 "Kostn fria/subv måltider") {}
-[WARNING] Misplaced account plan post (1513: #SRU 7382 0) {}
-[WARNING] Misplaced account plan post (1516: #KONTO 7385 "Kostn för fri bil") {}
-[WARNING] Misplaced account plan post (1517: #SRU 7385 0) {}
-[WARNING] Misplaced account plan post (1520: #KONTO 7389 "Övriga kostn naturaförm") {}
-[WARNING] Misplaced account plan post (1521: #SRU 7389 0) {}
-[WARNING] Misplaced account plan post (1524: #KONTO 7390 "Övr kostnadsersättningar") {}
-[WARNING] Misplaced account plan post (1525: #SRU 7390 0) {}
-[WARNING] Misplaced account plan post (1528: #KONTO 7411 "Kollektiv pensionsförsäkr") {}
-[WARNING] Misplaced account plan post (1529: #SRU 7411 0) {}
-[WARNING] Misplaced account plan post (1532: #KONTO 7412 "Indiv pensionsförsäkring") {}
-[WARNING] Misplaced account plan post (1533: #SRU 7412 0) {}
-[WARNING] Misplaced account plan post (1536: #KONTO 7490 "Övriga pensionsförsäkring") {}
-[WARNING] Misplaced account plan post (1537: #SRU 7490 0) {}
-[WARNING] Misplaced account plan post (1540: #KONTO 7510 "Arbetsgivaravgifter") {}
-[WARNING] Misplaced account plan post (1541: #SRU 7510 0) {}
-[WARNING] Misplaced account plan post (1544: #KONTO 7519 "Soc.avgifter semesterlön") {}
-[WARNING] Misplaced account plan post (1545: #SRU 7519 0) {}
-[WARNING] Misplaced account plan post (1548: #KONTO 7531 "Löneskatt") {}
-[WARNING] Misplaced account plan post (1549: #SRU 7531 0) {}
-[WARNING] Misplaced account plan post (1552: #KONTO 7533 "Särsk löneskatt pensionsk") {}
-[WARNING] Misplaced account plan post (1553: #SRU 7533 0) {}
-[WARNING] Misplaced account plan post (1556: #KONTO 7570 "AMF enl avtal") {}
-[WARNING] Misplaced account plan post (1557: #SRU 7570 0) {}
-[WARNING] Misplaced account plan post (1560: #KONTO 7610 "Utbildning") {}
-[WARNING] Misplaced account plan post (1561: #SRU 7610 0) {}
-[WARNING] Misplaced account plan post (1564: #KONTO 7620 "Sjuk- och hälsovård") {}
-[WARNING] Misplaced account plan post (1565: #SRU 7620 0) {}
-[WARNING] Misplaced account plan post (1568: #KONTO 7650 "Sjuklöneförsäkring") {}
-[WARNING] Misplaced account plan post (1569: #SRU 7650 0) {}
-[WARNING] Misplaced account plan post (1572: #KONTO 7690 "Övr personalkostnader") {}
-[WARNING] Misplaced account plan post (1573: #SRU 7690 0) {}
-[WARNING] Misplaced account plan post (1576: #KONTO 7813 "Avskrivningar patent") {}
-[WARNING] Misplaced account plan post (1577: #SRU 7813 0) {}
-[WARNING] Misplaced account plan post (1580: #KONTO 7816 "Avskrivningar hyresrätt") {}
-[WARNING] Misplaced account plan post (1581: #SRU 7816 0) {}
-[WARNING] Misplaced account plan post (1584: #KONTO 7817 "Avskrivningar goodwill") {}
-[WARNING] Misplaced account plan post (1585: #SRU 7817 0) {}
-[WARNING] Misplaced account plan post (1588: #KONTO 7821 "Avskrivn byggnader") {}
-[WARNING] Misplaced account plan post (1589: #SRU 7821 0) {}
-[WARNING] Misplaced account plan post (1592: #KONTO 7822 "Avskrivn byggnadsinv") {}
-[WARNING] Misplaced account plan post (1593: #SRU 7822 0) {}
-[WARNING] Misplaced account plan post (1596: #KONTO 7824 "Avskrivn markanläggn") {}
-[WARNING] Misplaced account plan post (1597: #SRU 7824 0) {}
-[WARNING] Misplaced account plan post (1600: #KONTO 7831 "Avskrivn arbetsmaskiner") {}
-[WARNING] Misplaced account plan post (1601: #SRU 7831 0) {}
-[WARNING] Misplaced account plan post (1604: #KONTO 7832 "Avskrivn inventarier") {}
-[WARNING] Misplaced account plan post (1605: #SRU 7832 0) {}
-[WARNING] Misplaced account plan post (1608: #KONTO 7834 "Avskrivn bilar") {}
-[WARNING] Misplaced account plan post (1609: #SRU 7834 0) {}
-[WARNING] Misplaced account plan post (1612: #KONTO 7960 "Kursförluster") {}
-[WARNING] Misplaced account plan post (1613: #SRU 7960 0) {}
-[WARNING] Misplaced account plan post (1616: #KONTO 7972 "Förlust avyttr fastigheter") {}
-[WARNING] Misplaced account plan post (1617: #SRU 7972 0) {}
-[WARNING] Misplaced account plan post (1620: #KONTO 7973 "Förlust avyttr maskiner/inv") {}
-[WARNING] Misplaced account plan post (1621: #SRU 7973 0) {}
-[WARNING] Misplaced account plan post (1624: #KONTO 7974 "Förlust avyttr aktier/andel") {}
-[WARNING] Misplaced account plan post (1625: #SRU 7974 0) {}
-[WARNING] Misplaced account plan post (1628: #KONTO 8012 "Utdeln sv/utl dotterbolag") {}
-[WARNING] Misplaced account plan post (1629: #SRU 8012 0) {}
-[WARNING] Misplaced account plan post (1632: #KONTO 8210 "Utdeln andra sv/utl företag") {}
-[WARNING] Misplaced account plan post (1633: #SRU 8210 0) {}
-[WARNING] Misplaced account plan post (1636: #KONTO 8230 "Valutakursdiff långfr fordr") {}
-[WARNING] Misplaced account plan post (1637: #SRU 8230 0) {}
-[WARNING] Misplaced account plan post (1640: #KONTO 8270 "Nedskr andel/lf ford övr ftg") {}
-[WARNING] Misplaced account plan post (1641: #SRU 8270 0) {}
-[WARNING] Misplaced account plan post (1644: #KONTO 8280 "Återf nedskr and/lf ford ö ftg") {}
-[WARNING] Misplaced account plan post (1645: #SRU 8280 0) {}
-[WARNING] Misplaced account plan post (1648: #KONTO 8300 "Ränteintäkter") {}
-[WARNING] Misplaced account plan post (1649: #SRU 8300 0) {}
-[WARNING] Misplaced account plan post (1652: #KONTO 8313 "Ränteintäkter kundfordringar") {}
-[WARNING] Misplaced account plan post (1653: #SRU 8313 0) {}
-[WARNING] Misplaced account plan post (1656: #KONTO 8331 "Valutakursvinster") {}
-[WARNING] Misplaced account plan post (1657: #SRU 8331 0) {}
-[WARNING] Misplaced account plan post (1660: #KONTO 8336 "Valutakursförluster") {}
-[WARNING] Misplaced account plan post (1661: #SRU 8336 0) {}
-[WARNING] Misplaced account plan post (1664: #KONTO 8390 "Övr finansiella intäkter") {}
-[WARNING] Misplaced account plan post (1665: #SRU 8390 0) {}
-[WARNING] Misplaced account plan post (1668: #KONTO 8400 "Räntekostnader") {}
-[WARNING] Misplaced account plan post (1669: #SRU 8400 0) {}
-[WARNING] Misplaced account plan post (1672: #KONTO 8422 "Räntekostnader levskulder") {}
-[WARNING] Misplaced account plan post (1673: #SRU 8422 0) {}
-[WARNING] Misplaced account plan post (1676: #KONTO 8431 "Valutakursvinster skulder") {}
-[WARNING] Misplaced account plan post (1677: #SRU 8431 0) {}
-[WARNING] Misplaced account plan post (1680: #KONTO 8436 "Valutakursförlust skulder") {}
-[WARNING] Misplaced account plan post (1681: #SRU 8436 0) {}
-[WARNING] Misplaced account plan post (1684: #KONTO 8490 "Övr finansiella kostnader") {}
-[WARNING] Misplaced account plan post (1685: #SRU 8490 0) {}
-[WARNING] Misplaced account plan post (1688: #KONTO 8811 "Avsättning per fond") {}
-[WARNING] Misplaced account plan post (1689: #SRU 8811 0) {}
-[WARNING] Misplaced account plan post (1692: #KONTO 8819 "Återföring av per fond") {}
-[WARNING] Misplaced account plan post (1693: #SRU 8819 0) {}
-[WARNING] Misplaced account plan post (1696: #KONTO 8850 "Avskrivn över/under plan") {}
-[WARNING] Misplaced account plan post (1697: #SRU 8850 0) {}
-[WARNING] Misplaced account plan post (1700: #KONTO 8896 "Förändring lagerreserv") {}
-[WARNING] Misplaced account plan post (1701: #SRU 8896 0) {}
-[WARNING] Misplaced account plan post (1704: #KONTO 8897 "Återföring av SURV") {}
-[WARNING] Misplaced account plan post (1705: #SRU 8897 0) {}
-[WARNING] Misplaced account plan post (1708: #KONTO 8910 "Årets skattekostnad") {}
-[WARNING] Misplaced account plan post (1709: #SRU 8910 0) {}
-[WARNING] Misplaced account plan post (1712: #KONTO 8999 "Redovisat resultat") {}
-[WARNING] Misplaced account plan post (1713: #SRU 8999 0) {}
+[WARNING] Misplaced account plan post (234: #KONTO 1512 "Belånade fordringar")
+[WARNING] Misplaced account plan post (235: #SRU 1512 0)
+[WARNING] Misplaced account plan post (238: #KONTO 1513 "Kundfordringar - delad faktura")
+[WARNING] Misplaced account plan post (239: #SRU 1513 0)
+[WARNING] Misplaced account plan post (242: #KONTO 1515 "Osäkra kundfordringar")
+[WARNING] Misplaced account plan post (243: #SRU 1515 0)
+[WARNING] Misplaced account plan post (246: #KONTO 1580 "Kontokort och kuponger")
+[WARNING] Misplaced account plan post (247: #SRU 1580 0)
+[WARNING] Misplaced account plan post (250: #KONTO 1610 "Förskott")
+[WARNING] Misplaced account plan post (251: #SRU 1610 0)
+[WARNING] Misplaced account plan post (254: #KONTO 1611 "Reseförskott")
+[WARNING] Misplaced account plan post (255: #SRU 1611 0)
+[WARNING] Misplaced account plan post (258: #KONTO 1613 "Övriga förskott")
+[WARNING] Misplaced account plan post (259: #SRU 1613 0)
+[WARNING] Misplaced account plan post (262: #KONTO 1619 "Övr fordringar hos anställda")
+[WARNING] Misplaced account plan post (263: #SRU 1619 0)
+[WARNING] Misplaced account plan post (266: #KONTO 1630 "Avräkn skatter och avgifter")
+[WARNING] Misplaced account plan post (267: #SRU 1630 0)
+[WARNING] Misplaced account plan post (270: #KONTO 1640 "Skattefordringar")
+[WARNING] Misplaced account plan post (271: #SRU 1640 0)
+[WARNING] Misplaced account plan post (274: #KONTO 1650 "Fordran moms")
+[WARNING] Misplaced account plan post (275: #SRU 1650 0)
+[WARNING] Misplaced account plan post (278: #KONTO 1680 "Övr kortfristiga fordr")
+[WARNING] Misplaced account plan post (279: #SRU 1680 0)
+[WARNING] Misplaced account plan post (282: #KONTO 1684 "Fordring hos leverantör")
+[WARNING] Misplaced account plan post (283: #SRU 1684 0)
+[WARNING] Misplaced account plan post (286: #KONTO 1685 "Fordring hos närstående")
+[WARNING] Misplaced account plan post (287: #SRU 1685 0)
+[WARNING] Misplaced account plan post (290: #KONTO 1710 "Förutbetalda hyror")
+[WARNING] Misplaced account plan post (291: #SRU 1710 0)
+[WARNING] Misplaced account plan post (294: #KONTO 1740 "Förutbet ränteutgifter")
+[WARNING] Misplaced account plan post (295: #SRU 1740 0)
+[WARNING] Misplaced account plan post (298: #KONTO 1750 "Upplupna hyresinkomster")
+[WARNING] Misplaced account plan post (299: #SRU 1750 0)
+[WARNING] Misplaced account plan post (302: #KONTO 1760 "Upplupna inkomsträntor")
+[WARNING] Misplaced account plan post (303: #SRU 1760 0)
+[WARNING] Misplaced account plan post (306: #KONTO 1790 "Övr interimsfordringar")
+[WARNING] Misplaced account plan post (307: #SRU 1790 0)
+[WARNING] Misplaced account plan post (310: #KONTO 1795 "Varer levererade, faktura ej skickad")
+[WARNING] Misplaced account plan post (311: #SRU 1795 0)
+[WARNING] Misplaced account plan post (314: #KONTO 1820 "Obligationer, värdepapper")
+[WARNING] Misplaced account plan post (315: #SRU 1820 0)
+[WARNING] Misplaced account plan post (318: #KONTO 1860 "Finansiella instrument")
+[WARNING] Misplaced account plan post (319: #SRU 1860 0)
+[WARNING] Misplaced account plan post (322: #KONTO 1869 "Värderegl finans instr")
+[WARNING] Misplaced account plan post (323: #SRU 1869 0)
+[WARNING] Misplaced account plan post (326: #KONTO 1910 "Kassa")
+[WARNING] Misplaced account plan post (327: #SRU 1910 0)
+[WARNING] Misplaced account plan post (334: #KONTO 1920 "Plusgiro")
+[WARNING] Misplaced account plan post (335: #SRU 1920 0)
+[WARNING] Misplaced account plan post (342: #KONTO 1930 "Checkräkningskonto")
+[WARNING] Misplaced account plan post (343: #SRU 1930 0)
+[WARNING] Misplaced account plan post (350: #KONTO 1940 "Övriga bankkonton")
+[WARNING] Misplaced account plan post (351: #SRU 1940 0)
+[WARNING] Misplaced account plan post (354: #KONTO 1950 "Kreditkort")
+[WARNING] Misplaced account plan post (355: #SRU 1950 0)
+[WARNING] Misplaced account plan post (358: #KONTO 2081 "Aktiekapital")
+[WARNING] Misplaced account plan post (359: #SRU 2081 0)
+[WARNING] Misplaced account plan post (366: #KONTO 2086 "Reservfond")
+[WARNING] Misplaced account plan post (367: #SRU 2086 0)
+[WARNING] Misplaced account plan post (370: #KONTO 2091 "Balanserad vinst/förlust")
+[WARNING] Misplaced account plan post (371: #SRU 2091 0)
+[WARNING] Misplaced account plan post (374: #KONTO 2094 "Egna aktier")
+[WARNING] Misplaced account plan post (375: #SRU 2094 0)
+[WARNING] Misplaced account plan post (378: #KONTO 2098 "Vinst/förlust föreg år")
+[WARNING] Misplaced account plan post (379: #SRU 2098 0)
+[WARNING] Misplaced account plan post (382: #KONTO 2099 "Redovisat resultat")
+[WARNING] Misplaced account plan post (383: #SRU 2099 0)
+[WARNING] Misplaced account plan post (390: #KONTO 2116 "Periodiseringsfond TAX 1996")
+[WARNING] Misplaced account plan post (391: #SRU 2116 0)
+[WARNING] Misplaced account plan post (394: #KONTO 2117 "Periodiseringsfond TAX 1997")
+[WARNING] Misplaced account plan post (395: #SRU 2117 0)
+[WARNING] Misplaced account plan post (398: #KONTO 2118 "Periodiseringsfond TAX 1998")
+[WARNING] Misplaced account plan post (399: #SRU 2118 0)
+[WARNING] Misplaced account plan post (402: #KONTO 2119 "Periodiseringsfond TAX 1999")
+[WARNING] Misplaced account plan post (403: #SRU 2119 0)
+[WARNING] Misplaced account plan post (406: #KONTO 2120 "Periodiseringsfond TAX 2000")
+[WARNING] Misplaced account plan post (407: #SRU 2120 0)
+[WARNING] Misplaced account plan post (410: #KONTO 2121 "Periodiseringsfond TAX 2001")
+[WARNING] Misplaced account plan post (411: #SRU 2121 0)
+[WARNING] Misplaced account plan post (414: #KONTO 2150 "Ack överavskrivningar")
+[WARNING] Misplaced account plan post (415: #SRU 2150 0)
+[WARNING] Misplaced account plan post (418: #KONTO 2151 "Ack överavskr imm anl.tillg")
+[WARNING] Misplaced account plan post (419: #SRU 2151 0)
+[WARNING] Misplaced account plan post (422: #KONTO 2152 "Ack överavskr på byggn/markanl")
+[WARNING] Misplaced account plan post (423: #SRU 2152 0)
+[WARNING] Misplaced account plan post (426: #KONTO 2153 "Ack överavskr maskiner/inv")
+[WARNING] Misplaced account plan post (427: #SRU 2153 0)
+[WARNING] Misplaced account plan post (430: #KONTO 2190 "Övr obeskattade reserver")
+[WARNING] Misplaced account plan post (431: #SRU 2190 0)
+[WARNING] Misplaced account plan post (434: #KONTO 2195 "Valutakursreserv")
+[WARNING] Misplaced account plan post (435: #SRU 2195 0)
+[WARNING] Misplaced account plan post (438: #KONTO 2196 "Lagerreserv")
+[WARNING] Misplaced account plan post (439: #SRU 2196 0)
+[WARNING] Misplaced account plan post (442: #KONTO 2210 "Avsatt till pensioner")
+[WARNING] Misplaced account plan post (443: #SRU 2210 0)
+[WARNING] Misplaced account plan post (446: #KONTO 2211 "Avsättningar för PRI-pensioner")
+[WARNING] Misplaced account plan post (447: #SRU 2211 0)
+[WARNING] Misplaced account plan post (450: #KONTO 2219 "Avsättningar för övr pensioner")
+[WARNING] Misplaced account plan post (451: #SRU 2219 0)
+[WARNING] Misplaced account plan post (454: #KONTO 2220 "Garantiskulder")
+[WARNING] Misplaced account plan post (455: #SRU 2220 0)
+[WARNING] Misplaced account plan post (458: #KONTO 2280 "Avsättning, faktura ej mottagen")
+[WARNING] Misplaced account plan post (459: #SRU 2280 0)
+[WARNING] Misplaced account plan post (462: #KONTO 2330 "Checkräkningskredit")
+[WARNING] Misplaced account plan post (463: #SRU 2330 0)
+[WARNING] Misplaced account plan post (466: #KONTO 2350 "Reverslån")
+[WARNING] Misplaced account plan post (467: #SRU 2350 0)
+[WARNING] Misplaced account plan post (470: #KONTO 2355 "Lån i utländsk valuta")
+[WARNING] Misplaced account plan post (471: #SRU 2355 0)
+[WARNING] Misplaced account plan post (474: #KONTO 2393 "Lån från aktieägare")
+[WARNING] Misplaced account plan post (475: #SRU 2393 0)
+[WARNING] Misplaced account plan post (478: #KONTO 2395 "Andra lån i utl valuta")
+[WARNING] Misplaced account plan post (479: #SRU 2395 0)
+[WARNING] Misplaced account plan post (482: #KONTO 2399 "Övr långfristiga skulder")
+[WARNING] Misplaced account plan post (483: #SRU 2399 0)
+[WARNING] Misplaced account plan post (486: #KONTO 2420 "Förskott från kunder")
+[WARNING] Misplaced account plan post (487: #SRU 2420 0)
+[WARNING] Misplaced account plan post (490: #KONTO 2440 "Leverantörskulder")
+[WARNING] Misplaced account plan post (491: #SRU 2440 0)
+[WARNING] Misplaced account plan post (497: #KONTO 2510 "Skatteskulder")
+[WARNING] Misplaced account plan post (498: #SRU 2510 0)
+[WARNING] Misplaced account plan post (501: #KONTO 2611 "Utg moms försäljning 25%")
+[WARNING] Misplaced account plan post (502: #SRU 2611 0)
+[WARNING] Misplaced account plan post (509: #KONTO 2612 "Utg moms egna uttag 25%")
+[WARNING] Misplaced account plan post (510: #SRU 2612 0)
+[WARNING] Misplaced account plan post (513: #KONTO 2613 "Utg moms uthyrning ored")
+[WARNING] Misplaced account plan post (514: #SRU 2613 0)
+[WARNING] Misplaced account plan post (517: #KONTO 2614 "Ber moms tjförv 25% utl")
+[WARNING] Misplaced account plan post (518: #SRU 2614 0)
+[WARNING] Misplaced account plan post (521: #KONTO 2615 "Ber moms varuförv")
+[WARNING] Misplaced account plan post (522: #SRU 2615 0)
+[WARNING] Misplaced account plan post (525: #KONTO 2617 "Utg moms omvänd skattskyldighet Sverige 25%")
+[WARNING] Misplaced account plan post (526: #SRU 2617 0)
+[WARNING] Misplaced account plan post (529: #KONTO 2621 "Utg moms försäljning 12%")
+[WARNING] Misplaced account plan post (530: #SRU 2621 0)
+[WARNING] Misplaced account plan post (533: #KONTO 2622 "Utg moms egna uttag 12%")
+[WARNING] Misplaced account plan post (534: #SRU 2622 0)
+[WARNING] Misplaced account plan post (537: #KONTO 2623 "Utg moms för uthyrning 12%")
+[WARNING] Misplaced account plan post (538: #SRU 2623 0)
+[WARNING] Misplaced account plan post (541: #KONTO 2624 "Ber moms tjförv 12% utl")
+[WARNING] Misplaced account plan post (542: #SRU 2624 0)
+[WARNING] Misplaced account plan post (545: #KONTO 2625 "Ber moms varuförv från EG-land 12%")
+[WARNING] Misplaced account plan post (546: #SRU 2625 0)
+[WARNING] Misplaced account plan post (549: #KONTO 2627 "Utg moms omvänd skattskyldighet Sverige 12%")
+[WARNING] Misplaced account plan post (550: #SRU 2627 0)
+[WARNING] Misplaced account plan post (553: #KONTO 2631 "Utg moms försäljning 6%")
+[WARNING] Misplaced account plan post (554: #SRU 2631 0)
+[WARNING] Misplaced account plan post (557: #KONTO 2632 "Utg moms egna uttag 6%")
+[WARNING] Misplaced account plan post (558: #SRU 2632 0)
+[WARNING] Misplaced account plan post (561: #KONTO 2633 "Utg moms för uthyrning 6%")
+[WARNING] Misplaced account plan post (562: #SRU 2633 0)
+[WARNING] Misplaced account plan post (565: #KONTO 2634 "Ber moms tjförv 6% utl")
+[WARNING] Misplaced account plan post (566: #SRU 2634 0)
+[WARNING] Misplaced account plan post (569: #KONTO 2635 "Ber moms varuförv från EG-land 6%")
+[WARNING] Misplaced account plan post (570: #SRU 2635 0)
+[WARNING] Misplaced account plan post (573: #KONTO 2637 "Utg moms omvänd skattskyldighet Sverige 6%")
+[WARNING] Misplaced account plan post (574: #SRU 2637 0)
+[WARNING] Misplaced account plan post (577: #KONTO 2641 "Ingående moms")
+[WARNING] Misplaced account plan post (578: #SRU 2641 0)
+[WARNING] Misplaced account plan post (584: #KONTO 2645 "Ingående moms utland")
+[WARNING] Misplaced account plan post (585: #SRU 2645 0)
+[WARNING] Misplaced account plan post (588: #KONTO 2646 "Ingående moms uth. verksamhetslokaler")
+[WARNING] Misplaced account plan post (589: #SRU 2646 0)
+[WARNING] Misplaced account plan post (592: #KONTO 2647 "Ingående moms omvänd skattskyldighet Sverige")
+[WARNING] Misplaced account plan post (593: #SRU 2647 0)
+[WARNING] Misplaced account plan post (596: #KONTO 2648 "Fördelningskonto 1")
+[WARNING] Misplaced account plan post (597: #SRU 2648 0)
+[WARNING] Misplaced account plan post (600: #KONTO 2649 "Fördelningskonto 2 (motkontering)")
+[WARNING] Misplaced account plan post (601: #SRU 2649 0)
+[WARNING] Misplaced account plan post (604: #KONTO 2650 "Moms redovisningskonto")
+[WARNING] Misplaced account plan post (605: #SRU 2650 0)
+[WARNING] Misplaced account plan post (612: #KONTO 2660 "Särskilda punktskatter")
+[WARNING] Misplaced account plan post (613: #SRU 2660 0)
+[WARNING] Misplaced account plan post (616: #KONTO 2710 "Personalens källskatt")
+[WARNING] Misplaced account plan post (617: #SRU 2710 0)
+[WARNING] Misplaced account plan post (620: #KONTO 2731 "Avräkn sociala avgifter")
+[WARNING] Misplaced account plan post (621: #SRU 2731 0)
+[WARNING] Misplaced account plan post (624: #KONTO 2732 "Avräkn särsk lönesk pens")
+[WARNING] Misplaced account plan post (625: #SRU 2732 0)
+[WARNING] Misplaced account plan post (628: #KONTO 2750 "Utmätning i lön mm")
+[WARNING] Misplaced account plan post (629: #SRU 2750 0)
+[WARNING] Misplaced account plan post (632: #KONTO 2790 "Övriga löneavdrag")
+[WARNING] Misplaced account plan post (633: #SRU 2790 0)
+[WARNING] Misplaced account plan post (636: #KONTO 2792 "Lönsparande")
+[WARNING] Misplaced account plan post (637: #SRU 2792 0)
+[WARNING] Misplaced account plan post (640: #KONTO 2793 "Kollektivförsäkring mm")
+[WARNING] Misplaced account plan post (641: #SRU 2793 0)
+[WARNING] Misplaced account plan post (644: #KONTO 2794 "Fackföreningsavgifter")
+[WARNING] Misplaced account plan post (645: #SRU 2794 0)
+[WARNING] Misplaced account plan post (648: #KONTO 2795 "Granskningsavgifter")
+[WARNING] Misplaced account plan post (649: #SRU 2795 0)
+[WARNING] Misplaced account plan post (652: #KONTO 2840 "Låneskulder")
+[WARNING] Misplaced account plan post (653: #SRU 2840 0)
+[WARNING] Misplaced account plan post (656: #KONTO 2850 "Avräkn skatter/avgifter")
+[WARNING] Misplaced account plan post (657: #SRU 2850 0)
+[WARNING] Misplaced account plan post (660: #KONTO 2890 "Övr kortfr skulder")
+[WARNING] Misplaced account plan post (661: #SRU 2890 0)
+[WARNING] Misplaced account plan post (664: #KONTO 2893 "Skulder närstående personer")
+[WARNING] Misplaced account plan post (665: #SRU 2893 0)
+[WARNING] Misplaced account plan post (668: #KONTO 2910 "Upplupna löner")
+[WARNING] Misplaced account plan post (669: #SRU 2910 0)
+[WARNING] Misplaced account plan post (672: #KONTO 2920 "Upplupna semlöner")
+[WARNING] Misplaced account plan post (673: #SRU 2920 0)
+[WARNING] Misplaced account plan post (676: #KONTO 2921 "Upplupna soc.avg sem.lön")
+[WARNING] Misplaced account plan post (677: #SRU 2921 0)
+[WARNING] Misplaced account plan post (680: #KONTO 2941 "Upplupna sociala avgifter")
+[WARNING] Misplaced account plan post (681: #SRU 2941 0)
+[WARNING] Misplaced account plan post (684: #KONTO 2950 "Upplupna avtalade soc avg")
+[WARNING] Misplaced account plan post (685: #SRU 2950 0)
+[WARNING] Misplaced account plan post (688: #KONTO 2960 "Upplupna utgiftsräntor")
+[WARNING] Misplaced account plan post (689: #SRU 2960 0)
+[WARNING] Misplaced account plan post (692: #KONTO 2970 "Förutbetalda hyresinkomster")
+[WARNING] Misplaced account plan post (693: #SRU 2970 0)
+[WARNING] Misplaced account plan post (696: #KONTO 2990 "Övr interimsskulder")
+[WARNING] Misplaced account plan post (697: #SRU 2990 0)
+[WARNING] Misplaced account plan post (700: #KONTO 2995 "Skuld inkomna följesedlar")
+[WARNING] Misplaced account plan post (701: #SRU 2995 0)
+[WARNING] Misplaced account plan post (704: #KONTO 2999 "Övr uppl kostn/förutbet intäkter")
+[WARNING] Misplaced account plan post (705: #SRU 2999 0)
+[WARNING] Misplaced account plan post (708: #KONTO 3020 "Försäljning VMB varor")
+[WARNING] Misplaced account plan post (709: #SRU 3020 0)
+[WARNING] Misplaced account plan post (712: #KONTO 3028 "Positiv VM omföringskonto")
+[WARNING] Misplaced account plan post (713: #SRU 3028 0)
+[WARNING] Misplaced account plan post (716: #KONTO 3030 "Positiv VM")
+[WARNING] Misplaced account plan post (717: #SRU 3030 0)
+[WARNING] Misplaced account plan post (720: #KONTO 3041 "Försäljn tjänst 25% sv")
+[WARNING] Misplaced account plan post (721: #SRU 3041 0)
+[WARNING] Misplaced account plan post (724: #KONTO 3042 "Försäljn tjänst 12% sv")
+[WARNING] Misplaced account plan post (725: #SRU 3042 0)
+[WARNING] Misplaced account plan post (728: #KONTO 3043 "Försäljn tjänst 6% sv")
+[WARNING] Misplaced account plan post (729: #SRU 3043 0)
+[WARNING] Misplaced account plan post (732: #KONTO 3044 "Försäljn tjänst sv momsfri")
+[WARNING] Misplaced account plan post (733: #SRU 3044 0)
+[WARNING] Misplaced account plan post (736: #KONTO 3045 "Försälj tjänst utanför EU")
+[WARNING] Misplaced account plan post (737: #SRU 3045 0)
+[WARNING] Misplaced account plan post (740: #KONTO 3046 "Försäljn tjänst till EU")
+[WARNING] Misplaced account plan post (741: #SRU 3046 0)
+[WARNING] Misplaced account plan post (744: #KONTO 3048 "Försäljn tjänst EU momsfri")
+[WARNING] Misplaced account plan post (745: #SRU 3048 0)
+[WARNING] Misplaced account plan post (748: #KONTO 3051 "Försäljn varor 25% sv")
+[WARNING] Misplaced account plan post (749: #SRU 3051 0)
+[WARNING] Misplaced account plan post (754: #KONTO 3052 "Försäljn varor 12% sv")
+[WARNING] Misplaced account plan post (755: #SRU 3052 0)
+[WARNING] Misplaced account plan post (758: #KONTO 3053 "Försäljn varor 6% sv")
+[WARNING] Misplaced account plan post (759: #SRU 3053 0)
+[WARNING] Misplaced account plan post (762: #KONTO 3054 "Försäljn varor sv momsfri")
+[WARNING] Misplaced account plan post (763: #SRU 3054 0)
+[WARNING] Misplaced account plan post (768: #KONTO 3055 "Försäljn varor utanför EU")
+[WARNING] Misplaced account plan post (769: #SRU 3055 0)
+[WARNING] Misplaced account plan post (772: #KONTO 3056 "Försäljn varor till EU")
+[WARNING] Misplaced account plan post (773: #SRU 3056 0)
+[WARNING] Misplaced account plan post (776: #KONTO 3058 "Försäljn varor EU momsfri")
+[WARNING] Misplaced account plan post (777: #SRU 3058 0)
+[WARNING] Misplaced account plan post (780: #KONTO 3059 "Momspl uttag av fast.tj")
+[WARNING] Misplaced account plan post (781: #SRU 3059 0)
+[WARNING] Misplaced account plan post (784: #KONTO 3062 "Förs varor närst företag")
+[WARNING] Misplaced account plan post (785: #SRU 3062 0)
+[WARNING] Misplaced account plan post (788: #KONTO 3066 "Försäljn till närstående företag inom EU")
+[WARNING] Misplaced account plan post (789: #SRU 3066 0)
+[WARNING] Misplaced account plan post (792: #KONTO 3100 "Hyresintäkt skattepl")
+[WARNING] Misplaced account plan post (793: #SRU 3100 0)
+[WARNING] Misplaced account plan post (796: #KONTO 3231 "Försäljning inom byggsektorn,omvänd skattskyldighetmoms")
+[WARNING] Misplaced account plan post (797: #SRU 3231 0)
+[WARNING] Misplaced account plan post (800: #KONTO 3510 "Emballage")
+[WARNING] Misplaced account plan post (801: #SRU 3510 0)
+[WARNING] Misplaced account plan post (804: #KONTO 3520 "Frakter")
+[WARNING] Misplaced account plan post (805: #SRU 3520 0)
+[WARNING] Misplaced account plan post (808: #KONTO 3521 "Frakter export")
+[WARNING] Misplaced account plan post (809: #SRU 3521 0)
+[WARNING] Misplaced account plan post (812: #KONTO 3522 "Frakter EU")
+[WARNING] Misplaced account plan post (813: #SRU 3522 0)
+[WARNING] Misplaced account plan post (816: #KONTO 3530 "Fakt tull och spedition")
+[WARNING] Misplaced account plan post (817: #SRU 3530 0)
+[WARNING] Misplaced account plan post (820: #KONTO 3540 "Faktureringsavgifter")
+[WARNING] Misplaced account plan post (821: #SRU 3540 0)
+[WARNING] Misplaced account plan post (824: #KONTO 3541 "Faktureringsavgifter export")
+[WARNING] Misplaced account plan post (825: #SRU 3541 0)
+[WARNING] Misplaced account plan post (828: #KONTO 3542 "Faktureringsavgifter EU")
+[WARNING] Misplaced account plan post (829: #SRU 3542 0)
+[WARNING] Misplaced account plan post (832: #KONTO 3550 "Fakt resekostnader")
+[WARNING] Misplaced account plan post (833: #SRU 3550 0)
+[WARNING] Misplaced account plan post (836: #KONTO 3590 "Övr fakt kostnader")
+[WARNING] Misplaced account plan post (837: #SRU 3590 0)
+[WARNING] Misplaced account plan post (840: #KONTO 3610 "Försäljning material")
+[WARNING] Misplaced account plan post (841: #SRU 3610 0)
+[WARNING] Misplaced account plan post (844: #KONTO 3731 "Kassarabatter")
+[WARNING] Misplaced account plan post (845: #SRU 3731 0)
+[WARNING] Misplaced account plan post (848: #KONTO 3736 "Kassarabatter export")
+[WARNING] Misplaced account plan post (849: #SRU 3736 0)
+[WARNING] Misplaced account plan post (852: #KONTO 3737 "Kassarabatter EU")
+[WARNING] Misplaced account plan post (853: #SRU 3737 0)
+[WARNING] Misplaced account plan post (856: #KONTO 3740 "Öresutjämning")
+[WARNING] Misplaced account plan post (857: #SRU 3740 0)
+[WARNING] Misplaced account plan post (862: #KONTO 3840 "Aktiverat arbete (material)")
+[WARNING] Misplaced account plan post (863: #SRU 3840 0)
+[WARNING] Misplaced account plan post (866: #KONTO 3850 "Aktiverat arbete (omkostnader)")
+[WARNING] Misplaced account plan post (867: #SRU 3850 0)
+[WARNING] Misplaced account plan post (870: #KONTO 3870 "Aktiverat arbete (löner)")
+[WARNING] Misplaced account plan post (871: #SRU 3870 0)
+[WARNING] Misplaced account plan post (874: #KONTO 3911 "Hyresintäkter")
+[WARNING] Misplaced account plan post (875: #SRU 3911 0)
+[WARNING] Misplaced account plan post (878: #KONTO 3921 "Provisionsintäkter")
+[WARNING] Misplaced account plan post (879: #SRU 3921 0)
+[WARNING] Misplaced account plan post (882: #KONTO 3950 "Återvunna kundförluster")
+[WARNING] Misplaced account plan post (883: #SRU 3950 0)
+[WARNING] Misplaced account plan post (886: #KONTO 3960 "Kursvinst rörelsen")
+[WARNING] Misplaced account plan post (887: #SRU 3960 0)
+[WARNING] Misplaced account plan post (890: #KONTO 3970 "Vinst avyttr imm/mat anl.tillg")
+[WARNING] Misplaced account plan post (891: #SRU 3970 0)
+[WARNING] Misplaced account plan post (894: #KONTO 3972 "Vinst avyttr fastigheter")
+[WARNING] Misplaced account plan post (895: #SRU 3972 0)
+[WARNING] Misplaced account plan post (898: #KONTO 3973 "Vinst avyttr maskiner/inv")
+[WARNING] Misplaced account plan post (899: #SRU 3973 0)
+[WARNING] Misplaced account plan post (902: #KONTO 3985 "Erhållna statliga bidrag")
+[WARNING] Misplaced account plan post (903: #SRU 3985 0)
+[WARNING] Misplaced account plan post (906: #KONTO 3987 "Erhållna kommunala bidrag")
+[WARNING] Misplaced account plan post (907: #SRU 3987 0)
+[WARNING] Misplaced account plan post (910: #KONTO 3989 "Övriga erhållna bidrag")
+[WARNING] Misplaced account plan post (911: #SRU 3989 0)
+[WARNING] Misplaced account plan post (914: #KONTO 3990 "Övriga sidintäkter")
+[WARNING] Misplaced account plan post (915: #SRU 3990 0)
+[WARNING] Misplaced account plan post (918: #KONTO 3994 "Försäkringsersättningar")
+[WARNING] Misplaced account plan post (919: #SRU 3994 0)
+[WARNING] Misplaced account plan post (922: #KONTO 4011 "Inköp material och varor 25 %")
+[WARNING] Misplaced account plan post (923: #SRU 4011 0)
+[WARNING] Misplaced account plan post (928: #KONTO 4012 "Inköp material och varor 12 %")
+[WARNING] Misplaced account plan post (929: #SRU 4012 0)
+[WARNING] Misplaced account plan post (932: #KONTO 4013 "Inköp material och varor 6 %")
+[WARNING] Misplaced account plan post (933: #SRU 4013 0)
+[WARNING] Misplaced account plan post (936: #KONTO 4015 "Inköp material momsfritt")
+[WARNING] Misplaced account plan post (937: #SRU 4015 0)
+[WARNING] Misplaced account plan post (942: #KONTO 4020 "Inköp VMB varor")
+[WARNING] Misplaced account plan post (943: #SRU 4020 0)
+[WARNING] Misplaced account plan post (946: #KONTO 4028 "Negativ VMB varor")
+[WARNING] Misplaced account plan post (947: #SRU 4028 0)
+[WARNING] Misplaced account plan post (950: #KONTO 4030 "Negativ VM")
+[WARNING] Misplaced account plan post (951: #SRU 4030 0)
+[WARNING] Misplaced account plan post (954: #KONTO 4055 "Trepartsförv varor fr EU")
+[WARNING] Misplaced account plan post (955: #SRU 4055 0)
+[WARNING] Misplaced account plan post (958: #KONTO 4056 "Inköp varor 25% EU")
+[WARNING] Misplaced account plan post (959: #SRU 4056 0)
+[WARNING] Misplaced account plan post (962: #KONTO 4057 "Inköp varor EU 12%")
+[WARNING] Misplaced account plan post (963: #SRU 4057 0)
+[WARNING] Misplaced account plan post (966: #KONTO 4058 "Inköp varor EU 6%")
+[WARNING] Misplaced account plan post (967: #SRU 4058 0)
+[WARNING] Misplaced account plan post (970: #KONTO 4059 "Inköp varor EU momsfri")
+[WARNING] Misplaced account plan post (971: #SRU 4059 0)
+[WARNING] Misplaced account plan post (974: #KONTO 4100 "Kostn uthyrn lokal sk.pl")
+[WARNING] Misplaced account plan post (975: #SRU 4100 0)
+[WARNING] Misplaced account plan post (978: #KONTO 4415 "Inköpta varor i Sverige,omvänd skattskyldighet, 25%")
+[WARNING] Misplaced account plan post (979: #SRU 4415 0)
+[WARNING] Misplaced account plan post (982: #KONTO 4416 "Inköpta varor i Sverige,omvänd skattskyldighet, 12%")
+[WARNING] Misplaced account plan post (983: #SRU 4416 0)
+[WARNING] Misplaced account plan post (986: #KONTO 4417 "Inköpta varor i Sverige,omvänd skattskyldighet, 6%")
+[WARNING] Misplaced account plan post (987: #SRU 4417 0)
+[WARNING] Misplaced account plan post (990: #KONTO 4425 "Inköpta tjänster i Sverige,omvänd skattskyldighet, 25%")
+[WARNING] Misplaced account plan post (991: #SRU 4425 0)
+[WARNING] Misplaced account plan post (994: #KONTO 4426 "Inköpta tjänster i Sverige,omvänd skattskyldighet, 12%")
+[WARNING] Misplaced account plan post (995: #SRU 4426 0)
+[WARNING] Misplaced account plan post (998: #KONTO 4427 "Inköpta tjänster i Sverige,omvänd skattskyldighet, 6%")
+[WARNING] Misplaced account plan post (999: #SRU 4427 0)
+[WARNING] Misplaced account plan post (1002: #KONTO 4600 "Legoarbeten, underentrepr")
+[WARNING] Misplaced account plan post (1003: #SRU 4600 0)
+[WARNING] Misplaced account plan post (1006: #KONTO 4731 "Erhållna kassarabatter")
+[WARNING] Misplaced account plan post (1007: #SRU 4731 0)
+[WARNING] Misplaced account plan post (1010: #KONTO 4733 "Erhållet aktivitetsstöd")
+[WARNING] Misplaced account plan post (1011: #SRU 4733 0)
+[WARNING] Misplaced account plan post (1014: #KONTO 4940 "Förändr. produkter i arbete")
+[WARNING] Misplaced account plan post (1015: #SRU 4940 0)
+[WARNING] Misplaced account plan post (1018: #KONTO 4950 "Förändr. lager färdigvaror")
+[WARNING] Misplaced account plan post (1019: #SRU 4950 0)
+[WARNING] Misplaced account plan post (1022: #KONTO 4970 "Förändr. påg arbete")
+[WARNING] Misplaced account plan post (1023: #SRU 4970 0)
+[WARNING] Misplaced account plan post (1026: #KONTO 4990 "Lagerförändring")
+[WARNING] Misplaced account plan post (1027: #SRU 4990 0)
+[WARNING] Misplaced account plan post (1030: #KONTO 5010 "Lokalhyra")
+[WARNING] Misplaced account plan post (1031: #SRU 5010 0)
+[WARNING] Misplaced account plan post (1034: #KONTO 5020 "El hyrd lokal")
+[WARNING] Misplaced account plan post (1035: #SRU 5020 0)
+[WARNING] Misplaced account plan post (1038: #KONTO 5030 "Värme hyrd lokal")
+[WARNING] Misplaced account plan post (1039: #SRU 5030 0)
+[WARNING] Misplaced account plan post (1042: #KONTO 5050 "Lokaltillbehör hyrd lokal")
+[WARNING] Misplaced account plan post (1043: #SRU 5050 0)
+[WARNING] Misplaced account plan post (1046: #KONTO 5060 "Städning, renhållning hyrd lokal")
+[WARNING] Misplaced account plan post (1047: #SRU 5060 0)
+[WARNING] Misplaced account plan post (1050: #KONTO 5070 "Reparationer hyrd lokal")
+[WARNING] Misplaced account plan post (1051: #SRU 5070 0)
+[WARNING] Misplaced account plan post (1054: #KONTO 5090 "Övr kostnader hyrd lokal")
+[WARNING] Misplaced account plan post (1055: #SRU 5090 0)
+[WARNING] Misplaced account plan post (1058: #KONTO 5120 "Belysning")
+[WARNING] Misplaced account plan post (1059: #SRU 5120 0)
+[WARNING] Misplaced account plan post (1062: #KONTO 5130 "Värme")
+[WARNING] Misplaced account plan post (1063: #SRU 5130 0)
+[WARNING] Misplaced account plan post (1066: #KONTO 5132 "Sotning")
+[WARNING] Misplaced account plan post (1067: #SRU 5132 0)
+[WARNING] Misplaced account plan post (1070: #KONTO 5140 "Vatten och avlopp")
+[WARNING] Misplaced account plan post (1071: #SRU 5140 0)
+[WARNING] Misplaced account plan post (1074: #KONTO 5160 "Renhållning och städning")
+[WARNING] Misplaced account plan post (1075: #SRU 5160 0)
+[WARNING] Misplaced account plan post (1078: #KONTO 5170 "Rep och underhåll")
+[WARNING] Misplaced account plan post (1079: #SRU 5170 0)
+[WARNING] Misplaced account plan post (1082: #KONTO 5191 "Fastighetsskatt")
+[WARNING] Misplaced account plan post (1083: #SRU 5191 0)
+[WARNING] Misplaced account plan post (1086: #KONTO 5192 "Försäkringsprem fastighet")
+[WARNING] Misplaced account plan post (1087: #SRU 5192 0)
+[WARNING] Misplaced account plan post (1090: #KONTO 5199 "Övr fastighetskostnader")
+[WARNING] Misplaced account plan post (1091: #SRU 5199 0)
+[WARNING] Misplaced account plan post (1094: #KONTO 5210 "Hyra arbetsmaskiner")
+[WARNING] Misplaced account plan post (1095: #SRU 5210 0)
+[WARNING] Misplaced account plan post (1098: #KONTO 5220 "Hyra inventarier")
+[WARNING] Misplaced account plan post (1099: #SRU 5220 0)
+[WARNING] Misplaced account plan post (1102: #KONTO 5310 "El för drift")
+[WARNING] Misplaced account plan post (1103: #SRU 5310 0)
+[WARNING] Misplaced account plan post (1106: #KONTO 5380 "Vatten")
+[WARNING] Misplaced account plan post (1107: #SRU 5380 0)
+[WARNING] Misplaced account plan post (1110: #KONTO 5390 "Övriga bränslen")
+[WARNING] Misplaced account plan post (1111: #SRU 5390 0)
+[WARNING] Misplaced account plan post (1114: #KONTO 5410 "Förbrukningsinventarier")
+[WARNING] Misplaced account plan post (1115: #SRU 5410 0)
+[WARNING] Misplaced account plan post (1118: #KONTO 5420 "Dataprogram")
+[WARNING] Misplaced account plan post (1119: #SRU 5420 0)
+[WARNING] Misplaced account plan post (1122: #KONTO 5460 "Förbrukningsmaterial")
+[WARNING] Misplaced account plan post (1123: #SRU 5460 0)
+[WARNING] Misplaced account plan post (1126: #KONTO 5480 "Arbetskläder o skyddsmtrl")
+[WARNING] Misplaced account plan post (1127: #SRU 5480 0)
+[WARNING] Misplaced account plan post (1130: #KONTO 5500 "Reparation och underhåll")
+[WARNING] Misplaced account plan post (1131: #SRU 5500 0)
+[WARNING] Misplaced account plan post (1134: #KONTO 5611 "Drivmedel personbilar")
+[WARNING] Misplaced account plan post (1135: #SRU 5611 0)
+[WARNING] Misplaced account plan post (1138: #KONTO 5612 "Skatt försäkr personbilar")
+[WARNING] Misplaced account plan post (1139: #SRU 5612 0)
+[WARNING] Misplaced account plan post (1142: #KONTO 5613 "Reparation personbilar")
+[WARNING] Misplaced account plan post (1143: #SRU 5613 0)
+[WARNING] Misplaced account plan post (1146: #KONTO 5615 "Leasingavg personbilar")
+[WARNING] Misplaced account plan post (1147: #SRU 5615 0)
+[WARNING] Misplaced account plan post (1150: #KONTO 5690 "Övr transportmedel")
+[WARNING] Misplaced account plan post (1151: #SRU 5690 0)
+[WARNING] Misplaced account plan post (1154: #KONTO 5710 "Frakt och transport")
+[WARNING] Misplaced account plan post (1155: #SRU 5710 0)
+[WARNING] Misplaced account plan post (1158: #KONTO 5720 "Tull- och speditionskost")
+[WARNING] Misplaced account plan post (1159: #SRU 5720 0)
+[WARNING] Misplaced account plan post (1162: #KONTO 5800 "Resekostnader")
+[WARNING] Misplaced account plan post (1163: #SRU 5800 0)
+[WARNING] Misplaced account plan post (1166: #KONTO 5910 "Annonsering")
+[WARNING] Misplaced account plan post (1167: #SRU 5910 0)
+[WARNING] Misplaced account plan post (1172: #KONTO 5930 "Reklamtrycksaker")
+[WARNING] Misplaced account plan post (1173: #SRU 5930 0)
+[WARNING] Misplaced account plan post (1176: #KONTO 5940 "Utställning och mässor")
+[WARNING] Misplaced account plan post (1177: #SRU 5940 0)
+[WARNING] Misplaced account plan post (1180: #KONTO 5990 "Övrig reklam")
+[WARNING] Misplaced account plan post (1181: #SRU 5990 0)
+[WARNING] Misplaced account plan post (1184: #KONTO 6010 "Kataloger och prislistor")
+[WARNING] Misplaced account plan post (1185: #SRU 6010 0)
+[WARNING] Misplaced account plan post (1188: #KONTO 6040 "Kontokortsavgifter")
+[WARNING] Misplaced account plan post (1189: #SRU 6040 0)
+[WARNING] Misplaced account plan post (1192: #KONTO 6050 "Försäljningsprovision")
+[WARNING] Misplaced account plan post (1193: #SRU 6050 0)
+[WARNING] Misplaced account plan post (1196: #KONTO 6060 "Kreditförsäljningskostnad")
+[WARNING] Misplaced account plan post (1197: #SRU 6060 0)
+[WARNING] Misplaced account plan post (1200: #KONTO 6071 "Repr avdr.gill")
+[WARNING] Misplaced account plan post (1201: #SRU 6071 0)
+[WARNING] Misplaced account plan post (1204: #KONTO 6072 "Repr ej avdr.gill")
+[WARNING] Misplaced account plan post (1205: #SRU 6072 0)
+[WARNING] Misplaced account plan post (1208: #KONTO 6080 "Bankgarantier")
+[WARNING] Misplaced account plan post (1209: #SRU 6080 0)
+[WARNING] Misplaced account plan post (1212: #KONTO 6090 "Övr försäljningskostnader")
+[WARNING] Misplaced account plan post (1213: #SRU 6090 0)
+[WARNING] Misplaced account plan post (1216: #KONTO 6110 "Kontorsmaterial")
+[WARNING] Misplaced account plan post (1217: #SRU 6110 0)
+[WARNING] Misplaced account plan post (1220: #KONTO 6150 "Trycksaker")
+[WARNING] Misplaced account plan post (1221: #SRU 6150 0)
+[WARNING] Misplaced account plan post (1224: #KONTO 6211 "Telefon")
+[WARNING] Misplaced account plan post (1225: #SRU 6211 0)
+[WARNING] Misplaced account plan post (1228: #KONTO 6212 "Mobiltelefon")
+[WARNING] Misplaced account plan post (1229: #SRU 6212 0)
+[WARNING] Misplaced account plan post (1232: #KONTO 6213 "Mobilsökning")
+[WARNING] Misplaced account plan post (1233: #SRU 6213 0)
+[WARNING] Misplaced account plan post (1236: #KONTO 6214 "Fax")
+[WARNING] Misplaced account plan post (1237: #SRU 6214 0)
+[WARNING] Misplaced account plan post (1240: #KONTO 6230 "Datakommunikation")
+[WARNING] Misplaced account plan post (1241: #SRU 6230 0)
+[WARNING] Misplaced account plan post (1244: #KONTO 6250 "Porto")
+[WARNING] Misplaced account plan post (1245: #SRU 6250 0)
+[WARNING] Misplaced account plan post (1248: #KONTO 6310 "Företagsförsäkringar")
+[WARNING] Misplaced account plan post (1249: #SRU 6310 0)
+[WARNING] Misplaced account plan post (1252: #KONTO 6320 "Självrisker")
+[WARNING] Misplaced account plan post (1253: #SRU 6320 0)
+[WARNING] Misplaced account plan post (1256: #KONTO 6350 "Kundförluster")
+[WARNING] Misplaced account plan post (1257: #SRU 6350 0)
+[WARNING] Misplaced account plan post (1260: #KONTO 6390 "Övriga riskkostnader")
+[WARNING] Misplaced account plan post (1261: #SRU 6390 0)
+[WARNING] Misplaced account plan post (1264: #KONTO 6410 "Styrelsearvode")
+[WARNING] Misplaced account plan post (1265: #SRU 6410 0)
+[WARNING] Misplaced account plan post (1268: #KONTO 6420 "Revisionsarvode")
+[WARNING] Misplaced account plan post (1269: #SRU 6420 0)
+[WARNING] Misplaced account plan post (1272: #KONTO 6430 "Management fees")
+[WARNING] Misplaced account plan post (1273: #SRU 6430 0)
+[WARNING] Misplaced account plan post (1276: #KONTO 6440 "Årsredovisn, delårsrapporter")
+[WARNING] Misplaced account plan post (1277: #SRU 6440 0)
+[WARNING] Misplaced account plan post (1280: #KONTO 6450 "Bolagsstämma")
+[WARNING] Misplaced account plan post (1281: #SRU 6450 0)
+[WARNING] Misplaced account plan post (1284: #KONTO 6490 "Övr förvaltningskostnader")
+[WARNING] Misplaced account plan post (1285: #SRU 6490 0)
+[WARNING] Misplaced account plan post (1288: #KONTO 6530 "Redovisningstjänster")
+[WARNING] Misplaced account plan post (1289: #SRU 6530 0)
+[WARNING] Misplaced account plan post (1292: #KONTO 6540 "IT-tjänster")
+[WARNING] Misplaced account plan post (1293: #SRU 6540 0)
+[WARNING] Misplaced account plan post (1296: #KONTO 6550 "Konsultarvoden")
+[WARNING] Misplaced account plan post (1297: #SRU 6550 0)
+[WARNING] Misplaced account plan post (1300: #KONTO 6570 "Bankkostnader")
+[WARNING] Misplaced account plan post (1301: #SRU 6570 0)
+[WARNING] Misplaced account plan post (1304: #KONTO 6580 "Advokatkostnader")
+[WARNING] Misplaced account plan post (1305: #SRU 6580 0)
+[WARNING] Misplaced account plan post (1308: #KONTO 6590 "Övr främmande tjänster")
+[WARNING] Misplaced account plan post (1309: #SRU 6590 0)
+[WARNING] Misplaced account plan post (1312: #KONTO 6800 "Inhyrd personal")
+[WARNING] Misplaced account plan post (1313: #SRU 6800 0)
+[WARNING] Misplaced account plan post (1316: #KONTO 6904 "Tjänst förv utlandet")
+[WARNING] Misplaced account plan post (1317: #SRU 6904 0)
+[WARNING] Misplaced account plan post (1320: #KONTO 6909 "Fördelade förvärv")
+[WARNING] Misplaced account plan post (1321: #SRU 6909 0)
+[WARNING] Misplaced account plan post (1324: #KONTO 6970 "Tidningar, facklitteratur")
+[WARNING] Misplaced account plan post (1325: #SRU 6970 0)
+[WARNING] Misplaced account plan post (1328: #KONTO 6981 "Föreningsavg avdr gill")
+[WARNING] Misplaced account plan post (1329: #SRU 6981 0)
+[WARNING] Misplaced account plan post (1332: #KONTO 6982 "Föreningsavg ej avdr gill")
+[WARNING] Misplaced account plan post (1333: #SRU 6982 0)
+[WARNING] Misplaced account plan post (1336: #KONTO 6991 "Övr avdr gill kostn")
+[WARNING] Misplaced account plan post (1337: #SRU 6991 0)
+[WARNING] Misplaced account plan post (1340: #KONTO 6992 "Övr ej avdr gill kostn")
+[WARNING] Misplaced account plan post (1341: #SRU 6992 0)
+[WARNING] Misplaced account plan post (1344: #KONTO 6993 "Lämnade bidrag och gåvor")
+[WARNING] Misplaced account plan post (1345: #SRU 6993 0)
+[WARNING] Misplaced account plan post (1348: #KONTO 7010 "Lön kollektivanställda")
+[WARNING] Misplaced account plan post (1349: #SRU 7010 0)
+[WARNING] Misplaced account plan post (1352: #KONTO 7011 "Löner till kollektivanställda")
+[WARNING] Misplaced account plan post (1353: #SRU 7011 0)
+[WARNING] Misplaced account plan post (1356: #KONTO 7012 "Vinstandelar till kollektivanställda")
+[WARNING] Misplaced account plan post (1357: #SRU 7012 0)
+[WARNING] Misplaced account plan post (1360: #KONTO 7014 "Löner till kollektivanställda (65 år)")
+[WARNING] Misplaced account plan post (1361: #SRU 7014 0)
+[WARNING] Misplaced account plan post (1364: #KONTO 7015 "Löner till kollektivanställda (särskild löneskatt)")
+[WARNING] Misplaced account plan post (1365: #SRU 7015 0)
+[WARNING] Misplaced account plan post (1368: #KONTO 7016 "Vinstandelar till kollektivanställda (särskild löneskatt)")
+[WARNING] Misplaced account plan post (1369: #SRU 7016 0)
+[WARNING] Misplaced account plan post (1372: #KONTO 7017 "Avgångsvederlag till kollektivanställda")
+[WARNING] Misplaced account plan post (1373: #SRU 7017 0)
+[WARNING] Misplaced account plan post (1376: #KONTO 7081 "Sjuklön kollektivanställda")
+[WARNING] Misplaced account plan post (1377: #SRU 7081 0)
+[WARNING] Misplaced account plan post (1380: #KONTO 7082 "Semesterlön kollektivanställda")
+[WARNING] Misplaced account plan post (1381: #SRU 7082 0)
+[WARNING] Misplaced account plan post (1384: #KONTO 7090 "Förändr sem löneskuld")
+[WARNING] Misplaced account plan post (1385: #SRU 7090 0)
+[WARNING] Misplaced account plan post (1388: #KONTO 7210 "Lön tjänstemän")
+[WARNING] Misplaced account plan post (1389: #SRU 7210 0)
+[WARNING] Misplaced account plan post (1392: #KONTO 7211 "Löner till tjänstemän")
+[WARNING] Misplaced account plan post (1393: #SRU 7211 0)
+[WARNING] Misplaced account plan post (1396: #KONTO 7212 "Vinstandelar till tjänstemän")
+[WARNING] Misplaced account plan post (1397: #SRU 7212 0)
+[WARNING] Misplaced account plan post (1400: #KONTO 7214 "Löner till tjänstemän (65 år)")
+[WARNING] Misplaced account plan post (1401: #SRU 7214 0)
+[WARNING] Misplaced account plan post (1404: #KONTO 7215 "Löner till tjänstemän (särskild löneskatt)")
+[WARNING] Misplaced account plan post (1405: #SRU 7215 0)
+[WARNING] Misplaced account plan post (1408: #KONTO 7216 "Vinstandelar till tjänstemän (särskild löneskatt)")
+[WARNING] Misplaced account plan post (1409: #SRU 7216 0)
+[WARNING] Misplaced account plan post (1412: #KONTO 7217 "Avgångsvederlag till tjänstemän")
+[WARNING] Misplaced account plan post (1413: #SRU 7217 0)
+[WARNING] Misplaced account plan post (1416: #KONTO 7220 "Lön företagsledare")
+[WARNING] Misplaced account plan post (1417: #SRU 7220 0)
+[WARNING] Misplaced account plan post (1420: #KONTO 7221 "Löner till styrelse och företagsledning")
+[WARNING] Misplaced account plan post (1421: #SRU 7221 0)
+[WARNING] Misplaced account plan post (1424: #KONTO 7222 "Tantiem till företagsledare")
+[WARNING] Misplaced account plan post (1425: #SRU 7222 0)
+[WARNING] Misplaced account plan post (1428: #KONTO 7223 "Gratifikationer till företagsledare")
+[WARNING] Misplaced account plan post (1429: #SRU 7223 0)
+[WARNING] Misplaced account plan post (1432: #KONTO 7224 "Löner till företagsledare (65 år)")
+[WARNING] Misplaced account plan post (1433: #SRU 7224 0)
+[WARNING] Misplaced account plan post (1436: #KONTO 7227 "Avgångsvederlag till företagsledare")
+[WARNING] Misplaced account plan post (1437: #SRU 7227 0)
+[WARNING] Misplaced account plan post (1440: #KONTO 7281 "Sjuklön tjänstemän")
+[WARNING] Misplaced account plan post (1441: #SRU 7281 0)
+[WARNING] Misplaced account plan post (1444: #KONTO 7282 "Sjuklöner till ftgledare")
+[WARNING] Misplaced account plan post (1445: #SRU 7282 0)
+[WARNING] Misplaced account plan post (1448: #KONTO 7285 "Semester lön tjänstemän")
+[WARNING] Misplaced account plan post (1449: #SRU 7285 0)
+[WARNING] Misplaced account plan post (1452: #KONTO 7286 "Semesterlön ftgledare")
+[WARNING] Misplaced account plan post (1453: #SRU 7286 0)
+[WARNING] Misplaced account plan post (1456: #KONTO 7290 "Förändr sem löneskuld")
+[WARNING] Misplaced account plan post (1457: #SRU 7290 0)
+[WARNING] Misplaced account plan post (1460: #KONTO 7300 "Kostnadsersättningar och förmåner")
+[WARNING] Misplaced account plan post (1461: #SRU 7300 0)
+[WARNING] Misplaced account plan post (1464: #KONTO 7310 "Kontanta extra ersättn")
+[WARNING] Misplaced account plan post (1465: #SRU 7310 0)
+[WARNING] Misplaced account plan post (1468: #KONTO 7312 "Ersättningar för förlagsverksamhet och uppfinningar")
+[WARNING] Misplaced account plan post (1469: #SRU 7312 0)
+[WARNING] Misplaced account plan post (1472: #KONTO 7316 "Ersättningar för/bidrag till arbetskläder")
+[WARNING] Misplaced account plan post (1473: #SRU 7316 0)
+[WARNING] Misplaced account plan post (1476: #KONTO 7318 "Felräkningspengar")
+[WARNING] Misplaced account plan post (1477: #SRU 7318 0)
+[WARNING] Misplaced account plan post (1480: #KONTO 7319 "Övriga kontanta ersättningar")
+[WARNING] Misplaced account plan post (1481: #SRU 7319 0)
+[WARNING] Misplaced account plan post (1484: #KONTO 7321 "Skattefria trakt Sverige")
+[WARNING] Misplaced account plan post (1485: #SRU 7321 0)
+[WARNING] Misplaced account plan post (1488: #KONTO 7322 "Skattepl trakt Sverige")
+[WARNING] Misplaced account plan post (1489: #SRU 7322 0)
+[WARNING] Misplaced account plan post (1492: #KONTO 7323 "Skattefria trakt utland")
+[WARNING] Misplaced account plan post (1493: #SRU 7323 0)
+[WARNING] Misplaced account plan post (1496: #KONTO 7324 "Skattepl trakt utland")
+[WARNING] Misplaced account plan post (1497: #SRU 7324 0)
+[WARNING] Misplaced account plan post (1500: #KONTO 7331 "Skattefri bilersättning")
+[WARNING] Misplaced account plan post (1501: #SRU 7331 0)
+[WARNING] Misplaced account plan post (1504: #KONTO 7332 "Skattepl bilersättning")
+[WARNING] Misplaced account plan post (1505: #SRU 7332 0)
+[WARNING] Misplaced account plan post (1508: #KONTO 7381 "Kostn för fri bostad")
+[WARNING] Misplaced account plan post (1509: #SRU 7381 0)
+[WARNING] Misplaced account plan post (1512: #KONTO 7382 "Kostn fria/subv måltider")
+[WARNING] Misplaced account plan post (1513: #SRU 7382 0)
+[WARNING] Misplaced account plan post (1516: #KONTO 7385 "Kostn för fri bil")
+[WARNING] Misplaced account plan post (1517: #SRU 7385 0)
+[WARNING] Misplaced account plan post (1520: #KONTO 7389 "Övriga kostn naturaförm")
+[WARNING] Misplaced account plan post (1521: #SRU 7389 0)
+[WARNING] Misplaced account plan post (1524: #KONTO 7390 "Övr kostnadsersättningar")
+[WARNING] Misplaced account plan post (1525: #SRU 7390 0)
+[WARNING] Misplaced account plan post (1528: #KONTO 7411 "Kollektiv pensionsförsäkr")
+[WARNING] Misplaced account plan post (1529: #SRU 7411 0)
+[WARNING] Misplaced account plan post (1532: #KONTO 7412 "Indiv pensionsförsäkring")
+[WARNING] Misplaced account plan post (1533: #SRU 7412 0)
+[WARNING] Misplaced account plan post (1536: #KONTO 7490 "Övriga pensionsförsäkring")
+[WARNING] Misplaced account plan post (1537: #SRU 7490 0)
+[WARNING] Misplaced account plan post (1540: #KONTO 7510 "Arbetsgivaravgifter")
+[WARNING] Misplaced account plan post (1541: #SRU 7510 0)
+[WARNING] Misplaced account plan post (1544: #KONTO 7519 "Soc.avgifter semesterlön")
+[WARNING] Misplaced account plan post (1545: #SRU 7519 0)
+[WARNING] Misplaced account plan post (1548: #KONTO 7531 "Löneskatt")
+[WARNING] Misplaced account plan post (1549: #SRU 7531 0)
+[WARNING] Misplaced account plan post (1552: #KONTO 7533 "Särsk löneskatt pensionsk")
+[WARNING] Misplaced account plan post (1553: #SRU 7533 0)
+[WARNING] Misplaced account plan post (1556: #KONTO 7570 "AMF enl avtal")
+[WARNING] Misplaced account plan post (1557: #SRU 7570 0)
+[WARNING] Misplaced account plan post (1560: #KONTO 7610 "Utbildning")
+[WARNING] Misplaced account plan post (1561: #SRU 7610 0)
+[WARNING] Misplaced account plan post (1564: #KONTO 7620 "Sjuk- och hälsovård")
+[WARNING] Misplaced account plan post (1565: #SRU 7620 0)
+[WARNING] Misplaced account plan post (1568: #KONTO 7650 "Sjuklöneförsäkring")
+[WARNING] Misplaced account plan post (1569: #SRU 7650 0)
+[WARNING] Misplaced account plan post (1572: #KONTO 7690 "Övr personalkostnader")
+[WARNING] Misplaced account plan post (1573: #SRU 7690 0)
+[WARNING] Misplaced account plan post (1576: #KONTO 7813 "Avskrivningar patent")
+[WARNING] Misplaced account plan post (1577: #SRU 7813 0)
+[WARNING] Misplaced account plan post (1580: #KONTO 7816 "Avskrivningar hyresrätt")
+[WARNING] Misplaced account plan post (1581: #SRU 7816 0)
+[WARNING] Misplaced account plan post (1584: #KONTO 7817 "Avskrivningar goodwill")
+[WARNING] Misplaced account plan post (1585: #SRU 7817 0)
+[WARNING] Misplaced account plan post (1588: #KONTO 7821 "Avskrivn byggnader")
+[WARNING] Misplaced account plan post (1589: #SRU 7821 0)
+[WARNING] Misplaced account plan post (1592: #KONTO 7822 "Avskrivn byggnadsinv")
+[WARNING] Misplaced account plan post (1593: #SRU 7822 0)
+[WARNING] Misplaced account plan post (1596: #KONTO 7824 "Avskrivn markanläggn")
+[WARNING] Misplaced account plan post (1597: #SRU 7824 0)
+[WARNING] Misplaced account plan post (1600: #KONTO 7831 "Avskrivn arbetsmaskiner")
+[WARNING] Misplaced account plan post (1601: #SRU 7831 0)
+[WARNING] Misplaced account plan post (1604: #KONTO 7832 "Avskrivn inventarier")
+[WARNING] Misplaced account plan post (1605: #SRU 7832 0)
+[WARNING] Misplaced account plan post (1608: #KONTO 7834 "Avskrivn bilar")
+[WARNING] Misplaced account plan post (1609: #SRU 7834 0)
+[WARNING] Misplaced account plan post (1612: #KONTO 7960 "Kursförluster")
+[WARNING] Misplaced account plan post (1613: #SRU 7960 0)
+[WARNING] Misplaced account plan post (1616: #KONTO 7972 "Förlust avyttr fastigheter")
+[WARNING] Misplaced account plan post (1617: #SRU 7972 0)
+[WARNING] Misplaced account plan post (1620: #KONTO 7973 "Förlust avyttr maskiner/inv")
+[WARNING] Misplaced account plan post (1621: #SRU 7973 0)
+[WARNING] Misplaced account plan post (1624: #KONTO 7974 "Förlust avyttr aktier/andel")
+[WARNING] Misplaced account plan post (1625: #SRU 7974 0)
+[WARNING] Misplaced account plan post (1628: #KONTO 8012 "Utdeln sv/utl dotterbolag")
+[WARNING] Misplaced account plan post (1629: #SRU 8012 0)
+[WARNING] Misplaced account plan post (1632: #KONTO 8210 "Utdeln andra sv/utl företag")
+[WARNING] Misplaced account plan post (1633: #SRU 8210 0)
+[WARNING] Misplaced account plan post (1636: #KONTO 8230 "Valutakursdiff långfr fordr")
+[WARNING] Misplaced account plan post (1637: #SRU 8230 0)
+[WARNING] Misplaced account plan post (1640: #KONTO 8270 "Nedskr andel/lf ford övr ftg")
+[WARNING] Misplaced account plan post (1641: #SRU 8270 0)
+[WARNING] Misplaced account plan post (1644: #KONTO 8280 "Återf nedskr and/lf ford ö ftg")
+[WARNING] Misplaced account plan post (1645: #SRU 8280 0)
+[WARNING] Misplaced account plan post (1648: #KONTO 8300 "Ränteintäkter")
+[WARNING] Misplaced account plan post (1649: #SRU 8300 0)
+[WARNING] Misplaced account plan post (1652: #KONTO 8313 "Ränteintäkter kundfordringar")
+[WARNING] Misplaced account plan post (1653: #SRU 8313 0)
+[WARNING] Misplaced account plan post (1656: #KONTO 8331 "Valutakursvinster")
+[WARNING] Misplaced account plan post (1657: #SRU 8331 0)
+[WARNING] Misplaced account plan post (1660: #KONTO 8336 "Valutakursförluster")
+[WARNING] Misplaced account plan post (1661: #SRU 8336 0)
+[WARNING] Misplaced account plan post (1664: #KONTO 8390 "Övr finansiella intäkter")
+[WARNING] Misplaced account plan post (1665: #SRU 8390 0)
+[WARNING] Misplaced account plan post (1668: #KONTO 8400 "Räntekostnader")
+[WARNING] Misplaced account plan post (1669: #SRU 8400 0)
+[WARNING] Misplaced account plan post (1672: #KONTO 8422 "Räntekostnader levskulder")
+[WARNING] Misplaced account plan post (1673: #SRU 8422 0)
+[WARNING] Misplaced account plan post (1676: #KONTO 8431 "Valutakursvinster skulder")
+[WARNING] Misplaced account plan post (1677: #SRU 8431 0)
+[WARNING] Misplaced account plan post (1680: #KONTO 8436 "Valutakursförlust skulder")
+[WARNING] Misplaced account plan post (1681: #SRU 8436 0)
+[WARNING] Misplaced account plan post (1684: #KONTO 8490 "Övr finansiella kostnader")
+[WARNING] Misplaced account plan post (1685: #SRU 8490 0)
+[WARNING] Misplaced account plan post (1688: #KONTO 8811 "Avsättning per fond")
+[WARNING] Misplaced account plan post (1689: #SRU 8811 0)
+[WARNING] Misplaced account plan post (1692: #KONTO 8819 "Återföring av per fond")
+[WARNING] Misplaced account plan post (1693: #SRU 8819 0)
+[WARNING] Misplaced account plan post (1696: #KONTO 8850 "Avskrivn över/under plan")
+[WARNING] Misplaced account plan post (1697: #SRU 8850 0)
+[WARNING] Misplaced account plan post (1700: #KONTO 8896 "Förändring lagerreserv")
+[WARNING] Misplaced account plan post (1701: #SRU 8896 0)
+[WARNING] Misplaced account plan post (1704: #KONTO 8897 "Återföring av SURV")
+[WARNING] Misplaced account plan post (1705: #SRU 8897 0)
+[WARNING] Misplaced account plan post (1708: #KONTO 8910 "Årets skattekostnad")
+[WARNING] Misplaced account plan post (1709: #SRU 8910 0)
+[WARNING] Misplaced account plan post (1712: #KONTO 8999 "Redovisat resultat")
+[WARNING] Misplaced account plan post (1713: #SRU 8999 0)

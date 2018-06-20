@@ -48,7 +48,7 @@ class Parser extends Grammar
             parent::parse($content);
         } catch (\Exception $e) {
             $this->getLogger()->incrementLineCount();
-            $this->getLogger()->error($e->getMessage());
+            $this->getLogger()->log('error', $e->getMessage());
         }
 
         $container = new Container(

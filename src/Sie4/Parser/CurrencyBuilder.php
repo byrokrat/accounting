@@ -23,7 +23,6 @@ declare(strict_types = 1);
 namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\amount\Currency;
-use Psr\Log\LoggerInterface;
 
 /**
  * Builder that keeps track of the defined currency and creates monetary objects
@@ -36,14 +35,14 @@ class CurrencyBuilder
     private $currencyClassname = 'byrokrat\\amount\\Currency\\SEK';
 
     /**
-     * @var LoggerInterface
+     * @var Logger
      */
     private $logger;
 
     /**
      * Inject logger at construct
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(Logger $logger)
     {
         $this->logger = $logger;
     }
@@ -58,7 +57,7 @@ class CurrencyBuilder
         $currencyClassname = "byrokrat\\amount\\Currency\\$currency";
 
         if (!class_exists($currencyClassname)) {
-            $this->logger->warning("Unknown currency $currency");
+            $this->logger->log('warning', "Unknown currency $currency");
             return;
         }
 

@@ -59,18 +59,18 @@ grammar Grammar extends AbstractParser
     KSUMMA_END_POST = ROW_START 'KSUMMA' checksum:INT? ROW_END {
         if ($this->assertInt($checksum, 'Expected checksum')) {
             $this->parsedAttributes['checksum'] = $checksum;
-            $this->getLogger()->notice('Checksum detected but currently not handled');
+            $this->getLogger()->log('notice', 'Checksum detected but currently not handled');
         }
     };
 
     // Posts for identification and meta-data
 
     MISPLACED_IDENTIFICATION_POST = IDENTIFICATION_POST {
-        $this->getLogger()->warning('Misplaced identification post');
+        $this->getLogger()->log('warning', 'Misplaced identification post');
     };
 
     MISPLACED_ACCOUNT_PLAN_POST = ACCOUNT_PLAN_POST {
-        $this->getLogger()->warning('Misplaced account plan post');
+        $this->getLogger()->log('warning', 'Misplaced account plan post');
     };
 
     IDENTIFICATION_POST = ADRESS_POST
@@ -116,7 +116,7 @@ grammar Grammar extends AbstractParser
     FORMAT_POST = ROW_START 'FORMAT' ^ charset:STRING? ROW_END {
         if ($this->assertString($charset, 'Expected charset identifier')) {
             if ($charset != 'PC8') {
-                $this->getLogger()->warning("Unknown charset $charset defined using #FORMAT");
+                $this->getLogger()->log('warning', "Unknown charset $charset defined using #FORMAT");
             }
 
             $this->parsedAttributes['charset'] = $charset;
@@ -401,11 +401,12 @@ grammar Grammar extends AbstractParser
     VOID_ROW = UNKNOWN_POST / INVALID_LINE / EMPTY_LINE;
 
     INVALID_LINE = _ !'#' fields:STRING+ EOL {
-        $this->getLogger()->warning('Ignored invalid line "' . implode(' ', $fields) . '"');
+        $this->getLogger()->log('warning', 'Ignored invalid line "' . implode(' ', $fields) . '"');
     };
 
     UNKNOWN_POST = ROW_START !VALID_LABEL label:VALID_CHARS ^ vars:STRING* EOL {
-        $this->getLogger()->notice(
+        $this->getLogger()->log(
+            'notice',
             array_reduce(
                 $vars,
                 function ($carry, $var) {
@@ -465,7 +466,7 @@ grammar Grammar extends AbstractParser
 
     ROW_END = fields:STRING* _ EOL? {
         foreach ($fields as $field) {
-            $this->getLogger()->notice("Ignored unknown field $field at end of line");
+            $this->getLogger()->log('notice', "Ignored unknown field $field at end of line");
         }
     };
 

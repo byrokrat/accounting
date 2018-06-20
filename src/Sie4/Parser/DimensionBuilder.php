@@ -24,7 +24,6 @@ namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Dimension\Dimension;
-use Psr\Log\LoggerInterface;
 
 /**
  * Builder that creates and manages accounting dimensions
@@ -49,14 +48,14 @@ class DimensionBuilder
     private $dims = [];
 
     /**
-     * @var LoggerInterface
+     * @var Logger
      */
     private $logger;
 
     /**
      * Inject logger att construct
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(Logger $logger)
     {
         $this->logger = $logger;
     }
@@ -67,7 +66,7 @@ class DimensionBuilder
     public function addDimension(string $dimId, string $desc, string $super = ''): void
     {
         if (isset($this->dims[$dimId])) {
-            $this->logger->warning("Overwriting previously created dimension $dimId");
+            $this->logger->log('warning', "Overwriting previously created dimension $dimId");
         }
 
         $this->dims[$dimId] = new Dimension(
@@ -83,7 +82,7 @@ class DimensionBuilder
     public function addObject(string $super, string $objectId, string $desc): void
     {
         if (isset($this->dims["$super.$objectId"])) {
-            $this->logger->warning("Overwriting previously created object $super.$objectId");
+            $this->logger->log('warning', "Overwriting previously created object $super.$objectId");
         }
 
         $this->dims["$super.$objectId"] = new Dimension($objectId, $desc, $this->getDimension($super));
@@ -101,7 +100,7 @@ class DimensionBuilder
             return $this->dims[$dimId];
         }
 
-        $this->logger->warning("Dimension number $dimId not defined", ['_addToLineCount' => 1]);
+        $this->logger->log('warning', "Dimension number $dimId not defined", 1);
 
         if ('2' === $dimId) {
             return $this->dims['2'] = new Dimension('2', 'Kostnadsbärare', $this->getDimension('1'));
@@ -124,7 +123,7 @@ class DimensionBuilder
             return $this->dims["$super.$objectId"];
         }
 
-        $this->logger->warning("Object number $super.$objectId not defined", ['_addToLineCount' => 1]);
+        $this->logger->log('warning', "Object number $super.$objectId not defined", 1);
 
         $this->addObject($super, $objectId, 'UNSPECIFIED');
 
