@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\amount\Currency;
+use byrokrat\amount\Amount;
 
 /**
  * Builder that keeps track of the defined currency and creates monetary objects
@@ -39,18 +39,13 @@ class CurrencyBuilder
      */
     private $logger;
 
-    /**
-     * Inject logger at construct
-     */
     public function __construct(Logger $logger)
     {
         $this->logger = $logger;
     }
 
     /**
-     * Set the currency classname
-     *
-     * @param string $currency The iso-4217 currency code
+     * Set the iso-4217 currency code classname
      */
     public function setCurrencyClass(string $currency): void
     {
@@ -66,11 +61,8 @@ class CurrencyBuilder
 
     /**
      * Called when a monetary amount is encountered
-     *
-     * @param  string   $amount The raw amount
-     * @return Currency Currency object representing amount
      */
-    public function createMoney(string $amount): Currency
+    public function createMoney(string $amount): Amount
     {
         return new $this->currencyClassname($amount);
     }
