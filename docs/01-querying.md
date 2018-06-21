@@ -10,37 +10,46 @@ The package is shipped with a generic solution for querying accounting data.
 @example container
 
 ```php
-$template = new byrokrat\accounting\Template(
-    'template_name',
-    'desc',
-    ['1920', '{bank_amount}'],
-    ['3000', '{income_amount}']
-);
+$template = new byrokrat\accounting\Template\VerificationTemplate([
+    'description' => 'desc',
+    'transactions' => [
+        [
+            'account' => '1920',
+            'amount' => '{bank_amount}'
+        ],
+        [
+            'account' => '3000',
+            'amount' => '{income_amount}'
+        ]
+    ]
+]);
 
 $accountFactory = new byrokrat\accounting\Dimension\AccountFactory;
 
 $bank = $accountFactory->createAccount('1920', 'Bank');
-$bank->setAttribute('incoming_balance', new byrokrat\amount\Amount('0'));
+$bank->setAttribute('incoming_balance', new byrokrat\amount\Currency\SEK('0'));
 
 $incomes = $accountFactory->createAccount('3000', 'Incomes');
-$incomes->setAttribute('incoming_balance', new byrokrat\amount\Amount('0'));
+$incomes->setAttribute('incoming_balance', new byrokrat\amount\Currency\SEK('0'));
 
 $accounts = new byrokrat\accounting\Container($bank, $incomes);
 
+$renderer = new \byrokrat\accounting\Template\TemplateRenderer($accounts);
+
 $container = new byrokrat\accounting\Container(
-    $template->build(
-        [
+    $renderer->render(
+        $template,
+        new \byrokrat\accounting\Template\Translator([
             'bank_amount' => '999',
-            'income_amount' => '-999'
-        ],
-        $accounts
+            'income_amount' => '-999',
+        ])
     ),
-    $template->build(
-        [
+    $renderer->render(
+        $template,
+        new \byrokrat\accounting\Template\Translator([
             'bank_amount' => '1',
-            'income_amount' => '-1'
-        ],
-        $accounts
+            'income_amount' => '-1',
+        ])
     )
 );
 ```

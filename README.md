@@ -37,12 +37,20 @@ First we create an accounting template
 
 <!-- @example template -->
 ```php
-$template = new byrokrat\accounting\Template(
-    'template_name',
-    '{description}',
-    ['1920', '{bank_amount}'],
-    ['{account}', '{income_amount}']
-);
+$template = new byrokrat\accounting\Template\VerificationTemplate([
+    'description' => '{description}',
+    'transactionDate' => '{now}',
+    'transactions' => [
+        [
+            'account' => '1920',
+            'amount' => '{bank_amount}'
+        ],
+        [
+            'account' => '{account}',
+            'amount' => '{income_amount}'
+        ]
+    ]
+]);
 ```
 
 To build verifications using our template we need an account plan
@@ -69,24 +77,26 @@ account plan.
     @include accounts
 -->
 ```php
-$verA = $template->build(
-    [
+$renderer = new \byrokrat\accounting\Template\TemplateRenderer($accounts);
+
+$verA = $renderer->render(
+    $template,
+    new \byrokrat\accounting\Template\Translator([
         'description' => 'basic income',
         'bank_amount' => '999',
         'income_amount' => '-999',
         'account' => '3000'
-    ],
-    $accounts
+    ])
 );
 
-$verB = $template->build(
-    [
+$verB = $renderer->render(
+    $template,
+    new \byrokrat\accounting\Template\Translator([
         'description' => 'sales',
         'bank_amount' => '333',
         'income_amount' => '-333',
         'account' => '3010'
-    ],
-    $accounts
+    ])
 );
 ```
 
