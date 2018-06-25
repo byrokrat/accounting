@@ -12,7 +12,7 @@ Accounting data can be read and written in the [SIE](http://www.sie.se/) file fo
 namespace byrokrat\accounting\Sie4\Parser;
 
 /** @var \byrokrat\accounting\Sie4\Parser\Parser $parser */
-$parser = (new ParserFactory)->createParser();
+$parser = (new Sie4ParserFactory)->createParser();
 
 /** @var \byrokrat\accounting\Container $content */
 $content = $parser->parse("
@@ -44,9 +44,33 @@ namespace byrokrat\accounting;
 
 use byrokrat\amount\Amount;
 
-echo (new Sie4\Writer\Writer)->generate(
-    (new Sie4\Writer\Settings)->setTargetCompany('my-company'),
-    new Query([
+echo (new Sie4\Writer\Sie4Writer)->generateSie(
+    new Container(
+        new Verification\Verification(
+            2,
+            new \DateTimeImmutable,
+            new \DateTimeImmutable,
+            '',
+            '',
+            new Transaction\Transaction(
+                0,
+                new \DateTimeImmutable,
+                '',
+                '',
+                new Amount('100'),
+                new Amount('0'),
+                new Dimension\AssetAccount('1920', 'Bank')
+            ),
+            new Transaction\Transaction(
+                0,
+                new \DateTimeImmutable,
+                '',
+                '',
+                new Amount('-100'),
+                new Amount('0'),
+                new Dimension\AssetAccount('3000', 'Intänk')
+            )
+        ),
         new Verification\Verification(
             1,
             new \DateTimeImmutable,
@@ -72,7 +96,7 @@ echo (new Sie4\Writer\Writer)->generate(
                 new Dimension\AssetAccount('3000', 'Intänk')
             )
         )
-    ])
+    )
 );
 ```
 

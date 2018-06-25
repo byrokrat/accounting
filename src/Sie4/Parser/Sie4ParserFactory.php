@@ -24,13 +24,13 @@ namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Dimension\AccountFactory;
 
-class ParserFactory
+class Sie4ParserFactory
 {
-    public function createParser(): Parser
+    public function createParser(): Sie4Parser
     {
         $logger = new Logger;
 
-        return new Parser(
+        return new Sie4Parser(
             $logger,
             new AccountBuilder(new AccountFactory, $logger),
             new CurrencyBuilder($logger),

@@ -53,7 +53,7 @@ class Sie4IntegrationTest extends \PHPUnit\Framework\TestCase
 
     private function parse(string $content): array
     {
-        $parser = (new ParserFactory)->createParser();
+        $parser = (new Sie4ParserFactory)->createParser();
 
         return [$parser->parse($content), $parser->getErrorLog()];
     }

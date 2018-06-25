@@ -2,7 +2,7 @@
 
 namespace Bob\BuildConfig;
 
-use byrokrat\accounting\Sie4\Parser\ParserFactory;
+use byrokrat\accounting\Sie4\Parser\Sie4ParserFactory;
 
 task('default', ['build_sie_parser', 'test', 'phpstan', 'sniff']);
 
@@ -62,7 +62,7 @@ desc('Validate the contents of a SIE4 file');
 task('check_sie4_file', function() {
     println('Usage: bob check_sie4_file name=[filename]');
     require_once __DIR__ . '/vendor/autoload.php';
-    $parser = (new ParserFactory)->createParser();
+    $parser = (new Sie4ParserFactory)->createParser();
     $parser->parse(
         file_get_contents($_ENV['name'] ?? '')
     );
