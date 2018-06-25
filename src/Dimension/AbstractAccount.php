@@ -41,21 +41,21 @@ abstract class AbstractAccount extends Dimension implements AccountInterface
 
     public function isAsset(): bool
     {
-        return false;
+        return $this->getType() == self::TYPE_ASSET;
     }
 
     public function isCost(): bool
     {
-        return false;
+        return $this->getType() == self::TYPE_COST;
     }
 
     public function isDebt(): bool
     {
-        return false;
+        return $this->getType() == self::TYPE_DEBT;
     }
 
     public function isEarning(): bool
     {
-        return false;
+        return $this->getType() == self::TYPE_EARNING;
     }
 }

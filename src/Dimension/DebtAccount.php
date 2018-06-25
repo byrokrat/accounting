@@ -24,8 +24,8 @@ namespace byrokrat\accounting\Dimension;
 
 class DebtAccount extends AbstractAccount
 {
-    public function isDebt(): bool
+    public function getType(): string
     {
-        return true;
+        return self::TYPE_DEBT;
     }
 }

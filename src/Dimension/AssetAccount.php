@@ -24,8 +24,8 @@ namespace byrokrat\accounting\Dimension;
 
 class AssetAccount extends AbstractAccount
 {
-    public function isAsset(): bool
+    public function getType(): string
     {
-        return true;
+        return self::TYPE_ASSET;
     }
 }

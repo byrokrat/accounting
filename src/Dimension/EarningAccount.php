@@ -24,8 +24,8 @@ namespace byrokrat\accounting\Dimension;
 
 class EarningAccount extends AbstractAccount
 {
-    public function isEarning(): bool
+    public function getType(): string
     {
-        return true;
+        return self::TYPE_EARNING;
     }
 }

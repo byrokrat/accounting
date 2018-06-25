@@ -24,8 +24,8 @@ namespace byrokrat\accounting\Dimension;
 
 class CostAccount extends AbstractAccount
 {
-    public function isCost(): bool
+    public function getType(): string
     {
-        return true;
+        return self::TYPE_COST;
     }
 }

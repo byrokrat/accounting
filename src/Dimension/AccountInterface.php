@@ -25,6 +25,16 @@ namespace byrokrat\accounting\Dimension;
  */
 interface AccountInterface extends DimensionInterface
 {
+    const TYPE_ASSET = 'ASSET';
+    const TYPE_COST = 'COST';
+    const TYPE_DEBT = 'DEBT';
+    const TYPE_EARNING = 'EARNING';
+
+    /**
+     * Get account type identifier
+     */
+    public function getType(): string;
+
     /**
      * Check if object represents an asset account
      */
