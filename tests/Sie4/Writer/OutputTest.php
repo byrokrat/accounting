@@ -6,29 +6,12 @@ namespace byrokrat\accounting\Sie4\Writer;
 
 class OutputTest extends \PHPUnit\Framework\TestCase
 {
-    public function escapeStringProvider()
-    {
-        return [
-            ["bar", '"bar"'],
-            ["\n", '""'],
-            ["'", '"\\\'"'],
-        ];
-    }
-
-    /**
-     * @dataProvider escapeStringProvider
-     */
-    public function testEscapeString($raw, $escaped)
-    {
-        $this->assertSame(
-            $escaped,
-            (new Output)->escape($raw)
-        );
-    }
-
     public function writeProvider()
     {
         return [
+            ["%s", ["bar"], '"bar"'],
+            ["%s", ["\n"], '""'],
+            ["%s", ["'"], '"\\\'"'],
             ['#ID %s %s', ['foo', 'bar'], '#ID "foo" "bar"'],
         ];
     }

@@ -33,27 +33,14 @@ class Output
     const EOL = "\r\n";
 
     /**
-     * @var string Written content
+     * @var string
      */
     private $content = '';
 
     /**
-     * Escape and quote string for SIE output
-     */
-    public function escape(string $str): string
-    {
-        return sprintf(
-            '"%s"',
-            addslashes(
-                preg_replace('/[[:cntrl:]]/', '', $str)
-            )
-        );
-    }
-
-    /**
      * Write to output
      */
-    public function write(string $format, string ...$args)
+    public function write(string $format, string ...$args): void
     {
         $this->content .= sprintf(
             $format,
@@ -64,7 +51,7 @@ class Output
     /**
      * Write line to output
      */
-    public function writeln(string $format, string ...$args)
+    public function writeln(string $format, string ...$args): void
     {
         $this->write($format . self::EOL, ...$args);
     }
@@ -75,5 +62,18 @@ class Output
     public function getContent(): string
     {
         return iconv("UTF-8", "CP437", $this->content);
+    }
+
+    /**
+     * Escape and quote string for SIE output
+     */
+    private function escape(string $str): string
+    {
+        return sprintf(
+            '"%s"',
+            addslashes(
+                preg_replace('/[[:cntrl:]]/', '', $str)
+            )
+        );
     }
 }
