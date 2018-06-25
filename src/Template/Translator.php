@@ -63,7 +63,7 @@ class Translator
 
     private static function arrayMapRecursive(callable $callback, array $original): array
     {
-        $mapped = array();
+        $mapped = [];
 
         foreach ($original as $key => $value) {
             $mapped[$key] = is_array($value) ? self::arrayMapRecursive($callback, $value) : $callback($value);
