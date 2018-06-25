@@ -43,17 +43,19 @@ class TransactionProcessor implements ProcessorInterface
 
             $dim->setAttribute(
                 'summary',
-                new Summary($dim->hasAttribute('incoming_balance') ? $dim->getAttribute('incoming_balance') : null)
+                new Summary($dim->getAttribute('incoming_balance', null))
             );
 
             $dim->setAttribute(
                 'quantity_summary',
-                new Summary($dim->hasAttribute('incoming_quantity') ? $dim->getAttribute('incoming_quantity') : null)
+                new Summary($dim->getAttribute('incoming_quantity', null))
             );
         });
 
         $updateDim = function ($dim, $transaction) {
-            $dim->getAttribute('transactions')[] = $transaction;
+            $transactions = $dim->getAttribute('transactions');
+            $transactions[] = $transaction;
+            $dim->setAttribute('transactions', $transactions);
             $dim->getAttribute('summary')->addAmount($transaction->getAmount());
             $dim->getAttribute('quantity_summary')->addAmount($transaction->getQuantity());
         };

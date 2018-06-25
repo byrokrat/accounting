@@ -4,8 +4,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
-use byrokrat\accounting\Exception\LogicException;
-
 trait AttributableTestTrait
 {
     abstract protected function getAttributableToTest(): AttributableInterface;
@@ -18,6 +16,12 @@ trait AttributableTestTrait
         $value = 'foobarbaz';
 
         $this->assertFalse($attributable->hasAttribute($key));
+
+        $this->assertSame(
+            'default',
+            $attributable->getAttribute($key, 'default'),
+            'Reading an attribute that does not exist should return the default'
+        );
 
         $attributable->setAttribute($key, $value);
 
@@ -40,11 +44,5 @@ trait AttributableTestTrait
             $attributable->getAttributes()[$key],
             'Getting all attributes should return attribute i small case'
         );
-    }
-
-    public function testExceptionWhenAttributeNotSet()
-    {
-        $this->expectException(LogicException::CLASS);
-        $this->getAttributableToTest()->getAttribute('this-is-not-set');
     }
 }

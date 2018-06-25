@@ -22,15 +22,13 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting;
 
-use byrokrat\accounting\Exception\LogicException;
-
 /**
  * Basic implementation of an attributable object
  */
 trait AttributableTrait
 {
     /**
-     * @var array Registered attributes
+     * @var array
      */
     private $attributes = [];
 
@@ -44,13 +42,9 @@ trait AttributableTrait
         return isset($this->attributes[strtolower($name)]);
     }
 
-    public function &getAttribute(string $name)
+    public function getAttribute(string $name, $default = '')
     {
-        if (!$this->hasAttribute($name)) {
-            throw new LogicException("Trying to read non-existing attribute $name");
-        }
-
-        return $this->attributes[strtolower($name)];
+        return $this->attributes[strtolower($name)] ?? $default;
     }
 
     public function getAttributes(): array

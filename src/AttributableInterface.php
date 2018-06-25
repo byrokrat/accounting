@@ -39,10 +39,8 @@ interface AttributableInterface
 
     /**
      * Read registered attribute
-     *
-     * @throws Exception\LogicException if attriute is not set
      */
-    public function getAttribute(string $key);
+    public function getAttribute(string $key, $default = '');
 
     /**
      * Get the array of all registered attributes
