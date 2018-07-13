@@ -156,7 +156,7 @@ class Sie4Writer
             return $left->getVerificationId() <=> $right->getVerificationId();
         };
 
-        $container->select()->uniqueVerifications()->orderBy($comp)->each(function ($ver) use ($output) {
+        $container->select()->verifications()->orderBy($comp)->each(function ($ver) use ($output) {
             $output->writeln(
                 '#VER %s %s %s %s %s %s',
                 $ver->getAttribute('series', ''),
