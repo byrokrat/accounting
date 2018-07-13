@@ -360,7 +360,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$flag) {
                 if ($this->assertBool($flag)) {
-                    $this->parsedAttributes['flag'] = $flag;
+                    $this->parsedAttributes['flag'] = (string)$flag;
                 }
             });
         }

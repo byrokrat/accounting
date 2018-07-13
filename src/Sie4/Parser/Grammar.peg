@@ -50,7 +50,7 @@ grammar Grammar extends AbstractParser
 
     FLAGGA_POST = ROW_START 'FLAGGA' ^ flag:BOOLEAN? ROW_END {
         if ($this->assertBool($flag)) {
-            $this->parsedAttributes['flag'] = $flag;
+            $this->parsedAttributes['flag'] = (string)$flag;
         }
     };
 

@@ -1,7 +1,7 @@
 {
     "name": "byrokrat/accounting",
     "description": "Analysis and generation of bookkeeping data according to Swedish standards",
-    "keywords": ["accounting", "bookkeeping", "SIE"],
+    "keywords": ["accounting", "bookkeeping", "SIE", "SIE4"],
     "homepage": "https://github.com/byrokrat/accounting",
     "type": "library",
     "license": "GPL-3.0-or-later",
