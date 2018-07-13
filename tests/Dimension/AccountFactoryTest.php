@@ -41,4 +41,14 @@ class AccountFactoryTest extends \PHPUnit\Framework\TestCase
             $account->getDescription()
         );
     }
+
+    public function testMultipleAccounts()
+    {
+        $accounts = (new AccountFactory)->createAccounts([
+            '1000' => 'foo',
+            '2000' => 'bar'
+        ]);
+
+        $this->assertCount(2, $accounts->select());
+    }
 }

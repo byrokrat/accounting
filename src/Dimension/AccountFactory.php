@@ -22,6 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\accounting\Dimension;
 
+use byrokrat\accounting\Container;
+
 /**
  * Facilitates the creation of account objects
  */
@@ -44,5 +46,16 @@ class AccountFactory
         }
 
         return new CostAccount($number, $description);
+    }
+
+    public function createAccounts(array $definitions): Container
+    {
+        $accounts = [];
+
+        foreach ($definitions as $number => $description) {
+            $accounts[] = $this->createAccount((string)$number, (string)$description);
+        }
+
+        return new Container(...$accounts);
     }
 }
