@@ -39,7 +39,7 @@ and generating files in the [SIE](http://www.sie.se/) file format.
 ### Generating accounting data using templates
 
 First we create an accounting template. Values enclosed in curly braces `{}`
-are placeholders for values supplied when template is rendered.
+are placeholders for values supplied at render time.
 
 <!-- @example template -->
 ```php
@@ -61,7 +61,7 @@ $template = new VerificationTemplate([
 ]);
 ```
 
-To render templates need an account plan, a set of accounts.
+Create an account plan, a set of accounts.
 
 <!--
     @example accounts
@@ -125,7 +125,7 @@ use byrokrat\accounting\Sie4\Writer\Sie4Writer;
 $sie = (new Sie4Writer)->generateSie($verifications);
 ```
 
-## Parsing SIE files
+### Parsing SIE files
 
 <!--
     @example parsing-sie
@@ -158,7 +158,7 @@ byrokrat\accounting\Query::macro('orderById', function () {
     return $this->orderBy(function ($left, $right) {
         return $left->getId() <=> $right->getId();
     });
-    });
+});
 ```
 
 ### Listing accounts
