@@ -17,7 +17,7 @@ task('phpunit', function() {
 
 desc('Test examples');
 task('examples', function() {
-    sh('readme-tester README.md docs', null, ['failOnError' => true]);
+    sh('readme-tester README.md', null, ['failOnError' => true]);
     println('Examples passed');
 });
 

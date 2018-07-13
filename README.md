@@ -5,19 +5,15 @@
 [![Build Status](https://img.shields.io/travis/byrokrat/accounting/master.svg?style=flat-square)](https://travis-ci.org/byrokrat/accounting)
 [![Quality Score](https://img.shields.io/scrutinizer/g/byrokrat/accounting.svg?style=flat-square)](https://scrutinizer-ci.com/g/byrokrat/accounting)
 
-> NOTE! This package is under development and the API subject to change.
-
 Analysis and generation of bookkeeping data according to Swedish standards.
 
 ## Installation
 
 ```shell
-composer require byrokrat/accounting:dev-master
+composer require byrokrat/accounting:^1.0
 ```
 
-## Usage
-
-[Read the documentation here.](docs)
+## Why?
 
 Although it would be possible to build a general bookkeeping application on top
 of Accounting this was never the primary concern. The motivation for creating
@@ -29,15 +25,27 @@ Accounting was to provide solutions for two scenarios:
    bookkeeping).
 
 To enable import and export of bookkeeping data Accounting supports parsing
-and generating files in the [SIE](docs/02-sie.md) file format.
+and generating files in the [SIE](http://www.sie.se/) file format.
+
+## Usage
+
+1. [Generating accounting data using templates](#generating-accounting-data-using-templates)
+1. [Writing SIE files](#writing-sie-files)
+1. [Parsing SIE files](#parsing-sie-files)
+1. [Writing macros](#writing-macros)
+1. [Listing accounts](#listing-accounts)
+1. [Sorting transactions into a ledger (huvudbok)](#sorting-transactions-into-a-ledger-huvudbok)
 
 ### Generating accounting data using templates
 
-First we create an accounting template
+First we create an accounting template. Values enclosed in curly braces `{}`
+are placeholders for values supplied when template is rendered.
 
 <!-- @example template -->
 ```php
-$template = new byrokrat\accounting\Template\VerificationTemplate([
+use byrokrat\accounting\Template\VerificationTemplate;
+
+$template = new VerificationTemplate([
     'description' => '{description}',
     'transactionDate' => '{now}',
     'transactions' => [
@@ -53,23 +61,23 @@ $template = new byrokrat\accounting\Template\VerificationTemplate([
 ]);
 ```
 
-To build verifications using our template we need an account plan
+To render templates need an account plan, a set of accounts.
 
 <!--
     @example accounts
     @include template
 -->
 ```php
-$accountFactory = new byrokrat\accounting\Dimension\AccountFactory;
+use byrokrat\accounting\Dimension\AccountFactory;
 
-$accounts = new byrokrat\accounting\Container(
-    $accountFactory->createAccount('1920', 'Bank'),
-    $accountFactory->createAccount('3000', 'Incomes'),
-    $accountFactory->createAccount('3010', 'Sales')
-);
+$accounts = (new AccountFactory)->createAccounts([
+    '1920' => 'Bank',
+    '3000' => 'Incomes',
+    '3010' => 'Sales',
+]);
 ```
 
-And to create a verification we supply a list of translation values and the
+And to render verifications we supply a list of translation values and the
 account plan.
 
 <!--
@@ -77,53 +85,132 @@ account plan.
     @include accounts
 -->
 ```php
-$renderer = new \byrokrat\accounting\Template\TemplateRenderer($accounts);
+use byrokrat\accounting\Template\TemplateRenderer;
+use byrokrat\accounting\Template\Translator;
+use byrokrat\accounting\Container;
 
-$verA = $renderer->render(
-    $template,
-    new \byrokrat\accounting\Template\Translator([
-        'description' => 'basic income',
-        'bank_amount' => '999',
-        'income_amount' => '-999',
-        'account' => '3000'
-    ])
-);
+$renderer = new TemplateRenderer($accounts);
 
-$verB = $renderer->render(
-    $template,
-    new \byrokrat\accounting\Template\Translator([
-        'description' => 'sales',
-        'bank_amount' => '333',
-        'income_amount' => '-333',
-        'account' => '3010'
-    ])
+$verifications = new Container(
+    $renderer->render(
+        $template,
+        new Translator([
+            'description' => 'basic income',
+            'bank_amount' => '999',
+            'income_amount' => '-999',
+            'account' => '3000'
+        ])
+    ),
+    $renderer->render(
+        $template,
+        new Translator([
+            'description' => 'sales',
+            'bank_amount' => '333',
+            'income_amount' => '-333',
+            'account' => '3010'
+        ])
+    )
 );
 ```
 
-### Querying data
-
-We then query our generated accounting data using something like
+### Writing SIE files
 
 <!--
-    @example query
+    @example sie
     @include verifications
-    @expectOutput "sales"
 -->
 ```php
-$data = new byrokrat\accounting\Container($verA, $verB);
+use byrokrat\accounting\Sie4\Writer\Sie4Writer;
 
-// Grab the first verification concerning account 3010 and output it's description
-echo $data->select()->verifications()->whereAccount('3010')->getFirst()->getDescription();
+$sie = (new Sie4Writer)->generateSie($verifications);
 ```
 
-For more examples see the documentation.
+## Parsing SIE files
 
-## Documentation
+<!--
+    @example parsing-sie
+    @include sie
+    @expectOutput "/^999.00$/"
+-->
+```php
+use byrokrat\accounting\Sie4\Parser\Sie4ParserFactory;
 
-- [Start](docs)
-- [Querying accounting data](docs/01-querying.md)
-- [Parsing and writing SIE files](docs/02-sie.md)
-- [Generating verifications using templates](docs/03-templates.md)
+$parser = (new Sie4ParserFactory)->createParser();
+
+$container = $parser->parse($sie);
+
+// Outputs '999.00'
+echo $container->select()->verifications()->getFirst()->getMagnitude();
+```
+
+### Writing macros
+
+Macros expose the posibility to extend the query api on the fly, without having
+to subclass the Query class itself. It is suitable for adding project specific
+order and filter methods. If we for example whant to order account objects
+based on number we can define a macro for this:
+
+<!--
+    @example macro
+-->
+```php
+byrokrat\accounting\Query::macro('orderById', function () {
+    return $this->orderBy(function ($left, $right) {
+        return $left->getId() <=> $right->getId();
+    });
+    });
+```
+
+### Listing accounts
+
+We can use our newly defined macro to order all account objects in a container.
+
+<!--
+    @example list-accounts
+    @include verifications
+    @include macro
+-->
+```php
+$orderedAccounts = $verifications->select()->uniqueAccounts()->orderById()->asArray();
+```
+
+### Sorting transactions into a ledger (huvudbok)
+
+An example of how Accounting may be used to sort transactions inte a ledger
+(or *huvudbok* as it is known in swedish).
+
+<!--
+    @example ledger
+    @include verifications
+    @include macro
+    @expectOutput "/Outgoing balance 1332.00/"
+-->
+```php
+use byrokrat\accounting\Processor\TransactionProcessor;
+
+(new TransactionProcessor)->processContainer($verifications);
+
+$verifications->select()->uniqueAccounts()->orderById()->each(function ($account) {
+    echo "{$account->getId()}: {$account->getDescription()}\n";
+    echo "Incoming balance {$account->getAttribute('summary')->getIncomingBalance()}\n\n";
+
+    $currentBalance = $account->getAttribute('summary')->getIncomingBalance();
+
+    foreach ($account->getAttribute('transactions') as $trans) {
+        echo $trans->getVerificationId(),
+            "\t",
+            $trans->getDescription(),
+            "\t",
+            $trans->getAmount(),
+            "\t",
+            $currentBalance = $currentBalance->add($trans->getAmount()),
+            "\n";
+    }
+
+    echo "\nOutgoing balance {$account->getAttribute('summary')->getOutgoingBalance()}\n\n";
+    echo "----------\n\n";
+});
+```
 
 ## Hacking
 
@@ -133,11 +220,21 @@ Install dependencies
 composer install
 ```
 
-Install development tools
+Install the bob build environment
 
 ```shell
 composer global require chh/bob:^1.0@alpha
+```
+
+If needed put the "global" composer bin dir in your path.
+
+```shell
 export PATH=$PATH:$HOME/.composer/vendor/bin/
+```
+
+Install development tools
+
+```shell
 bob install_dev_tools
 ```
 
