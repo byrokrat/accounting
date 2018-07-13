@@ -200,9 +200,24 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testAccounts()
     {
+        $account = $this->createMock(AccountInterface::CLASS);
+
         $this->assertSame(
-            [$account = $this->createMock(AccountInterface::CLASS)],
-            (new Query([1, $account, 3]))->accounts()->asArray()
+            [$account, $account],
+            (new Query([1, $account, $account, 3]))->accounts()->asArray()
+        );
+    }
+
+    /**
+     * @depends testAccounts
+     */
+    public function testuniqueAccounts()
+    {
+        $account = $this->createMock(AccountInterface::CLASS);
+
+        $this->assertSame(
+            [$account],
+            (new Query([1, $account, $account, 3]))->uniqueAccounts()->asArray()
         );
     }
 
@@ -211,9 +226,24 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testDimensions()
     {
+        $dim = $this->createMock(DimensionInterface::CLASS);
+
         $this->assertSame(
-            [$dim = $this->createMock(DimensionInterface::CLASS)],
-            (new Query([1, $dim, 3]))->dimensions()->asArray()
+            [$dim, $dim],
+            (new Query([1, $dim, $dim, 3]))->dimensions()->asArray()
+        );
+    }
+
+    /**
+     * @depends testDimensions
+     */
+    public function testUniqueDimensions()
+    {
+        $dim = $this->createMock(DimensionInterface::CLASS);
+
+        $this->assertSame(
+            [$dim],
+            (new Query([1, $dim, $dim, 3]))->uniqueDimensions()->asArray()
         );
     }
 
@@ -272,9 +302,24 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testVerifications()
     {
+        $verification = $this->createMock(VerificationInterface::CLASS);
+
         $this->assertSame(
-            [$verification = $this->createMock(VerificationInterface::CLASS)],
-            (new Query([1, $verification, 3]))->verifications()->asArray()
+            [$verification, $verification],
+            (new Query([1, $verification, $verification, 3]))->verifications()->asArray()
+        );
+    }
+
+    /**
+     * @depends testVerifications
+     */
+    public function testUniqueVerifications()
+    {
+        $verification = $this->createMock(VerificationInterface::CLASS);
+
+        $this->assertSame(
+            [$verification],
+            (new Query([1, $verification, $verification, 3]))->uniqueVerifications()->asArray()
         );
     }
 
@@ -286,11 +331,15 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         $balanced = $this->prophesize(VerificationInterface::CLASS);
         $balanced->isBalanced()->willReturn(true);
         $balanced->select()->willReturn(new Query);
+        $balanced->getVerificationId()->willReturn(1);
+        $balanced->getAttribute('series', '')->willReturn('');
         $balanced = $balanced->reveal();
 
         $unbalanced = $this->prophesize(VerificationInterface::CLASS);
         $unbalanced->isBalanced()->willReturn(false);
         $unbalanced->select()->willReturn(new Query);
+        $unbalanced->getVerificationId()->willReturn(2);
+        $unbalanced->getAttribute('series', '')->willReturn('');
         $unbalanced = $unbalanced->reveal();
 
         $this->assertSame(
@@ -417,6 +466,26 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(
             [$objA, $objB],
             (new Query([$objA, $objB, $objB, $objA]))->whereUnique()->asArray()
+        );
+    }
+
+    /**
+     * @depends testWhereUnique
+     */
+    public function testUniqueWithInspector()
+    {
+        $arrAA = ['A', 'A'];
+        $arrAB = ['A', 'B'];
+        $arrBA = ['B', 'A'];
+        $arrBB = ['B', 'B'];
+
+        $inspector = function ($arr) {
+            return $arr[0];
+        };
+
+        $this->assertSame(
+            [$arrAA, $arrBA],
+            (new Query([$arrAA, $arrBA, $arrAB, $arrBB]))->whereUnique($inspector)->asArray()
         );
     }
 

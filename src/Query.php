@@ -107,6 +107,16 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     }
 
     /**
+     * Filter that returns only unique Account objects
+     */
+    public function uniqueAccounts(): Query
+    {
+        return $this->accounts()->whereUnique(function (AccountInterface $account) {
+            return $account->getId();
+        });
+    }
+
+    /**
      * Get all items matched by query
      *
      * As the result may be constructed by multiple generators the probability
@@ -187,6 +197,16 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     public function dimensions(): Query
     {
         return $this->filterType(DimensionInterface::CLASS);
+    }
+
+    /**
+     * Filter that returns only unique dimension objects
+     */
+    public function uniqueDimensions(): Query
+    {
+        return $this->dimensions()->whereUnique(function (DimensionInterface $dim) {
+            return $dim->getId();
+        });
     }
 
     /**
@@ -448,6 +468,16 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     }
 
     /**
+     * Filter that returns only unique verification objects
+     */
+    public function uniqueVerifications(): Query
+    {
+        return $this->verifications()->whereUnique(function (VerificationInterface $ver) {
+            return $ver->getAttribute('series', '') . $ver->getVerificationId();
+        });
+    }
+
+    /**
      * Filter those objects that are or contain a child that are matching $filter
      *
      * @param callable $filter Takes one argument and returnes a boolean
@@ -541,16 +571,22 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     /**
      * Filter unique items in query
      */
-    public function whereUnique(): Query
+    public function whereUnique(callable $inspector = null): Query
     {
+        $inspector = $inspector ?: function ($item) {
+            return $item;
+        };
+
         $uniqueItems = [];
 
-        return $this->filter(function ($item) use (&$uniqueItems) {
-            if (array_search($item, $uniqueItems, true) !== false) {
+        return $this->filter(function ($item) use ($inspector, &$uniqueItems) {
+            $key = $inspector($item);
+
+            if (array_search($key, $uniqueItems, true) !== false) {
                 return false;
             }
 
-            $uniqueItems[] = $item;
+            $uniqueItems[] = $key;
 
             return true;
         });

@@ -91,8 +91,13 @@ grammar Grammar extends AbstractParser
         / VALUTA_POST
         / VOID_ROW;
 
-    ADRESS_POST = ROW_START 'ADRESS' ^ contact:STRING? address:STRING? location:STRING? phone:STRING? ROW_END {
-        $this->parsedAttributes['company_address'] = [(string)$contact, (string)$address, (string)$location, (string)$phone];
+    ADRESS_POST = ROW_START 'ADRESS' ^ contact:STRING? street:STRING? postal:STRING? phone:STRING? ROW_END {
+        $this->parsedAttributes['company_address'] = [
+            'contact' => (string)$contact,
+            'street' => (string)$street,
+            'postal' => (string)$postal,
+            'phone' => (string)$phone
+        ];
     };
 
     BKOD_POST = ROW_START 'BKOD' ^ sni:INT? ROW_END {
@@ -131,7 +136,8 @@ grammar Grammar extends AbstractParser
 
     GEN_POST = ROW_START 'GEN' ^ date:DATE? sign:STRING? ROW_END {
         if ($this->assertDate($date)) {
-            $this->parsedAttributes['generation_date'] = [$date, strval($sign)];
+            $this->parsedAttributes['generation_date'] = $date;
+            $this->parsedAttributes['generating_user'] = strval($sign);
         }
     };
 
@@ -155,12 +161,13 @@ grammar Grammar extends AbstractParser
 
     PROGRAM_POST = ROW_START 'PROGRAM' ^ name:STRING? version:STRING? ROW_END {
         if ($this->assertString($name, 'Expected name') && $this->assertString($version, 'Expected version')) {
-            $this->parsedAttributes['program'] = [$name, $version];
+            $this->parsedAttributes['generating_program'] = $name;
+            $this->parsedAttributes['generating_program_version'] = $version;
         }
     };
 
     PROSA_POST = ROW_START 'PROSA' ^ text:STRING* ROW_END {
-        $this->parsedAttributes['free_text'] = implode(' ', $text);
+        $this->parsedAttributes['description'] = implode(' ', $text);
     };
 
     RAR_POST = ROW_START 'RAR' ^ year:INT? startDate:DATE? endDate:DATE? ROW_END {

@@ -49,7 +49,7 @@ class Sie4Writer
     ];
 
     /**
-     * TODO beskriv vilka attribute som används..
+     * Generate SIE content from container data
      *
      * NOTE that writing dimensions other then accounts is currently noy supported.
      *
@@ -57,7 +57,7 @@ class Sie4Writer
      * contents. Notably verifications must contain transactions and be
      * balanced, and any written attribute contents must be formatted correctly.
      */
-    public function generateSie(Container $container): string
+    public function generateSie(Container $container, \DateTimeInterface $generationDate = null): string
     {
         $output = new Output;
 
@@ -65,66 +65,70 @@ class Sie4Writer
         $output->writeln('#SIETYP 4');
         $output->writeln('#FORMAT PC8');
 
-        // TODO kolla vad attributes heter i parser...
+        $output->writeln(
+            '#PROGRAM %s %s',
+            $container->getAttribute('generating_program', 'byrokrat/accounting'),
+            $container->getAttribute('generating_program_version')
+        );
 
-        // TODO valuta måste skrivas ut..., använd SEK som default....
+        $output->writeln(
+            '#GEN %s %s',
+            ($generationDate ?: new \DateTime)->format('Ymd'),
+            $container->getAttribute('generating_user')
+        );
 
-        // TODO vilka fler är mandatory???
+        $output->writeln('#FNAMN %s', $container->getAttribute('company_name'));
 
-        if ($container->hasAttribute('generating_program')) {
-            $output->writeln(
-                '#PROGRAM %s %s',
-                $container->getAttribute('generating_program'),
-                $container->getAttribute('generating_program_version')
-            );
+        if ($container->hasAttribute('company_type')) {
+            $output->writeln('#FTYP %s', $container->getAttribute('company_type'));
         }
 
-        // TODO vill vi att datum ska vara med på bättre sätt??
-            // förstå att det kan vara \DateTimeInterface ??
-            // default till dagens datum??
-            // skicka med $now vid method call??????
-
-        if ($container->hasAttribute('generation_date')) {
-            $output->writeln(
-                '#GEN %s %s',
-                $container->getAttribute('generation_date'),
-                $container->getAttribute('generating_user')
-            );
+        if ($container->hasAttribute('company_id')) {
+            $output->writeln('#FNR %s', $container->getAttribute('company_id'));
         }
 
-        if ($container->hasAttribute('company_name')) {
+        if ($container->hasAttribute('company_org_nr')) {
+            $output->writeln('#ORGNR %s', $container->getAttribute('company_org_nr'));
+        }
+
+        if ($container->hasAttribute('company_address')) {
             $output->writeln(
-                '#FNAMN %s',
-                $container->getAttribute('company_name')
+                '#ADRESS %s %s %s %s',
+                $container->getAttribute('company_address', [])['contact'] ?? '',
+                $container->getAttribute('company_address', [])['street'] ?? '',
+                $container->getAttribute('company_address', [])['postal'] ?? '',
+                $container->getAttribute('company_address', [])['phone'] ?? ''
             );
         }
 
         if ($container->hasAttribute('description')) {
-            $output->writeln(
-                '#PROSA %s',
-                $container->getAttribute('description')
-            );
+            $output->writeln('#PROSA %s', $container->getAttribute('description'));
         }
 
-        if ($container->hasAttribute('accounting_year_start')) {
-            $output->writeln(
-                '#RAR 0 %s %s',
-                $container->getAttribute('accounting_year_start'),
-                $container->getAttribute('accounting_year_end')
-            );
+        $output->writeln('#VALUTA %s', $container->getAttribute('currency', 'SEK'));
+
+        if ($container->hasAttribute('taxation_year')) {
+            $output->writeln('#TAXAR %s', $container->getAttribute('taxation_year'));
+        }
+
+        if ($container->hasAttribute('account_plan_type')) {
+            $output->writeln('#KPTYP %s', $container->getAttribute('account_plan_type'));
+        }
+
+        foreach (range(-5, 5) as $year) {
+            if ($container->hasAttribute("financial_year[$year]")) {
+                $output->writeln(
+                    '#RAR %s %s %s',
+                    (string)$year,
+                    $container->getAttribute("financial_year[$year]", [])[0] ?? '',
+                    $container->getAttribute("financial_year[$year]", [])[1] ?? ''
+                );
+            }
         }
 
         // Write accounts
 
-        $writtenAccounts = [];
-
-        $container->select()->accounts()->each(function ($account) use ($output, &$writtenAccounts) {
-            if (isset($writtenAccounts[$account->getId()])) {
-                return;
-            }
-
-            $writtenAccounts[$account->getId()] = true;
-
+        $container->select()->uniqueAccounts()->each(function ($account) use ($output) {
             $output->writeln(
                 '#KONTO %s %s',
                 $account->getId(),
@@ -136,6 +140,14 @@ class Sie4Writer
                 $account->getId(),
                 self::ACCOUNT_TYPE_MAP[$account->getType()] ?? ''
             );
+
+            if ($account->hasAttribute('unit')) {
+                $output->writeln(
+                    '#ENHET %s %s',
+                    $account->getId(),
+                    $account->getAttribute('unit')
+                );
+            }
         });
 
         // Write verifications
@@ -144,15 +156,7 @@ class Sie4Writer
             return $left->getVerificationId() <=> $right->getVerificationId();
         };
 
-        $writtenVers = [];
-
-        $container->select()->verifications()->orderBy($comp)->each(function ($ver) use ($output, &$writtenVers) {
-            if (isset($writtenVers[$ver->getVerificationId()])) {
-                return;
-            }
-
-            $writtenVers[$ver->getVerificationId()] = true;
-
+        $container->select()->uniqueVerifications()->orderBy($comp)->each(function ($ver) use ($output) {
             $output->writeln(
                 '#VER %s %s %s %s %s %s',
                 $ver->getAttribute('series', ''),

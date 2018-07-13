@@ -260,17 +260,24 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         $this->assertAttributes(
             [
                 'company_sni_code' => 1234,
-                'company_address' => ['A', 'B', 'C', 'D'],
+                'company_address' => [
+                    'contact' => 'A',
+                    'street' => 'B',
+                    'postal' => 'C',
+                    'phone' => 'D',
+                ],
                 'company_name' => 'name',
                 'company_id' => 'X',
                 'charset' => 'PC8',
                 'company_type' => 'AB',
-                'generation_date' => [new \DateTimeImmutable('20160824'), 'HF'],
+                'generation_date' => new \DateTimeImmutable('20160824'),
+                'generating_user' => 'HF',
                 'account_plan_type' => 'BAS95',
                 'period_end_date' => new \DateTimeImmutable('20160101'),
                 'company_org_nr' => ['123456-1234', 0, 0],
-                'program' => ['byrokrat', '1.0'],
-                'free_text' => 'foo bar baz',
+                'generating_program' => 'byrokrat',
+                'generating_program_version' => '1.0',
+                'description' => 'foo bar baz',
                 'financial_year[0]' =>[new \DateTimeImmutable('20160101'), new \DateTimeImmutable('20161231')],
                 'financial_year[-1]' =>[new \DateTimeImmutable('20150101'), new \DateTimeImmutable('20151231')],
                 'sie_version' => 4,
@@ -534,12 +541,12 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     {
         $verifications = $this->parse("
             #FLAGGA 1
-            #VER \"\" \"\" 20110104 \"Ver A\"
+            #VER \"\" \"1\" 20110104 \"Ver A\"
             {
                 #TRANS  3010 {} -100.00
                 #TRANS  1920 {} 100.00
             }
-            #VER \"\" \"\" 20110104 \"Ver B\"
+            #VER \"\" \"2\" 20110104 \"Ver B\"
             {
                 #TRANS  3010 {} -100.00
                 #TRANS  1920 {} 100.00
@@ -632,12 +639,12 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     {
         $seriesA = $this->parse("
             #FLAGGA 1
-            #VER \"A\" \"\" 20110104 \"Ver A\"
+            #VER \"A\" \"1\" 20110104 \"Ver A\"
             {
                 #TRANS  3010 {} -100.00
                 #TRANS  1920 {} 100.00
             }
-            #VER \"B\" \"\" 20110104 \"Ver B\"
+            #VER \"B\" \"1\" 20110104 \"Ver B\"
             {
                 #TRANS  3010 {} -100.00
                 #TRANS  1920 {} 100.00

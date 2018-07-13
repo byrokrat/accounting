@@ -793,7 +793,7 @@ class Grammar extends AbstractParser
             $this->cut = $_cut34;
 
             if ($_success) {
-                $address = $this->value;
+                $street = $this->value;
             }
         }
 
@@ -815,7 +815,7 @@ class Grammar extends AbstractParser
             $this->cut = $_cut36;
 
             if ($_success) {
-                $location = $this->value;
+                $postal = $this->value;
             }
         }
 
@@ -854,8 +854,13 @@ class Grammar extends AbstractParser
         }
 
         if ($_success) {
-            $this->value = call_user_func(function () use (&$contact, &$address, &$location, &$phone) {
-                $this->parsedAttributes['company_address'] = [(string)$contact, (string)$address, (string)$location, (string)$phone];
+            $this->value = call_user_func(function () use (&$contact, &$street, &$postal, &$phone) {
+                $this->parsedAttributes['company_address'] = [
+                    'contact' => (string)$contact,
+                    'street' => (string)$street,
+                    'postal' => (string)$postal,
+                    'phone' => (string)$phone
+                ];
             });
         }
 
@@ -1444,7 +1449,8 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$date, &$sign) {
                 if ($this->assertDate($date)) {
-                    $this->parsedAttributes['generation_date'] = [$date, strval($sign)];
+                    $this->parsedAttributes['generation_date'] = $date;
+                    $this->parsedAttributes['generating_user'] = strval($sign);
                 }
             });
         }
@@ -1886,7 +1892,8 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$name, &$version) {
                 if ($this->assertString($name, 'Expected name') && $this->assertString($version, 'Expected version')) {
-                    $this->parsedAttributes['program'] = [$name, $version];
+                    $this->parsedAttributes['generating_program'] = $name;
+                    $this->parsedAttributes['generating_program_version'] = $version;
                 }
             });
         }
@@ -1989,7 +1996,7 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$text) {
-                $this->parsedAttributes['free_text'] = implode(' ', $text);
+                $this->parsedAttributes['description'] = implode(' ', $text);
             });
         }
 
