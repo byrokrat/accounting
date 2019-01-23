@@ -106,7 +106,7 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($balanced, $verification->isBalanced());
 
         if ($balanced) {
-            $this->assertEquals($magnitude, $verification->getMagnitude());
+            $this->assertTrue($magnitude->equals($verification->getMagnitude()));
         }
     }
 

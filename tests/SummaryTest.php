@@ -15,31 +15,26 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
         $summary->addAmount(new Amount('5'));
         $summary->addAmount(new Amount('-5'));
 
-        $this->assertEquals(
-            new Amount('10'),
-            $summary->getIncomingBalance()
+        $this->assertTrue(
+            $summary->getIncomingBalance()->equals(new Amount('10'))
         );
 
-        $this->assertEquals(
-            new Amount('10'),
-            $summary->getOutgoingBalance()
+        $this->assertTrue(
+            $summary->getOutgoingBalance()->equals(new Amount('10'))
         );
 
-        $this->assertEquals(
-            new Amount('5'),
-            $summary->getDebit()
+        $this->assertTrue(
+            $summary->getDebit()->equals(new Amount('5'))
         );
 
-        $this->assertEquals(
-            new Amount('5'),
-            $summary->getCredit()
+        $this->assertTrue(
+            $summary->getCredit()->equals(new Amount('5'))
         );
 
         $this->assertTrue($summary->isBalanced());
 
-        $this->assertEquals(
-            new Amount('5'),
-            $summary->getMagnitude()
+        $this->assertTrue(
+            $summary->getMagnitude()->equals(new Amount('5'))
         );
     }
 
@@ -51,24 +46,20 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
         $summary->addAmount(new Amount('5'));
         $summary->addAmount(new Amount('-5'));
 
-        $this->assertEquals(
-            new Amount('10'),
-            $summary->getIncomingBalance()
+        $this->assertTrue(
+            $summary->getIncomingBalance()->equals(new Amount('10'))
         );
 
-        $this->assertEquals(
-            new Amount('15'),
-            $summary->getOutgoingBalance()
+        $this->assertTrue(
+            $summary->getOutgoingBalance()->equals(new Amount('15'))
         );
 
-        $this->assertEquals(
-            new Amount('10'),
-            $summary->getDebit()
+        $this->assertTrue(
+            $summary->getDebit()->equals(new Amount('10'))
         );
 
-        $this->assertEquals(
-            new Amount('5'),
-            $summary->getCredit()
+        $this->assertTrue(
+            $summary->getCredit()->equals(new Amount('5'))
         );
 
         $this->assertFalse($summary->isBalanced());
@@ -82,24 +73,20 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
         $summary->addAmount(new Amount('-5'));
         $summary->addAmount(new Amount('-5'));
 
-        $this->assertEquals(
-            new Amount('10'),
-            $summary->getIncomingBalance()
+        $this->assertTrue(
+            $summary->getIncomingBalance()->equals(new Amount('10'))
         );
 
-        $this->assertEquals(
-            new Amount('5'),
-            $summary->getOutgoingBalance()
+        $this->assertTrue(
+            $summary->getOutgoingBalance()->equals(new Amount('5'))
         );
 
-        $this->assertEquals(
-            new Amount('5'),
-            $summary->getDebit()
+        $this->assertTrue(
+            $summary->getDebit()->equals(new Amount('5'))
         );
 
-        $this->assertEquals(
-            new Amount('10'),
-            $summary->getCredit()
+        $this->assertTrue(
+            $summary->getCredit()->equals(new Amount('10'))
         );
 
         $this->assertFalse($summary->isBalanced());
@@ -112,31 +99,26 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
         $summary->addAmount(new Amount('5'));
         $summary->addAmount(new Amount('-5'));
 
-        $this->assertEquals(
-            new Amount('-10'),
-            $summary->getIncomingBalance()
+        $this->assertTrue(
+            $summary->getIncomingBalance()->equals(new Amount('-10'))
         );
 
-        $this->assertEquals(
-            new Amount('-10'),
-            $summary->getOutgoingBalance()
+        $this->assertTrue(
+            $summary->getOutgoingBalance()->equals(new Amount('-10'))
         );
 
-        $this->assertEquals(
-            new Amount('5'),
-            $summary->getDebit()
+        $this->assertTrue(
+            $summary->getDebit()->equals(new Amount('5'))
         );
 
-        $this->assertEquals(
-            new Amount('5'),
-            $summary->getCredit()
+        $this->assertTrue(
+            $summary->getCredit()->equals(new Amount('5'))
         );
 
         $this->assertTrue($summary->isBalanced());
 
-        $this->assertEquals(
-            new Amount('5'),
-            $summary->getMagnitude()
+        $this->assertTrue(
+            $summary->getMagnitude()->equals(new Amount('5'))
         );
     }
 
@@ -155,31 +137,26 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
         $summary->addAmount(new Amount('5'));
         $summary->addAmount(new Amount('-5'));
 
-        $this->assertEquals(
-            new Amount('0'),
-            $summary->getIncomingBalance()
+        $this->assertTrue(
+            $summary->getIncomingBalance()->equals(new Amount('0'))
         );
 
-        $this->assertEquals(
-            new Amount('0'),
-            $summary->getOutgoingBalance()
+        $this->assertTrue(
+            $summary->getOutgoingBalance()->equals(new Amount('0'))
         );
 
-        $this->assertEquals(
-            new Amount('5'),
-            $summary->getDebit()
+        $this->assertTrue(
+            $summary->getDebit()->equals(new Amount('5'))
         );
 
-        $this->assertEquals(
-            new Amount('5'),
-            $summary->getCredit()
+        $this->assertTrue(
+            $summary->getCredit()->equals(new Amount('5'))
         );
 
         $this->assertTrue($summary->isBalanced());
 
-        $this->assertEquals(
-            new Amount('5'),
-            $summary->getMagnitude()
+        $this->assertTrue(
+            $summary->getMagnitude()->equals(new Amount('5'))
         );
     }
 

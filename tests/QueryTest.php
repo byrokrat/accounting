@@ -41,9 +41,8 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         $trans->select()->willReturn(new Query);
         $trans = $trans->reveal();
 
-        $this->assertEquals(
-            new Amount('100'),
-            (new Query([1, $trans, $trans]))->asSummary()->getOutgoingBalance()
+        $this->assertTrue(
+            (new Query([1, $trans, $trans]))->asSummary()->getOutgoingBalance()->equals(new Amount('100'))
         );
     }
 

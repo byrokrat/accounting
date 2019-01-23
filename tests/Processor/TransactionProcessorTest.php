@@ -58,21 +58,18 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
 
         (new TransactionProcessor)->processContainer($container);
 
-        $this->assertEquals(
-            new Amount('200'),
-            $account->getAttribute('summary')->getOutgoingBalance()
+        $this->assertTrue(
+            $account->getAttribute('summary')->getOutgoingBalance()->equals(new Amount('200'))
         );
 
-        $this->assertEquals(
-            new Amount('200'),
-            $dim->getAttribute('summary')->getOutgoingBalance()
+        $this->assertTrue(
+            $dim->getAttribute('summary')->getOutgoingBalance()->equals(new Amount('200'))
         );
 
         (new TransactionProcessor)->processContainer($container);
 
-        $this->assertEquals(
-            new Amount('200'),
-            $account->getAttribute('summary')->getOutgoingBalance()
+        $this->assertTrue(
+            $account->getAttribute('summary')->getOutgoingBalance()->equals(new Amount('200'))
         );
     }
 
@@ -90,21 +87,18 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
 
         (new TransactionProcessor)->processContainer($container);
 
-        $this->assertEquals(
-            new Amount('2'),
-            $account->getAttribute('quantity_summary')->getOutgoingBalance()
+        $this->assertTrue(
+            $account->getAttribute('quantity_summary')->getOutgoingBalance()->equals(new Amount('2'))
         );
 
-        $this->assertEquals(
-            new Amount('2'),
-            $dim->getAttribute('quantity_summary')->getOutgoingBalance()
+        $this->assertTrue(
+            $dim->getAttribute('quantity_summary')->getOutgoingBalance()->equals(new Amount('2'))
         );
 
         (new TransactionProcessor)->processContainer($container);
 
-        $this->assertEquals(
-            new Amount('2'),
-            $account->getAttribute('quantity_summary')->getOutgoingBalance()
+        $this->assertTrue(
+            $account->getAttribute('quantity_summary')->getOutgoingBalance()->equals(new Amount('2'))
         );
     }
 }

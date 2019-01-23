@@ -490,14 +490,12 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             #IB 0 1920 $raw
         ")->select()->getAccount('1920');
 
-        $this->assertEquals(
-            $money,
-            $account->getAttribute('incoming_balance')
+        $this->assertTrue(
+            $account->getAttribute('incoming_balance')->equals($money)
         );
 
-        $this->assertEquals(
-            $money,
-            $account->getAttribute('incoming_balance[0]')
+        $this->assertTrue(
+            $account->getAttribute('incoming_balance[0]')->equals($money)
         );
     }
 
@@ -514,26 +512,22 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
         $objB = $content->select()->getDimension('30');
 
-        $this->assertEquals(
-            new SEK('100'),
-            $objB->getAttribute('incoming_balance')
+        $this->assertTrue(
+            $objB->getAttribute('incoming_balance')->equals(new SEK('100'))
         );
 
         $objA = $content->select()->getDimension('20');
 
-        $this->assertEquals(
-            new SEK('100'),
-            $objA->getAttribute('incoming_balance')
+        $this->assertTrue(
+            $objA->getAttribute('incoming_balance')->equals(new SEK('100'))
         );
 
-        $this->assertEquals(
-            new SEK('200'),
-            $objA->getAttribute('incoming_balance[-1]')
+        $this->assertTrue(
+            $objA->getAttribute('incoming_balance[-1]')->equals(new SEK('200'))
         );
 
-        $this->assertEquals(
-            new Amount('1'),
-            $objA->getAttribute('incoming_quantity[-1]')
+        $this->assertTrue(
+            $objA->getAttribute('incoming_quantity[-1]')->equals(new Amount('1'))
         );
     }
 
@@ -690,9 +684,8 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             "
         )->select()->transactions()->asArray();
 
-        $this->assertEquals(
-            new Amount('2.5'),
-            $transactions[0]->getQuantity()
+        $this->assertTrue(
+            $transactions[0]->getQuantity()->equals(new Amount('2.5'))
         );
     }
 
@@ -703,14 +696,12 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             #PBUDGET 0 201608 1920 {} 100 1
         ")->select()->getAccount('1920');
 
-        $this->assertEquals(
-            $account->getAttribute('period_budget_balance[0.201608]'),
-            new SEK('100')
+        $this->assertTrue(
+            $account->getAttribute('period_budget_balance[0.201608]')->equals(new SEK('100'))
         );
 
-        $this->assertEquals(
-            $account->getAttribute('period_budget_quantity[0.201608]'),
-            new Amount('1')
+        $this->assertTrue(
+            $account->getAttribute('period_budget_quantity[0.201608]')->equals(new Amount('1'))
         );
     }
 
@@ -721,14 +712,12 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             #PSALDO 0 201608 1920 {} 100 1
         ")->select()->getAccount('1920');
 
-        $this->assertEquals(
-            $account->getAttribute('period_balance[0.201608]'),
-            new SEK('100')
+        $this->assertTrue(
+            $account->getAttribute('period_balance[0.201608]')->equals(new SEK('100'))
         );
 
-        $this->assertEquals(
-            $account->getAttribute('period_quantity[0.201608]'),
-            new Amount('1')
+        $this->assertTrue(
+            $account->getAttribute('period_quantity[0.201608]')->equals(new Amount('1'))
         );
     }
 
