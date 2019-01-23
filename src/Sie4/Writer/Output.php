@@ -61,7 +61,7 @@ class Output
      */
     public function getContent(): string
     {
-        return iconv("UTF-8", "CP437", $this->content);
+        return (string)iconv("UTF-8", "CP437", $this->content);
     }
 
     /**
@@ -72,7 +72,7 @@ class Output
         return sprintf(
             '"%s"',
             addslashes(
-                preg_replace('/[[:cntrl:]]/', '', $str)
+                (string)preg_replace('/[[:cntrl:]]/', '', $str)
             )
         );
     }

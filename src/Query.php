@@ -367,7 +367,8 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
             $index++;
 
             if ($offset <= $index && $count < $length) {
-                return !!++$count;
+                $count++;
+                return true;
             }
 
             return false;

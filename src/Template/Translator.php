@@ -34,7 +34,7 @@ class Translator
 
     public function __construct(array $translations)
     {
-        $this->translations = array_combine(
+        $this->translations = (array)array_combine(
             array_map(
                 function (string $key): string {
                     return '{' . $key . '}';

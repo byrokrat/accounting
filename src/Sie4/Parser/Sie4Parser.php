@@ -33,14 +33,13 @@ class Sie4Parser extends Grammar
      */
     public function parse($content): Container
     {
-        $content = preg_replace(
+        $this->resetInternalState();
+
+        $content = (string)preg_replace(
             '/[\xFF]/',
             ' ',
-            iconv('CP437', 'UTF-8//IGNORE', $content)
+            (string)iconv('CP437', 'UTF-8//IGNORE', $content)
         );
-
-        $this->parsedItems = [];
-        $this->parsedAttributes = [];
 
         $this->getLogger()->resetLog($content);
 
@@ -54,10 +53,10 @@ class Sie4Parser extends Grammar
         $container = new Container(
             ...array_values($this->getAccountBuilder()->getAccounts()),
             ...array_values($this->getDimensionBuilder()->getDimensions()),
-            ...$this->parsedItems
+            ...$this->getParsedItems()
         );
 
-        foreach ($this->parsedAttributes as $key => $value) {
+        foreach ($this->getParsedAttributes() as $key => $value) {
             $container->setAttribute($key, $value);
         }
 

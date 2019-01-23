@@ -53,12 +53,12 @@ class AbstractParser
     /**
      * @var array
      */
-    protected $parsedItems = [];
+    protected $parsedItems;
 
     /**
      * @var array
      */
-    protected $parsedAttributes = [];
+    protected $parsedAttributes;
 
     public function __construct(
         Logger $logger,
@@ -70,6 +70,23 @@ class AbstractParser
         $this->accountBuilder = $accountBuilder;
         $this->currencyBuilder = $currencyBuilder;
         $this->dimensionBuilder = $dimensionBuilder;
+        $this->resetInternalState();
+    }
+
+    protected function resetInternalState()
+    {
+        $this->parsedAttributes = [];
+        $this->parsedItems = [];
+    }
+
+    protected function getParsedAttributes(): array
+    {
+        return $this->parsedAttributes;
+    }
+
+    protected function getParsedItems(): array
+    {
+        return $this->parsedItems;
     }
 
     protected function getAccountBuilder(): AccountBuilder
