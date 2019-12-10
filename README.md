@@ -10,7 +10,7 @@ Analysis and generation of bookkeeping data according to Swedish standards.
 ## Installation
 
 ```shell
-composer require byrokrat/accounting:^1.0
+composer require byrokrat/accounting
 ```
 
 ## Why?
