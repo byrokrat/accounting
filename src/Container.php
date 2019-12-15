@@ -34,6 +34,9 @@ class Container implements AttributableInterface, QueryableInterface, \IteratorA
      */
     private $items;
 
+    /**
+     * @param array<mixed> ...$items
+     */
     public function __construct(...$items)
     {
         $this->items = $items;

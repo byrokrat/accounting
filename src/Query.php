@@ -48,7 +48,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      *
      * @throws Exception\LogicException If $name already exists
      */
-    public static function macro(string $name, \Closure $macro)
+    public static function macro(string $name, \Closure $macro): void
     {
         if (method_exists(__CLASS__, $name) || isset(self::$macros[$name])) {
             throw new Exception\LogicException("Cannot create macro, $name() does already exist.");
@@ -88,6 +88,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      * Execute macro if defined
      *
      * @throws Exception\LogicException If macro $name is not defined
+     * @return mixed Returns what the macro returns
      */
     public function __call(string $name, array $args)
     {
@@ -184,11 +185,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
             return iterator_count($iter);
         }
 
-        if (is_array($iter)) {
-            return count($iter);
-        }
-
-        return 0;
+        return count($iter);
     }
 
     /**

@@ -29,6 +29,8 @@ interface AttributableInterface
 {
     /**
      * Register attribute
+     *
+     * @param mixed $value
      */
     public function setAttribute(string $key, $value): void;
 
@@ -39,11 +41,16 @@ interface AttributableInterface
 
     /**
      * Read registered attribute
+     *
+     * @param mixed $default
+     * @return mixed
      */
     public function getAttribute(string $key, $default = '');
 
     /**
      * Get the array of all registered attributes
+     *
+     * @return array<string, mixed>
      */
     public function getAttributes(): array;
 }

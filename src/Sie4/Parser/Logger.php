@@ -44,7 +44,7 @@ class Logger
     /**
      * @param string $content The content logged events are related to
      */
-    public function resetLog(string $content = '')
+    public function resetLog(string $content = ''): void
     {
         $this->log = [];
         $this->lineCount = 0;

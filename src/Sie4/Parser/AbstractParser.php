@@ -73,7 +73,7 @@ class AbstractParser
         $this->resetInternalState();
     }
 
-    protected function resetInternalState()
+    protected function resetInternalState(): void
     {
         $this->parsedAttributes = [];
         $this->parsedItems = [];
@@ -158,20 +158,24 @@ class AbstractParser
 
     /**
      * Helper that writes an attribute to an attributable
+     *
+     * @param mixed $value
      */
-    protected function writeAttribute(AttributableInterface $attributable, string $key, $value, string $year = '')
+    protected function writeAttribute(AttributableInterface $attr, string $key, $value, string $year = ''): void
     {
         if ('' == $year || '0' == $year) {
-            $attributable->setAttribute($key, $value);
+            $attr->setAttribute($key, $value);
         }
 
         if ('' != $year) {
-            $attributable->setAttribute("{$key}[$year]", $value);
+            $attr->setAttribute("{$key}[$year]", $value);
         }
     }
 
     /**
      * Assert that $expr is thruthy and log a warning if not
+     *
+     * @param mixed $expr
      */
     protected function assert($expr, string $failureMessage): bool
     {
@@ -186,56 +190,70 @@ class AbstractParser
 
     /**
      * Assert that $expr is an array and log warning if not
+     *
+     * @param mixed $expr
      */
-    protected function assertArray($expr, $failureMessage = 'Expected a set of values'): bool
+    protected function assertArray($expr, string $failureMessage = 'Expected a set of values'): bool
     {
         return $this->assert(is_array($expr), $failureMessage);
     }
 
     /**
      * Assert that $expr is a boolen and log warning if not
+     *
+     * @param mixed $expr
      */
-    protected function assertBool($expr, $failureMessage = 'Expected bool (1 or 0)'): bool
+    protected function assertBool($expr, string $failureMessage = 'Expected bool (1 or 0)'): bool
     {
         return $this->assert(is_bool($expr), $failureMessage);
     }
 
     /**
      * Assert that $expr is an integer and log warning if not
+     *
+     * @param mixed $expr
      */
-    protected function assertInt($expr, $failureMessage = 'Expected integer'): bool
+    protected function assertInt($expr, string $failureMessage = 'Expected integer'): bool
     {
         return $this->assert(is_int($expr), $failureMessage);
     }
 
     /**
      * Assert that $expr is a string and log warning if not
+     *
+     * @param mixed $expr
      */
-    protected function assertString($expr, $failureMessage = 'Expected string'): bool
+    protected function assertString($expr, string $failureMessage = 'Expected string'): bool
     {
         return $this->assert(is_string($expr), $failureMessage);
     }
 
     /**
      * Assert that $expr is an account and log warning if not
+     *
+     * @param mixed $expr
      */
-    protected function assertAccount($expr, $failureMessage = 'Expected account'): bool
+    protected function assertAccount($expr, string $failureMessage = 'Expected account'): bool
     {
         return $this->assert(is_object($expr) && $expr instanceof AccountInterface, $failureMessage);
     }
 
     /**
      * Assert that $expr is a monetary amount and log warning if not
+     *
+     * @param mixed $expr
      */
-    protected function assertAmount($expr, $failureMessage = 'Expected monetary amount'): bool
+    protected function assertAmount($expr, string $failureMessage = 'Expected monetary amount'): bool
     {
         return $this->assert(is_object($expr) && $expr instanceof Currency, $failureMessage);
     }
 
     /**
      * Assert that $expr is a Date and log warning if not
+     *
+     * @param mixed $expr
      */
-    protected function assertDate($expr, $failureMessage = 'Expected date'): bool
+    protected function assertDate($expr, string $failureMessage = 'Expected date'): bool
     {
         return $this->assert(is_object($expr) && $expr instanceof \DateTimeImmutable, $failureMessage);
     }

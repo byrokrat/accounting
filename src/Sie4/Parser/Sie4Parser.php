@@ -30,6 +30,8 @@ class Sie4Parser extends Grammar
      * Parse SIE content
      *
      * Please note that content should be passed in the PC8 charset (code page 437)
+     *
+     * @param string $content
      */
     public function parse($content): Container
     {

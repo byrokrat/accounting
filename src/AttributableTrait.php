@@ -28,7 +28,7 @@ namespace byrokrat\accounting;
 trait AttributableTrait
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $attributes = [];
 
