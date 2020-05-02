@@ -11,6 +11,9 @@
             "email": "hannes.forsgard@fripost.org"
         }
     ],
+    "bin": [
+        "bin/check_sie4_file"
+    ],
     "autoload": {
         "psr-4": {
             "byrokrat\\accounting\\": "src/"
@@ -24,5 +27,8 @@
     "require": {
         "php": "^7.1",
         "byrokrat/amount": "^2"
+    },
+    "require-dev": {
+        "scato/phpeg": "^1"
     }
 }

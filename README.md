@@ -214,38 +214,14 @@ $verifications->select()->uniqueAccounts()->orderById()->each(function ($account
 
 ## Hacking
 
-Install dependencies
+With [composer](https://getcomposer.org/) installed as `composer`
 
 ```shell
-composer install
+make
 ```
 
-Install the bob build environment
+Or use something like
 
 ```shell
-composer global require chh/bob:^1.0@alpha
-```
-
-If needed put the "global" composer bin dir in your path.
-
-```shell
-export PATH=$PATH:$HOME/.composer/vendor/bin/
-```
-
-Install development tools
-
-```shell
-bob install_dev_tools
-```
-
-Build and run tests
-
-```shell
-bob
-```
-
-Check the contents of an sie4 file
-
-```shell
-bob check_sie4_file name=[filename]
+make COMPOSER_CMD=./composer.phar
 ```

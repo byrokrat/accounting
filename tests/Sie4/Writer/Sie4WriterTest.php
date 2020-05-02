@@ -36,6 +36,6 @@ class Sie4WriterTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        $this->assertInternalType('string', (new Sie4Writer)->generateSie($container));
+        $this->assertIsString((new Sie4Writer)->generateSie($container));
     }
 }
