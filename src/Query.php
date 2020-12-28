@@ -185,6 +185,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
             return iterator_count($iter);
         }
 
+        // @phpstan-ignore-next-line
         return count($iter);
     }
 
