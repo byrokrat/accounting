@@ -41,7 +41,10 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             "
         );
 
-        $this->assertRegExp('/invalid line/', implode($parser->getErrorLog()));
+        $this->assertMatchesRegularExpression(
+            '/invalid line/',
+            implode($parser->getErrorLog())
+        );
     }
 
     /**
@@ -126,7 +129,10 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             "#FLAGGA 1 unknown-field-at-end-of-line\n"
         );
 
-        $this->assertRegExp('/unknown field/', implode($parser->getErrorLog()));
+        $this->assertMatchesRegularExpression(
+            '/unknown field/',
+            implode($parser->getErrorLog())
+        );
     }
 
     /**
@@ -143,7 +149,10 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             "
         );
 
-        $this->assertRegExp('/unknown statement/', implode($parser->getErrorLog()));
+        $this->assertMatchesRegularExpression(
+            '/unknown statement/',
+            implode($parser->getErrorLog())
+        );
     }
 
     /**
@@ -223,7 +232,10 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             #VALUTA \"bar{$char}baz\"
         ");
 
-        $this->assertRegExp('/expecting end of file/', implode($parser->getErrorLog()));
+        $this->assertMatchesRegularExpression(
+            '/expecting end of file/',
+            implode($parser->getErrorLog())
+        );
     }
 
     public function testNoticeOnKsumma()
@@ -238,7 +250,10 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             "
         );
 
-        $this->assertRegExp('/Checksum detected but currently not handled/', implode($parser->getErrorLog()));
+        $this->assertMatchesRegularExpression(
+            '/Checksum detected but currently not handled/',
+            implode($parser->getErrorLog())
+        );
     }
 
     public function testKsumm()
@@ -321,7 +336,10 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             "
         );
 
-        $this->assertRegExp('/Unknown charset/', implode($parser->getErrorLog()));
+        $this->assertMatchesRegularExpression(
+            '/Unknown charset/',
+            implode($parser->getErrorLog())
+        );
     }
 
     /**
@@ -354,7 +372,10 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             "
         );
 
-        $this->assertRegExp('/Overwriting previously created account/', implode($parser->getErrorLog()));
+        $this->assertMatchesRegularExpression(
+            '/Overwriting previously created account/',
+            implode($parser->getErrorLog())
+        );
     }
 
     public function testEnhet()
@@ -394,7 +415,10 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             "
         );
 
-        $this->assertRegExp('/Expected account/', implode($parser->getErrorLog()));
+        $this->assertMatchesRegularExpression(
+            '/Expected account/',
+            implode($parser->getErrorLog())
+        );
     }
 
     public function testWarningOnMissingSruNumber()
@@ -408,7 +432,10 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             "
         );
 
-        $this->assertRegExp('/Expected SRU code/', implode($parser->getErrorLog()));
+        $this->assertMatchesRegularExpression(
+            '/Expected SRU code/',
+            implode($parser->getErrorLog())
+        );
     }
 
     public function testObjectType()
@@ -462,7 +489,10 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             "
         );
 
-        $this->assertRegExp('/Overwriting previously created dimension/', implode($parser->getErrorLog()));
+        $this->assertMatchesRegularExpression(
+            '/Overwriting previously created dimension/',
+            implode($parser->getErrorLog())
+        );
     }
 
     public function testWarningOnObjectDuplication()
@@ -477,7 +507,10 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             "
         );
 
-        $this->assertRegExp('/Overwriting previously created object/', implode($parser->getErrorLog()));
+        $this->assertMatchesRegularExpression(
+            '/Overwriting previously created object/',
+            implode($parser->getErrorLog())
+        );
     }
 
     /**
@@ -667,7 +700,10 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             "
         );
 
-        $this->assertRegExp('/Expected monetary amount/', implode($parser->getErrorLog()));
+        $this->assertMatchesRegularExpression(
+            '/Expected monetary amount/',
+            implode($parser->getErrorLog())
+        );
     }
 
     public function testSkippingOverOptionalArguments()

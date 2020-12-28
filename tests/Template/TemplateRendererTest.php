@@ -16,6 +16,8 @@ use byrokrat\amount\Amount;
  */
 class TemplateRendererTest extends \PHPUnit\Framework\TestCase
 {
+    use \Prophecy\PhpUnit\ProphecyTrait;
+
     public function testTranslations()
     {
         $template = $this->prophesize(VerificationTemplate::CLASS);

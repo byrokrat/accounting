@@ -12,6 +12,8 @@ use byrokrat\amount\Amount;
 
 class QueryTest extends \PHPUnit\Framework\TestCase
 {
+    use \Prophecy\PhpUnit\ProphecyTrait;
+
     public function testInvalidConstructorArgument()
     {
         $this->expectException(Exception\LogicException::CLASS);

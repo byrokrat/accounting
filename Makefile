@@ -1,7 +1,7 @@
 COMPOSER_CMD=composer
 PHIVE_CMD=phive
 
-PHPUNIT_CMD=tools/phpunit
+PHPUNIT_CMD=vendor/bin/phpunit
 README_TESTER_CMD=tools/readme-tester
 PHPSTAN_CMD=tools/phpstan
 PHPCS_CMD=tools/phpcs
@@ -66,7 +66,7 @@ tools/installed:
 	$(PHIVE_CMD) install --force-accept-unsigned --trust-gpg-keys 4AA394086372C20A,CF1A108D0E7AE720,0FD3A3029E470F86
 	touch $@
 
-$(PHPUNIT_CMD): tools/installed
+$(PHPUNIT_CMD): vendor/installed
 $(README_TESTER_CMD): tools/installed
 $(PHPSTAN_CMD): tools/installed
 $(PHPCS_CMD): tools/installed

@@ -11,7 +11,7 @@ use byrokrat\accounting\Container;
  *
  * @see http://www.sie.se/?page_id=125 Example files downloaded 2016-08-22
  */
-class Sie4IntegrationTest extends \PHPUnit\Framework\TestCase
+class ParserIntegrationTest extends \PHPUnit\Framework\TestCase
 {
     public function fileInfoProvider()
     {

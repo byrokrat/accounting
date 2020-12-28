@@ -25,7 +25,11 @@
         }
     },
     "require": {
-        "php": "^7.2 || ^8.0",
+        "php": "^7.3 || ^8.0",
         "byrokrat/amount": "^2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9",
+        "phpspec/prophecy-phpunit": "^2"
     }
 }

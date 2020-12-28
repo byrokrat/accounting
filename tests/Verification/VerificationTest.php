@@ -15,6 +15,7 @@ use Prophecy\Argument;
 
 class VerificationTest extends \PHPUnit\Framework\TestCase
 {
+    use \Prophecy\PhpUnit\ProphecyTrait;
     use AttributableTestTrait;
 
     protected function getAttributableToTest(): AttributableInterface

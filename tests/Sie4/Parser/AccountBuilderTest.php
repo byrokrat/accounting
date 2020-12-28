@@ -15,6 +15,8 @@ use Prophecy\Argument;
  */
 class AccountBuilderTest extends \PHPUnit\Framework\TestCase
 {
+    use \Prophecy\PhpUnit\ProphecyTrait;
+
     public function testCreateAccount()
     {
         $account = $this->createMock(AccountInterface::CLASS);

@@ -43,12 +43,12 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 
         $logger->log('error', 'bar');
 
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             "/(1: line A)/",
             $logger->getLog()[0]
         );
 
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             "/(2: line B)/",
             $logger->getLog()[1]
         );
@@ -59,7 +59,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 
         $logger->log('error', 'bar');
 
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             "/(1: line D)/",
             $logger->getLog()[0]
         );

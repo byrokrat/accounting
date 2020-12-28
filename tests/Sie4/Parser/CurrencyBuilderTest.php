@@ -11,6 +11,8 @@ use byrokrat\amount\Currency;
  */
 class CurrencyBuilderTest extends \PHPUnit\Framework\TestCase
 {
+    use \Prophecy\PhpUnit\ProphecyTrait;
+
     public function testCreateMoney()
     {
         $currencyBuilder = new CurrencyBuilder(

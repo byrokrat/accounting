@@ -9,6 +9,8 @@ namespace byrokrat\accounting\Sie4\Parser;
  */
 class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
 {
+    use \Prophecy\PhpUnit\ProphecyTrait;
+
     public function testCreateAndGetDimension()
     {
         $dimensionBuilder = new DimensionBuilder(
