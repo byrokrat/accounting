@@ -46,7 +46,7 @@ docs: vendor/installed $(SIE4_GRAMMAR) $(README_TESTER_CMD)
 analyze: phpstan phpcs
 
 phpstan: vendor/installed $(PHPSTAN_CMD)
-	$(PHPSTAN_CMD) analyze -c phpstan.neon -l 7 src
+	$(PHPSTAN_CMD) analyze -c phpstan.neon -l 8 src
 
 phpcs: $(PHPCS_CMD)
 	$(PHPCS_CMD)
@@ -63,7 +63,7 @@ vendor/installed: composer.lock
 	touch $@
 
 tools/installed:
-	$(PHIVE_CMD) install --force-accept-unsigned --trust-gpg-keys 4AA394086372C20A,0FD3A3029E470F86
+	$(PHIVE_CMD) install --force-accept-unsigned --trust-gpg-keys 4AA394086372C20A,CF1A108D0E7AE720,0FD3A3029E470F86
 	touch $@
 
 $(PHPUNIT_CMD): tools/installed

@@ -31,6 +31,8 @@ use byrokrat\amount\Amount;
 
 /**
  * Filter and iterate over collections of accounting objects
+ *
+ * @implements \IteratorAggregate<mixed>
  */
 class Query implements QueryableInterface, \IteratorAggregate, \Countable
 {
@@ -186,7 +188,6 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
             return iterator_count($iter);
         }
 
-        // @phpstan-ignore-next-line
         return count($iter);
     }
 
@@ -305,6 +306,8 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
 
     /**
      * Get iterator for items currently in query
+     *
+     * @return iterable<mixed>
      */
     public function getIterator(): iterable
     {

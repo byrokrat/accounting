@@ -25,13 +25,15 @@ namespace byrokrat\accounting;
 
 /**
  * A container is a queryable and attributable keeper of bookkeeping objects
+ *
+ * @implements \IteratorAggregate<mixed>
  */
 class Container implements AttributableInterface, QueryableInterface, \IteratorAggregate
 {
     use AttributableTrait;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     private $items;
 
@@ -43,11 +45,17 @@ class Container implements AttributableInterface, QueryableInterface, \IteratorA
         $this->items = $items;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getItems(): array
     {
         return $this->items;
     }
 
+    /**
+     * @return iterable<mixed>
+     */
     public function getIterator(): iterable
     {
         yield from $this->getItems();
