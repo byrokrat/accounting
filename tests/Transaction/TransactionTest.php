@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Transaction;
 
@@ -19,7 +19,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     {
         return new Transaction(
             0,
-            new \DateTimeImmutable,
+            new \DateTimeImmutable(),
             '',
             '',
             new Amount('0'),
@@ -32,7 +32,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     {
         $trans = new Transaction(
             999,
-            new \DateTimeImmutable,
+            new \DateTimeImmutable(),
             '',
             '',
             new Amount('0'),
@@ -47,7 +47,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     {
         $trans = new Transaction(
             999,
-            $date = new \DateTimeImmutable,
+            $date = new \DateTimeImmutable(),
             '',
             '',
             new Amount('0'),
@@ -62,7 +62,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     {
         $trans = new Transaction(
             0,
-            new \DateTimeImmutable,
+            new \DateTimeImmutable(),
             'desc',
             '',
             new Amount('0'),
@@ -77,7 +77,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     {
         $trans = new Transaction(
             0,
-            new \DateTimeImmutable,
+            new \DateTimeImmutable(),
             '',
             'sign',
             new Amount('0'),
@@ -92,7 +92,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     {
         $trans = new Transaction(
             0,
-            new \DateTimeImmutable,
+            new \DateTimeImmutable(),
             '',
             '',
             $amount = new Amount('100'),
@@ -107,7 +107,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     {
         $trans = new Transaction(
             0,
-            new \DateTimeImmutable,
+            new \DateTimeImmutable(),
             '',
             '',
             new Amount('0'),
@@ -122,7 +122,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     {
         $trans = new Transaction(
             0,
-            new \DateTimeImmutable,
+            new \DateTimeImmutable(),
             '',
             '',
             new Amount('0'),
@@ -137,7 +137,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     {
         $trans = new Transaction(
             0,
-            new \DateTimeImmutable,
+            new \DateTimeImmutable(),
             '',
             '',
             new Amount('0'),
@@ -154,7 +154,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     {
         $trans = new Transaction(
             0,
-            new \DateTimeImmutable,
+            new \DateTimeImmutable(),
             '',
             '',
             $amount = new Amount('0'),

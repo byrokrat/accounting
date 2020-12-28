@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat/accounting.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
@@ -31,7 +32,7 @@ class DateFactory
 
     public function __construct(\DateTimeImmutable $now = null)
     {
-        $this->now = $now ?: new \DateTimeImmutable;
+        $this->now = $now ?: new \DateTimeImmutable();
     }
 
     public function createDate(string $rawDate): \DateTimeImmutable

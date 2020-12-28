@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat/accounting.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting;
 
@@ -96,7 +97,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
             return self::$macros[$name]->call($this, ...$args);
         }
 
-        throw new Exception\LogicException("Call to undefined method ".__CLASS__."::$name()");
+        throw new Exception\LogicException("Call to undefined method " . __CLASS__ . "::$name()");
     }
 
     /**
@@ -151,7 +152,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      */
     public function asSummary(): Summary
     {
-        $summary = new Summary;
+        $summary = new Summary();
 
         foreach ($this->transactions()->getIterator() as $transaction) {
             $summary->addAmount($transaction->getAmount());

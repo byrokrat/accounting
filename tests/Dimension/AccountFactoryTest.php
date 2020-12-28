@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Dimension;
 
@@ -24,7 +24,7 @@ class AccountFactoryTest extends \PHPUnit\Framework\TestCase
      */
     public function testAccountTypes(string $number, string $desc, string $expectedClass)
     {
-        $account = (new AccountFactory)->createAccount($number, $desc);
+        $account = (new AccountFactory())->createAccount($number, $desc);
 
         $this->assertInstanceOf(
             $expectedClass,
@@ -44,7 +44,7 @@ class AccountFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testMultipleAccounts()
     {
-        $accounts = (new AccountFactory)->createAccounts([
+        $accounts = (new AccountFactory())->createAccounts([
             '1000' => 'foo',
             '2000' => 'bar'
         ]);

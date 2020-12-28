@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
@@ -12,7 +12,7 @@ class SekMoneyFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(
             new SEK('999'),
-            (new SekMoneyFactory)->createMoney('999')
+            (new SekMoneyFactory())->createMoney('999')
         );
     }
 }

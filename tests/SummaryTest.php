@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting;
 
@@ -125,14 +125,14 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     public function testExceptionOnGetMagnitudeWithoutBalance()
     {
         $this->expectException(Exception\RuntimeException::CLASS);
-        $summary = new Summary;
+        $summary = new Summary();
         $summary->addAmount(new Amount('5'));
         $summary->getMagnitude();
     }
 
     public function testWithoutIncomingBalance()
     {
-        $summary = new Summary;
+        $summary = new Summary();
 
         $summary->addAmount(new Amount('5'));
         $summary->addAmount(new Amount('-5'));
@@ -163,6 +163,6 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     public function testExceptionOnUninitializedSummaries()
     {
         $this->expectException(Exception\RuntimeException::CLASS);
-        (new Summary)->getMagnitude();
+        (new Summary())->getMagnitude();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting;
 
@@ -10,7 +10,7 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
 
     protected function getAttributableToTest(): AttributableInterface
     {
-        return new Container;
+        return new Container();
     }
 
     public function testGetItems()

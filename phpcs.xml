@@ -1,8 +1,13 @@
 <?xml version="1.0"?>
 <ruleset>
+    <rule ref="PSR12"/>
+
+    <file>./bin</file>
+    <file>./integrations</file>
     <file>./src</file>
     <file>./tests</file>
-    <file>./integrations</file>
+
     <exclude-pattern>./src/Sie4/Parser/Grammar.php</exclude-pattern>
-    <rule ref="PSR2"/>
+
+    <arg name="colors"/>
 </ruleset>

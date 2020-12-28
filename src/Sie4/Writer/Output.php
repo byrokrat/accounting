@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat/accounting.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Writer;
 
@@ -30,7 +31,7 @@ class Output
     /**
      * End of line chars used
      */
-    const EOL = "\r\n";
+    public const EOL = "\r\n";
 
     /**
      * @var string

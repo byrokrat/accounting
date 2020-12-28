@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Verification;
 
@@ -19,21 +19,21 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
 
     protected function getAttributableToTest(): AttributableInterface
     {
-        return new Verification(0, new \DateTimeImmutable, new \DateTimeImmutable, '', '');
+        return new Verification(0, new \DateTimeImmutable(), new \DateTimeImmutable(), '', '');
     }
 
     public function testId()
     {
         $this->assertSame(
             1,
-            (new Verification(1, new \DateTimeImmutable, new \DateTimeImmutable, '', ''))->getVerificationId()
+            (new Verification(1, new \DateTimeImmutable(), new \DateTimeImmutable(), '', ''))->getVerificationId()
         );
     }
 
     public function testDates()
     {
-        $transactionDate = new \DateTimeImmutable;
-        $registrationDate = new \DateTimeImmutable;
+        $transactionDate = new \DateTimeImmutable();
+        $registrationDate = new \DateTimeImmutable();
 
         $ver = new Verification(0, $transactionDate, $registrationDate, '', '');
 
@@ -45,7 +45,7 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             'desc',
-            (new Verification(0, new \DateTimeImmutable, new \DateTimeImmutable, 'desc', ''))->getDescription()
+            (new Verification(0, new \DateTimeImmutable(), new \DateTimeImmutable(), 'desc', ''))->getDescription()
         );
     }
 
@@ -53,7 +53,7 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             'sign',
-            (new Verification(0, new \DateTimeImmutable, new \DateTimeImmutable, '', 'sign'))->getSignature()
+            (new Verification(0, new \DateTimeImmutable(), new \DateTimeImmutable(), '', 'sign'))->getSignature()
         );
     }
 
@@ -62,7 +62,7 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         $transA = $this->createMock(TransactionInterface::CLASS);
         $transB = $this->createMock(TransactionInterface::CLASS);
 
-        $ver = new Verification(0, new \DateTimeImmutable, new \DateTimeImmutable, '', '', $transA, $transB);
+        $ver = new Verification(0, new \DateTimeImmutable(), new \DateTimeImmutable(), '', '', $transA, $transB);
 
         $this->assertSame(
             [$transA, $transB],
@@ -101,7 +101,14 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
             $transactions[] = $trans->reveal();
         }
 
-        $verification = new Verification(0, new \DateTimeImmutable, new \DateTimeImmutable, '', '', ...$transactions);
+        $verification = new Verification(
+            0,
+            new \DateTimeImmutable(),
+            new \DateTimeImmutable(),
+            '',
+            '',
+            ...$transactions
+        );
 
         $this->assertSame($balanced, $verification->isBalanced());
 
@@ -116,7 +123,14 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         $trans->getAmount()->willReturn(new Amount('100'));
         $trans->isDeleted()->willReturn(true);
 
-        $verification = new Verification(0, new \DateTimeImmutable, new \DateTimeImmutable, '', '', $trans->reveal());
+        $verification = new Verification(
+            0,
+            new \DateTimeImmutable(),
+            new \DateTimeImmutable(),
+            '',
+            '',
+            $trans->reveal()
+        );
 
         $this->assertSame(0, $verification->getMagnitude()->getInt());
     }
@@ -127,7 +141,14 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         $trans->getAmount()->willReturn(new Amount('100'));
         $trans->isDeleted()->willReturn(false);
 
-        $verification = new Verification(0, new \DateTimeImmutable, new \DateTimeImmutable, '', '', $trans->reveal());
+        $verification = new Verification(
+            0,
+            new \DateTimeImmutable(),
+            new \DateTimeImmutable(),
+            '',
+            '',
+            $trans->reveal()
+        );
 
         $this->expectException(RuntimeException::CLASS);
         $verification->getMagnitude();
@@ -136,7 +157,17 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
     public function testQueryable()
     {
         $trans = $this->createMock(TransactionInterface::CLASS);
-        $ver = new Verification(0, new \DateTimeImmutable, new \DateTimeImmutable, 'Verification', '', $trans, $trans);
+
+        $ver = new Verification(
+            0,
+            new \DateTimeImmutable(),
+            new \DateTimeImmutable(),
+            'Verification',
+            '',
+            $trans,
+            $trans
+        );
+
         $this->assertEquals(new Query([$trans, $trans]), $ver->select());
     }
 }

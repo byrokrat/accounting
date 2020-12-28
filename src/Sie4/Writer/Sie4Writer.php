@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat/accounting.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Writer;
 
@@ -59,7 +60,7 @@ class Sie4Writer
      */
     public function generateSie(Container $container, \DateTimeInterface $generationDate = null): string
     {
-        $output = new Output;
+        $output = new Output();
 
         $output->writeln('#FLAGGA 0');
         $output->writeln('#SIETYP 4');
@@ -73,7 +74,7 @@ class Sie4Writer
 
         $output->writeln(
             '#GEN %s %s',
-            ($generationDate ?: new \DateTime)->format('Ymd'),
+            ($generationDate ?: new \DateTime())->format('Ymd'),
             $container->getAttribute('generating_user')
         );
 

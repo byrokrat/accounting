@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat/accounting.
  *
@@ -17,6 +18,8 @@
  *
  * Copyright 2016-20 Hannes Forsgård
  */
+
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Exception;
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat/accounting.
  *
@@ -25,10 +26,10 @@ namespace byrokrat\accounting\Dimension;
  */
 interface AccountInterface extends DimensionInterface
 {
-    const TYPE_ASSET = 'ASSET';
-    const TYPE_COST = 'COST';
-    const TYPE_DEBT = 'DEBT';
-    const TYPE_EARNING = 'EARNING';
+    public const TYPE_ASSET = 'ASSET';
+    public const TYPE_COST = 'COST';
+    public const TYPE_DEBT = 'DEBT';
+    public const TYPE_EARNING = 'EARNING';
 
     /**
      * Get account type identifier

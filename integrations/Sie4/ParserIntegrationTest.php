@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
@@ -53,7 +53,7 @@ class Sie4IntegrationTest extends \PHPUnit\Framework\TestCase
 
     private function parse(string $content): array
     {
-        $parser = (new Sie4ParserFactory)->createParser();
+        $parser = (new Sie4ParserFactory())->createParser();
 
         return [$parser->parse($content), $parser->getErrorLog()];
     }

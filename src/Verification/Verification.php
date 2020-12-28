@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat/accounting.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Verification;
 
@@ -84,7 +85,7 @@ class Verification implements VerificationInterface
         $this->description = $description;
         $this->signature = $signature;
         $this->transactions = $transactions;
-        $this->summary = new Summary;
+        $this->summary = new Summary();
 
         foreach ($transactions as $transaction) {
             // Validate currency

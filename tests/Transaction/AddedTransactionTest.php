@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Transaction;
 
@@ -14,7 +14,7 @@ class AddedTransactionTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(
             (new AddedTransaction(
                 0,
-                new \DateTimeImmutable,
+                new \DateTimeImmutable(),
                 '',
                 '',
                 new Amount('0'),

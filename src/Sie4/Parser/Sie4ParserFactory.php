@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat/accounting.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
@@ -28,11 +29,11 @@ class Sie4ParserFactory
 {
     public function createParser(): Sie4Parser
     {
-        $logger = new Logger;
+        $logger = new Logger();
 
         return new Sie4Parser(
             $logger,
-            new AccountBuilder(new AccountFactory, $logger),
+            new AccountBuilder(new AccountFactory(), $logger),
             new CurrencyBuilder($logger),
             new DimensionBuilder($logger)
         );

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
@@ -13,7 +13,7 @@ class Sie4ParserFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertInstanceOf(
             Sie4Parser::CLASS,
-            (new Sie4ParserFactory)->createParser()
+            (new Sie4ParserFactory())->createParser()
         );
     }
 }

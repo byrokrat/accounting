@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Processor;
 
@@ -17,14 +17,14 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
         $account = new CostAccount('1000');
         $dim = new Dimension('2000');
 
-        $date = new \DateTimeImmutable;
+        $date = new \DateTimeImmutable();
 
         $transA = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, $dim);
         $transB = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, $dim);
 
         $container = new Container($transA, $transB);
 
-        (new TransactionProcessor)->processContainer($container);
+        (new TransactionProcessor())->processContainer($container);
 
         $this->assertEquals(
             [$transA, $transB],
@@ -36,7 +36,7 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
             $dim->getAttribute('transactions')
         );
 
-        (new TransactionProcessor)->processContainer($container);
+        (new TransactionProcessor())->processContainer($container);
 
         $this->assertEquals(
             [$transA, $transB],
@@ -49,14 +49,14 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
         $account = new CostAccount('1000');
         $dim = new Dimension('2000');
 
-        $date = new \DateTimeImmutable;
+        $date = new \DateTimeImmutable();
 
         $transA = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, $dim);
         $transB = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, $dim);
 
         $container = new Container($transA, $transB);
 
-        (new TransactionProcessor)->processContainer($container);
+        (new TransactionProcessor())->processContainer($container);
 
         $this->assertTrue(
             $account->getAttribute('summary')->getOutgoingBalance()->equals(new Amount('200'))
@@ -66,7 +66,7 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
             $dim->getAttribute('summary')->getOutgoingBalance()->equals(new Amount('200'))
         );
 
-        (new TransactionProcessor)->processContainer($container);
+        (new TransactionProcessor())->processContainer($container);
 
         $this->assertTrue(
             $account->getAttribute('summary')->getOutgoingBalance()->equals(new Amount('200'))
@@ -78,14 +78,14 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
         $account = new CostAccount('1000');
         $dim = new Dimension('2000');
 
-        $date = new \DateTimeImmutable;
+        $date = new \DateTimeImmutable();
 
         $transA = new Transaction(0, $date, '', '', new Amount('0'), new Amount('1'), $account, $dim);
         $transB = new Transaction(0, $date, '', '', new Amount('0'), new Amount('1'), $account, $dim);
 
         $container = new Container($transA, $transB);
 
-        (new TransactionProcessor)->processContainer($container);
+        (new TransactionProcessor())->processContainer($container);
 
         $this->assertTrue(
             $account->getAttribute('quantity_summary')->getOutgoingBalance()->equals(new Amount('2'))
@@ -95,7 +95,7 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
             $dim->getAttribute('quantity_summary')->getOutgoingBalance()->equals(new Amount('2'))
         );
 
-        (new TransactionProcessor)->processContainer($container);
+        (new TransactionProcessor())->processContainer($container);
 
         $this->assertTrue(
             $account->getAttribute('quantity_summary')->getOutgoingBalance()->equals(new Amount('2'))

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat/accounting.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Dimension;
 
@@ -103,6 +104,6 @@ class Dimension implements DimensionInterface
 
     public function select(): Query
     {
-        return $this->hasParent() ? new Query([$this->getParent()]) : new Query;
+        return $this->hasParent() ? new Query([$this->getParent()]) : new Query();
     }
 }

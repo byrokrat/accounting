@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Writer;
 
@@ -21,7 +21,7 @@ class OutputTest extends \PHPUnit\Framework\TestCase
      */
     public function testWrite($format, $args, $expected)
     {
-        $output = new Output;
+        $output = new Output();
         $output->write($format, ...$args);
         $this->assertSame(
             $expected,
@@ -34,7 +34,7 @@ class OutputTest extends \PHPUnit\Framework\TestCase
      */
     public function testWriteln($format, $args, $expected)
     {
-        $output = new Output;
+        $output = new Output();
         $output->writeln($format, ...$args);
         $this->assertSame(
             $expected . Output::EOL,
@@ -44,7 +44,7 @@ class OutputTest extends \PHPUnit\Framework\TestCase
 
     public function testCharsetConversion()
     {
-        $output = new Output;
+        $output = new Output();
         $output->write('åäö');
         $this->assertSame(
             iconv("UTF-8", "CP437", 'åäö'),

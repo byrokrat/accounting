@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
@@ -47,7 +47,7 @@ class AccountBuilderTest extends \PHPUnit\Framework\TestCase
     public function testWarningOnFailureCreatingAccount()
     {
         $accountFactory = $this->prophesize(AccountFactory::CLASS);
-        $accountFactory->createAccount('1234', 'foobar')->willThrow(new Exception\RuntimeException);
+        $accountFactory->createAccount('1234', 'foobar')->willThrow(new Exception\RuntimeException());
 
         $logger = $this->prophesize(Logger::CLASS);
         $logger->log('warning', Argument::any())->shouldBeCalled();
@@ -59,7 +59,7 @@ class AccountBuilderTest extends \PHPUnit\Framework\TestCase
     public function testExceptionOnFailureGettingAccount()
     {
         $accountFactory = $this->prophesize(AccountFactory::CLASS);
-        $accountFactory->createAccount('1234', 'UNSPECIFIED')->willThrow(new Exception\RuntimeException);
+        $accountFactory->createAccount('1234', 'UNSPECIFIED')->willThrow(new Exception\RuntimeException());
 
         $logger = $this->prophesize(Logger::CLASS);
 

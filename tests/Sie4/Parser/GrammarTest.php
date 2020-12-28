@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
@@ -24,7 +24,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
      */
     private function parse(string $content): Container
     {
-        return (new Sie4ParserFactory)->createParser()->parse($content);
+        return (new Sie4ParserFactory())->createParser()->parse($content);
     }
 
     /**
@@ -32,7 +32,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
      */
     public function testLabelRequired()
     {
-        $parser = (new Sie4ParserFactory)->createParser();
+        $parser = (new Sie4ParserFactory())->createParser();
 
         $parser->parse(
             "
@@ -120,7 +120,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
      */
     public function testUnknownFieldsAtEndOfLine()
     {
-        $parser = (new Sie4ParserFactory)->createParser();
+        $parser = (new Sie4ParserFactory())->createParser();
 
         $parser->parse(
             "#FLAGGA 1 unknown-field-at-end-of-line\n"
@@ -134,7 +134,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
      */
     public function testUnknownLabels()
     {
-        $parser = (new Sie4ParserFactory)->createParser();
+        $parser = (new Sie4ParserFactory())->createParser();
 
         $parser->parse(
             "
@@ -216,7 +216,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
      */
     public function testStringTypeInvalidChars(string $char)
     {
-        $parser = (new Sie4ParserFactory)->createParser();
+        $parser = (new Sie4ParserFactory())->createParser();
 
         $parser->parse("
             #FLAGGA 1
@@ -228,7 +228,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
     public function testNoticeOnKsumma()
     {
-        $parser = (new Sie4ParserFactory)->createParser();
+        $parser = (new Sie4ParserFactory())->createParser();
 
         $parser->parse(
             "
@@ -278,8 +278,8 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
                 'generating_program' => 'byrokrat',
                 'generating_program_version' => '1.0',
                 'description' => 'foo bar baz',
-                'financial_year[0]' =>[new \DateTimeImmutable('20160101'), new \DateTimeImmutable('20161231')],
-                'financial_year[-1]' =>[new \DateTimeImmutable('20150101'), new \DateTimeImmutable('20151231')],
+                'financial_year[0]' => [new \DateTimeImmutable('20160101'), new \DateTimeImmutable('20161231')],
+                'financial_year[-1]' => [new \DateTimeImmutable('20150101'), new \DateTimeImmutable('20151231')],
                 'sie_version' => 4,
                 'taxation_year' => 2016,
                 'currency' => 'EUR',
@@ -312,7 +312,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
      */
     public function testErrorOnInvalidCharset()
     {
-        $parser = (new Sie4ParserFactory)->createParser();
+        $parser = (new Sie4ParserFactory())->createParser();
 
         $parser->parse(
             "
@@ -344,7 +344,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
     public function testWarningOnAccountDuplication()
     {
-        $parser = (new Sie4ParserFactory)->createParser();
+        $parser = (new Sie4ParserFactory())->createParser();
 
         $parser->parse(
             "
@@ -385,7 +385,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
     public function testWarningOnMissingSruAccount()
     {
-        $parser = (new Sie4ParserFactory)->createParser();
+        $parser = (new Sie4ParserFactory())->createParser();
 
         $parser->parse(
             "
@@ -399,7 +399,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
     public function testWarningOnMissingSruNumber()
     {
-        $parser = (new Sie4ParserFactory)->createParser();
+        $parser = (new Sie4ParserFactory())->createParser();
 
         $parser->parse(
             "
@@ -452,7 +452,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
     public function testWarningOnDimensionDuplication()
     {
-        $parser = (new Sie4ParserFactory)->createParser();
+        $parser = (new Sie4ParserFactory())->createParser();
 
         $parser->parse(
             "
@@ -467,7 +467,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
     public function testWarningOnObjectDuplication()
     {
-        $parser = (new Sie4ParserFactory)->createParser();
+        $parser = (new Sie4ParserFactory())->createParser();
 
         $parser->parse(
             "
@@ -606,7 +606,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
     public function testParserResetsBetweenRuns()
     {
-        $parser = (new Sie4ParserFactory)->createParser();
+        $parser = (new Sie4ParserFactory())->createParser();
 
         $parser->parse("
             #FLAGGA 1
@@ -655,7 +655,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
     public function testWarningOnMissingTransactionAmont()
     {
-        $parser = (new Sie4ParserFactory)->createParser();
+        $parser = (new Sie4ParserFactory())->createParser();
 
         $parser->parse(
             "

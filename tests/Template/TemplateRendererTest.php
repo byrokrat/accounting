@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
@@ -38,7 +38,7 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
     {
         list($template, $translator) = $mocks;
 
-        $date = new \DateTimeImmutable;
+        $date = new \DateTimeImmutable();
         $dateFactory = $this->prophesize(DateFactory::CLASS);
         $dateFactory->createDate('foo')->willReturn($date);
         $dateFactory->createDate('')->willReturn($date);
@@ -129,7 +129,7 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
             ]
         ]);
 
-        $ver = (new TemplateRenderer(new Container))->render($template, new Translator([]));
+        $ver = (new TemplateRenderer(new Container()))->render($template, new Translator([]));
 
         $this->assertSame('bar', $ver->getAttribute('foo'));
     }

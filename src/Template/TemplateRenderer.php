@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat/accounting.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
@@ -52,8 +53,8 @@ class TemplateRenderer
         DateFactory $dateFactory = null
     ) {
         $this->dimensionQuery = $container->select();
-        $this->moneyFactory = $moneyFactory ?: new SekMoneyFactory;
-        $this->dateFactory = $dateFactory ?: new DateFactory;
+        $this->moneyFactory = $moneyFactory ?: new SekMoneyFactory();
+        $this->dateFactory = $dateFactory ?: new DateFactory();
     }
 
     public function render(VerificationTemplate $template, Translator $translator): VerificationInterface

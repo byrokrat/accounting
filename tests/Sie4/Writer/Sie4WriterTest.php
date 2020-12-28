@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Writer;
 
@@ -20,13 +20,13 @@ class Sie4WriterTest extends \PHPUnit\Framework\TestCase
         $container = new Container(
             new Verification(
                 1,
-                new \DateTimeImmutable,
-                new \DateTimeImmutable,
+                new \DateTimeImmutable(),
+                new \DateTimeImmutable(),
                 'desc',
                 'signature',
                 new Transaction(
                     1,
-                    new \DateTimeImmutable,
+                    new \DateTimeImmutable(),
                     'desc',
                     'signature',
                     new Amount('100'),
@@ -36,6 +36,6 @@ class Sie4WriterTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        $this->assertIsString((new Sie4Writer)->generateSie($container));
+        $this->assertIsString((new Sie4Writer())->generateSie($container));
     }
 }

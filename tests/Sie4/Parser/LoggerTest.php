@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
@@ -13,7 +13,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 {
     public function testLogEvents()
     {
-        $logger = new Logger;
+        $logger = new Logger();
 
         $this->assertEmpty($logger->getLog());
 
@@ -31,7 +31,7 @@ class LoggerTest extends \PHPUnit\Framework\TestCase
 
     public function testLineCount()
     {
-        $logger = new Logger;
+        $logger = new Logger();
 
         $logger->resetLog("line A\nline B\nline C");
 
