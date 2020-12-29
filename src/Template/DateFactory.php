@@ -25,10 +25,7 @@ namespace byrokrat\accounting\Template;
 
 class DateFactory
 {
-    /**
-     * @var \DateTimeImmutable
-     */
-    private $now;
+    private \DateTimeImmutable $now;
 
     public function __construct(\DateTimeImmutable $now = null)
     {

@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
+use byrokrat\accounting\Exception\RuntimeException;
 use byrokrat\accounting\Transaction\Transaction;
 use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\accounting\Verification\Verification;
@@ -32,20 +33,9 @@ use byrokrat\amount\Amount;
 
 class TemplateRenderer
 {
-    /**
-     * @var Query
-     */
-    private $dimensionQuery;
-
-    /**
-     * @var MoneyFactoryInterface
-     */
-    private $moneyFactory;
-
-    /**
-     * @var DateFactory
-     */
-    private $dateFactory;
+    private Query $dimensionQuery;
+    private MoneyFactoryInterface $moneyFactory;
+    private DateFactory $dateFactory;
 
     public function __construct(
         QueryableInterface $container,
@@ -62,9 +52,9 @@ class TemplateRenderer
         $data = $translator->translate($template->getValues());
 
         $relations = new Translator([
-            'verification_transaction_date' => (string)($data['transaction_date'] ?? ''),
-            'verification_description' => (string)($data['description'] ?? ''),
-            'verification_signature' => (string)($data['signature'] ?? ''),
+            'verification_transaction_date' => $this->stringify($data['transaction_date'] ?? ''),
+            'verification_description' => $this->stringify($data['description'] ?? ''),
+            'verification_signature' => $this->stringify($data['signature'] ?? ''),
         ]);
 
         $data = $relations->translate($data);
@@ -79,7 +69,7 @@ class TemplateRenderer
             }
 
             $transactions[] = new Transaction(
-                (int)($data['id'] ?? ''),
+                (int)$this->stringify($data['id'] ?? ''),
                 $this->dateFactory->createDate((string)($transData['transaction_date'] ?? '')),
                 (string)($transData['description'] ?? ''),
                 (string)($transData['signature'] ?? ''),
@@ -91,11 +81,11 @@ class TemplateRenderer
         }
 
         $verification =  new Verification(
-            (int)($data['id'] ?? ''),
-            $this->dateFactory->createDate((string)($data['transaction_date'] ?? '')),
-            $this->dateFactory->createDate((string)($data['registration_date'] ?? '')),
-            (string)($data['description'] ?? ''),
-            (string)($data['signature'] ?? ''),
+            (int)$this->stringify($data['id'] ?? ''),
+            $this->dateFactory->createDate($this->stringify($data['transaction_date'] ?? '')),
+            $this->dateFactory->createDate($this->stringify($data['registration_date'] ?? '')),
+            $this->stringify($data['description'] ?? ''),
+            $this->stringify($data['signature'] ?? ''),
             ...$transactions
         );
 
@@ -104,5 +94,18 @@ class TemplateRenderer
         }
 
         return $verification;
+    }
+
+    private function stringify(mixed $arg): string
+    {
+        if (is_string($arg)) {
+            return $arg;
+        }
+
+        if ($arg instanceof \Stringable) {
+            return (string)$arg;
+        }
+
+        throw new RuntimeException('Unable to cast ' . gettype($arg) . ' to string');
     }
 }

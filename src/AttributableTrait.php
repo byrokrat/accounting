@@ -28,12 +28,10 @@ namespace byrokrat\accounting;
  */
 trait AttributableTrait
 {
-    /**
-     * @var array<string, mixed>
-     */
+    /** @var array<string, mixed> */
     private $attributes = [];
 
-    public function setAttribute(string $name, $value): void
+    public function setAttribute(string $name, mixed $value): void
     {
         $this->attributes[strtolower($name)] = $value;
     }
@@ -43,7 +41,7 @@ trait AttributableTrait
         return isset($this->attributes[strtolower($name)]);
     }
 
-    public function getAttribute(string $name, $default = '')
+    public function getAttribute(string $name, mixed $default = ''): mixed
     {
         return $this->attributes[strtolower($name)] ?? $default;
     }

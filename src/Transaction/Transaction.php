@@ -36,63 +36,23 @@ class Transaction implements TransactionInterface
 {
     use AttributableTrait;
 
-    /**
-     * @var int
-     */
-    private $verId;
+    /** @var array<DimensionInterface> */
+    private array $dimensions;
 
     /**
-     * @var \DateTimeImmutable
+     * @TODO skicka med $dimensions som array för constructor promotion?
+     * @TODO defaults för att använda med named arguments?
      */
-    private $transactionDate;
-
-    /**
-     * @var string
-     */
-    private $description;
-
-    /**
-     * @var string
-     */
-    private $signature;
-
-    /**
-     * @var Amount
-     */
-    private $amount;
-
-    /**
-     * @var Amount
-     */
-    private $quantity;
-
-    /**
-     * @var AccountInterface
-     */
-    private $account;
-
-    /**
-     * @var DimensionInterface[]
-     */
-    private $dimensions;
-
     public function __construct(
-        int $verId,
-        \DateTimeImmutable $transactionDate,
-        string $description,
-        string $signature,
-        Amount $amount,
-        Amount $quantity,
-        AccountInterface $account,
+        private int $verId,
+        private \DateTimeImmutable $transactionDate,
+        private string $description,
+        private string $signature,
+        private Amount $amount,
+        private Amount $quantity,
+        private AccountInterface $account,
         DimensionInterface ...$dimensions
     ) {
-        $this->verId = $verId;
-        $this->transactionDate = $transactionDate;
-        $this->description = $description;
-        $this->signature = $signature;
-        $this->amount = $amount;
-        $this->quantity = $quantity;
-        $this->account = $account;
         $this->dimensions = $dimensions;
     }
 

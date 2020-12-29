@@ -32,9 +32,7 @@ class Container implements AttributableInterface, QueryableInterface, \IteratorA
 {
     use AttributableTrait;
 
-    /**
-     * @var array<mixed>
-     */
+    /** @var array<mixed> */
     private $items;
 
     /**

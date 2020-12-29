@@ -30,20 +30,11 @@ use byrokrat\amount\Amount;
  */
 class CurrencyBuilder
 {
-    /**
-     * @var string Name of class to represent parsed amounts
-     */
-    private $currencyClassname = 'byrokrat\\amount\\Currency\\SEK';
+    private string $currencyClassname = 'byrokrat\\amount\\Currency\\SEK';
 
-    /**
-     * @var Logger
-     */
-    private $logger;
-
-    public function __construct(Logger $logger)
-    {
-        $this->logger = $logger;
-    }
+    public function __construct(
+        private Logger $logger,
+    ) {}
 
     /**
      * Set the iso-4217 currency code classname

@@ -9,5 +9,18 @@
 
     <exclude-pattern>./src/Sie4/Parser/Grammar.php</exclude-pattern>
 
+    <!--
+        TODO tmp exclude awaiting phpcs 3.6.0
+        see https://github.com/squizlabs/PHP_CodeSniffer/issues/3167
+    -->
+    <rule ref="Generic.WhiteSpace.ScopeIndent.IncorrectExact">
+       <exclude-pattern>./src</exclude-pattern>
+    </rule>
+
+    <!-- allow closing brace to be on same line togheter with constructur argument promotion -->
+    <rule ref="Squiz.WhiteSpace.ScopeClosingBrace">
+       <exclude-pattern>./src</exclude-pattern>
+    </rule>
+
     <arg name="colors"/>
 </ruleset>

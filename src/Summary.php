@@ -31,25 +31,10 @@ use byrokrat\amount\Amount;
  */
 class Summary
 {
-    /**
-     * @var Amount
-     */
-    private $incoming;
-
-    /**
-     * @var Amount
-     */
-    private $balance;
-
-    /**
-     * @var Amount
-     */
-    private $debit;
-
-    /**
-     * @var Amount
-     */
-    private $credit;
+    private Amount $incoming;
+    private Amount $balance;
+    private Amount $debit;
+    private Amount $credit;
 
     public function __construct(Amount $incoming = null)
     {

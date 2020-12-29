@@ -49,6 +49,9 @@ class AccountFactory
         return new CostAccount($number, $description);
     }
 
+    /**
+     * @param array<string, string> $definitions
+     */
     public function createAccounts(array $definitions): Container
     {
         $accounts = [];

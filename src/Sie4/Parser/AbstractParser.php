@@ -31,48 +31,18 @@ use byrokrat\amount\Currency;
 
 class AbstractParser
 {
-    /**
-     * @var AccountBuilder
-     */
-    private $accountBuilder;
+    /** @var array<mixed> */
+    protected array $parsedItems = [];
 
-    /**
-     * @var Logger
-     */
-    private $logger;
-
-    /**
-     * @var CurrencyBuilder
-     */
-    private $currencyBuilder;
-
-    /**
-     * @var DimensionBuilder
-     */
-    private $dimensionBuilder;
-
-    /**
-     * @var array
-     */
-    protected $parsedItems;
-
-    /**
-     * @var array
-     */
-    protected $parsedAttributes;
+    /** @var array<mixed> */
+    protected array $parsedAttributes = [];
 
     public function __construct(
-        Logger $logger,
-        AccountBuilder $accountBuilder,
-        CurrencyBuilder $currencyBuilder,
-        DimensionBuilder $dimensionBuilder
-    ) {
-        $this->logger = $logger;
-        $this->accountBuilder = $accountBuilder;
-        $this->currencyBuilder = $currencyBuilder;
-        $this->dimensionBuilder = $dimensionBuilder;
-        $this->resetInternalState();
-    }
+        private Logger $logger,
+        private AccountBuilder $accountBuilder,
+        private CurrencyBuilder $currencyBuilder,
+        private DimensionBuilder $dimensionBuilder
+    ) {}
 
     protected function resetInternalState(): void
     {
@@ -80,11 +50,17 @@ class AbstractParser
         $this->parsedItems = [];
     }
 
+    /**
+     * @return array<mixed>
+     */
     protected function getParsedAttributes(): array
     {
         return $this->parsedAttributes;
     }
 
+    /**
+     * @return array<mixed>
+     */
     protected function getParsedItems(): array
     {
         return $this->parsedItems;
@@ -117,7 +93,7 @@ class AbstractParser
      * @param string             $desc            Free text description
      * @param \DateTimeImmutable $regdate         Date of registration (defaults to $date)
      * @param string             $sign            Signature
-     * @param array              $transactionData Data to build transactions from
+     * @param array<array>       $transactionData Data to build transactions from
      */
     public function createVerification(
         string $series,
@@ -131,6 +107,7 @@ class AbstractParser
         $transactions = [];
 
         foreach ($transactionData as $data) {
+            // @TODO check the data integrity here! includes class name..
             $transactions[] = new $data['type'](
                 intval($number),
                 $data['date'] ?: $transactionDate,
@@ -159,10 +136,8 @@ class AbstractParser
 
     /**
      * Helper that writes an attribute to an attributable
-     *
-     * @param mixed $value
      */
-    protected function writeAttribute(AttributableInterface $attr, string $key, $value, string $year = ''): void
+    protected function writeAttribute(AttributableInterface $attr, string $key, mixed $value, string $year = ''): void
     {
         if ('' == $year || '0' == $year) {
             $attr->setAttribute($key, $value);
@@ -175,10 +150,8 @@ class AbstractParser
 
     /**
      * Assert that $expr is thruthy and log a warning if not
-     *
-     * @param mixed $expr
      */
-    protected function assert($expr, string $failureMessage): bool
+    protected function assert(mixed $expr, string $failureMessage): bool
     {
         if ($expr) {
             return true;
@@ -191,70 +164,56 @@ class AbstractParser
 
     /**
      * Assert that $expr is an array and log warning if not
-     *
-     * @param mixed $expr
      */
-    protected function assertArray($expr, string $failureMessage = 'Expected a set of values'): bool
+    protected function assertArray(mixed $expr, string $failureMessage = 'Expected a set of values'): bool
     {
         return $this->assert(is_array($expr), $failureMessage);
     }
 
     /**
      * Assert that $expr is a boolen and log warning if not
-     *
-     * @param mixed $expr
      */
-    protected function assertBool($expr, string $failureMessage = 'Expected bool (1 or 0)'): bool
+    protected function assertBool(mixed $expr, string $failureMessage = 'Expected bool (1 or 0)'): bool
     {
         return $this->assert(is_bool($expr), $failureMessage);
     }
 
     /**
      * Assert that $expr is an integer and log warning if not
-     *
-     * @param mixed $expr
      */
-    protected function assertInt($expr, string $failureMessage = 'Expected integer'): bool
+    protected function assertInt(mixed $expr, string $failureMessage = 'Expected integer'): bool
     {
         return $this->assert(is_int($expr), $failureMessage);
     }
 
     /**
      * Assert that $expr is a string and log warning if not
-     *
-     * @param mixed $expr
      */
-    protected function assertString($expr, string $failureMessage = 'Expected string'): bool
+    protected function assertString(mixed $expr, string $failureMessage = 'Expected string'): bool
     {
         return $this->assert(is_string($expr), $failureMessage);
     }
 
     /**
      * Assert that $expr is an account and log warning if not
-     *
-     * @param mixed $expr
      */
-    protected function assertAccount($expr, string $failureMessage = 'Expected account'): bool
+    protected function assertAccount(mixed $expr, string $failureMessage = 'Expected account'): bool
     {
         return $this->assert(is_object($expr) && $expr instanceof AccountInterface, $failureMessage);
     }
 
     /**
      * Assert that $expr is a monetary amount and log warning if not
-     *
-     * @param mixed $expr
      */
-    protected function assertAmount($expr, string $failureMessage = 'Expected monetary amount'): bool
+    protected function assertAmount(mixed $expr, string $failureMessage = 'Expected monetary amount'): bool
     {
         return $this->assert(is_object($expr) && $expr instanceof Currency, $failureMessage);
     }
 
     /**
      * Assert that $expr is a Date and log warning if not
-     *
-     * @param mixed $expr
      */
-    protected function assertDate($expr, string $failureMessage = 'Expected date'): bool
+    protected function assertDate(mixed $expr, string $failureMessage = 'Expected date'): bool
     {
         return $this->assert(is_object($expr) && $expr instanceof \DateTimeImmutable, $failureMessage);
     }

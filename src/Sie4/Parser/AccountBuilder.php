@@ -36,46 +36,21 @@ use byrokrat\accounting\Exception;
  */
 class AccountBuilder
 {
-    /**
-     * @var string[] Map of account type identifier to class name
-     */
-    private static $accountTypeMap = [
+    private const ACCOUNT_TYPE_MAP = [
         'T' => AssetAccount::CLASS,
         'S' => DebtAccount::CLASS,
         'K' => CostAccount::CLASS,
         'I' => EarningAccount::CLASS
     ];
 
-    /**
-     * @var AccountInterface[] Created account objects
-     */
-    private $accounts = [];
+    /** @var array<AccountInterface> */
+    private array $accounts = [];
 
-    /**
-     * @var AccountFactory
-     */
-    private $factory;
+    public function __construct(
+        private AccountFactory $factory,
+        private Logger $logger,
+    ) {}
 
-    /**
-     * @var Logger
-     */
-    private $logger;
-
-    /**
-     * Inject account factory and logger att construct
-     */
-    public function __construct(AccountFactory $factory, Logger $logger)
-    {
-        $this->factory = $factory;
-        $this->logger = $logger;
-    }
-
-    /**
-     * Create a new account object
-     *
-     * @param string $number      Number of account
-     * @param string $description Free text description of account
-     */
     public function addAccount(string $number, string $description): void
     {
         if (isset($this->accounts[$number])) {
@@ -90,19 +65,16 @@ class AccountBuilder
     }
 
     /**
-     * Set a new type of account
-     *
-     * @param string $number Number of account
-     * @param string $type   Type of account (T, S, I or K)
+     * @param string $type Type of account (T, S, I or K)
      */
     public function setAccountType(string $number, string $type): void
     {
-        if (!isset(self::$accountTypeMap[$type])) {
+        if (!isset(self::ACCOUNT_TYPE_MAP[$type])) {
             $this->logger->log('warning', "Unknown type $type for account number $number");
             return;
         }
 
-        $this->accounts[$number] = new self::$accountTypeMap[$type](
+        $this->accounts[$number] = new (self::ACCOUNT_TYPE_MAP[$type])(
             $number,
             $this->getAccount($number)->getDescription(),
             $this->getAccount($number)->getAttributes()
@@ -110,8 +82,6 @@ class AccountBuilder
     }
 
     /**
-     * Get account from internal store using account number as key
-     *
      * @throws Exception\RuntimeException If account does not exist and can not be created
      */
     public function getAccount(string $number): AccountInterface
@@ -129,9 +99,7 @@ class AccountBuilder
     }
 
     /**
-     * Get creaated accounts
-     *
-     * @return AccountInterface[]
+     * @return array<AccountInterface>
      */
     public function getAccounts(): array
     {

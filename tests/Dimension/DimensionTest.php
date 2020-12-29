@@ -66,12 +66,6 @@ class DimensionTest extends \PHPUnit\Framework\TestCase
         (new Dimension('0'))->getParent();
     }
 
-    public function testExceptionOnInvalidArgumentInDimension()
-    {
-        $this->expectException(LogicException::CLASS);
-        (new Dimension('0'))->inDimension(0);
-    }
-
     public function testInDimension()
     {
         $dim = new Dimension(

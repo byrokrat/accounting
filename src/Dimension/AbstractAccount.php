@@ -27,6 +27,9 @@ use byrokrat\accounting\Exception\RuntimeException;
 
 abstract class AbstractAccount extends Dimension implements AccountInterface
 {
+    /**
+     * @param array<string, mixed> $attributes
+     */
     public function __construct(string $number, string $description = '', array $attributes = [])
     {
         if (!is_numeric($number)) {

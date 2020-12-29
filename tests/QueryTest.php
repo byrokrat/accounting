@@ -14,12 +14,6 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 {
     use \Prophecy\PhpUnit\ProphecyTrait;
 
-    public function testInvalidConstructorArgument()
-    {
-        $this->expectException(Exception\LogicException::CLASS);
-        (new Query(0))->exec();
-    }
-
     public function testAsArray()
     {
         $this->assertSame(

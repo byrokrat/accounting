@@ -30,10 +30,8 @@ interface AttributableInterface
 {
     /**
      * Register attribute
-     *
-     * @param mixed $value
      */
-    public function setAttribute(string $key, $value): void;
+    public function setAttribute(string $key, mixed $value): void;
 
     /**
      * Check if attribute has been set
@@ -42,11 +40,8 @@ interface AttributableInterface
 
     /**
      * Read registered attribute
-     *
-     * @param mixed $default
-     * @return mixed
      */
-    public function getAttribute(string $key, $default = '');
+    public function getAttribute(string $key, mixed $default = ''): mixed;
 
     /**
      * Get the array of all registered attributes

@@ -25,48 +25,57 @@ namespace byrokrat\accounting\Template;
 
 /**
  * Translate raw data by expanding placeholders
+ *
+ * @TODO felmeddelanden om ej string|Stringable skickas med??
  */
 class Translator
 {
-    /**
-     * @var array
-     */
-    private $translations;
+    /** @var array<string, string> */
+    private array $translations;
 
+    /**
+     * @param array<string, string> $translations
+     */
     public function __construct(array $translations)
     {
         $this->translations = (array)array_combine(
             array_map(
-                function (string $key): string {
-                    return '{' . $key . '}';
-                },
+                fn (string $key) => '{' . $key . '}',
                 array_keys($translations)
             ),
             $translations
         );
     }
 
-    public function translate(array $rawArray): array
+    /**
+     * @param array<string, string|array> $raw
+     * @return array<string, string|array>
+     */
+    public function translate(array $raw): array
     {
         return self::arrayMapRecursive(
-            function (string $rawValue): string {
+            function (string $value): string {
                 return trim(
                     str_replace(
                         array_keys($this->translations),
                         $this->translations,
-                        $rawValue
+                        $value
                     )
                 );
             },
-            $rawArray
+            $raw
         );
     }
 
-    private static function arrayMapRecursive(callable $callback, array $original): array
+    /**
+     * @param array<string, string|array> $raw
+     * @return array<string, string|array>
+     */
+    private static function arrayMapRecursive(callable $callback, array $raw): array
     {
         $mapped = [];
 
-        foreach ($original as $key => $value) {
+        foreach ($raw as $key => $value) {
             $mapped[$key] = is_array($value) ? self::arrayMapRecursive($callback, $value) : $callback($value);
         }
 

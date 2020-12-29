@@ -70,7 +70,7 @@ interface TransactionInterface extends AttributableInterface, QueryableInterface
     /**
      * Get registered dimensions
      *
-     * @return DimensionInterface[]
+     * @return array<DimensionInterface>
      */
     public function getDimensions(): array;
 

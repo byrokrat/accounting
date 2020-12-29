@@ -67,7 +67,7 @@ class Sie4Parser extends Grammar
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getErrorLog(): array
     {

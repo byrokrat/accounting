@@ -36,54 +36,22 @@ class Verification implements VerificationInterface
 {
     use AttributableTrait;
 
-    /**
-     * @var int
-     */
-    private $id;
+    /** @var array<TransactionInterface> */
+    private array $transactions;
+    private Summary $summary;
 
     /**
-     * @var \DateTimeImmutable
+     * @TODO skicka med transactions som array för att möjliggöra constructor promotion
+     * @TODO defaults för att använda med named arguments?
      */
-    private $transactionDate;
-
-    /**
-     * @var \DateTimeImmutable
-     */
-    private $registrationDate;
-
-    /**
-     * @var string
-     */
-    private $description;
-
-    /**
-     * @var string
-     */
-    private $signature;
-
-    /**
-     * @var Summary
-     */
-    private $summary;
-
-    /**
-     * @var TransactionInterface[]
-     */
-    private $transactions = [];
-
     public function __construct(
-        int $id,
-        \DateTimeImmutable $transactionDate,
-        \DateTimeImmutable $registrationDate,
-        string $description,
-        string $signature,
+        private int $id,
+        private \DateTimeImmutable $transactionDate,
+        private \DateTimeImmutable $registrationDate,
+        private string $description,
+        private string $signature,
         TransactionInterface ...$transactions
     ) {
-        $this->id = $id;
-        $this->transactionDate = $transactionDate;
-        $this->registrationDate = $registrationDate;
-        $this->description = $description;
-        $this->signature = $signature;
         $this->transactions = $transactions;
         $this->summary = new Summary();
 

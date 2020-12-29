@@ -36,15 +36,11 @@ use byrokrat\amount\Amount;
  */
 class Query implements QueryableInterface, \IteratorAggregate, \Countable
 {
-    /**
-     * @var callable Internal factory for creating the query iterator
-     */
+    /** @var callable Internal factory for creating the query iterator */
     private $iteratorFactory;
 
-    /**
-     * @var \Closure[] Registerad macros
-     */
-    private static $macros = [];
+    /** @var array<\Closure> Registerad macros */
+    private static array $macros = [];
 
     /**
      * Load macro
@@ -63,18 +59,14 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     /**
      * Load data to query
      *
-     * @param iterable|\Closure $data Items to query. If items is a
-     *     Closure it is expected to take no parameters and return an iterable.
+     * @param iterable<mixed>|\Closure $data If data is a closure it is expected
+     *  to take no parameters and return an iterable.
      */
-    public function __construct($data = [])
+    public function __construct(iterable | \Closure $data = [])
     {
         if ($data instanceof \Closure) {
             $this->iteratorFactory = $data;
             return;
-        }
-
-        if (!is_iterable($data)) {
-            throw new Exception\LogicException('Query source must be iterable');
         }
 
         $this->iteratorFactory = function () use ($data) {
@@ -90,10 +82,10 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     /**
      * Execute macro if defined
      *
+     * @param array<mixed> $args
      * @throws Exception\LogicException If macro $name is not defined
-     * @return mixed Returns what the macro returns
      */
-    public function __call(string $name, array $args)
+    public function __call(string $name, array $args): mixed
     {
         if (isset(self::$macros[$name])) {
             return self::$macros[$name]->call($this, ...$args);
@@ -128,7 +120,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      * triggers unexpected behaviour in iterator_to_array(). For that reason
      * this method should be used instead of iterator_to_array.
      *
-     * @return array The collection of items currently in query
+     * @return array<mixed> The collection of items currently in query
      */
     public function asArray(): array
     {
@@ -165,10 +157,8 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
 
     /**
      * Check if query contains a given value
-     *
-     * @param mixed $value The value to search for
      */
-    public function contains($value): bool
+    public function contains(mixed $value): bool
     {
         return !!$this
             ->filter(function ($item) use ($value) {
@@ -211,8 +201,6 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
 
     /**
      * Immediately execute callback for all items in query
-     *
-     * @param callable $callback Executed for all items matching query
      */
     public function each(callable $callback): Query
     {
@@ -233,7 +221,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     /**
      * Create a new query with those items that pass a truth test definied in $filter
      *
-     * @param callable $filter Takes one argument and returnes a boolean
+     * @param callable $filter Should take one argument and return a boolean
      */
     public function filter(callable $filter): Query
     {
@@ -291,11 +279,9 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     }
 
     /**
-     * Get the first item matched by query
-     *
-     * @return mixed The first item in query, null if no item is found
+     * Get the first item matched by query, null if no item is found
      */
-    public function getFirst()
+    public function getFirst(): mixed
     {
         foreach ($this->getIterator() as $item) {
             return $item;
@@ -343,7 +329,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     /**
      * Lazily execute callback if filter matches
      *
-     * @param  callable $filter   Takes an $item and returns a boolean
+     * @param  callable $filter   Should take one $item and return a boolean
      * @param  callable $callback Called for all items matching $filter
      */
     public function lazyOn(callable $filter, callable $callback): Query
@@ -379,6 +365,8 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
 
     /**
      * Create a new Query including addtional data
+     *
+     * @param iterable<mixed> $data
      */
     public function load(iterable $data): Query
     {
@@ -396,7 +384,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     /**
      * Create a new Query that transform items by passing each item to $callback
      *
-     * @param callable $callback Takes one argument and returnes a modified version
+     * @param callable $callback Should takes one argument and return it in a modified version
      */
     public function map(callable $callback): Query
     {
@@ -430,7 +418,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      * @param  mixed    $initial  Optional initial value of the first iteration
      * @return mixed    The final value of the reduction
      */
-    public function reduce(callable $callback, $initial = null)
+    public function reduce(callable $callback, mixed $initial = null): mixed
     {
         $this->each(function ($item) use ($callback, &$initial) {
             $initial = $callback($initial, $item);
@@ -562,7 +550,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      * @param  string $name  Case-insensitive name of attribute
      * @param  mixed  $value If specified attribute must be set to value for filter to pass
      */
-    public function whereAttribute(string $name, $value = null): Query
+    public function whereAttribute(string $name, mixed $value = null): Query
     {
         return $this->filter(function ($item) use ($name, $value) {
             return $item instanceof AttributableInterface

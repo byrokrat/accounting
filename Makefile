@@ -63,7 +63,7 @@ vendor/installed: composer.lock
 	touch $@
 
 tools/installed:
-	$(PHIVE_CMD) install --force-accept-unsigned --trust-gpg-keys 4AA394086372C20A,CF1A108D0E7AE720,0FD3A3029E470F86
+	$(PHIVE_CMD) install --force-accept-unsigned --trust-gpg-keys 4AA394086372C20A,CF1A108D0E7AE720,31C7E470E2138192,0FD3A3029E470F86
 	touch $@
 
 $(PHPUNIT_CMD): vendor/installed

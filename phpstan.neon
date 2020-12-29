@@ -1,4 +1,3 @@
 parameters:
 	excludes_analyse:
 		- src/Sie4/Parser/Grammar.php
-	checkMissingIterableValueType: false

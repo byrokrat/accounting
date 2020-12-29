@@ -59,7 +59,7 @@ interface VerificationInterface extends AttributableInterface, QueryableInterfac
     /**
      * Get included transactions
      *
-     * @return TransactionInterface[]
+     * @return array<TransactionInterface>
      */
     public function getTransactions(): array;
 

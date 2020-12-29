@@ -27,20 +27,13 @@ use byrokrat\accounting\Exception;
 
 class Logger
 {
-    /**
-     * @var integer
-     */
-    private $lineCount = 0;
+    private int $lineCount = 0;
 
-    /**
-     * @var string[]
-     */
-    private $lines = [];
+    /** @var array<string> */
+    private array $lines = [];
 
-    /**
-     * @var string[]
-     */
-    private $log = [];
+    /** @var array<string> */
+    private array $log = [];
 
     /**
      * @param string $content The content logged events are related to
@@ -52,6 +45,9 @@ class Logger
         $this->lines = explode("\n", $content);
     }
 
+    /**
+     * @return array<string>
+     */
     public function getLog(): array
     {
         return $this->log;

@@ -54,8 +54,6 @@ interface DimensionInterface extends AttributableInterface, QueryableInterface
 
     /**
      * Check if this dimension is contained in $dimension
-     *
-     * @param DimensionInterface|string $dimension Object or dimension id
      */
-    public function inDimension($dimension): bool;
+    public function inDimension(DimensionInterface | string $dimension): bool;
 }

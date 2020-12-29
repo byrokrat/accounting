@@ -31,27 +31,11 @@ class Dimension implements DimensionInterface
 {
     use AttributableTrait;
 
-    /**
-     * @var string
-     */
-    private $dimensionId;
-
-    /**
-     * @var string
-     */
-    private $description;
-
-    /**
-     * @var ?DimensionInterface
-     */
-    private $parent;
-
-    public function __construct(string $dimensionId, string $description = '', DimensionInterface $parent = null)
-    {
-        $this->dimensionId = $dimensionId;
-        $this->description = $description;
-        $this->parent = $parent;
-    }
+    public function __construct(
+        private string $dimensionId,
+        private string $description = '',
+        private ?DimensionInterface $parent = null
+    ) {}
 
     public function getId(): string
     {
@@ -79,16 +63,10 @@ class Dimension implements DimensionInterface
         return $this->parent;
     }
 
-    public function inDimension($dimension): bool
+    public function inDimension(DimensionInterface | string $dimension): bool
     {
         if ($dimension instanceof DimensionInterface) {
             $dimension = $dimension->getId();
-        }
-
-        if (!is_string($dimension)) {
-            throw new LogicException(
-                '$dimension must be a string or a dimension object, found: ' . gettype($dimension)
-            );
         }
 
         if (!$this->hasParent()) {

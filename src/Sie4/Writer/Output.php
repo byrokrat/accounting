@@ -28,19 +28,10 @@ namespace byrokrat\accounting\Sie4\Writer;
  */
 class Output
 {
-    /**
-     * End of line chars used
-     */
     public const EOL = "\r\n";
 
-    /**
-     * @var string
-     */
-    private $content = '';
+    private string $content = '';
 
-    /**
-     * Write to output
-     */
     public function write(string $format, string ...$args): void
     {
         $this->content .= sprintf(
@@ -49,9 +40,6 @@ class Output
         );
     }
 
-    /**
-     * Write line to output
-     */
     public function writeln(string $format, string ...$args): void
     {
         $this->write($format . self::EOL, ...$args);

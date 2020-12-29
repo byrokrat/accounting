@@ -31,10 +31,7 @@ use byrokrat\accounting\Dimension\Dimension;
  */
 class DimensionBuilder
 {
-    /**
-     * @var array Map of reserved dimension numbers to descriptions
-     */
-    private static $reservedDimsMap = [
+    private const RESERVED_DIMENSIONS_MAP = [
         '1' => 'Kostnadsställe/resultatenhet',
         '6' => 'Projekt',
         '7' => 'Anställd',
@@ -43,73 +40,56 @@ class DimensionBuilder
         '10' => 'Faktura'
     ];
 
-    /**
-     * @var DimensionInterface[] Created dimensions
-     */
-    private $dims = [];
+    /** @var array<DimensionInterface> */
+    private array $dimensions = [];
 
-    /**
-     * @var Logger
-     */
-    private $logger;
+    public function __construct(
+        private Logger $logger,
+    ) {}
 
-    /**
-     * Inject logger att construct
-     */
-    public function __construct(Logger $logger)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     * Create a new accounting dimension
-     */
     public function addDimension(string $dimId, string $desc, string $super = ''): void
     {
-        if (isset($this->dims[$dimId])) {
+        if (isset($this->dimensions[$dimId])) {
             $this->logger->log('warning', "Overwriting previously created dimension $dimId");
         }
 
-        $this->dims[$dimId] = new Dimension(
+        $this->dimensions[$dimId] = new Dimension(
             $dimId,
             $desc,
             $super ? $this->getDimension($super) : null
         );
     }
 
-    /**
-     * Create a new accounting object
-     */
     public function addObject(string $super, string $objectId, string $desc): void
     {
-        if (isset($this->dims["$super.$objectId"])) {
+        if (isset($this->dimensions["$super.$objectId"])) {
             $this->logger->log('warning', "Overwriting previously created object $super.$objectId");
         }
 
-        $this->dims["$super.$objectId"] = new Dimension($objectId, $desc, $this->getDimension($super));
+        $this->dimensions["$super.$objectId"] = new Dimension($objectId, $desc, $this->getDimension($super));
     }
 
     /**
      * Get dimension from internal store using number as key
      *
      * If dimension is not defined a new dimension is created, using one of the
-     * reserved sie dimension description if applicable.
+     * reserved sie dimension descriptions if applicable.
      */
     public function getDimension(string $dimId): DimensionInterface
     {
-        if (isset($this->dims[$dimId])) {
-            return $this->dims[$dimId];
+        if (isset($this->dimensions[$dimId])) {
+            return $this->dimensions[$dimId];
         }
 
         $this->logger->log('warning', "Dimension number $dimId not defined", 1);
 
         if ('2' === $dimId) {
-            return $this->dims['2'] = new Dimension('2', 'Kostnadsbärare', $this->getDimension('1'));
+            return $this->dimensions['2'] = new Dimension('2', 'Kostnadsbärare', $this->getDimension('1'));
         }
 
         $this->addDimension(
             $dimId,
-            self::$reservedDimsMap[$dimId] ?? 'UNSPECIFIED'
+            self::RESERVED_DIMENSIONS_MAP[$dimId] ?? 'UNSPECIFIED'
         );
 
         return $this->getDimension($dimId);
@@ -120,8 +100,8 @@ class DimensionBuilder
      */
     public function getObject(string $super, string $objectId): DimensionInterface
     {
-        if (isset($this->dims["$super.$objectId"])) {
-            return $this->dims["$super.$objectId"];
+        if (isset($this->dimensions["$super.$objectId"])) {
+            return $this->dimensions["$super.$objectId"];
         }
 
         $this->logger->log('warning', "Object number $super.$objectId not defined", 1);
@@ -132,12 +112,10 @@ class DimensionBuilder
     }
 
     /**
-     * Get created dimensions
-     *
-     * @return DimensionInterface[]
+     * @return array<DimensionInterface>
      */
     public function getDimensions(): array
     {
-        return $this->dims;
+        return $this->dimensions;
     }
 }
