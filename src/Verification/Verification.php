@@ -32,7 +32,7 @@ use byrokrat\amount\Amount;
 /**
  * Simple verification value object wrapping a list of transactions
  */
-class Verification implements VerificationInterface
+final class Verification implements VerificationInterface
 {
     use AttributableTrait;
 

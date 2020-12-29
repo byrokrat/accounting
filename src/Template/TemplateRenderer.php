@@ -31,7 +31,7 @@ use byrokrat\accounting\QueryableInterface;
 use byrokrat\accounting\Query;
 use byrokrat\amount\Amount;
 
-class TemplateRenderer
+final class TemplateRenderer
 {
     private Query $dimensionQuery;
     private MoneyFactoryInterface $moneyFactory;

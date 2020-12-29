@@ -26,7 +26,7 @@ namespace byrokrat\accounting\Template;
 use byrokrat\amount\Amount;
 use byrokrat\amount\Currency\SEK;
 
-class SekMoneyFactory implements MoneyFactoryInterface
+final class SekMoneyFactory implements MoneyFactoryInterface
 {
     public function createMoney(string $rawMoney): Amount
     {

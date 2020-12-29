@@ -34,7 +34,7 @@ use byrokrat\accounting\Exception;
 /**
  * Builder that creates and keeps track of account objects
  */
-class AccountBuilder
+final class AccountBuilder
 {
     private const ACCOUNT_TYPE_MAP = [
         'T' => AssetAccount::CLASS,

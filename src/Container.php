@@ -28,7 +28,7 @@ namespace byrokrat\accounting;
  *
  * @implements \IteratorAggregate<mixed>
  */
-class Container implements AttributableInterface, QueryableInterface, \IteratorAggregate
+final class Container implements AttributableInterface, QueryableInterface, \IteratorAggregate
 {
     use AttributableTrait;
 

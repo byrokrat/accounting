@@ -26,7 +26,7 @@ namespace byrokrat\accounting\Transaction;
 /**
  * Represents a transaction that has been added to an existing verification
  */
-class AddedTransaction extends Transaction
+final class AddedTransaction extends Transaction
 {
     public function isAdded(): bool
     {

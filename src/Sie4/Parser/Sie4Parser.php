@@ -25,7 +25,7 @@ namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Container;
 
-class Sie4Parser extends Grammar
+final class Sie4Parser extends Grammar
 {
     /**
      * Parse SIE content

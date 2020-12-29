@@ -29,7 +29,7 @@ use byrokrat\amount\Amount;
 /**
  * Calculate amount summaries
  */
-class Summary
+final class Summary
 {
     private Amount $incoming;
     private Amount $balance;

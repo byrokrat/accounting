@@ -29,7 +29,7 @@ use byrokrat\accounting\Dimension\Dimension;
 /**
  * Builder that creates and manages accounting dimensions
  */
-class DimensionBuilder
+final class DimensionBuilder
 {
     private const RESERVED_DIMENSIONS_MAP = [
         '1' => 'Kostnadsställe/resultatenhet',

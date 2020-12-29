@@ -37,7 +37,7 @@ use byrokrat\accounting\Dimension\AccountInterface;
  * This implementation is based on specification 4B from the
  * maintainer (SIE gruppen) dated 2008-09-30.
  */
-class Sie4Writer
+final class Sie4Writer
 {
     /**
      * Account type to SIE identifier map

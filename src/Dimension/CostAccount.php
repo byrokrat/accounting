@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Dimension;
 
-class CostAccount extends AbstractAccount
+final class CostAccount extends AbstractAccount
 {
     public function getType(): string
     {

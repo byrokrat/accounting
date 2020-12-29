@@ -25,7 +25,7 @@ namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Dimension\AccountFactory;
 
-class Sie4ParserFactory
+final class Sie4ParserFactory
 {
     public function createParser(): Sie4Parser
     {

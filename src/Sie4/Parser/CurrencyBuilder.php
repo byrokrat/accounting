@@ -28,7 +28,7 @@ use byrokrat\amount\Amount;
 /**
  * Builder that keeps track of the defined currency and creates monetary objects
  */
-class CurrencyBuilder
+final class CurrencyBuilder
 {
     private string $currencyClassname = 'byrokrat\\amount\\Currency\\SEK';
 

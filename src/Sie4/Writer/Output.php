@@ -26,7 +26,7 @@ namespace byrokrat\accounting\Sie4\Writer;
 /**
  * Simple stream helper for creating content
  */
-class Output
+final class Output
 {
     public const EOL = "\r\n";
 

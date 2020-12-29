@@ -26,7 +26,7 @@ namespace byrokrat\accounting\Transaction;
 /**
  * Represents a transaction that has been deleted from an existing verification
  */
-class DeletedTransaction extends Transaction
+final class DeletedTransaction extends Transaction
 {
     public function isDeleted(): bool
     {

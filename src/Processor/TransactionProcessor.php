@@ -35,7 +35,7 @@ use byrokrat\accounting\Summary;
  * - summary          Summary object on amount
  * - quantity_summary Summary object on quantity
  */
-class TransactionProcessor implements ProcessorInterface
+final class TransactionProcessor implements ProcessorInterface
 {
     public function processContainer(Container $container): void
     {
