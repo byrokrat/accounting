@@ -11,9 +11,7 @@ use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Exception\RuntimeException;
 use byrokrat\accounting\Transaction\TransactionInterface;
-use byrokrat\accounting\Transaction\Transaction;
 use byrokrat\accounting\Verification\VerificationInterface;
-use byrokrat\accounting\Verification\Verification;
 use byrokrat\amount\Amount;
 use Prophecy\Argument;
 
@@ -43,7 +41,17 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
 
         $renderer = new TemplateRenderer($this->createMock(QueryableInterface::class));
 
-        $renderer->render(new VerificationTemplate(id: 'foobar'), $translator->reveal());
+        $renderer->render(
+            new VerificationTemplate(id: 'foobar'),
+            $translator->reveal()
+        );
+    }
+
+    public function testExceptionIfVerificationIdIsNotDigits()
+    {
+        $this->expectException(RuntimeException::class);
+        $renderer = new TemplateRenderer($this->createMock(QueryableInterface::class));
+        $renderer->render(new VerificationTemplate(id: 'these-are-not-digits'), new Translator([]));
     }
 
     public function testVerificationValues()
@@ -67,26 +75,21 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
 
         $renderer = new TemplateRenderer($this->createMock(QueryableInterface::class), null, $dateFactory->reveal());
 
-        $expected = new Verification(
-            id: 666,
-            transactionDate: $transactionDate,
-            registrationDate: $registrationDate,
-            description: 'desc',
-            signature: 'sign',
-            transactions: [],
-            attributes: ['foo' => 'bar'],
-        );
+        $verification = $renderer->render($template, new Translator([]));
 
-        $this->assertEquals($expected, $renderer->render($template, new Translator([])));
+        $this->assertSame(666, $verification->getVerificationId());
+        $this->assertSame($transactionDate, $verification->getTransactionDate());
+        $this->assertSame($registrationDate, $verification->getRegistrationDate());
+        $this->assertSame('desc', $verification->getDescription());
+        $this->assertSame('sign', $verification->getSignature());
+        $this->assertSame('bar', $verification->getAttribute('foo'));
     }
 
     public function testRenderTransaction()
     {
         $renderer = new TemplateRenderer($this->createMock(QueryableInterface::class));
 
-        $template = new VerificationTemplate(
-            transactions: [new TransactionTemplate()]
-        );
+        $template = new VerificationTemplate(transactions: [new TransactionTemplate()]);
 
         $this->assertInstanceOf(
             TransactionInterface::class,
@@ -106,10 +109,10 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $queryable = $this->prophesize(QueryableInterface::class);
         $queryable->select()->willReturn($query);
 
-        $amount = new Amount('999');
+        $amount = new Amount('0');
 
         $moneyFactory = $this->prophesize(MoneyFactoryInterface::class);
-        $moneyFactory->createMoney('999')->willReturn($amount)->shouldBeCalled();
+        $moneyFactory->createMoney('0')->willReturn($amount)->shouldBeCalled();
 
         $dateFactory = $this->prophesize(DateFactory::class);
 
@@ -121,34 +124,31 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
 
         $template = new VerificationTemplate(
             id: '666',
-            transactions: [new TransactionTemplate(
-                transactionDate: 'transactionDate',
-                description: 'desc',
-                signature: 'sign',
-                amount: '999',
-                quantity: '1',
-                account: '1234',
-                dimensions: ['dim'],
-                attributes: [new AttributeTemplate('foo', 'bar')],
-            )]
+            transactions: [
+                new TransactionTemplate(
+                    transactionDate: 'transactionDate',
+                    description: 'desc',
+                    signature: 'sign',
+                    amount: '0',
+                    quantity: '1',
+                    account: '1234',
+                    dimensions: ['dim'],
+                    attributes: [new AttributeTemplate('foo', 'bar')],
+                )
+            ]
         );
 
-        $expected = new Transaction(
-            verificationId: 666,
-            transactionDate: $transactionDate,
-            description: 'desc',
-            signature: 'sign',
-            amount: $amount,
-            quantity: new Amount('1'),
-            account: $account,
-            dimensions: [$dimension],
-            attributes: ['foo' => 'bar'],
-        );
+        list($transaction) = $renderer->render($template, new Translator([]))->getTransactions();
 
-        $this->assertEquals(
-            $expected,
-            $renderer->render($template, new Translator([]))->getTransactions()[0]
-        );
+        $this->assertSame(666, $transaction->getVerificationId());
+        $this->assertSame($transactionDate, $transaction->getTransactionDate());
+        $this->assertSame('desc', $transaction->getDescription());
+        $this->assertSame('sign', $transaction->getSignature());
+        $this->assertSame($amount, $transaction->getAmount());
+        $this->assertEquals(new Amount('1'), $transaction->getQuantity());
+        $this->assertSame($account, $transaction->getAccount());
+        $this->assertSame([$dimension], $transaction->getDimensions());
+        $this->assertSame('bar', $transaction->getAttribute('foo'));
     }
 
     public function testTransactionDefaultsFromVerification()
@@ -159,7 +159,7 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $queryable = $this->prophesize(QueryableInterface::class);
         $queryable->select()->willReturn($query);
 
-        $amount = new Amount('999');
+        $amount = new Amount('0');
         $moneyFactory = $this->prophesize(MoneyFactoryInterface::class);
         $moneyFactory->createMoney(Argument::any())->willReturn($amount);
 
@@ -178,26 +178,10 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
             transactions: [new TransactionTemplate()]
         );
 
-        $expected = new Transaction(
-            verificationId: 666,
-            transactionDate: $transactionDate,
-            description: 'desc',
-            signature: 'sign',
-            amount: $amount,
-            quantity: new Amount('0'),
-            account: $account,
-        );
+        list($transaction) = $renderer->render($template, new Translator([]))->getTransactions();
 
-        $this->assertEquals(
-            $expected,
-            $renderer->render($template, new Translator([]))->getTransactions()[0]
-        );
-    }
-
-    public function testExceptionIfVerificationIdIsNotDigits()
-    {
-        $this->expectException(RuntimeException::class);
-        $renderer = new TemplateRenderer($this->createMock(QueryableInterface::class));
-        $renderer->render(new VerificationTemplate(id: 'these-are-not-digits'), new Translator([]));
+        $this->assertSame($transactionDate, $transaction->getTransactionDate());
+        $this->assertSame('desc', $transaction->getDescription());
+        $this->assertSame('sign', $transaction->getSignature());
     }
 }

@@ -7,7 +7,8 @@ namespace byrokrat\accounting\Verification;
 use byrokrat\accounting\AttributableTestTrait;
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Exception\LogicException;
-use byrokrat\accounting\Exception\RuntimeException;
+use byrokrat\accounting\Exception\InvalidVerificationException;
+use byrokrat\accounting\Exception\UnbalancedVerificationException;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Query;
 use byrokrat\amount\Amount;
@@ -21,19 +22,12 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
 
     protected function getAttributableToTest(): AttributableInterface
     {
-        return new Verification(0, new \DateTimeImmutable(), new \DateTimeImmutable(), '', '', []);
-    }
-
-    public function testExceptionOnNonTransactionArgument()
-    {
-        $this->expectException(LogicException::class);
-        new Verification(1, new \DateTimeImmutable(), new \DateTimeImmutable(), '', '', ['this-is-not-a-transaction']);
+        return new Verification();
     }
 
     public function testAttributesToConstructor()
     {
-        $ver = new Verification(1, new \DateTimeImmutable(), new \DateTimeImmutable(), '', '', [], ['key' => 'val']);
-
+        $ver = new Verification(attributes: ['key' => 'val']);
         $this->assertSame(
             'val',
             $ver->getAttribute('key')
@@ -43,39 +37,77 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
     public function testExceptionOnNonStringAttributeKey()
     {
         $this->expectException(LogicException::class);
-        new Verification(1, new \DateTimeImmutable(), new \DateTimeImmutable(), '', '', [], [1 => '']);
+        new Verification(attributes: [1 => '']);
     }
 
     public function testExceptionOnNonStringAttributeValue()
     {
         $this->expectException(LogicException::class);
-        new Verification(1, new \DateTimeImmutable(), new \DateTimeImmutable(), '', '', [], ['key' => null]);
+        new Verification(attributes: ['key' => null]);
+    }
+
+    public function testExceptionOnNonTransactionArgument()
+    {
+        $this->expectException(LogicException::class);
+        new Verification(transactions: ['this-is-not-a-transaction']);
+    }
+
+    public function testExceptionOnUnbalancedVerification()
+    {
+        $this->expectException(UnbalancedVerificationException::class);
+
+        $trans = $this->prophesize(TransactionInterface::class);
+        $trans->getAmount()->willReturn(new Amount('1'));
+        $trans->isDeleted()->willReturn(false);
+
+        new Verification(transactions: [$trans->reveal()]);
     }
 
     public function testId()
     {
         $this->assertSame(
             1,
-            (new Verification(1, new \DateTimeImmutable(), new \DateTimeImmutable(), '', '', []))->getVerificationId()
+            (new Verification(id: 1))->getVerificationId()
         );
     }
 
-    public function testDates()
+    public function testAssigningDates()
     {
         $transactionDate = new \DateTimeImmutable();
         $registrationDate = new \DateTimeImmutable();
 
-        $ver = new Verification(0, $transactionDate, $registrationDate, '', '', []);
+        $ver = new Verification(
+            transactionDate: $transactionDate,
+            registrationDate: $registrationDate,
+        );
 
         $this->assertSame($transactionDate, $ver->getTransactionDate());
         $this->assertSame($registrationDate, $ver->getRegistrationDate());
+    }
+
+    public function testTransactionDefaultDate()
+    {
+        $this->assertInstanceOf(
+            \DateTimeImmutable::class,
+            (new Verification())->getTransactionDate()
+        );
+    }
+
+    public function testRegistrationDateDefaultsToTransactionDate()
+    {
+        $transactionDate = new \DateTimeImmutable();
+
+        $this->assertSame(
+            $transactionDate,
+            (new Verification(transactionDate: $transactionDate))->getRegistrationDate()
+        );
     }
 
     public function testDescription()
     {
         $this->assertSame(
             'desc',
-            (new Verification(0, new \DateTimeImmutable(), new \DateTimeImmutable(), 'desc', '', []))->getDescription()
+            (new Verification(description: 'desc'))->getDescription()
         );
     }
 
@@ -83,44 +115,38 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             'sign',
-            (new Verification(0, new \DateTimeImmutable(), new \DateTimeImmutable(), '', 'sign', []))->getSignature()
+            (new Verification(signature: 'sign'))->getSignature()
         );
     }
 
     public function testAccessingTransactions()
     {
-        $transA = $this->createMock(TransactionInterface::class);
-        $transB = $this->createMock(TransactionInterface::class);
-
-        $ver = new Verification(0, new \DateTimeImmutable(), new \DateTimeImmutable(), '', '', [$transA, $transB]);
+        $trans = $this->prophesize(TransactionInterface::class);
+        $trans->getAmount()->willReturn(new Amount('0'));
+        $trans->isDeleted()->willReturn(false);
+        $trans = $trans->reveal();
 
         $this->assertSame(
-            [$transA, $transB],
-            $ver->getTransactions()
+            [$trans, $trans],
+            (new Verification(transactions: [$trans, $trans]))->getTransactions()
         );
     }
 
     public function transactionArithmeticsProvider()
     {
         return [
-            // magnitude        balanced   transaction amounts...
-            [new Amount('30'),  true,      new Amount('10'), new Amount('20'), new Amount('-30')],
-            [new Amount('200'), true,      new Amount('200'), new Amount('-200')],
-            [new SEK('300'),    true,      new SEK('100'), new SEK('200'), new SEK('-300')],
-            [new SEK('200'),    true,      new SEK('200'), new SEK('-200')],
-            [new Amount('0'),   false,     new Amount('20'), new Amount('-30')],
-            [new Amount('0'),   false,     new Amount('200'), new Amount('-100')],
-            [new Amount('0'),   false,     new Amount('10'), new Amount('-10'), new Amount('-10')],
-            [new Amount('0'),   false,     new SEK('200'), new SEK('-300')],
-            [new Amount('0'),   false,     new SEK('200'), new SEK('-100')],
-            [new Amount('0'),   false,     new SEK('100'), new SEK('-100'), new SEK('-100')],
+            // magnitude        transaction amounts...
+            [new Amount('30'),  new Amount('10'),  new Amount('20'), new Amount('-30')],
+            [new Amount('200'), new Amount('200'), new Amount('-200')],
+            [new SEK('300'),    new SEK('100'),    new SEK('200'),   new SEK('-300')],
+            [new SEK('200'),    new SEK('200'),    new SEK('-200')],
         ];
     }
 
     /**
      * @dataProvider transactionArithmeticsProvider
      */
-    public function testTransactionArithmetics(Amount $magnitude, bool $balanced, Amount ...$amounts)
+    public function testTransactionArithmetics(Amount $magnitude, Amount ...$amounts)
     {
         $transactions = [];
 
@@ -131,20 +157,37 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
             $transactions[] = $trans->reveal();
         }
 
-        $verification = new Verification(
-            0,
-            new \DateTimeImmutable(),
-            new \DateTimeImmutable(),
-            '',
-            '',
-            $transactions
-        );
+        $verification = new Verification(transactions: $transactions);
 
-        $this->assertSame($balanced, $verification->isBalanced());
+        $this->assertTrue($magnitude->equals($verification->getMagnitude()));
+    }
 
-        if ($balanced) {
-            $this->assertTrue($magnitude->equals($verification->getMagnitude()));
-        }
+    public function testExceptionOnCurrencyMissmatch()
+    {
+        $transA = $this->prophesize(TransactionInterface::class);
+        $transA->getAmount()->willReturn(new Amount('0'));
+        $transA->isDeleted()->willReturn(false);
+
+        $transSEK = $this->prophesize(TransactionInterface::class);
+        $transSEK->getAmount()->willReturn(new SEK('0'));
+        $transSEK->isDeleted()->willReturn(false);
+
+        $this->expectException(InvalidVerificationException::class);
+        $verification = new Verification(transactions: [$transSEK->reveal(), $transA->reveal()]);
+    }
+
+    public function testExceptionOnCurrencyMissmatchInDeletedTransactions()
+    {
+        $transA = $this->prophesize(TransactionInterface::class);
+        $transA->getAmount()->willReturn(new Amount('0'));
+        $transA->isDeleted()->willReturn(true);
+
+        $transSEK = $this->prophesize(TransactionInterface::class);
+        $transSEK->getAmount()->willReturn(new SEK('0'));
+        $transSEK->isDeleted()->willReturn(true);
+
+        $this->expectException(InvalidVerificationException::class);
+        $verification = new Verification(transactions: [$transSEK->reveal(), $transA->reveal()]);
     }
 
     public function testDeletedTransactionsDoesNotCount()
@@ -153,50 +196,21 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         $trans->getAmount()->willReturn(new Amount('100'));
         $trans->isDeleted()->willReturn(true);
 
-        $verification = new Verification(
-            0,
-            new \DateTimeImmutable(),
-            new \DateTimeImmutable(),
-            '',
-            '',
-            [$trans->reveal()]
-        );
+        $verification = new Verification(transactions: [$trans->reveal()]);
 
         $this->assertSame(0, $verification->getMagnitude()->getInt());
     }
 
-    public function testExceptionOnGetMagnitudeWithUnbalancedVerification()
+    public function testQueryable()
     {
         $trans = $this->prophesize(TransactionInterface::class);
         $trans->getAmount()->willReturn(new Amount('100'));
-        $trans->isDeleted()->willReturn(false);
+        $trans->isDeleted()->willReturn(true);
+        $trans = $trans->reveal();
 
-        $verification = new Verification(
-            0,
-            new \DateTimeImmutable(),
-            new \DateTimeImmutable(),
-            '',
-            '',
-            [$trans->reveal()]
+        $this->assertEquals(
+            new Query([$trans, $trans]),
+            (new Verification(transactions: [$trans, $trans]))->select()
         );
-
-        $this->expectException(RuntimeException::class);
-        $verification->getMagnitude();
-    }
-
-    public function testQueryable()
-    {
-        $trans = $this->createMock(TransactionInterface::class);
-
-        $ver = new Verification(
-            0,
-            new \DateTimeImmutable(),
-            new \DateTimeImmutable(),
-            'Verification',
-            '',
-            [$trans, $trans]
-        );
-
-        $this->assertEquals(new Query([$trans, $trans]), $ver->select());
     }
 }

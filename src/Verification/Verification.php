@@ -24,35 +24,46 @@ declare(strict_types=1);
 namespace byrokrat\accounting\Verification;
 
 use byrokrat\accounting\AttributableTrait;
+use byrokrat\accounting\Exception\InvalidVerificationException;
+use byrokrat\accounting\Exception\UnbalancedVerificationException;
 use byrokrat\accounting\Exception\LogicException;
 use byrokrat\accounting\Query;
 use byrokrat\accounting\Summary;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\amount\Amount;
+use byrokrat\amount\Exception as AmountException;
 
 /**
- * Verification value object wrapping a list of transactions
+ * Verification value object wrapping a set of transactions
  */
 final class Verification implements VerificationInterface
 {
     use AttributableTrait;
 
     private Summary $summary;
+    private \DateTimeImmutable $transactionDate;
+    private \DateTimeImmutable $registrationDate;
 
     /**
-     * @TODO Add sensible defaults
      * @param array<TransactionInterface> $transactions
      * @param array<string, string> $attributes
+     * @throws InvalidVerificationException If data is invalid
+     * @throws UnbalancedVerificationException If verification is not balanced
      */
     public function __construct(
-        private int $id,
-        private \DateTimeImmutable $transactionDate,
-        private \DateTimeImmutable $registrationDate,
-        private string $description,
-        private string $signature,
-        private array $transactions,
+        private int $id = 0,
+        ?\DateTimeImmutable $transactionDate = null,
+        ?\DateTimeImmutable $registrationDate = null,
+        private string $description = '',
+        private string $signature = '',
+        private array $transactions = [],
         array $attributes = [],
     ) {
+        // @TODO should be a NullDate implementation?
+        $this->transactionDate = $transactionDate ?: new \DateTimeImmutable();
+
+        $this->registrationDate = $registrationDate ?: $this->transactionDate;
+
         $this->summary = new Summary();
 
         foreach ($this->transactions as $transaction) {
@@ -60,15 +71,20 @@ final class Verification implements VerificationInterface
                 throw new LogicException('TypeError: transaction must implement TransactionInterface');
             }
 
-            // Validate currency
-            $this->summary->addAmount(
-                $transaction->getAmount()->subtract($transaction->getAmount())
-            );
-
-            // Add amount to summary
-            if (!$transaction->isDeleted()) {
-                $this->summary->addAmount($transaction->getAmount());
+            try {
+                // Null amount if deleted, add it to validate currency
+                $this->summary->addAmount(
+                    $transaction->isDeleted()
+                        ? $transaction->getAmount()->subtract($transaction->getAmount())
+                        : $transaction->getAmount()
+                );
+            } catch (AmountException $exception) {
+                throw new InvalidVerificationException($exception->getMessage(), 0, $exception);
             }
+        }
+
+        if ($this->summary->isInitialized() && !$this->isBalanced()) {
+            throw new UnbalancedVerificationException('Unable to create unbalanced verification');
         }
 
         foreach ($attributes as $key => $value) {

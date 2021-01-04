@@ -19,20 +19,26 @@ class Sie4WriterTest extends \PHPUnit\Framework\TestCase
     {
         $container = new Container(
             new Verification(
-                1,
-                new \DateTimeImmutable(),
-                new \DateTimeImmutable(),
-                'desc',
-                'signature',
-                [new Transaction(
-                    1,
-                    new \DateTimeImmutable(),
-                    'desc',
-                    'signature',
-                    new Amount('100'),
-                    new Amount('0'),
-                    new DebtAccount('1000')
-                )]
+                transactions: [
+                    new Transaction(
+                        1,
+                        new \DateTimeImmutable(),
+                        'desc',
+                        'signature',
+                        new Amount('100'),
+                        new Amount('0'),
+                        new DebtAccount('1000')
+                    ),
+                    new Transaction(
+                        1,
+                        new \DateTimeImmutable(),
+                        'desc',
+                        'signature',
+                        new Amount('-100'),
+                        new Amount('0'),
+                        new DebtAccount('1000')
+                    ),
+                ]
             )
         );
 

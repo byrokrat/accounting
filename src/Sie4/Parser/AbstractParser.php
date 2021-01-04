@@ -87,32 +87,31 @@ class AbstractParser
     }
 
     /**
-     * @param string             $series          The series verification should be a part of
-     * @param string             $number          Verification number
-     * @param \DateTimeImmutable $transactionDate Date of accounting action
-     * @param string             $desc            Free text description
-     * @param \DateTimeImmutable $regdate         Date of registration (defaults to $date)
-     * @param string             $sign            Signature
-     * @param array<array>       $transactionData Data to build transactions from
+     * @param string $series The series verification should be a part of
+     * @param array<array> $transactionData
+     * @TODO The $transactionData structure needs to be documentet or preferably refactored
+     * @TODO Why not pass $verificationId as int
      */
-    public function createVerification(
+    protected function createVerification(
         string $series,
-        string $number,
+        string $verificationId,
         \DateTimeImmutable $transactionDate,
-        string $desc = '',
-        \DateTimeImmutable $regdate = null,
-        string $sign = '',
+        string $description = '',
+        \DateTimeImmutable $registrationDate = null,
+        string $signature = '',
         array $transactionData = []
     ): VerificationInterface {
         $transactions = [];
 
         foreach ($transactionData as $data) {
             // @TODO check the data integrity here! includes class name..
+            // @TODO why not use templating here?
+            // @TODO pass using named arguments
             $transactions[] = new $data['type'](
-                intval($number),
+                intval($verificationId),
                 $data['date'] ?: $transactionDate,
-                $data['description'] ?: $desc,
-                $data['signature'] ?: $sign,
+                $data['description'] ?: $description,
+                $data['signature'] ?: $signature,
                 $data['amount'],
                 $data['quantity'],
                 $data['account'],
@@ -120,20 +119,15 @@ class AbstractParser
             );
         }
 
-        // @TODO create using named arguments
-        $verification = new Verification(
-            intval($number),
-            $transactionDate,
-            $regdate ?: $transactionDate,
-            $desc,
-            $sign,
-            $transactions
+        return new Verification(
+            id: intval($verificationId),
+            transactionDate: $transactionDate,
+            registrationDate: $registrationDate,
+            description: $description,
+            signature: $signature,
+            transactions: $transactions,
+            attributes: ['series' => $series]
         );
-
-        // @TODO add attributes to constructor
-        $verification->setAttribute('series', $series);
-
-        return $verification;
     }
 
     /**
