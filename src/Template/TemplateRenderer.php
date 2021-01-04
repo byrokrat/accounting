@@ -27,28 +27,16 @@ use byrokrat\accounting\Exception\RuntimeException;
 use byrokrat\accounting\Transaction\Transaction;
 use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\accounting\Verification\Verification;
-use byrokrat\accounting\QueryableInterface;
 use byrokrat\accounting\Query;
 use byrokrat\amount\Amount;
 
 final class TemplateRenderer
 {
-    private Query $dimensionQuery;
-    private MoneyFactoryInterface $moneyFactory;
-    private DateFactory $dateFactory;
-
-    /**
-     * @TODO Create using factory. Constructor could take a Query. Factory could take Query | QueryableInterface.
-     */
     public function __construct(
-        QueryableInterface $container,
-        MoneyFactoryInterface $moneyFactory = null,
-        DateFactory $dateFactory = null
-    ) {
-        $this->dimensionQuery = $container->select();
-        $this->moneyFactory = $moneyFactory ?: new SekMoneyFactory();
-        $this->dateFactory = $dateFactory ?: new DateFactory();
-    }
+        private Query $dimensionQuery,
+        private MoneyFactoryInterface $moneyFactory,
+        private DateFactory $dateFactory,
+    ) {}
 
     public function render(VerificationTemplate $template, TranslatorInterface $translator): VerificationInterface
     {
@@ -76,7 +64,8 @@ final class TemplateRenderer
     }
 
     /**
-     * @TODO Quantity should be validated as a float-style number string. Here or in a factory
+     * @TODO Quantity should be validated as a float-style number string. Here or in a factory.
+     * Or wrapp creation on a try block so we throw an internal exception..
      */
     private function renderTransaction(TransactionTemplate $transTmpl, VerificationTemplate $verTmpl): Transaction
     {

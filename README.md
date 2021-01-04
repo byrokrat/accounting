@@ -81,11 +81,11 @@ account plan.
     @include accounts
 -->
 ```php
-use byrokrat\accounting\Template\TemplateRenderer;
+use byrokrat\accounting\Template\TemplateRendererFactory;
 use byrokrat\accounting\Template\Translator;
 use byrokrat\accounting\Container;
 
-$renderer = new TemplateRenderer($accounts);
+$renderer = (new TemplateRendererFactory)->createRenderer($accounts);
 
 $verifications = new Container(
     $renderer->render(

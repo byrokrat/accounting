@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
-use byrokrat\accounting\QueryableInterface;
 use byrokrat\accounting\Query;
 use byrokrat\accounting\Container;
 use byrokrat\accounting\Dimension\DimensionInterface;
@@ -24,7 +23,11 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
 
     public function testRenderVerification()
     {
-        $renderer = new TemplateRenderer($this->createMock(QueryableInterface::class));
+        $renderer = new TemplateRenderer(
+            $this->createMock(Query::class),
+            $this->createMock(MoneyFactoryInterface::class),
+            $this->createMock(DateFactory::class),
+        );
 
         $this->assertInstanceOf(
             VerificationInterface::class,
@@ -39,7 +42,11 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
 
         $translator->translate('foobar')->willReturn('1')->shouldBeCalled();
 
-        $renderer = new TemplateRenderer($this->createMock(QueryableInterface::class));
+        $renderer = new TemplateRenderer(
+            $this->createMock(Query::class),
+            $this->createMock(MoneyFactoryInterface::class),
+            $this->createMock(DateFactory::class),
+        );
 
         $renderer->render(
             new VerificationTemplate(id: 'foobar'),
@@ -50,7 +57,13 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
     public function testExceptionIfVerificationIdIsNotDigits()
     {
         $this->expectException(RuntimeException::class);
-        $renderer = new TemplateRenderer($this->createMock(QueryableInterface::class));
+
+        $renderer = new TemplateRenderer(
+            $this->createMock(Query::class),
+            $this->createMock(MoneyFactoryInterface::class),
+            $this->createMock(DateFactory::class),
+        );
+
         $renderer->render(new VerificationTemplate(id: 'these-are-not-digits'), new Translator([]));
     }
 
@@ -73,7 +86,11 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
             attributes: [new AttributeTemplate('foo', 'bar')],
         );
 
-        $renderer = new TemplateRenderer($this->createMock(QueryableInterface::class), null, $dateFactory->reveal());
+        $renderer = new TemplateRenderer(
+            $this->createMock(Query::class),
+            $this->createMock(MoneyFactoryInterface::class),
+            $dateFactory->reveal()
+        );
 
         $verification = $renderer->render($template, new Translator([]));
 
@@ -87,14 +104,20 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
 
     public function testRenderTransaction()
     {
-        $renderer = new TemplateRenderer($this->createMock(QueryableInterface::class));
+        $moneyFactory = $this->prophesize(MoneyFactoryInterface::class);
+        $moneyFactory->createMoney(Argument::any())->willReturn(new Amount('0'));
+
+        $renderer = new TemplateRenderer(
+            $this->createMock(Query::class),
+            $moneyFactory->reveal(),
+            $this->createMock(DateFactory::class),
+        );
 
         $template = new VerificationTemplate(transactions: [new TransactionTemplate()]);
 
-        $this->assertInstanceOf(
-            TransactionInterface::class,
-            $renderer->render($template, new Translator([]))->getTransactions()[0]
-        );
+        list($transaction) = $renderer->render($template, new Translator([]))->getTransactions();
+
+        $this->assertInstanceOf(TransactionInterface::class, $transaction);
     }
 
     public function testTransactionValues()
@@ -105,9 +128,6 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $query = $this->prophesize(Query::class);
         $query->getDimension('dim')->willReturn($dimension)->shouldBeCalled();
         $query->getAccount('1234')->willReturn($account)->shouldBeCalled();
-
-        $queryable = $this->prophesize(QueryableInterface::class);
-        $queryable->select()->willReturn($query);
 
         $amount = new Amount('0');
 
@@ -120,7 +140,7 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $dateFactory->createDate('transactionDate')->willReturn($transactionDate)->shouldBeCalled();
         $dateFactory->createDate(Argument::any())->willReturn(new \DateTimeImmutable());
 
-        $renderer = new TemplateRenderer($queryable->reveal(), $moneyFactory->reveal(), $dateFactory->reveal());
+        $renderer = new TemplateRenderer($query->reveal(), $moneyFactory->reveal(), $dateFactory->reveal());
 
         $template = new VerificationTemplate(
             id: '666',
@@ -156,8 +176,6 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $account = $this->createMock(AccountInterface::class);
         $query = $this->prophesize(Query::class);
         $query->getAccount(Argument::any())->willReturn($account);
-        $queryable = $this->prophesize(QueryableInterface::class);
-        $queryable->select()->willReturn($query);
 
         $amount = new Amount('0');
         $moneyFactory = $this->prophesize(MoneyFactoryInterface::class);
@@ -168,7 +186,7 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $dateFactory->createDate('transactionDate')->willReturn($transactionDate);
         $dateFactory->createDate(Argument::any())->willReturn(new \DateTimeImmutable());
 
-        $renderer = new TemplateRenderer($queryable->reveal(), $moneyFactory->reveal(), $dateFactory->reveal());
+        $renderer = new TemplateRenderer($query->reveal(), $moneyFactory->reveal(), $dateFactory->reveal());
 
         $template = new VerificationTemplate(
             id: '666',
