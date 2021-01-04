@@ -8,6 +8,7 @@ use byrokrat\accounting\AttributableTestTrait;
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
+use byrokrat\accounting\Exception\LogicException;
 use byrokrat\accounting\Query;
 use byrokrat\amount\Amount;
 
@@ -24,7 +25,75 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS)
+            $this->createMock(AccountInterface::CLASS),
+            []
+        );
+    }
+
+    public function testExceptionOnNonDimension()
+    {
+        $this->expectException(LogicException::class);
+        new Transaction(
+            1,
+            new \DateTimeImmutable(),
+            '',
+            '',
+            new Amount('0'),
+            new Amount('0'),
+            $this->createMock(AccountInterface::CLASS),
+            ['this-is-not-a-dimension-object']
+        );
+    }
+
+    public function testAttributesToConstructor()
+    {
+        $trans = new Transaction(
+            1,
+            new \DateTimeImmutable(),
+            '',
+            '',
+            new Amount('0'),
+            new Amount('0'),
+            $this->createMock(AccountInterface::CLASS),
+            [],
+            ['key' => 'val']
+        );
+
+        $this->assertSame(
+            'val',
+            $trans->getAttribute('key')
+        );
+    }
+
+    public function testExceptionOnNonStringAttributeKey()
+    {
+        $this->expectException(LogicException::class);
+        $trans = new Transaction(
+            1,
+            new \DateTimeImmutable(),
+            '',
+            '',
+            new Amount('0'),
+            new Amount('0'),
+            $this->createMock(AccountInterface::CLASS),
+            [],
+            [1 => 'val']
+        );
+    }
+
+    public function testExceptionOnNonStringAttributeValue()
+    {
+        $this->expectException(LogicException::class);
+        new Transaction(
+            1,
+            new \DateTimeImmutable(),
+            '',
+            '',
+            new Amount('0'),
+            new Amount('0'),
+            $this->createMock(AccountInterface::CLASS),
+            [],
+            ['key' => null]
         );
     }
 
@@ -37,7 +106,8 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS)
+            $this->createMock(AccountInterface::CLASS),
+            []
         );
 
         $this->assertSame(999, $trans->getVerificationId());
@@ -52,7 +122,8 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS)
+            $this->createMock(AccountInterface::CLASS),
+            []
         );
 
         $this->assertSame($date, $trans->getTransactionDate());
@@ -67,7 +138,8 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS)
+            $this->createMock(AccountInterface::CLASS),
+            []
         );
 
         $this->assertSame('desc', $trans->getDescription());
@@ -82,7 +154,8 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             'sign',
             new Amount('0'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS)
+            $this->createMock(AccountInterface::CLASS),
+            []
         );
 
         $this->assertSame('sign', $trans->getSignature());
@@ -97,7 +170,8 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             $amount = new Amount('100'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS)
+            $this->createMock(AccountInterface::CLASS),
+            []
         );
 
         $this->assertSame($amount, $trans->getAmount());
@@ -112,7 +186,8 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             $quantity = new Amount('100'),
-            $this->createMock(AccountInterface::CLASS)
+            $this->createMock(AccountInterface::CLASS),
+            []
         );
 
         $this->assertSame($quantity, $trans->getQuantity());
@@ -127,7 +202,8 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             new Amount('0'),
-            $account = $this->createMock(AccountInterface::CLASS)
+            $account = $this->createMock(AccountInterface::CLASS),
+            []
         );
 
         $this->assertSame($account, $trans->getAccount());
@@ -143,8 +219,10 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             new Amount('0'),
             new Amount('0'),
             $this->createMock(AccountInterface::CLASS),
-            $dimA = $this->createMock(DimensionInterface::CLASS),
-            $dimB = $this->createMock(DimensionInterface::CLASS)
+            [
+                $dimA = $this->createMock(DimensionInterface::CLASS),
+                $dimB = $this->createMock(DimensionInterface::CLASS),
+            ]
         );
 
         $this->assertSame([$dimA, $dimB], $trans->getDimensions());
@@ -160,8 +238,10 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             $amount = new Amount('0'),
             new Amount('0'),
             $account = $this->createMock(AccountInterface::CLASS),
-            $dimA = $this->createMock(DimensionInterface::CLASS),
-            $dimB = $this->createMock(DimensionInterface::CLASS)
+            [
+                $dimA = $this->createMock(DimensionInterface::CLASS),
+                $dimB = $this->createMock(DimensionInterface::CLASS),
+            ]
         );
 
         $this->assertEquals(

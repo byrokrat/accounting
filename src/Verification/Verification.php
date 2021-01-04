@@ -24,25 +24,25 @@ declare(strict_types=1);
 namespace byrokrat\accounting\Verification;
 
 use byrokrat\accounting\AttributableTrait;
+use byrokrat\accounting\Exception\LogicException;
 use byrokrat\accounting\Query;
 use byrokrat\accounting\Summary;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\amount\Amount;
 
 /**
- * Simple verification value object wrapping a list of transactions
+ * Verification value object wrapping a list of transactions
  */
 final class Verification implements VerificationInterface
 {
     use AttributableTrait;
 
-    /** @var array<TransactionInterface> */
-    private array $transactions;
     private Summary $summary;
 
     /**
-     * @TODO skicka med transactions som array för att möjliggöra constructor promotion
-     * @TODO defaults för att använda med named arguments?
+     * @TODO Add sensible defaults
+     * @param array<TransactionInterface> $transactions
+     * @param array<string, string> $attributes
      */
     public function __construct(
         private int $id,
@@ -50,12 +50,16 @@ final class Verification implements VerificationInterface
         private \DateTimeImmutable $registrationDate,
         private string $description,
         private string $signature,
-        TransactionInterface ...$transactions
+        private array $transactions,
+        array $attributes = [],
     ) {
-        $this->transactions = $transactions;
         $this->summary = new Summary();
 
-        foreach ($transactions as $transaction) {
+        foreach ($this->transactions as $transaction) {
+            if (!$transaction instanceof TransactionInterface) {
+                throw new LogicException('TypeError: transaction must implement TransactionInterface');
+            }
+
             // Validate currency
             $this->summary->addAmount(
                 $transaction->getAmount()->subtract($transaction->getAmount())
@@ -65,6 +69,18 @@ final class Verification implements VerificationInterface
             if (!$transaction->isDeleted()) {
                 $this->summary->addAmount($transaction->getAmount());
             }
+        }
+
+        foreach ($attributes as $key => $value) {
+            if (!is_string($key)) {
+                throw new LogicException('TypeError: attribute key must be string');
+            }
+
+            if (!is_string($value)) {
+                throw new LogicException('TypeError: attribute value must be string');
+            }
+
+            $this->setAttribute($key, $value);
         }
     }
 

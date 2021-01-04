@@ -28,6 +28,7 @@ use byrokrat\amount\Currency\SEK;
 
 final class SekMoneyFactory implements MoneyFactoryInterface
 {
+    // @TODO Exception if $rawMoney is not a parsable string
     public function createMoney(string $rawMoney): Amount
     {
         return new SEK($rawMoney);

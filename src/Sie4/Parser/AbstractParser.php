@@ -116,19 +116,21 @@ class AbstractParser
                 $data['amount'],
                 $data['quantity'],
                 $data['account'],
-                ...$data['dimensions']
+                $data['dimensions']
             );
         }
 
+        // @TODO create using named arguments
         $verification = new Verification(
             intval($number),
             $transactionDate,
             $regdate ?: $transactionDate,
             $desc,
             $sign,
-            ...$transactions
+            $transactions
         );
 
+        // @TODO add attributes to constructor
         $verification->setAttribute('series', $series);
 
         return $verification;

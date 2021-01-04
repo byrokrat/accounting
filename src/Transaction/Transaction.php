@@ -26,6 +26,7 @@ namespace byrokrat\accounting\Transaction;
 use byrokrat\accounting\AttributableTrait;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
+use byrokrat\accounting\Exception\LogicException;
 use byrokrat\accounting\Query;
 use byrokrat\amount\Amount;
 
@@ -36,29 +37,44 @@ class Transaction implements TransactionInterface
 {
     use AttributableTrait;
 
-    /** @var array<DimensionInterface> */
-    private array $dimensions;
-
     /**
-     * @TODO skicka med $dimensions som array för constructor promotion?
-     * @TODO defaults för att använda med named arguments?
+     * @TODO Add sensible defaults
+     * @param array<DimensionInterface> $dimensions
+     * @param array<string, string> $attributes
      */
     public function __construct(
-        private int $verId,
+        private int $verificationId,
         private \DateTimeImmutable $transactionDate,
         private string $description,
         private string $signature,
         private Amount $amount,
         private Amount $quantity,
         private AccountInterface $account,
-        DimensionInterface ...$dimensions
+        private array $dimensions = [],
+        array $attributes = [],
     ) {
-        $this->dimensions = $dimensions;
+        foreach ($this->dimensions as $dimension) {
+            if (!$dimension instanceof DimensionInterface) {
+                throw new LogicException('TypeError: dimension must implement DimensionInterface');
+            }
+        }
+
+        foreach ($attributes as $key => $value) {
+            if (!is_string($key)) {
+                throw new LogicException('TypeError: attribute key must be string');
+            }
+
+            if (!is_string($value)) {
+                throw new LogicException('TypeError: attribute value must be string');
+            }
+
+            $this->setAttribute($key, $value);
+        }
     }
 
     public function getVerificationId(): int
     {
-        return $this->verId;
+        return $this->verificationId;
     }
 
     public function getTransactionDate(): \DateTimeImmutable

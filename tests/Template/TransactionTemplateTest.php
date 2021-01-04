@@ -7,20 +7,20 @@ namespace byrokrat\accounting\Template;
 use byrokrat\accounting\Exception\LogicException;
 use Prophecy\Argument;
 
-class VerificationTemplateTest extends \PHPUnit\Framework\TestCase
+class TransactionTemplateTest extends \PHPUnit\Framework\TestCase
 {
     use \Prophecy\PhpUnit\ProphecyTrait;
 
-    public function testExceptionOnInvalidTransaction()
+    public function testExceptionOnInvalidDimension()
     {
         $this->expectException(LogicException::class);
-        new VerificationTemplate(transactions: [null]);
+        new TransactionTemplate(dimensions: [null]);
     }
 
     public function testExceptionOnInvalidAttribute()
     {
         $this->expectException(LogicException::class);
-        new VerificationTemplate(attributes: [null]);
+        new TransactionTemplate(attributes: [null]);
     }
 
     public function testTranslateStrings()
@@ -28,41 +28,44 @@ class VerificationTemplateTest extends \PHPUnit\Framework\TestCase
         $translator = $this->prophesize(TranslatorInterface::class);
         $translator->translate('foo')->willReturn('bar');
 
-        $original = new VerificationTemplate(
-            id: 'foo',
+        $original = new TransactionTemplate(
             transactionDate: 'foo',
-            registrationDate: 'foo',
             description: 'foo',
             signature: 'foo',
+            amount: 'foo',
+            quantity: 'foo',
+            account: 'foo',
         );
 
         $translated = $original->translate($translator->reveal());
 
-        $this->assertSame('foo', $original->id);
         $this->assertSame('foo', $original->transactionDate);
-        $this->assertSame('foo', $original->registrationDate);
         $this->assertSame('foo', $original->description);
         $this->assertSame('foo', $original->signature);
+        $this->assertSame('foo', $original->amount);
+        $this->assertSame('foo', $original->quantity);
+        $this->assertSame('foo', $original->account);
 
-        $this->assertSame('bar', $translated->id);
         $this->assertSame('bar', $translated->transactionDate);
-        $this->assertSame('bar', $translated->registrationDate);
         $this->assertSame('bar', $translated->description);
         $this->assertSame('bar', $translated->signature);
+        $this->assertSame('bar', $translated->amount);
+        $this->assertSame('bar', $translated->quantity);
+        $this->assertSame('bar', $translated->account);
     }
 
-    public function testTranslateTransactions()
+    public function testTranslateDimensions()
     {
         $translator = $this->prophesize(TranslatorInterface::class);
         $translator->translate('foo')->willReturn('bar');
         $translator->translate(Argument::any())->willReturn('');
 
-        $original = new VerificationTemplate(transactions: [new TransactionTemplate(signature: 'foo')]);
+        $original = new TransactionTemplate(dimensions: ['foo']);
 
         $translated = $original->translate($translator->reveal());
 
-        $this->assertSame('foo', $original->transactions[0]->signature);
-        $this->assertSame('bar', $translated->transactions[0]->signature);
+        $this->assertSame(['foo'], $original->dimensions);
+        $this->assertSame(['bar'], $translated->dimensions);
     }
 
     public function testTranslateAttributes()
@@ -71,7 +74,7 @@ class VerificationTemplateTest extends \PHPUnit\Framework\TestCase
         $translator->translate('foo')->willReturn('bar');
         $translator->translate(Argument::any())->willReturn('');
 
-        $original = new VerificationTemplate(attributes: [new AttributeTemplate(key: 'foo')]);
+        $original = new TransactionTemplate(attributes: [new AttributeTemplate(key: 'foo')]);
 
         $translated = $original->translate($translator->reveal());
 

@@ -1,7 +1,6 @@
 # Accounting
 
 [![Packagist Version](https://img.shields.io/packagist/v/byrokrat/accounting.svg?style=flat-square)](https://packagist.org/packages/byrokrat/accounting)
-[![license](https://img.shields.io/github/license/byrokrat/accounting.svg?maxAge=2592000&style=flat-square)](LICENSE)
 [![Build Status](https://img.shields.io/travis/byrokrat/accounting/master.svg?style=flat-square)](https://travis-ci.com/github/byrokrat/accounting)
 [![Quality Score](https://img.shields.io/scrutinizer/g/byrokrat/accounting.svg?style=flat-square)](https://scrutinizer-ci.com/g/byrokrat/accounting)
 
@@ -43,22 +42,17 @@ are placeholders for values supplied at render time.
 
 <!-- @example template -->
 ```php
+use byrokrat\accounting\Template\TransactionTemplate;
 use byrokrat\accounting\Template\VerificationTemplate;
 
-$template = new VerificationTemplate([
-    'description' => '{description}',
-    'transactionDate' => '{now}',
-    'transactions' => [
-        [
-            'account' => '1920',
-            'amount' => '{bank_amount}'
-        ],
-        [
-            'account' => '{account}',
-            'amount' => '{income_amount}'
-        ]
+$template = new VerificationTemplate(
+    description: '{description}',
+    transactionDate: '{now}',
+    transactions: [
+        new TransactionTemplate(account: '1920', amount: '{bank_amount}'),
+        new TransactionTemplate(account: '{account}', amount: '{income_amount}'),
     ]
-]);
+);
 ```
 
 Create an account plan, a set of accounts.

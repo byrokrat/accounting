@@ -23,12 +23,12 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
+use byrokrat\accounting\Exception\LogicException;
+
 /**
  * Translate raw data by expanding placeholders
- *
- * @TODO felmeddelanden om ej string|Stringable skickas med??
  */
-class Translator
+final class Translator implements TranslatorInterface
 {
     /** @var array<string, string> */
     private array $translations;
@@ -38,47 +38,31 @@ class Translator
      */
     public function __construct(array $translations)
     {
+        foreach ($translations as $placeholder => $replacement) {
+            if (!is_string($placeholder)) {
+                throw new LogicException('TypeError: Placeholder must be string');
+            }
+
+            if (!is_string($replacement)) {
+                throw new LogicException('TypeError: Replacement must be string');
+            }
+        }
+
         $this->translations = (array)array_combine(
             array_map(
-                fn (string $key) => '{' . $key . '}',
+                fn ($placeholder) => '{' . $placeholder . '}',
                 array_keys($translations)
             ),
             $translations
         );
     }
 
-    /**
-     * @param array<string, string|array> $raw
-     * @return array<string, string|array>
-     */
-    public function translate(array $raw): array
+    public function translate(string $raw): string
     {
-        return self::arrayMapRecursive(
-            function (string $value): string {
-                return trim(
-                    str_replace(
-                        array_keys($this->translations),
-                        $this->translations,
-                        $value
-                    )
-                );
-            },
+        return str_replace(
+            array_keys($this->translations),
+            $this->translations,
             $raw
         );
-    }
-
-    /**
-     * @param array<string, string|array> $raw
-     * @return array<string, string|array>
-     */
-    private static function arrayMapRecursive(callable $callback, array $raw): array
-    {
-        $mapped = [];
-
-        foreach ($raw as $key => $value) {
-            $mapped[$key] = is_array($value) ? self::arrayMapRecursive($callback, $value) : $callback($value);
-        }
-
-        return $mapped;
     }
 }

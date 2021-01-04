@@ -24,7 +24,7 @@ class Sie4WriterTest extends \PHPUnit\Framework\TestCase
                 new \DateTimeImmutable(),
                 'desc',
                 'signature',
-                new Transaction(
+                [new Transaction(
                     1,
                     new \DateTimeImmutable(),
                     'desc',
@@ -32,7 +32,7 @@ class Sie4WriterTest extends \PHPUnit\Framework\TestCase
                     new Amount('100'),
                     new Amount('0'),
                     new DebtAccount('1000')
-                )
+                )]
             )
         );
 

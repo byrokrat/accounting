@@ -23,22 +23,21 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
-class DateFactory
+/**
+ * Attribute template data value object
+ */
+final class AttributeTemplate implements TemplateInterface
 {
-    private \DateTimeImmutable $now;
+    public function __construct(
+        public string $key = '',
+        public string $value = '',
+    ) {}
 
-    public function __construct(\DateTimeImmutable $now = null)
+    public function translate(TranslatorInterface $translator): self
     {
-        $this->now = $now ?: new \DateTimeImmutable();
-    }
-
-    // @TODO Exception if $rawDate is not a parsable string
-    public function createDate(string $rawDate): \DateTimeImmutable
-    {
-        if ($rawDate == '{now}') {
-            return $this->now;
-        }
-
-        return new \DateTimeImmutable($rawDate);
+        return new self(
+            key: $translator->translate($this->key),
+            value: $translator->translate($this->value),
+        );
     }
 }

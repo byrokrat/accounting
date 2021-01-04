@@ -26,26 +26,27 @@ namespace byrokrat\accounting\Template;
 use byrokrat\accounting\Exception\LogicException;
 
 /**
- * Verification template data value object
+ * Transaction template data value object
  */
-final class VerificationTemplate implements TemplateInterface
+final class TransactionTemplate implements TemplateInterface
 {
     /**
-     * @param array<TransactionTemplate> $transactions
+     * @param array<string> $dimensions
      * @param array<AttributeTemplate> $attributes
      */
     public function __construct(
-        public string $id = '0',
-        public string $transactionDate = '{now}',
-        public string $registrationDate = '{now}',
+        public string $transactionDate = '',
         public string $description = '',
         public string $signature = '',
-        public array $transactions = [],
-        public array $attributes = []
+        public string $amount = '0',
+        public string $quantity = '0',
+        public string $account = '',
+        public array $dimensions = [],
+        public array $attributes = [],
     ) {
-        foreach ($this->transactions as $transaction) {
-            if (!$transaction instanceof TransactionTemplate) {
-                throw new LogicException('Transaction must be instance of TransactionTemplate');
+        foreach ($this->dimensions as $dimension) {
+            if (!is_string($dimension)) {
+                throw new LogicException('Non-string dimension value found');
             }
         }
 
@@ -59,14 +60,15 @@ final class VerificationTemplate implements TemplateInterface
     public function translate(TranslatorInterface $translator): self
     {
         return new self(
-            id: $translator->translate($this->id),
             transactionDate: $translator->translate($this->transactionDate),
-            registrationDate: $translator->translate($this->registrationDate),
             description: $translator->translate($this->description),
             signature: $translator->translate($this->signature),
-            transactions: array_map(
-                fn($transaction) => $transaction->translate($translator),
-                $this->transactions
+            amount: $translator->translate($this->amount),
+            quantity: $translator->translate($this->quantity),
+            account: $translator->translate($this->account),
+            dimensions: array_map(
+                fn($dimension) => $translator->translate($dimension),
+                $this->dimensions
             ),
             attributes: array_map(
                 fn($attribute) => $attribute->translate($translator),

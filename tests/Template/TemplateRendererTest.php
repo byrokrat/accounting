@@ -9,7 +9,13 @@ use byrokrat\accounting\Query;
 use byrokrat\accounting\Container;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
+use byrokrat\accounting\Exception\RuntimeException;
+use byrokrat\accounting\Transaction\TransactionInterface;
+use byrokrat\accounting\Transaction\Transaction;
+use byrokrat\accounting\Verification\VerificationInterface;
+use byrokrat\accounting\Verification\Verification;
 use byrokrat\amount\Amount;
+use Prophecy\Argument;
 
 /**
  * @covers \byrokrat\accounting\Template\TemplateRenderer
@@ -18,121 +24,180 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
 {
     use \Prophecy\PhpUnit\ProphecyTrait;
 
-    public function testTranslations()
+    public function testRenderVerification()
     {
-        $template = $this->prophesize(VerificationTemplate::CLASS);
-        $template->getValues()->willReturn(['foo']);
+        $renderer = new TemplateRenderer($this->createMock(QueryableInterface::class));
 
-        $translator = $this->prophesize(Translator::CLASS);
-        $translator->translate(['foo'])->willReturn(['bar'])->shouldBeCalled();
-
-        $renderer = new TemplateRenderer($this->createMock(QueryableInterface::CLASS));
-
-        $renderer->render($template->reveal(), $translator->reveal());
-
-        return [$template, $translator];
+        $this->assertInstanceOf(
+            VerificationInterface::class,
+            $renderer->render(new VerificationTemplate(), new Translator([]))
+        );
     }
 
-    /**
-     * @depends testTranslations
-     */
-    public function testDatesFromFactory($mocks)
+    public function testTranslatorCalled()
     {
-        list($template, $translator) = $mocks;
+        $translator = $this->prophesize(TranslatorInterface::class);
+        $translator->translate(Argument::any())->willReturn('');
 
-        $date = new \DateTimeImmutable();
-        $dateFactory = $this->prophesize(DateFactory::CLASS);
-        $dateFactory->createDate('foo')->willReturn($date);
-        $dateFactory->createDate('')->willReturn($date);
+        $translator->translate('foobar')->willReturn('1')->shouldBeCalled();
 
-        $dimensions = $this->createMock(QueryableInterface::CLASS);
+        $renderer = new TemplateRenderer($this->createMock(QueryableInterface::class));
 
-        $renderer = new TemplateRenderer($dimensions, null, $dateFactory->reveal());
-
-        $translator->translate(['foo'])->willReturn([
-            'transaction_date' => 'foo',
-        ]);
-
-        $ver = $renderer->render($template->reveal(), $translator->reveal());
-
-        $this->assertSame($date, $ver->getTransactionDate());
-        $this->assertSame($date, $ver->getRegistrationDate());
-
-        return [$template, $translator, $dateFactory];
+        $renderer->render(new VerificationTemplate(id: 'foobar'), $translator->reveal());
     }
 
-    /**
-     * @depends testDatesFromFactory
-     */
-    public function testDimensionsFromQueryable($mocks)
+    public function testVerificationValues()
     {
-        list($template, $translator, $dateFactory) = $mocks;
+        $dateFactory = $this->prophesize(DateFactory::class);
 
-        $dimension = $this->createMock(DimensionInterface::CLASS);
-        $account = $this->createMock(AccountInterface::CLASS);
+        $transactionDate = new \DateTimeImmutable();
+        $dateFactory->createDate('transactionDate')->willReturn($transactionDate)->shouldBeCalled();
 
-        $query = $this->prophesize(Query::CLASS);
-        $query->getDimension('dim_nr')->willReturn($dimension);
-        $query->getAccount('account_nr')->willReturn($account);
-        $query->getAccount('')->willReturn($account);
+        $registrationDate = new \DateTimeImmutable();
+        $dateFactory->createDate('registrationDate')->willReturn($registrationDate)->shouldBeCalled();
 
-        $queryable = $this->prophesize(QueryableInterface::CLASS);
+        $template = new VerificationTemplate(
+            id: '666',
+            transactionDate: 'transactionDate',
+            registrationDate: 'registrationDate',
+            description: 'desc',
+            signature: 'sign',
+            attributes: [new AttributeTemplate('foo', 'bar')],
+        );
+
+        $renderer = new TemplateRenderer($this->createMock(QueryableInterface::class), null, $dateFactory->reveal());
+
+        $expected = new Verification(
+            id: 666,
+            transactionDate: $transactionDate,
+            registrationDate: $registrationDate,
+            description: 'desc',
+            signature: 'sign',
+            transactions: [],
+            attributes: ['foo' => 'bar'],
+        );
+
+        $this->assertEquals($expected, $renderer->render($template, new Translator([])));
+    }
+
+    public function testRenderTransaction()
+    {
+        $renderer = new TemplateRenderer($this->createMock(QueryableInterface::class));
+
+        $template = new VerificationTemplate(
+            transactions: [new TransactionTemplate()]
+        );
+
+        $this->assertInstanceOf(
+            TransactionInterface::class,
+            $renderer->render($template, new Translator([]))->getTransactions()[0]
+        );
+    }
+
+    public function testTransactionValues()
+    {
+        $dimension = $this->createMock(DimensionInterface::class);
+        $account = $this->createMock(AccountInterface::class);
+
+        $query = $this->prophesize(Query::class);
+        $query->getDimension('dim')->willReturn($dimension)->shouldBeCalled();
+        $query->getAccount('1234')->willReturn($account)->shouldBeCalled();
+
+        $queryable = $this->prophesize(QueryableInterface::class);
         $queryable->select()->willReturn($query);
-
-        $renderer = new TemplateRenderer($queryable->reveal(), null, $dateFactory->reveal());
-
-        $translator->translate(['foo'])->willReturn([
-            'transactions' => [
-                [
-                    'account' => 'account_nr',
-                    'dimensions' => ['dim_nr']
-                ]
-            ],
-        ]);
-
-        $ver = $renderer->render($template->reveal(), $translator->reveal());
-
-        $this->assertSame($account, $ver->getTransactions()[0]->getAccount());
-        $this->assertSame($dimension, $ver->getTransactions()[0]->getDimensions()[0]);
-
-        return [$template, $translator, $dateFactory, $queryable];
-    }
-
-    /**
-     * @depends testDimensionsFromQueryable
-     */
-    public function testMoneyFromFactory($mocks)
-    {
-        list($template, $translator, $dateFactory, $queryable) = $mocks;
 
         $amount = new Amount('999');
 
-        $moneyFactory = $this->prophesize(MoneyFactoryInterface::CLASS);
-        $moneyFactory->createMoney('999')->willReturn($amount);
+        $moneyFactory = $this->prophesize(MoneyFactoryInterface::class);
+        $moneyFactory->createMoney('999')->willReturn($amount)->shouldBeCalled();
+
+        $dateFactory = $this->prophesize(DateFactory::class);
+
+        $transactionDate = new \DateTimeImmutable();
+        $dateFactory->createDate('transactionDate')->willReturn($transactionDate)->shouldBeCalled();
+        $dateFactory->createDate(Argument::any())->willReturn(new \DateTimeImmutable());
 
         $renderer = new TemplateRenderer($queryable->reveal(), $moneyFactory->reveal(), $dateFactory->reveal());
 
-        $translator->translate(['foo'])->willReturn([
-            'transactions' => [
-                ['amount' => '999']
-            ],
-        ]);
+        $template = new VerificationTemplate(
+            id: '666',
+            transactions: [new TransactionTemplate(
+                transactionDate: 'transactionDate',
+                description: 'desc',
+                signature: 'sign',
+                amount: '999',
+                quantity: '1',
+                account: '1234',
+                dimensions: ['dim'],
+                attributes: [new AttributeTemplate('foo', 'bar')],
+            )]
+        );
 
-        $ver = $renderer->render($template->reveal(), $translator->reveal());
+        $expected = new Transaction(
+            verificationId: 666,
+            transactionDate: $transactionDate,
+            description: 'desc',
+            signature: 'sign',
+            amount: $amount,
+            quantity: new Amount('1'),
+            account: $account,
+            dimensions: [$dimension],
+            attributes: ['foo' => 'bar'],
+        );
 
-        $this->assertSame($amount, $ver->getTransactions()[0]->getAmount());
+        $this->assertEquals(
+            $expected,
+            $renderer->render($template, new Translator([]))->getTransactions()[0]
+        );
     }
 
-    public function testAttribute()
+    public function testTransactionDefaultsFromVerification()
     {
-        $template = new VerificationTemplate([
-            'attributes' => [
-                'foo' => 'bar'
-            ]
-        ]);
+        $account = $this->createMock(AccountInterface::class);
+        $query = $this->prophesize(Query::class);
+        $query->getAccount(Argument::any())->willReturn($account);
+        $queryable = $this->prophesize(QueryableInterface::class);
+        $queryable->select()->willReturn($query);
 
-        $ver = (new TemplateRenderer(new Container()))->render($template, new Translator([]));
+        $amount = new Amount('999');
+        $moneyFactory = $this->prophesize(MoneyFactoryInterface::class);
+        $moneyFactory->createMoney(Argument::any())->willReturn($amount);
 
-        $this->assertSame('bar', $ver->getAttribute('foo'));
+        $dateFactory = $this->prophesize(DateFactory::class);
+        $transactionDate = new \DateTimeImmutable();
+        $dateFactory->createDate('transactionDate')->willReturn($transactionDate);
+        $dateFactory->createDate(Argument::any())->willReturn(new \DateTimeImmutable());
+
+        $renderer = new TemplateRenderer($queryable->reveal(), $moneyFactory->reveal(), $dateFactory->reveal());
+
+        $template = new VerificationTemplate(
+            id: '666',
+            transactionDate: 'transactionDate',
+            description: 'desc',
+            signature: 'sign',
+            transactions: [new TransactionTemplate()]
+        );
+
+        $expected = new Transaction(
+            verificationId: 666,
+            transactionDate: $transactionDate,
+            description: 'desc',
+            signature: 'sign',
+            amount: $amount,
+            quantity: new Amount('0'),
+            account: $account,
+        );
+
+        $this->assertEquals(
+            $expected,
+            $renderer->render($template, new Translator([]))->getTransactions()[0]
+        );
+    }
+
+    public function testExceptionIfVerificationIdIsNotDigits()
+    {
+        $this->expectException(RuntimeException::class);
+        $renderer = new TemplateRenderer($this->createMock(QueryableInterface::class));
+        $renderer->render(new VerificationTemplate(id: 'these-are-not-digits'), new Translator([]));
     }
 }

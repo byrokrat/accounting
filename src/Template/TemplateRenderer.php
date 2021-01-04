@@ -37,6 +37,9 @@ final class TemplateRenderer
     private MoneyFactoryInterface $moneyFactory;
     private DateFactory $dateFactory;
 
+    /**
+     * @TODO Create using factory. Constructor could take a Query. Factory could take Query | QueryableInterface.
+     */
     public function __construct(
         QueryableInterface $container,
         MoneyFactoryInterface $moneyFactory = null,
@@ -47,65 +50,52 @@ final class TemplateRenderer
         $this->dateFactory = $dateFactory ?: new DateFactory();
     }
 
-    public function render(VerificationTemplate $template, Translator $translator): VerificationInterface
+    public function render(VerificationTemplate $template, TranslatorInterface $translator): VerificationInterface
     {
-        $data = $translator->translate($template->getValues());
+        $template = $template->translate($translator);
 
-        $relations = new Translator([
-            'verification_transaction_date' => $this->stringify($data['transaction_date'] ?? ''),
-            'verification_description' => $this->stringify($data['description'] ?? ''),
-            'verification_signature' => $this->stringify($data['signature'] ?? ''),
-        ]);
-
-        $data = $relations->translate($data);
-
-        $transactions = [];
-
-        foreach ((array)($data['transactions'] ?? []) as $transData) {
-            $dimensions = [];
-
-            foreach ((array)($transData['dimensions'] ?? []) as $rawDim) {
-                $dimensions[] = $this->dimensionQuery->getDimension($rawDim);
-            }
-
-            $transactions[] = new Transaction(
-                (int)$this->stringify($data['id'] ?? ''),
-                $this->dateFactory->createDate((string)($transData['transaction_date'] ?? '')),
-                (string)($transData['description'] ?? ''),
-                (string)($transData['signature'] ?? ''),
-                $this->moneyFactory->createMoney((string)($transData['amount'] ?? '')),
-                new Amount((string)($transData['quantity'] ?? '')),
-                $this->dimensionQuery->getAccount((string)($transData['account'] ?? '')),
-                ...$dimensions
-            );
+        if (!ctype_digit($template->id)) {
+            throw new RuntimeException('Verification id must be a string of integers');
         }
 
-        $verification =  new Verification(
-            (int)$this->stringify($data['id'] ?? ''),
-            $this->dateFactory->createDate($this->stringify($data['transaction_date'] ?? '')),
-            $this->dateFactory->createDate($this->stringify($data['registration_date'] ?? '')),
-            $this->stringify($data['description'] ?? ''),
-            $this->stringify($data['signature'] ?? ''),
-            ...$transactions
+        return new Verification(
+            id: (int)$template->id,
+            transactionDate: $this->dateFactory->createDate($template->transactionDate),
+            registrationDate: $this->dateFactory->createDate($template->registrationDate),
+            description: $template->description,
+            signature: $template->signature,
+            transactions: array_map(
+                fn($transTmpl) => $this->renderTransaction($transTmpl, $template),
+                $template->transactions
+            ),
+            attributes: array_combine(
+                array_map(fn($attr) => $attr->key, $template->attributes),
+                array_map(fn($attr) => $attr->value, $template->attributes),
+            ),
         );
-
-        foreach ((array)($data['attributes'] ?? '') as $key => $value) {
-            $verification->setAttribute((string)$key, $value);
-        }
-
-        return $verification;
     }
 
-    private function stringify(mixed $arg): string
+    /**
+     * @TODO Quantity should be validated as a float-style number string. Here or in a factory
+     */
+    private function renderTransaction(TransactionTemplate $transTmpl, VerificationTemplate $verTmpl): Transaction
     {
-        if (is_string($arg)) {
-            return $arg;
-        }
-
-        if ($arg instanceof \Stringable) {
-            return (string)$arg;
-        }
-
-        throw new RuntimeException('Unable to cast ' . gettype($arg) . ' to string');
+        return new Transaction(
+            verificationId: (int)$verTmpl->id,
+            transactionDate: $this->dateFactory->createDate($transTmpl->transactionDate ?: $verTmpl->transactionDate),
+            description: $transTmpl->description ?: $verTmpl->description,
+            signature: $transTmpl->signature ?: $verTmpl->signature,
+            amount: $this->moneyFactory->createMoney($transTmpl->amount),
+            quantity: new Amount($transTmpl->quantity),
+            account: $this->dimensionQuery->getAccount($transTmpl->account),
+            dimensions: array_map(
+                fn($dimId) => $this->dimensionQuery->getDimension($dimId),
+                $transTmpl->dimensions
+            ),
+            attributes: array_combine(
+                array_map(fn($attr) => $attr->key, $transTmpl->attributes),
+                array_map(fn($attr) => $attr->value, $transTmpl->attributes),
+            ),
+        );
     }
 }

@@ -19,26 +19,12 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types=1);
-
 namespace byrokrat\accounting\Template;
 
-class DateFactory
+interface TemplateInterface
 {
-    private \DateTimeImmutable $now;
-
-    public function __construct(\DateTimeImmutable $now = null)
-    {
-        $this->now = $now ?: new \DateTimeImmutable();
-    }
-
-    // @TODO Exception if $rawDate is not a parsable string
-    public function createDate(string $rawDate): \DateTimeImmutable
-    {
-        if ($rawDate == '{now}') {
-            return $this->now;
-        }
-
-        return new \DateTimeImmutable($rawDate);
-    }
+    /**
+     * Create a new template with translated values
+     */
+    public function translate(TranslatorInterface $translator): self;
 }

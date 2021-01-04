@@ -19,8 +19,8 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
 
         $date = new \DateTimeImmutable();
 
-        $transA = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, $dim);
-        $transB = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, $dim);
+        $transA = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, [$dim]);
+        $transB = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, [$dim]);
 
         $container = new Container($transA, $transB);
 
@@ -51,8 +51,8 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
 
         $date = new \DateTimeImmutable();
 
-        $transA = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, $dim);
-        $transB = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, $dim);
+        $transA = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, [$dim]);
+        $transB = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, [$dim]);
 
         $container = new Container($transA, $transB);
 
@@ -80,8 +80,8 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
 
         $date = new \DateTimeImmutable();
 
-        $transA = new Transaction(0, $date, '', '', new Amount('0'), new Amount('1'), $account, $dim);
-        $transB = new Transaction(0, $date, '', '', new Amount('0'), new Amount('1'), $account, $dim);
+        $transA = new Transaction(0, $date, '', '', new Amount('0'), new Amount('1'), $account, [$dim]);
+        $transB = new Transaction(0, $date, '', '', new Amount('0'), new Amount('1'), $account, [$dim]);
 
         $container = new Container($transA, $transB);
 

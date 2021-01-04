@@ -18,8 +18,12 @@
     </rule>
 
     <!-- allow closing brace to be on same line togheter with constructur argument promotion -->
-    <rule ref="Squiz.WhiteSpace.ScopeClosingBrace">
+    <rule ref="Squiz.WhiteSpace.ScopeClosingBrace.ContentBefore">
        <exclude-pattern>./src</exclude-pattern>
+    </rule>
+
+    <rule ref="PSR2.Methods.FunctionCallSignature.Indent">
+       <exclude-pattern>./src/Template/TemplateRenderer.php</exclude-pattern>
     </rule>
 
     <arg name="colors"/>

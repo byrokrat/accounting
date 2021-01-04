@@ -4,57 +4,43 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
+use byrokrat\accounting\Exception\LogicException;
+
 class TranslatorTest extends \PHPUnit\Framework\TestCase
 {
-    public function testTranslateSingleValue()
+    public function testExceptionOnInvalidPlaceholder()
+    {
+        $this->expectException(LogicException::class);
+        new Translator([123 => 'placeholder-is-not-string']);
+    }
+
+    public function testExceptionOnInvalidReplacement()
+    {
+        $this->expectException(LogicException::class);
+        new Translator(['replacement-is-not-string' => 123]);
+    }
+
+    public function testTranslatePlaceholder()
     {
         $this->assertSame(
-            ['key' => 'translated'],
-            (new Translator(['placeholder' => 'translated']))->translate(['key' => '{placeholder}'])
+            'translated',
+            (new Translator(['placeholder' => 'translated']))->translate('{placeholder}')
         );
     }
 
-    public function testTranslateMultipleValues()
+    public function testTranslateMultiplePlaceholders()
     {
         $this->assertSame(
-            ['keyA' => 'A', 'keyB' => 'B'],
-            (new Translator(['a' => 'A', 'b' => 'B']))->translate(['keyA' => '{a}', 'keyB' => '{b}'])
+            'A B',
+            (new Translator(['a' => 'A', 'b' => 'B']))->translate('{a} {b}')
         );
     }
 
-    public function testTranslateMultiplePlaceholdersInOneValue()
+    public function testTranslateUnknown()
     {
         $this->assertSame(
-            ['key' => 'A B'],
-            (new Translator(['a' => 'A', 'b' => 'B']))->translate(['key' => '{a} {b}'])
-        );
-    }
-
-    public function testIgnoreUnknownPlaceholders()
-    {
-        $this->assertSame(
-            ['key' => '{placeholder}'],
-            (new Translator([]))->translate(['key' => '{placeholder}'])
-        );
-    }
-
-    public function testRecursiveTranslation()
-    {
-        $this->assertSame(
-            [
-                'foo' => [
-                    'keyA' => 'A',
-                    'keyB' => 'B',
-                ],
-                'bar' => [
-                    'A',
-                    'B'
-                ]
-            ],
-            (new Translator(['a' => 'A', 'b' => 'B']))->translate([
-                'foo' => ['keyA' => '{a}', 'keyB' => '{b}'],
-                'bar' => ['{a}', '{b}']
-            ])
+            '{foo}',
+            (new Translator([]))->translate('{foo}')
         );
     }
 }
