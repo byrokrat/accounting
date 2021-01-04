@@ -32,7 +32,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testAsSummary()
     {
-        $trans = $this->prophesize(TransactionInterface::CLASS);
+        $trans = $this->prophesize(TransactionInterface::class);
         $trans->getAmount()->willReturn(new Amount('50'));
         $trans->select()->willReturn(new Query());
         $trans = $trans->reveal();
@@ -47,11 +47,11 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testNestedIteration()
     {
-        $queryable1 = $this->prophesize(QueryableInterface::CLASS);
+        $queryable1 = $this->prophesize(QueryableInterface::class);
         $queryable1->select()->willReturn(new Query(['bar']));
         $queryable1 = $queryable1->reveal();
 
-        $queryable2 = $this->prophesize(QueryableInterface::CLASS);
+        $queryable2 = $this->prophesize(QueryableInterface::class);
         $queryable2->select()->willReturn(new Query(['foo', $queryable1]));
         $queryable2 = $queryable2->reveal();
 
@@ -75,7 +75,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testFilter()
     {
-        $queryable = $this->prophesize(QueryableInterface::CLASS);
+        $queryable = $this->prophesize(QueryableInterface::class);
         $queryable->select()->willReturn(new Query([2]));
 
         $this->assertSame(
@@ -88,7 +88,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             [$query = new Query()],
-            (new Query([1, $query]))->filterType(Query::CLASS)->asArray()
+            (new Query([1, $query]))->filterType(Query::class)->asArray()
         );
     }
 
@@ -181,7 +181,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testCountingFilteredValues()
     {
-        $queryable = $this->prophesize(QueryableInterface::CLASS);
+        $queryable = $this->prophesize(QueryableInterface::class);
         $queryable->select()->willReturn(new Query([2]));
 
         $this->assertSame(
@@ -195,7 +195,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testAccounts()
     {
-        $account = $this->createMock(AccountInterface::CLASS);
+        $account = $this->createMock(AccountInterface::class);
 
         $this->assertSame(
             [$account, $account],
@@ -208,7 +208,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testuniqueAccounts()
     {
-        $account = $this->createMock(AccountInterface::CLASS);
+        $account = $this->createMock(AccountInterface::class);
 
         $this->assertSame(
             [$account],
@@ -221,7 +221,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testDimensions()
     {
-        $dim = $this->createMock(DimensionInterface::CLASS);
+        $dim = $this->createMock(DimensionInterface::class);
 
         $this->assertSame(
             [$dim, $dim],
@@ -234,7 +234,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testUniqueDimensions()
     {
-        $dim = $this->createMock(DimensionInterface::CLASS);
+        $dim = $this->createMock(DimensionInterface::class);
 
         $this->assertSame(
             [$dim],
@@ -244,7 +244,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testWhereAttribute()
     {
-        $attributableProphecy = $this->prophesize(AttributableInterface::CLASS);
+        $attributableProphecy = $this->prophesize(AttributableInterface::class);
 
         $attributableProphecy->hasAttribute('A')->willReturn(true);
         $attributableProphecy->getAttribute('A')->willReturn('foobar');
@@ -287,7 +287,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     public function testTransactions()
     {
         $this->assertSame(
-            [$transaction = $this->createMock(TransactionInterface::CLASS)],
+            [$transaction = $this->createMock(TransactionInterface::class)],
             (new Query([1, $transaction, 3]))->transactions()->asArray()
         );
     }
@@ -297,7 +297,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testVerifications()
     {
-        $verification = $this->createMock(VerificationInterface::CLASS);
+        $verification = $this->createMock(VerificationInterface::class);
 
         $this->assertSame(
             [$verification, $verification],
@@ -310,7 +310,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testUniqueVerifications()
     {
-        $verification = $this->createMock(VerificationInterface::CLASS);
+        $verification = $this->createMock(VerificationInterface::class);
 
         $this->assertSame(
             [$verification],
@@ -323,14 +323,14 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testUnbalancedVerifications()
     {
-        $balanced = $this->prophesize(VerificationInterface::CLASS);
+        $balanced = $this->prophesize(VerificationInterface::class);
         $balanced->isBalanced()->willReturn(true);
         $balanced->select()->willReturn(new Query());
         $balanced->getVerificationId()->willReturn(1);
         $balanced->getAttribute('series', '')->willReturn('');
         $balanced = $balanced->reveal();
 
-        $unbalanced = $this->prophesize(VerificationInterface::CLASS);
+        $unbalanced = $this->prophesize(VerificationInterface::class);
         $unbalanced->isBalanced()->willReturn(false);
         $unbalanced->select()->willReturn(new Query());
         $unbalanced->getVerificationId()->willReturn(2);
@@ -494,7 +494,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [$foo],
-            (new Query([$foo, $bar]))->filterType(QueryableInterface::CLASS)->where(function ($item) {
+            (new Query([$foo, $bar]))->filterType(QueryableInterface::class)->where(function ($item) {
                 return is_string($item) && $item == 'foo';
             })->asArray(),
             '$bar should be removed as it does not contain the subitem foo'
@@ -511,7 +511,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             [$bar],
-            (new Query([$foo, $bar]))->filterType(QueryableInterface::CLASS)->whereNot(function ($item) {
+            (new Query([$foo, $bar]))->filterType(QueryableInterface::class)->whereNot(function ($item) {
                 return is_string($item) && $item == 'foo';
             })->asArray(),
             '$bar should be kept as it does not contain the subitem foo'
@@ -523,19 +523,19 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testWhereAccount()
     {
-        $account1 = $this->prophesize(AccountInterface::CLASS);
+        $account1 = $this->prophesize(AccountInterface::class);
         $account1->getId()->willReturn('1');
         $account1->select()->willReturn(new Query());
         $query1 = new Query([$account1->reveal()]);
 
-        $account2 = $this->prophesize(AccountInterface::CLASS);
+        $account2 = $this->prophesize(AccountInterface::class);
         $account2->getId()->willReturn('2');
         $account2->select()->willReturn(new Query());
         $query2 = new Query([$account2->reveal()]);
 
         $this->assertSame(
             [$query1],
-            (new Query([$query1, $query2]))->filterType(Query::CLASS)->whereAccount('1')->asArray(),
+            (new Query([$query1, $query2]))->filterType(Query::class)->whereAccount('1')->asArray(),
             'transB should be removed as it does not contain account 1'
         );
     }
@@ -545,22 +545,22 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testWhereAmountEquals()
     {
-        $transA = $this->prophesize(TransactionInterface::CLASS);
+        $transA = $this->prophesize(TransactionInterface::class);
         $transA->getAmount()->willReturn(new Amount('4'));
         $transA->select()->willReturn(new Query());
         $transA = $transA->reveal();
 
-        $transB = $this->prophesize(TransactionInterface::CLASS);
+        $transB = $this->prophesize(TransactionInterface::class);
         $transB->getAmount()->willReturn(new Amount('2'));
         $transB->select()->willReturn(new Query());
         $transB = $transB->reveal();
 
-        $verA = $this->prophesize(VerificationInterface::CLASS);
+        $verA = $this->prophesize(VerificationInterface::class);
         $verA->getMagnitude()->willReturn(new Amount('3'));
         $verA->select()->willReturn(new Query());
         $verA = $verA->reveal();
 
-        $verB = $this->prophesize(VerificationInterface::CLASS);
+        $verB = $this->prophesize(VerificationInterface::class);
         $verB->getMagnitude()->willReturn(new Amount('1'));
         $verB->select()->willReturn(new Query());
         $verB = $verB->reveal();
@@ -614,7 +614,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetAccount()
     {
-        $account = $this->prophesize(AccountInterface::CLASS);
+        $account = $this->prophesize(AccountInterface::class);
         $account->getId()->willReturn('1234');
         $account = $account->reveal();
 
@@ -626,9 +626,9 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionOnUnknownAccountNumber()
     {
-        $this->expectException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::class);
 
-        $dimension = $this->prophesize(DimensionInterface::CLASS);
+        $dimension = $this->prophesize(DimensionInterface::class);
         $dimension->getId()->willReturn('1234');
         $dimension->select()->willReturn(new Query());
 
@@ -637,7 +637,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testGetDimension()
     {
-        $dimension = $this->prophesize(DimensionInterface::CLASS);
+        $dimension = $this->prophesize(DimensionInterface::class);
         $dimension->getId()->willReturn('1234');
         $dimension->select()->willReturn(new Query());
         $dimension = $dimension->reveal();
@@ -650,7 +650,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionOnUnknownDimensionNumber()
     {
-        $this->expectException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::class);
         (new Query())->getDimension('1234');
     }
 
@@ -712,14 +712,14 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionWhenOverwritingMethodWithMacro()
     {
-        $this->expectException(Exception\LogicException::CLASS);
+        $this->expectException(Exception\LogicException::class);
         Query::macro('filter', function () {
         });
     }
 
     public function testExceptionWhenOverwritingMacro()
     {
-        $this->expectException(Exception\LogicException::CLASS);
+        $this->expectException(Exception\LogicException::class);
         Query::macro('thisRareMacroNameIsCreated', function () {
         });
         Query::macro('thisRareMacroNameIsCreated', function () {
@@ -728,7 +728,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionOnUndefinedMethodCall()
     {
-        $this->expectException(Exception\LogicException::CLASS);
+        $this->expectException(Exception\LogicException::class);
         (new Query())->thisMethodDoesNotExist();
     }
 }

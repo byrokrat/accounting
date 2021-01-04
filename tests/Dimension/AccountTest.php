@@ -10,7 +10,7 @@ class AccountTest extends \PHPUnit\Framework\TestCase
 {
     public function testExceptionOnNonNumericAccountNumber()
     {
-        $this->expectException(RuntimeException::CLASS);
+        $this->expectException(RuntimeException::class);
         new AssetAccount('this-is-not-a-numerical-string');
     }
 

@@ -99,7 +99,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      */
     public function accounts(): Query
     {
-        return $this->filterType(AccountInterface::CLASS);
+        return $this->filterType(AccountInterface::class);
     }
 
     /**
@@ -186,7 +186,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      */
     public function dimensions(): Query
     {
-        return $this->filterType(DimensionInterface::CLASS);
+        return $this->filterType(DimensionInterface::class);
     }
 
     /**
@@ -437,7 +437,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      */
     public function transactions(): Query
     {
-        return $this->filterType(TransactionInterface::CLASS);
+        return $this->filterType(TransactionInterface::class);
     }
 
     /**
@@ -455,7 +455,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      */
     public function verifications(): Query
     {
-        return $this->filterType(VerificationInterface::CLASS);
+        return $this->filterType(VerificationInterface::class);
     }
 
     /**

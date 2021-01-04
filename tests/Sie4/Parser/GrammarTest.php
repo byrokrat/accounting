@@ -469,7 +469,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     public function testObjectListType(string $list, string $objId)
     {
         $this->assertInstanceOf(
-            DimensionInterface::CLASS,
+            DimensionInterface::class,
             $this->parse("
                 #FLAGGA 1
                 #OIB 0 0 $list 0 0
@@ -601,7 +601,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         ")->select()->verifications()->getFirst();
 
         $this->assertInstanceOf(
-            \byrokrat\accounting\Transaction\AddedTransaction::CLASS,
+            \byrokrat\accounting\Transaction\AddedTransaction::class,
             $ver->getTransactions()[1]
         );
 
@@ -626,7 +626,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         ")->select()->verifications()->getFirst();
 
         $this->assertInstanceOf(
-            \byrokrat\accounting\Transaction\DeletedTransaction::CLASS,
+            \byrokrat\accounting\Transaction\DeletedTransaction::class,
             $ver->getTransactions()[1]
         );
 

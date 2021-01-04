@@ -25,7 +25,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS),
+            $this->createMock(AccountInterface::class),
             []
         );
     }
@@ -40,7 +40,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS),
+            $this->createMock(AccountInterface::class),
             ['this-is-not-a-dimension-object']
         );
     }
@@ -54,7 +54,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS),
+            $this->createMock(AccountInterface::class),
             [],
             ['key' => 'val']
         );
@@ -75,7 +75,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS),
+            $this->createMock(AccountInterface::class),
             [],
             [1 => 'val']
         );
@@ -91,7 +91,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS),
+            $this->createMock(AccountInterface::class),
             [],
             ['key' => null]
         );
@@ -106,7 +106,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS),
+            $this->createMock(AccountInterface::class),
             []
         );
 
@@ -122,7 +122,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS),
+            $this->createMock(AccountInterface::class),
             []
         );
 
@@ -138,7 +138,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS),
+            $this->createMock(AccountInterface::class),
             []
         );
 
@@ -154,7 +154,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             'sign',
             new Amount('0'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS),
+            $this->createMock(AccountInterface::class),
             []
         );
 
@@ -170,7 +170,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             $amount = new Amount('100'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS),
+            $this->createMock(AccountInterface::class),
             []
         );
 
@@ -186,7 +186,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             $quantity = new Amount('100'),
-            $this->createMock(AccountInterface::CLASS),
+            $this->createMock(AccountInterface::class),
             []
         );
 
@@ -202,7 +202,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             new Amount('0'),
-            $account = $this->createMock(AccountInterface::CLASS),
+            $account = $this->createMock(AccountInterface::class),
             []
         );
 
@@ -218,10 +218,10 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             new Amount('0'),
             new Amount('0'),
-            $this->createMock(AccountInterface::CLASS),
+            $this->createMock(AccountInterface::class),
             [
-                $dimA = $this->createMock(DimensionInterface::CLASS),
-                $dimB = $this->createMock(DimensionInterface::CLASS),
+                $dimA = $this->createMock(DimensionInterface::class),
+                $dimB = $this->createMock(DimensionInterface::class),
             ]
         );
 
@@ -237,10 +237,10 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             '',
             $amount = new Amount('0'),
             new Amount('0'),
-            $account = $this->createMock(AccountInterface::CLASS),
+            $account = $this->createMock(AccountInterface::class),
             [
-                $dimA = $this->createMock(DimensionInterface::CLASS),
-                $dimB = $this->createMock(DimensionInterface::CLASS),
+                $dimA = $this->createMock(DimensionInterface::class),
+                $dimB = $this->createMock(DimensionInterface::class),
             ]
         );
 

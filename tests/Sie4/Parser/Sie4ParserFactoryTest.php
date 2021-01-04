@@ -12,7 +12,7 @@ class Sie4ParserFactoryTest extends \PHPUnit\Framework\TestCase
     public function testCreateParser()
     {
         $this->assertInstanceOf(
-            Sie4Parser::CLASS,
+            Sie4Parser::class,
             (new Sie4ParserFactory())->createParser()
         );
     }

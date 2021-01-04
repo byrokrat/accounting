@@ -16,7 +16,7 @@ class CurrencyBuilderTest extends \PHPUnit\Framework\TestCase
     public function testCreateMoney()
     {
         $currencyBuilder = new CurrencyBuilder(
-            $this->prophesize(Logger::CLASS)->reveal()
+            $this->prophesize(Logger::class)->reveal()
         );
 
         $this->assertEquals(
@@ -36,7 +36,7 @@ class CurrencyBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testUnvalidCurrencyClass()
     {
-        $logger = $this->prophesize(Logger::CLASS);
+        $logger = $this->prophesize(Logger::class);
 
         $currencyBuilder = new CurrencyBuilder($logger->reveal());
 

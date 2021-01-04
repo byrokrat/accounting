@@ -19,12 +19,12 @@ class AccountBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAccount()
     {
-        $account = $this->createMock(AccountInterface::CLASS);
+        $account = $this->createMock(AccountInterface::class);
 
-        $accountFactory = $this->prophesize(AccountFactory::CLASS);
+        $accountFactory = $this->prophesize(AccountFactory::class);
         $accountFactory->createAccount('1234', 'foobar')->willReturn($account);
 
-        $logger = $this->prophesize(Logger::CLASS);
+        $logger = $this->prophesize(Logger::class);
 
         $accountBuilder = new AccountBuilder($accountFactory->reveal(), $logger->reveal());
         $accountBuilder->addAccount('1234', 'foobar');
@@ -35,12 +35,12 @@ class AccountBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateUnspecifiedAccount()
     {
-        $account = $this->createMock(AccountInterface::CLASS);
+        $account = $this->createMock(AccountInterface::class);
 
-        $accountFactory = $this->prophesize(AccountFactory::CLASS);
+        $accountFactory = $this->prophesize(AccountFactory::class);
         $accountFactory->createAccount('1234', 'UNSPECIFIED')->willReturn($account);
 
-        $logger = $this->prophesize(Logger::CLASS);
+        $logger = $this->prophesize(Logger::class);
         $accountBuilder = new AccountBuilder($accountFactory->reveal(), $logger->reveal());
 
         $this->assertSame($account, $accountBuilder->getAccount('1234'));
@@ -48,10 +48,10 @@ class AccountBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testWarningOnFailureCreatingAccount()
     {
-        $accountFactory = $this->prophesize(AccountFactory::CLASS);
+        $accountFactory = $this->prophesize(AccountFactory::class);
         $accountFactory->createAccount('1234', 'foobar')->willThrow(new Exception\RuntimeException());
 
-        $logger = $this->prophesize(Logger::CLASS);
+        $logger = $this->prophesize(Logger::class);
         $logger->log('warning', Argument::any())->shouldBeCalled();
 
         $accountBuilder = new AccountBuilder($accountFactory->reveal(), $logger->reveal());
@@ -60,25 +60,25 @@ class AccountBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionOnFailureGettingAccount()
     {
-        $accountFactory = $this->prophesize(AccountFactory::CLASS);
+        $accountFactory = $this->prophesize(AccountFactory::class);
         $accountFactory->createAccount('1234', 'UNSPECIFIED')->willThrow(new Exception\RuntimeException());
 
-        $logger = $this->prophesize(Logger::CLASS);
+        $logger = $this->prophesize(Logger::class);
 
         $accountBuilder = new AccountBuilder($accountFactory->reveal(), $logger->reveal());
 
-        $this->expectException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::class);
         $accountBuilder->getAccount('1234');
     }
 
     public function testCreateAccountOOO()
     {
-        $account = $this->createMock(AccountInterface::CLASS);
+        $account = $this->createMock(AccountInterface::class);
 
-        $accountFactory = $this->prophesize(AccountFactory::CLASS);
+        $accountFactory = $this->prophesize(AccountFactory::class);
         $accountFactory->createAccount('1234', 'foobar')->willReturn($account);
 
-        $logger = $this->prophesize(Logger::CLASS);
+        $logger = $this->prophesize(Logger::class);
 
         $accountBuilder = new AccountBuilder($accountFactory->reveal(), $logger->reveal());
         $accountBuilder->addAccount('1234', 'foobar');
@@ -89,14 +89,14 @@ class AccountBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testSetAccountType()
     {
-        $account = $this->prophesize(AccountInterface::CLASS);
+        $account = $this->prophesize(AccountInterface::class);
         $account->getDescription()->willReturn('foobar');
         $account->getAttributes()->willReturn(['foo' => 'bar']);
 
-        $accountFactory = $this->prophesize(AccountFactory::CLASS);
+        $accountFactory = $this->prophesize(AccountFactory::class);
         $accountFactory->createAccount('1234', 'UNSPECIFIED')->willReturn($account);
 
-        $logger = $this->prophesize(Logger::CLASS);
+        $logger = $this->prophesize(Logger::class);
         $accountBuilder = new AccountBuilder($accountFactory->reveal(), $logger->reveal());
 
         // Creates the unspecified account
@@ -107,7 +107,7 @@ class AccountBuilderTest extends \PHPUnit\Framework\TestCase
 
         $newAccount = $accountBuilder->getAccount('1234');
 
-        $this->assertInstanceOf(DebtAccount::CLASS, $newAccount);
+        $this->assertInstanceOf(DebtAccount::class, $newAccount);
         $this->assertSame('1234', $newAccount->getId());
         $this->assertSame('foobar', $newAccount->getDescription());
         $this->assertSame(['foo' => 'bar'], $newAccount->getAttributes());
@@ -115,9 +115,9 @@ class AccountBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testSetUnvalidAccountType()
     {
-        $accountFactory = $this->prophesize(AccountFactory::CLASS);
+        $accountFactory = $this->prophesize(AccountFactory::class);
 
-        $logger = $this->prophesize(Logger::CLASS);
+        $logger = $this->prophesize(Logger::class);
         $logger->log('warning', Argument::any())->shouldBeCalled();
 
         $accountBuilder = new AccountBuilder($accountFactory->reveal(), $logger->reveal());

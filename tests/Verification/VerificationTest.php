@@ -89,8 +89,8 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
 
     public function testAccessingTransactions()
     {
-        $transA = $this->createMock(TransactionInterface::CLASS);
-        $transB = $this->createMock(TransactionInterface::CLASS);
+        $transA = $this->createMock(TransactionInterface::class);
+        $transB = $this->createMock(TransactionInterface::class);
 
         $ver = new Verification(0, new \DateTimeImmutable(), new \DateTimeImmutable(), '', '', [$transA, $transB]);
 
@@ -125,7 +125,7 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         $transactions = [];
 
         foreach ($amounts as $amount) {
-            $trans = $this->prophesize(TransactionInterface::CLASS);
+            $trans = $this->prophesize(TransactionInterface::class);
             $trans->getAmount()->willReturn($amount);
             $trans->isDeleted()->willReturn(false);
             $transactions[] = $trans->reveal();
@@ -149,7 +149,7 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
 
     public function testDeletedTransactionsDoesNotCount()
     {
-        $trans = $this->prophesize(TransactionInterface::CLASS);
+        $trans = $this->prophesize(TransactionInterface::class);
         $trans->getAmount()->willReturn(new Amount('100'));
         $trans->isDeleted()->willReturn(true);
 
@@ -167,7 +167,7 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionOnGetMagnitudeWithUnbalancedVerification()
     {
-        $trans = $this->prophesize(TransactionInterface::CLASS);
+        $trans = $this->prophesize(TransactionInterface::class);
         $trans->getAmount()->willReturn(new Amount('100'));
         $trans->isDeleted()->willReturn(false);
 
@@ -180,13 +180,13 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
             [$trans->reveal()]
         );
 
-        $this->expectException(RuntimeException::CLASS);
+        $this->expectException(RuntimeException::class);
         $verification->getMagnitude();
     }
 
     public function testQueryable()
     {
-        $trans = $this->createMock(TransactionInterface::CLASS);
+        $trans = $this->createMock(TransactionInterface::class);
 
         $ver = new Verification(
             0,

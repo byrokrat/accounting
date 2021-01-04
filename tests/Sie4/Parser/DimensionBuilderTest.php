@@ -14,7 +14,7 @@ class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
     public function testCreateAndGetDimension()
     {
         $dimensionBuilder = new DimensionBuilder(
-            $this->createMock(Logger::CLASS)
+            $this->createMock(Logger::class)
         );
 
         $dimensionBuilder->addDimension('1', 'foobar');
@@ -30,7 +30,7 @@ class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
     public function testCreateAndGetChildDimension()
     {
         $dimensionBuilder = new DimensionBuilder(
-            $this->createMock(Logger::CLASS)
+            $this->createMock(Logger::class)
         );
 
         $dimensionBuilder->addDimension('1', 'parent');
@@ -45,7 +45,7 @@ class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
     public function testCreateAndGetObject()
     {
         $dimensionBuilder = new DimensionBuilder(
-            $this->createMock(Logger::CLASS)
+            $this->createMock(Logger::class)
         );
 
         $dimensionBuilder->addDimension('1', 'parent');
@@ -61,7 +61,7 @@ class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetUnspecifiedObject()
     {
-        $logger = $this->prophesize(Logger::CLASS);
+        $logger = $this->prophesize(Logger::class);
 
         $dimensionBuilder = new DimensionBuilder(
             $logger->reveal()
@@ -77,7 +77,7 @@ class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetUnspecifiedDimension()
     {
-        $logger = $this->prophesize(Logger::CLASS);
+        $logger = $this->prophesize(Logger::class);
 
         $dimensionBuilder = new DimensionBuilder(
             $logger->reveal()
@@ -94,7 +94,7 @@ class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
     public function testGetUnspecifiedReservedDimension()
     {
         $dimensionBuilder = new DimensionBuilder(
-            $this->createMock(Logger::CLASS)
+            $this->createMock(Logger::class)
         );
 
         $this->assertSame(
@@ -106,7 +106,7 @@ class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
     public function testGetUnspecifiedReservedCostDimension()
     {
         $dimensionBuilder = new DimensionBuilder(
-            $this->createMock(Logger::CLASS)
+            $this->createMock(Logger::class)
         );
 
         $dim = $dimensionBuilder->getDimension('2');

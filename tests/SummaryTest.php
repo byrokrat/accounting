@@ -124,7 +124,7 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionOnGetMagnitudeWithoutBalance()
     {
-        $this->expectException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::class);
         $summary = new Summary();
         $summary->addAmount(new Amount('5'));
         $summary->getMagnitude();
@@ -162,7 +162,7 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionOnUninitializedSummaries()
     {
-        $this->expectException(Exception\RuntimeException::CLASS);
+        $this->expectException(Exception\RuntimeException::class);
         (new Summary())->getMagnitude();
     }
 }

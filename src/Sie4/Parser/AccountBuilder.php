@@ -37,10 +37,10 @@ use byrokrat\accounting\Exception;
 final class AccountBuilder
 {
     private const ACCOUNT_TYPE_MAP = [
-        'T' => AssetAccount::CLASS,
-        'S' => DebtAccount::CLASS,
-        'K' => CostAccount::CLASS,
-        'I' => EarningAccount::CLASS
+        'T' => AssetAccount::class,
+        'S' => DebtAccount::class,
+        'K' => CostAccount::class,
+        'I' => EarningAccount::class
     ];
 
     /** @var array<AccountInterface> */

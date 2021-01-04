@@ -5248,7 +5248,7 @@ class Grammar extends AbstractParser
             $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
                 if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
                     return [
-                        'type' => Transaction\Transaction::CLASS,
+                        'type' => Transaction\Transaction::class,
                         'account' => $account,
                         'dimensions' => $dims,
                         'amount' => $amount,
@@ -5483,7 +5483,7 @@ class Grammar extends AbstractParser
             $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
                 if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
                     return [
-                        'type' => Transaction\DeletedTransaction::CLASS,
+                        'type' => Transaction\DeletedTransaction::class,
                         'account' => $account,
                         'dimensions' => $dims,
                         'amount' => $amount,
@@ -5724,7 +5724,7 @@ class Grammar extends AbstractParser
             $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
                 if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
                     return [
-                        'type' => Transaction\AddedTransaction::CLASS,
+                        'type' => Transaction\AddedTransaction::class,
                         'account' => $account,
                         'dimensions' => $dims,
                         'amount' => $amount,

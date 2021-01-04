@@ -131,11 +131,11 @@ trait TypeProviderTrait
     public function accountTypeProvider()
     {
         return [
-            ["#KONTO 1920 bank",               '1920', 'bank',    AssetAccount::CLASS],
-            ["#KONTO 1920 bank\n#KTYP 1920 S", '1920', 'bank',    DebtAccount::CLASS],
-            ["#KONTO 2000 debt",               '2000', 'debt',    DebtAccount::CLASS],
-            ["#KONTO 3000 earning",            '3000', 'earning', EarningAccount::CLASS],
-            ["#KONTO 4000 cost",               '4000', 'cost',    CostAccount::CLASS],
+            ["#KONTO 1920 bank",               '1920', 'bank',    AssetAccount::class],
+            ["#KONTO 1920 bank\n#KTYP 1920 S", '1920', 'bank',    DebtAccount::class],
+            ["#KONTO 2000 debt",               '2000', 'debt',    DebtAccount::class],
+            ["#KONTO 3000 earning",            '3000', 'earning', EarningAccount::class],
+            ["#KONTO 4000 cost",               '4000', 'cost',    CostAccount::class],
         ];
     }
 

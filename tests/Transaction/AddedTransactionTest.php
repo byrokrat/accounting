@@ -19,7 +19,7 @@ class AddedTransactionTest extends \PHPUnit\Framework\TestCase
                 '',
                 new Amount('0'),
                 new Amount('0'),
-                $this->createMock(AccountInterface::CLASS),
+                $this->createMock(AccountInterface::class),
                 []
             ))->isAdded()
         );

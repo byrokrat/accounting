@@ -31,7 +31,7 @@ class ParserIntegrationTest extends \PHPUnit\Framework\TestCase
             file_get_contents($fname)
         );
 
-        $this->assertInstanceOf(Container::CLASS, $container);
+        $this->assertInstanceOf(Container::class, $container);
 
         if ($errors) {
             $expected = is_readable("$fname.errors") ? file("$fname.errors", FILE_IGNORE_NEW_LINES) : [];

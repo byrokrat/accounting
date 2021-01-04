@@ -12,10 +12,10 @@ class AccountFactoryTest extends \PHPUnit\Framework\TestCase
     public function accountTypesProvider()
     {
         return [
-            ['1999', 'desc', AssetAccount::CLASS],
-            ['2999', 'desc', DebtAccount::CLASS],
-            ['3999', 'desc', EarningAccount::CLASS],
-            ['4000', 'desc', CostAccount::CLASS]
+            ['1999', 'desc', AssetAccount::class],
+            ['2999', 'desc', DebtAccount::class],
+            ['3999', 'desc', EarningAccount::class],
+            ['4000', 'desc', CostAccount::class]
         ];
     }
 

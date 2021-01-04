@@ -62,7 +62,7 @@ class DimensionTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionWhenNoParentIsSet()
     {
-        $this->expectException(LogicException::CLASS);
+        $this->expectException(LogicException::class);
         (new Dimension('0'))->getParent();
     }
 
