@@ -1,3 +1,5 @@
+![byrokrat](res/logo.svg)
+
 # Accounting
 
 [![Packagist Version](https://img.shields.io/packagist/v/byrokrat/accounting.svg?style=flat-square)](https://packagist.org/packages/byrokrat/accounting)
