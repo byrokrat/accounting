@@ -11,17 +11,11 @@ class AddedTransactionTest extends \PHPUnit\Framework\TestCase
 {
     public function testIsAdded()
     {
-        $this->assertTrue(
-            (new AddedTransaction(
-                0,
-                new \DateTimeImmutable(),
-                '',
-                '',
-                new Amount('0'),
-                new Amount('0'),
-                $this->createMock(AccountInterface::class),
-                []
-            ))->isAdded()
+        $trans = new AddedTransaction(
+            amount: new Amount('0'),
+            account: $this->createMock(AccountInterface::class),
         );
+
+        $this->assertTrue($trans->isAdded());
     }
 }

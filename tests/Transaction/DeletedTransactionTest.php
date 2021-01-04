@@ -11,17 +11,11 @@ class DeletedTransactionTest extends \PHPUnit\Framework\TestCase
 {
     public function testIsDeleted()
     {
-        $this->assertTrue(
-            (new DeletedTransaction(
-                0,
-                new \DateTimeImmutable(),
-                '',
-                '',
-                new Amount('0'),
-                new Amount('0'),
-                $this->createMock(AccountInterface::class),
-                []
-            ))->isDeleted()
+        $trans = new DeletedTransaction(
+            amount: new Amount('0'),
+            account: $this->createMock(AccountInterface::class),
         );
+
+        $this->assertTrue($trans->isDeleted());
     }
 }

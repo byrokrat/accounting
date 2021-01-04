@@ -106,16 +106,16 @@ class AbstractParser
         foreach ($transactionData as $data) {
             // @TODO check the data integrity here! includes class name..
             // @TODO why not use templating here?
-            // @TODO pass using named arguments
+            // @TODO ska templating uppdateras så att vi kan sätta added och deleted transaction??
             $transactions[] = new $data['type'](
-                intval($verificationId),
-                $data['date'] ?: $transactionDate,
-                $data['description'] ?: $description,
-                $data['signature'] ?: $signature,
-                $data['amount'],
-                $data['quantity'],
-                $data['account'],
-                $data['dimensions']
+                verificationId: intval($verificationId),
+                transactionDate: $data['date'] ?: $transactionDate,
+                description: $data['description'] ?: $description,
+                signature: $data['signature'] ?: $signature,
+                amount: $data['amount'],
+                quantity: $data['quantity'],
+                account: $data['account'],
+                dimensions: $data['dimensions']
             );
         }
 

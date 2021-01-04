@@ -37,22 +37,29 @@ class Transaction implements TransactionInterface
 {
     use AttributableTrait;
 
+    private \DateTimeImmutable $transactionDate;
+    private Amount $quantity;
+
     /**
-     * @TODO Add sensible defaults
      * @param array<DimensionInterface> $dimensions
      * @param array<string, string> $attributes
      */
     public function __construct(
-        private int $verificationId,
-        private \DateTimeImmutable $transactionDate,
-        private string $description,
-        private string $signature,
-        private Amount $amount,
-        private Amount $quantity,
         private AccountInterface $account,
+        private Amount $amount,
+        private int $verificationId = 0,
+        ?\DateTimeImmutable $transactionDate = null,
+        private string $description = '',
+        private string $signature = '',
+        ?Amount $quantity = null,
         private array $dimensions = [],
         array $attributes = [],
     ) {
+        // @TODO should be a NullDate implementation?
+        $this->transactionDate = $transactionDate ?: new \DateTimeImmutable();
+
+        $this->quantity = $quantity ?: new Amount('0');
+
         foreach ($this->dimensions as $dimension) {
             if (!$dimension instanceof DimensionInterface) {
                 throw new LogicException('TypeError: dimension must implement DimensionInterface');
@@ -124,11 +131,6 @@ class Transaction implements TransactionInterface
 
     public function select(): Query
     {
-        return new Query(
-            array_merge(
-                [$this->getAccount(), $this->getAmount()],
-                $this->getDimensions()
-            )
-        );
+        return new Query([$this->getAccount(), $this->getAmount(), ...$this->getDimensions()]);
     }
 }

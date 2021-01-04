@@ -17,29 +17,26 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
         $account = new CostAccount('1000');
         $dim = new Dimension('2000');
 
-        $date = new \DateTimeImmutable();
+        $trans = new Transaction(amount: new Amount('100'), account: $account, dimensions: [$dim]);
 
-        $transA = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, [$dim]);
-        $transB = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, [$dim]);
-
-        $container = new Container($transA, $transB);
+        $container = new Container($trans, $trans);
 
         (new TransactionProcessor())->processContainer($container);
 
         $this->assertEquals(
-            [$transA, $transB],
+            [$trans, $trans],
             $account->getAttribute('transactions')
         );
 
         $this->assertEquals(
-            [$transA, $transB],
+            [$trans, $trans],
             $dim->getAttribute('transactions')
         );
 
         (new TransactionProcessor())->processContainer($container);
 
         $this->assertEquals(
-            [$transA, $transB],
+            [$trans, $trans],
             $account->getAttribute('transactions')
         );
     }
@@ -49,12 +46,9 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
         $account = new CostAccount('1000');
         $dim = new Dimension('2000');
 
-        $date = new \DateTimeImmutable();
+        $trans = new Transaction(amount: new Amount('100'), account: $account, dimensions: [$dim]);
 
-        $transA = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, [$dim]);
-        $transB = new Transaction(0, $date, '', '', new Amount('100'), new Amount('0'), $account, [$dim]);
-
-        $container = new Container($transA, $transB);
+        $container = new Container($trans, $trans);
 
         (new TransactionProcessor())->processContainer($container);
 
@@ -78,12 +72,14 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
         $account = new CostAccount('1000');
         $dim = new Dimension('2000');
 
-        $date = new \DateTimeImmutable();
+        $trans = new Transaction(
+            amount: new Amount('0'),
+            account: $account,
+            quantity: new Amount('1'),
+            dimensions: [$dim],
+        );
 
-        $transA = new Transaction(0, $date, '', '', new Amount('0'), new Amount('1'), $account, [$dim]);
-        $transB = new Transaction(0, $date, '', '', new Amount('0'), new Amount('1'), $account, [$dim]);
-
-        $container = new Container($transA, $transB);
+        $container = new Container($trans, $trans);
 
         (new TransactionProcessor())->processContainer($container);
 
