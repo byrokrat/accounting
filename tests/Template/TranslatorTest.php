@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
-use byrokrat\accounting\Exception\LogicException;
+use byrokrat\accounting\Exception\InvalidArgumentException;
 
 class TranslatorTest extends \PHPUnit\Framework\TestCase
 {
     public function testExceptionOnInvalidPlaceholder()
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(InvalidArgumentException::class);
         new Translator([123 => 'placeholder-is-not-string']);
     }
 
     public function testExceptionOnInvalidReplacement()
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(InvalidArgumentException::class);
         new Translator(['replacement-is-not-string' => 123]);
     }
 

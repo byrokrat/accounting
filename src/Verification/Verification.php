@@ -24,9 +24,9 @@ declare(strict_types=1);
 namespace byrokrat\accounting\Verification;
 
 use byrokrat\accounting\AttributableTrait;
+use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidVerificationException;
 use byrokrat\accounting\Exception\UnbalancedVerificationException;
-use byrokrat\accounting\Exception\LogicException;
 use byrokrat\accounting\Query;
 use byrokrat\accounting\Summary;
 use byrokrat\accounting\Transaction\TransactionInterface;
@@ -68,7 +68,7 @@ final class Verification implements VerificationInterface
 
         foreach ($this->transactions as $transaction) {
             if (!$transaction instanceof TransactionInterface) {
-                throw new LogicException('TypeError: transaction must implement TransactionInterface');
+                throw new InvalidArgumentException('Transaction must implement TransactionInterface');
             }
 
             try {
@@ -89,11 +89,11 @@ final class Verification implements VerificationInterface
 
         foreach ($attributes as $key => $value) {
             if (!is_string($key)) {
-                throw new LogicException('TypeError: attribute key must be string');
+                throw new InvalidArgumentException('Attribute key must be string');
             }
 
             if (!is_string($value)) {
-                throw new LogicException('TypeError: attribute value must be string');
+                throw new InvalidArgumentException('Attribute value must be string');
             }
 
             $this->setAttribute($key, $value);

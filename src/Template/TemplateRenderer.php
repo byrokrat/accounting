@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
-use byrokrat\accounting\Exception\RuntimeException;
+use byrokrat\accounting\Exception\InvalidTemplateDataException;
 use byrokrat\accounting\Transaction\Transaction;
 use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\accounting\Verification\Verification;
@@ -43,7 +43,7 @@ final class TemplateRenderer
         $template = $template->translate($translator);
 
         if (!ctype_digit($template->id)) {
-            throw new RuntimeException('Verification id must be a string of integers');
+            throw new InvalidTemplateDataException('Verification id must consist of digits');
         }
 
         return new Verification(

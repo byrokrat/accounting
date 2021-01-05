@@ -26,8 +26,8 @@ namespace byrokrat\accounting\Transaction;
 use byrokrat\accounting\AttributableTrait;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
+use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidTransactionException;
-use byrokrat\accounting\Exception\LogicException;
 use byrokrat\accounting\Query;
 use byrokrat\amount\Amount;
 
@@ -62,17 +62,17 @@ final class Transaction implements TransactionInterface
 
         foreach ($this->dimensions as $dimension) {
             if (!$dimension instanceof DimensionInterface) {
-                throw new LogicException('TypeError: dimension must implement DimensionInterface');
+                throw new InvalidArgumentException('Dimension must implement DimensionInterface');
             }
         }
 
         foreach ($attributes as $key => $value) {
             if (!is_string($key)) {
-                throw new LogicException('TypeError: attribute key must be string');
+                throw new InvalidArgumentException('Attribute key must be string');
             }
 
             if (!is_string($value)) {
-                throw new LogicException('TypeError: attribute value must be string');
+                throw new InvalidArgumentException('Attribute value must be string');
             }
 
             $this->setAttribute($key, $value);

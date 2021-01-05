@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace byrokrat\accounting\Dimension;
 
 use byrokrat\accounting\AttributableTrait;
-use byrokrat\accounting\Exception\LogicException;
+use byrokrat\accounting\Exception\RuntimeException;
 use byrokrat\accounting\Query;
 
 class Dimension implements DimensionInterface
@@ -55,7 +55,7 @@ class Dimension implements DimensionInterface
     public function getParent(): DimensionInterface
     {
         if (!isset($this->parent)) {
-            throw new LogicException(
+            throw new RuntimeException(
                 'Unable to read parent dimension, did you check if parent is set using hasParent()?'
             );
         }

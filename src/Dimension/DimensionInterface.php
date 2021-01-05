@@ -23,7 +23,7 @@ namespace byrokrat\accounting\Dimension;
 
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\QueryableInterface;
-use byrokrat\accounting\Exception\LogicException;
+use byrokrat\accounting\Exception\RuntimeException;
 
 /**
  * A dimension is an entity through which transactions can be channeled
@@ -48,7 +48,7 @@ interface DimensionInterface extends AttributableInterface, QueryableInterface
     /**
      * Get dimension parent
      *
-     * @throws LogicException If parent is not set
+     * @throws RuntimeException If parent is not set
      */
     public function getParent(): DimensionInterface;
 

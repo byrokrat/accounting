@@ -6,7 +6,7 @@ namespace byrokrat\accounting\Verification;
 
 use byrokrat\accounting\AttributableTestTrait;
 use byrokrat\accounting\AttributableInterface;
-use byrokrat\accounting\Exception\LogicException;
+use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidVerificationException;
 use byrokrat\accounting\Exception\UnbalancedVerificationException;
 use byrokrat\accounting\Transaction\TransactionInterface;
@@ -36,19 +36,19 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionOnNonStringAttributeKey()
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(InvalidArgumentException::class);
         new Verification(attributes: [1 => '']);
     }
 
     public function testExceptionOnNonStringAttributeValue()
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(InvalidArgumentException::class);
         new Verification(attributes: ['key' => null]);
     }
 
     public function testExceptionOnNonTransactionArgument()
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(InvalidArgumentException::class);
         new Verification(transactions: ['this-is-not-a-transaction']);
     }
 

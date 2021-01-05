@@ -23,6 +23,9 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\accounting\Exception\InvalidAccountException;
+use byrokrat\accounting\Exception\InvalidDimensionException;
+use byrokrat\accounting\Exception\RuntimeException;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Transaction\TransactionInterface;
@@ -43,14 +46,12 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     private static array $macros = [];
 
     /**
-     * Load macro
-     *
-     * @throws Exception\LogicException If $name already exists
+     * Register macro
      */
     public static function macro(string $name, \Closure $macro): void
     {
         if (method_exists(__CLASS__, $name) || isset(self::$macros[$name])) {
-            throw new Exception\LogicException("Cannot create macro, $name() does already exist.");
+            throw new RuntimeException("Cannot create macro, $name() already exist.");
         }
 
         self::$macros[$name] = $macro;
@@ -83,7 +84,6 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
      * Execute macro if defined
      *
      * @param array<mixed> $args
-     * @throws Exception\LogicException If macro $name is not defined
      */
     public function __call(string $name, array $args): mixed
     {
@@ -91,7 +91,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
             return self::$macros[$name]->call($this, ...$args);
         }
 
-        throw new Exception\LogicException("Call to undefined method " . __CLASS__ . "::$name()");
+        throw new RuntimeException("Call to undefined macro $name()");
     }
 
     /**
@@ -245,25 +245,27 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
     }
 
     /**
-     * Find account object with id
-     *
-     * @throws Exception\RuntimeException If account does not exist
+     * Find account object from id
      */
     public function getAccount(string $accountId): AccountInterface
     {
-        $account = $this->accounts()->getDimension($accountId);
+        $account = null;
+
+        try {
+            $account = $this->accounts()->getDimension($accountId);
+        } catch (InvalidDimensionException) {
+            // intentionally empty
+        }
 
         if (!$account instanceof AccountInterface) {
-            throw new Exception\RuntimeException("Account $accountId does not exist");
+            throw new InvalidAccountException("Account $accountId does not exist");
         }
 
         return $account;
     }
 
     /**
-     * Find first Dimension with id $dimensionId
-     *
-     * @throws Exception\RuntimeException If dimension does not exist
+     * Find dimension from id
      */
     public function getDimension(string $dimensionId): DimensionInterface
     {
@@ -275,7 +277,7 @@ class Query implements QueryableInterface, \IteratorAggregate, \Countable
             return $dimension;
         }
 
-        throw new Exception\RuntimeException("Dimension $dimensionId does not exist");
+        throw new InvalidDimensionException("Dimension $dimensionId does not exist");
     }
 
     /**

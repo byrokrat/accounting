@@ -8,7 +8,7 @@ use byrokrat\accounting\Query;
 use byrokrat\accounting\Container;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
-use byrokrat\accounting\Exception\RuntimeException;
+use byrokrat\accounting\Exception\InvalidTemplateDataException;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\amount\Amount;
@@ -56,7 +56,7 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionIfVerificationIdIsNotDigits()
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(InvalidTemplateDataException::class);
 
         $renderer = new TemplateRenderer(
             $this->createMock(Query::class),

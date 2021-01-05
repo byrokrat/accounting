@@ -8,8 +8,8 @@ use byrokrat\accounting\AttributableTestTrait;
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
+use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidTransactionException;
-use byrokrat\accounting\Exception\LogicException;
 use byrokrat\accounting\Query;
 use byrokrat\amount\Amount;
 
@@ -28,7 +28,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionOnNonDimension()
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new Transaction(
             amount: new Amount('0'),
@@ -53,7 +53,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionOnNonStringAttributeKey()
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $trans = new Transaction(
             amount: new Amount('0'),
@@ -64,7 +64,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionOnNonStringAttributeValue()
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new Transaction(
             amount: new Amount('0'),

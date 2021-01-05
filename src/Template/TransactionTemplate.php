@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
-use byrokrat\accounting\Exception\LogicException;
+use byrokrat\accounting\Exception\InvalidArgumentException;
 
 /**
  * Transaction template data value object
@@ -48,13 +48,13 @@ final class TransactionTemplate implements TemplateInterface
     ) {
         foreach ($this->dimensions as $dimension) {
             if (!is_string($dimension)) {
-                throw new LogicException('Non-string dimension value found');
+                throw new InvalidArgumentException('Non-string dimension value found');
             }
         }
 
         foreach ($this->attributes as $attribute) {
             if (!$attribute instanceof AttributeTemplate) {
-                throw new LogicException('Attribute must be instance of AttributeTemplate');
+                throw new InvalidArgumentException('Attribute must be instance of AttributeTemplate');
             }
         }
     }

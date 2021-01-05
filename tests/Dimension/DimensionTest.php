@@ -6,7 +6,7 @@ namespace byrokrat\accounting\Dimension;
 
 use byrokrat\accounting\AttributableTestTrait;
 use byrokrat\accounting\AttributableInterface;
-use byrokrat\accounting\Exception\LogicException;
+use byrokrat\accounting\Exception\RuntimeException;
 
 class DimensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -65,7 +65,7 @@ class DimensionTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionWhenNoParentIsSet()
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(RuntimeException::class);
         (new Dimension(''))->getParent();
     }
 

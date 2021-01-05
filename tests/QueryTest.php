@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting;
 
+use byrokrat\accounting\Exception\InvalidAccountException;
+use byrokrat\accounting\Exception\InvalidDimensionException;
+use byrokrat\accounting\Exception\RuntimeException;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Transaction\TransactionInterface;
@@ -626,7 +629,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionOnUnknownAccountNumber()
     {
-        $this->expectException(Exception\RuntimeException::class);
+        $this->expectException(InvalidAccountException::class);
 
         $dimension = $this->prophesize(DimensionInterface::class);
         $dimension->getId()->willReturn('1234');
@@ -650,7 +653,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionOnUnknownDimensionNumber()
     {
-        $this->expectException(Exception\RuntimeException::class);
+        $this->expectException(InvalidDimensionException::class);
         (new Query())->getDimension('1234');
     }
 
@@ -712,14 +715,14 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionWhenOverwritingMethodWithMacro()
     {
-        $this->expectException(Exception\LogicException::class);
+        $this->expectException(RuntimeException::class);
         Query::macro('filter', function () {
         });
     }
 
     public function testExceptionWhenOverwritingMacro()
     {
-        $this->expectException(Exception\LogicException::class);
+        $this->expectException(RuntimeException::class);
         Query::macro('thisRareMacroNameIsCreated', function () {
         });
         Query::macro('thisRareMacroNameIsCreated', function () {
@@ -728,7 +731,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionOnUndefinedMethodCall()
     {
-        $this->expectException(Exception\LogicException::class);
+        $this->expectException(RuntimeException::class);
         (new Query())->thisMethodDoesNotExist();
     }
 }

@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
-use byrokrat\accounting\Exception\LogicException;
+use byrokrat\accounting\Exception\InvalidArgumentException;
 
 /**
  * Translate raw data by expanding placeholders
@@ -40,11 +40,11 @@ final class Translator implements TranslatorInterface
     {
         foreach ($translations as $placeholder => $replacement) {
             if (!is_string($placeholder)) {
-                throw new LogicException('TypeError: Placeholder must be string');
+                throw new InvalidArgumentException('Placeholder must be string');
             }
 
             if (!is_string($replacement)) {
-                throw new LogicException('TypeError: Replacement must be string');
+                throw new InvalidArgumentException('Replacement must be string');
             }
         }
 

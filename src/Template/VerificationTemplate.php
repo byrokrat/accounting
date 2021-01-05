@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
-use byrokrat\accounting\Exception\LogicException;
+use byrokrat\accounting\Exception\InvalidArgumentException;
 
 /**
  * Verification template data value object
@@ -45,13 +45,13 @@ final class VerificationTemplate implements TemplateInterface
     ) {
         foreach ($this->transactions as $transaction) {
             if (!$transaction instanceof TransactionTemplate) {
-                throw new LogicException('Transaction must be instance of TransactionTemplate');
+                throw new InvalidArgumentException('Transaction must be instance of TransactionTemplate');
             }
         }
 
         foreach ($this->attributes as $attribute) {
             if (!$attribute instanceof AttributeTemplate) {
-                throw new LogicException('Attribute must be instance of AttributeTemplate');
+                throw new InvalidArgumentException('Attribute must be instance of AttributeTemplate');
             }
         }
     }

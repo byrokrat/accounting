@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
-use byrokrat\accounting\Exception\LogicException;
+use byrokrat\accounting\Exception\InvalidArgumentException;
 use Prophecy\Argument;
 
 class TransactionTemplateTest extends \PHPUnit\Framework\TestCase
@@ -13,13 +13,13 @@ class TransactionTemplateTest extends \PHPUnit\Framework\TestCase
 
     public function testExceptionOnInvalidDimension()
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(InvalidArgumentException::class);
         new TransactionTemplate(dimensions: [null]);
     }
 
     public function testExceptionOnInvalidAttribute()
     {
-        $this->expectException(LogicException::class);
+        $this->expectException(InvalidArgumentException::class);
         new TransactionTemplate(attributes: [null]);
     }
 
