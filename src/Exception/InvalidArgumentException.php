@@ -21,12 +21,8 @@
 
 declare(strict_types=1);
 
-namespace byrokrat\accounting\Dimension;
+namespace byrokrat\accounting\Exception;
 
-final class AssetAccount extends AbstractAccount
+class InvalidArgumentException extends LogicException
 {
-    public function getType(): string
-    {
-        return self::TYPE_ASSET;
-    }
 }

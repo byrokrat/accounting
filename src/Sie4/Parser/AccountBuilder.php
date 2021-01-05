@@ -23,13 +23,9 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\accounting\Dimension\AccountFactory;
+use byrokrat\accounting\Dimension\Account;
 use byrokrat\accounting\Dimension\AccountInterface;
-use byrokrat\accounting\Dimension\AssetAccount;
-use byrokrat\accounting\Dimension\DebtAccount;
-use byrokrat\accounting\Dimension\CostAccount;
-use byrokrat\accounting\Dimension\EarningAccount;
-use byrokrat\accounting\Exception;
+use byrokrat\accounting\Exception\RuntimeException;
 
 /**
  * Builder that creates and keeps track of account objects
@@ -37,18 +33,17 @@ use byrokrat\accounting\Exception;
 final class AccountBuilder
 {
     private const ACCOUNT_TYPE_MAP = [
-        'T' => AssetAccount::class,
-        'S' => DebtAccount::class,
-        'K' => CostAccount::class,
-        'I' => EarningAccount::class
+        'T' => AccountInterface::TYPE_ASSET,
+        'S' => AccountInterface::TYPE_DEBT,
+        'K' => AccountInterface::TYPE_COST,
+        'I' => AccountInterface::TYPE_EARNING,
     ];
 
-    /** @var array<AccountInterface> */
+    /** @var array<string, AccountInterface> */
     private array $accounts = [];
 
     public function __construct(
-        private AccountFactory $factory,
-        private Logger $logger,
+        private Logger $logger
     ) {}
 
     public function addAccount(string $number, string $description): void
@@ -58,8 +53,8 @@ final class AccountBuilder
         }
 
         try {
-            $this->accounts[$number] = $this->factory->createAccount($number, $description);
-        } catch (Exception\RuntimeException $e) {
+            $this->accounts[$number] = new Account(id: $number, description: $description);
+        } catch (RuntimeException $e) {
             $this->logger->log('warning', "Unable to create account $number ($description): {$e->getMessage()}");
         }
     }
@@ -74,15 +69,18 @@ final class AccountBuilder
             return;
         }
 
-        $this->accounts[$number] = new (self::ACCOUNT_TYPE_MAP[$type])(
-            $number,
-            $this->getAccount($number)->getDescription(),
-            $this->getAccount($number)->getAttributes()
+        $account = $this->getAccount($number);
+
+        $this->accounts[$number] = new Account(
+            id: $number,
+            description: $account->getDescription(),
+            type: self::ACCOUNT_TYPE_MAP[$type],
+            attributes: $account->getAttributes(),
         );
     }
 
     /**
-     * @throws Exception\RuntimeException If account does not exist and can not be created
+     * @throws RuntimeException If account does not exist and can not be created
      */
     public function getAccount(string $number): AccountInterface
     {
@@ -92,14 +90,14 @@ final class AccountBuilder
         }
 
         if (!isset($this->accounts[$number])) {
-            throw new Exception\RuntimeException("Unable to get account $number");
+            throw new RuntimeException("Unable to get account $number");
         }
 
         return $this->accounts[$number];
     }
 
     /**
-     * @return array<AccountInterface>
+     * @return array<string, AccountInterface>
      */
     public function getAccounts(): array
     {

@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\accounting\Dimension\AssetAccount;
-use byrokrat\accounting\Dimension\CostAccount;
-use byrokrat\accounting\Dimension\DebtAccount;
-use byrokrat\accounting\Dimension\EarningAccount;
+use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\amount\Currency\SEK;
 
 /**
@@ -131,11 +128,11 @@ trait TypeProviderTrait
     public function accountTypeProvider()
     {
         return [
-            ["#KONTO 1920 bank",               '1920', 'bank',    AssetAccount::class],
-            ["#KONTO 1920 bank\n#KTYP 1920 S", '1920', 'bank',    DebtAccount::class],
-            ["#KONTO 2000 debt",               '2000', 'debt',    DebtAccount::class],
-            ["#KONTO 3000 earning",            '3000', 'earning', EarningAccount::class],
-            ["#KONTO 4000 cost",               '4000', 'cost',    CostAccount::class],
+            ["#KONTO 1920 bank",               '1920', 'bank',    AccountInterface::TYPE_ASSET],
+            ["#KONTO 1920 bank\n#KTYP 1920 S", '1920', 'bank',    AccountInterface::TYPE_DEBT],
+            ["#KONTO 2000 debt",               '2000', 'debt',    AccountInterface::TYPE_DEBT],
+            ["#KONTO 3000 earning",            '3000', 'earning', AccountInterface::TYPE_EARNING],
+            ["#KONTO 4000 cost",               '4000', 'cost',    AccountInterface::TYPE_COST],
         ];
     }
 

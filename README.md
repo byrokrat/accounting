@@ -64,13 +64,14 @@ Create an account plan, a set of accounts.
     @include template
 -->
 ```php
-use byrokrat\accounting\Dimension\AccountFactory;
+use byrokrat\accounting\Container;
+use byrokrat\accounting\Dimension\Account;
 
-$accounts = (new AccountFactory)->createAccounts([
-    '1920' => 'Bank',
-    '3000' => 'Incomes',
-    '3010' => 'Sales',
-]);
+$accounts = new Container(
+    new Account(id: '1920', description: 'Bank'),
+    new Account(id: '3000', description: 'Incomes'),
+    new Account(id: '3010', description: 'Sales'),
+);
 ```
 
 And to render verifications we supply a list of translation values and the
@@ -83,7 +84,6 @@ account plan.
 ```php
 use byrokrat\accounting\Template\TemplateRendererFactory;
 use byrokrat\accounting\Template\Translator;
-use byrokrat\accounting\Container;
 
 $renderer = (new TemplateRendererFactory)->createRenderer($accounts);
 

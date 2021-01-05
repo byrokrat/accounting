@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace byrokrat\accounting\Processor;
 
 use byrokrat\accounting\Container;
-use byrokrat\accounting\Dimension\CostAccount;
+use byrokrat\accounting\Dimension\Account;
 use byrokrat\accounting\Dimension\Dimension;
 use byrokrat\accounting\Transaction\Transaction;
 use byrokrat\amount\Amount;
@@ -14,7 +14,7 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
 {
     public function testCollectTransactions()
     {
-        $account = new CostAccount('1000');
+        $account = new Account('1000');
         $dim = new Dimension('2000');
 
         $trans = new Transaction(amount: new Amount('100'), account: $account, dimensions: [$dim]);
@@ -43,7 +43,7 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessAmount()
     {
-        $account = new CostAccount('1000');
+        $account = new Account('1000');
         $dim = new Dimension('2000');
 
         $trans = new Transaction(amount: new Amount('100'), account: $account, dimensions: [$dim]);
@@ -69,7 +69,7 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessQuantity()
     {
-        $account = new CostAccount('1000');
+        $account = new Account('1000');
         $dim = new Dimension('2000');
 
         $trans = new Transaction(

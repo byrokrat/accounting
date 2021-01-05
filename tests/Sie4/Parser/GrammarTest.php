@@ -345,7 +345,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider accountTypeProvider
      */
-    public function testAccountType(string $raw, string $expectedNr, string $expectedDesc, string $expectedClass)
+    public function testAccountType(string $raw, string $expectedNr, string $expectedDesc, string $expectedType)
     {
         $account = $this->parse("#FLAGGA 1\n$raw\n")->select()->getAccount($expectedNr);
 
@@ -354,9 +354,9 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             $account->getDescription()
         );
 
-        $this->assertInstanceOf(
-            $expectedClass,
-            $account
+        $this->assertSame(
+            $expectedType,
+            $account->getType()
         );
     }
 

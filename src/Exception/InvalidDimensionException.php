@@ -21,12 +21,8 @@
 
 declare(strict_types=1);
 
-namespace byrokrat\accounting\Dimension;
+namespace byrokrat\accounting\Exception;
 
-final class DebtAccount extends AbstractAccount
+class InvalidDimensionException extends RuntimeException
 {
-    public function getType(): string
-    {
-        return self::TYPE_DEBT;
-    }
 }

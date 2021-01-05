@@ -32,14 +32,14 @@ class Dimension implements DimensionInterface
     use AttributableTrait;
 
     public function __construct(
-        private string $dimensionId,
+        private string $id,
         private string $description = '',
         private ?DimensionInterface $parent = null
     ) {}
 
     public function getId(): string
     {
-        return $this->dimensionId;
+        return $this->id;
     }
 
     public function getDescription(): string

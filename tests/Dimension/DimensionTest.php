@@ -21,19 +21,22 @@ class DimensionTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertSame(
             '1234',
-            (new Dimension('1234'))->getId()
+            (new Dimension(id: '1234'))->getId()
         );
     }
 
     public function testDescription()
     {
-        $this->assertSame('foo', (new Dimension('', 'foo'))->getDescription());
+        $this->assertSame(
+            'foo',
+            (new Dimension(id: '', description: 'foo'))->getDescription()
+        );
     }
 
     public function testParent()
     {
-        $parent = new Dimension('0');
-        $child = new Dimension('0', '', $parent);
+        $parent = new Dimension(id: '');
+        $child = new Dimension(id: '', parent: $parent);
 
         $this->assertTrue($child->hasParent());
 
@@ -50,7 +53,7 @@ class DimensionTest extends \PHPUnit\Framework\TestCase
 
     public function testNoParent()
     {
-        $dim = new Dimension('0');
+        $dim = new Dimension('');
 
         $this->assertFalse($dim->hasParent());
 
@@ -63,18 +66,16 @@ class DimensionTest extends \PHPUnit\Framework\TestCase
     public function testExceptionWhenNoParentIsSet()
     {
         $this->expectException(LogicException::class);
-        (new Dimension('0'))->getParent();
+        (new Dimension(''))->getParent();
     }
 
     public function testInDimension()
     {
         $dim = new Dimension(
-            '0',
-            '',
-            new Dimension(
-                '1',
-                '',
-                new Dimension('2')
+            id: '0',
+            parent: new Dimension(
+                id: '1',
+                parent: new Dimension('2')
             )
         );
 

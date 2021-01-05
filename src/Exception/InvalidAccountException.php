@@ -21,12 +21,8 @@
 
 declare(strict_types=1);
 
-namespace byrokrat\accounting\Dimension;
+namespace byrokrat\accounting\Exception;
 
-final class CostAccount extends AbstractAccount
+class InvalidAccountException extends InvalidDimensionException
 {
-    public function getType(): string
-    {
-        return self::TYPE_COST;
-    }
 }
