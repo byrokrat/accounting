@@ -154,6 +154,8 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
                     account: '1234',
                     dimensions: ['dim'],
                     attributes: [new AttributeTemplate('foo', 'bar')],
+                    added: '1',
+                    deleted: '',
                 )
             ]
         );
@@ -169,6 +171,8 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($account, $transaction->getAccount());
         $this->assertSame([$dimension], $transaction->getDimensions());
         $this->assertSame('bar', $transaction->getAttribute('foo'));
+        $this->assertTrue($transaction->isAdded());
+        $this->assertFalse($transaction->isDeleted());
     }
 
     public function testTransactionDefaultsFromVerification()

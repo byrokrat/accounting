@@ -8,12 +8,14 @@ use byrokrat\accounting\AttributableTestTrait;
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
+use byrokrat\accounting\Exception\InvalidTransactionException;
 use byrokrat\accounting\Exception\LogicException;
 use byrokrat\accounting\Query;
 use byrokrat\amount\Amount;
 
 class TransactionTest extends \PHPUnit\Framework\TestCase
 {
+    use \Prophecy\PhpUnit\ProphecyTrait;
     use AttributableTestTrait;
 
     protected function getAttributableToTest(): AttributableInterface
@@ -189,29 +191,73 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
 
     public function testQueryable()
     {
-        $dim = $this->createMock(DimensionInterface::class);
-        $amount = new Amount('0');
-        $account = $this->createMock(AccountInterface::class);
+        $account = $this->prophesize(AccountInterface::class);
+        $account->select()->willReturn(new Query());
+        $account = $account->reveal();
 
         $trans = new Transaction(
-            amount: $amount,
             account: $account,
-            dimensions: [$dim],
+            amount: new Amount('0'),
+            dimensions: [$account],
         );
 
         $this->assertEquals(
-            new Query([$account, $amount, $dim]),
-            $trans->select()
+            [$account, $account],
+            $trans->select()->asArray()
         );
     }
 
-    public function testIsAdded()
+    public function testDefaultsToNotAdded()
     {
-        $this->assertFalse($this->getAttributableToTest()->isAdded());
+        $trans = new Transaction(
+            amount: new Amount('0'),
+            account: $this->createMock(AccountInterface::class),
+        );
+
+        $this->assertFalse($trans->isAdded());
     }
 
-    public function testIsDeleted()
+    public function testAdded()
     {
-        $this->assertFalse($this->getAttributableToTest()->isDeleted());
+        $trans = new Transaction(
+            amount: new Amount('0'),
+            account: $this->createMock(AccountInterface::class),
+            added: true,
+        );
+
+        $this->assertTrue($trans->isAdded());
+    }
+
+    public function testDefaultsToNotDeleted()
+    {
+        $trans = new Transaction(
+            amount: new Amount('0'),
+            account: $this->createMock(AccountInterface::class),
+        );
+
+        $this->assertFalse($trans->isDeleted());
+    }
+
+    public function testDeleted()
+    {
+        $trans = new Transaction(
+            amount: new Amount('0'),
+            account: $this->createMock(AccountInterface::class),
+            deleted: true,
+        );
+
+        $this->assertTrue($trans->isDeleted());
+    }
+
+    public function testExceptionOnAddedAndDeleted()
+    {
+        $this->expectException(InvalidTransactionException::class);
+
+        new Transaction(
+            amount: new Amount('0'),
+            account: $this->createMock(AccountInterface::class),
+            added: true,
+            deleted: true,
+        );
     }
 }

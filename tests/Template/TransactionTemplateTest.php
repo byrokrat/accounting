@@ -35,6 +35,8 @@ class TransactionTemplateTest extends \PHPUnit\Framework\TestCase
             amount: 'foo',
             quantity: 'foo',
             account: 'foo',
+            added: 'foo',
+            deleted: 'foo',
         );
 
         $translated = $original->translate($translator->reveal());
@@ -45,6 +47,8 @@ class TransactionTemplateTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('foo', $original->amount);
         $this->assertSame('foo', $original->quantity);
         $this->assertSame('foo', $original->account);
+        $this->assertSame('foo', $original->added);
+        $this->assertSame('foo', $original->deleted);
 
         $this->assertSame('bar', $translated->transactionDate);
         $this->assertSame('bar', $translated->description);
@@ -52,6 +56,8 @@ class TransactionTemplateTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('bar', $translated->amount);
         $this->assertSame('bar', $translated->quantity);
         $this->assertSame('bar', $translated->account);
+        $this->assertSame('bar', $translated->added);
+        $this->assertSame('bar', $translated->deleted);
     }
 
     public function testTranslateDimensions()

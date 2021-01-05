@@ -21,13 +21,10 @@
 
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\accounting\Transaction;
 use byrokrat\amount\Amount;
 
 /**
- * Grammar for generating a SIE version 4 compliant parser using scato/phpeg
- *
- * @see "bob build_sie_parser" to rebuild the parser
+ * Grammar for generating a SIE version 4 compliant parser
  */
 grammar Grammar extends AbstractParser
 {
@@ -360,7 +357,6 @@ grammar Grammar extends AbstractParser
     TRANS_POST = ROW_START 'TRANS' ^ account:ACCOUNT? dims:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END {
         if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
             return [
-                'type' => Transaction\Transaction::class,
                 'account' => $account,
                 'dimensions' => $dims,
                 'amount' => $amount,
@@ -375,7 +371,7 @@ grammar Grammar extends AbstractParser
     BTRANS_POST = ROW_START 'BTRANS' ^ account:ACCOUNT? dims:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END {
         if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
             return [
-                'type' => Transaction\DeletedTransaction::class,
+                'deleted' => true,
                 'account' => $account,
                 'dimensions' => $dims,
                 'amount' => $amount,
@@ -390,7 +386,7 @@ grammar Grammar extends AbstractParser
     RTRANS_POST = ROW_START 'RTRANS' ^ account:ACCOUNT? dims:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END TRANS_POST {
         if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
             return [
-                'type' => Transaction\AddedTransaction::class,
+                'added' => true,
                 'account' => $account,
                 'dimensions' => $dims,
                 'amount' => $amount,

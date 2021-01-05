@@ -43,6 +43,8 @@ final class TransactionTemplate implements TemplateInterface
         public string $account = '',
         public array $dimensions = [],
         public array $attributes = [],
+        public string $added = '',
+        public string $deleted = '',
     ) {
         foreach ($this->dimensions as $dimension) {
             if (!is_string($dimension)) {
@@ -74,6 +76,8 @@ final class TransactionTemplate implements TemplateInterface
                 fn($attribute) => $attribute->translate($translator),
                 $this->attributes
             ),
+            added: $translator->translate($this->added),
+            deleted: $translator->translate($this->deleted),
         );
     }
 }

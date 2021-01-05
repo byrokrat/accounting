@@ -85,6 +85,8 @@ final class TemplateRenderer
                 array_map(fn($attr) => $attr->key, $transTmpl->attributes),
                 array_map(fn($attr) => $attr->value, $transTmpl->attributes),
             ),
+            added: !!$transTmpl->added,
+            deleted: !!$transTmpl->deleted,
         );
     }
 }

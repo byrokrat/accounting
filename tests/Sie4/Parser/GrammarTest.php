@@ -600,9 +600,9 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             }
         ")->select()->verifications()->getFirst();
 
-        $this->assertInstanceOf(
-            \byrokrat\accounting\Transaction\AddedTransaction::class,
-            $ver->getTransactions()[1]
+        $this->assertTrue(
+            $ver->getTransactions()[1]->isAdded(),
+            'Second transaction should be marked as added'
         );
 
         $this->assertCount(
@@ -625,9 +625,9 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             }
         ")->select()->verifications()->getFirst();
 
-        $this->assertInstanceOf(
-            \byrokrat\accounting\Transaction\DeletedTransaction::class,
-            $ver->getTransactions()[1]
+        $this->assertTrue(
+            $ver->getTransactions()[1]->isDeleted(),
+            'Second transaction should be marked as deleted'
         );
 
         $this->assertCount(

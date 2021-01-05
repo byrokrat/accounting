@@ -2,7 +2,6 @@
 
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\accounting\Transaction;
 use byrokrat\amount\Amount;
 
 class Grammar extends AbstractParser
@@ -5248,7 +5247,6 @@ class Grammar extends AbstractParser
             $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
                 if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
                     return [
-                        'type' => Transaction\Transaction::class,
                         'account' => $account,
                         'dimensions' => $dims,
                         'amount' => $amount,
@@ -5483,7 +5481,7 @@ class Grammar extends AbstractParser
             $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
                 if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
                     return [
-                        'type' => Transaction\DeletedTransaction::class,
+                        'deleted' => true,
                         'account' => $account,
                         'dimensions' => $dims,
                         'amount' => $amount,
@@ -5724,7 +5722,7 @@ class Grammar extends AbstractParser
             $this->value = call_user_func(function () use (&$account, &$dims, &$amount, &$date, &$desc, &$quantity, &$sign) {
                 if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
                     return [
-                        'type' => Transaction\AddedTransaction::class,
+                        'added' => true,
                         'account' => $account,
                         'dimensions' => $dims,
                         'amount' => $amount,

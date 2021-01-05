@@ -25,6 +25,7 @@ namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
+use byrokrat\accounting\Transaction\Transaction;
 use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\accounting\Verification\Verification;
 use byrokrat\amount\Currency;
@@ -104,10 +105,9 @@ class AbstractParser
         $transactions = [];
 
         foreach ($transactionData as $data) {
-            // @TODO check the data integrity here! includes class name..
-            // @TODO why not use templating here?
-            // @TODO ska templating uppdateras så att vi kan sätta added och deleted transaction??
-            $transactions[] = new $data['type'](
+            // @TODO check the data integrity here..
+            // @TODO why not use templating?
+            $transactions[] = new Transaction(
                 verificationId: intval($verificationId),
                 transactionDate: $data['date'] ?: $transactionDate,
                 description: $data['description'] ?: $description,
@@ -115,7 +115,9 @@ class AbstractParser
                 amount: $data['amount'],
                 quantity: $data['quantity'],
                 account: $data['account'],
-                dimensions: $data['dimensions']
+                dimensions: $data['dimensions'],
+                added: $data['added'] ?? false,
+                deleted: $data['deleted'] ?? false,
             );
         }
 

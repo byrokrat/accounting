@@ -21,15 +21,8 @@
 
 declare(strict_types=1);
 
-namespace byrokrat\accounting\Transaction;
+namespace byrokrat\accounting\Exception;
 
-/**
- * Represents a transaction that has been deleted from an existing verification
- */
-final class DeletedTransaction extends Transaction
+class InvalidTransactionException extends RuntimeException
 {
-    public function isDeleted(): bool
-    {
-        return true;
-    }
 }

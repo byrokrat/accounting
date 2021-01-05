@@ -26,14 +26,12 @@ namespace byrokrat\accounting\Transaction;
 use byrokrat\accounting\AttributableTrait;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
+use byrokrat\accounting\Exception\InvalidTransactionException;
 use byrokrat\accounting\Exception\LogicException;
 use byrokrat\accounting\Query;
 use byrokrat\amount\Amount;
 
-/**
- * A standard transaction
- */
-class Transaction implements TransactionInterface
+final class Transaction implements TransactionInterface
 {
     use AttributableTrait;
 
@@ -54,6 +52,8 @@ class Transaction implements TransactionInterface
         ?Amount $quantity = null,
         private array $dimensions = [],
         array $attributes = [],
+        private bool $added = false,
+        private bool $deleted = false,
     ) {
         // @TODO should be a NullDate implementation?
         $this->transactionDate = $transactionDate ?: new \DateTimeImmutable();
@@ -76,6 +76,10 @@ class Transaction implements TransactionInterface
             }
 
             $this->setAttribute($key, $value);
+        }
+
+        if ($this->added && $this->deleted) {
+            throw new InvalidTransactionException('Transaction can not be both added and deleted');
         }
     }
 
@@ -121,16 +125,16 @@ class Transaction implements TransactionInterface
 
     public function isAdded(): bool
     {
-        return false;
+        return $this->added;
     }
 
     public function isDeleted(): bool
     {
-        return false;
+        return $this->deleted;
     }
 
     public function select(): Query
     {
-        return new Query([$this->getAccount(), $this->getAmount(), ...$this->getDimensions()]);
+        return new Query([$this->getAccount(), ...$this->getDimensions()]);
     }
 }
