@@ -83,7 +83,7 @@ final class Verification implements VerificationInterface
             }
         }
 
-        if ($this->summary->isInitialized() && !$this->isBalanced()) {
+        if ($this->summary->isInitialized() && !$this->summary->isBalanced()) {
             throw new UnbalancedVerificationException('Unable to create unbalanced verification');
         }
 
@@ -128,11 +128,6 @@ final class Verification implements VerificationInterface
     public function getTransactions(): array
     {
         return $this->transactions;
-    }
-
-    public function isBalanced(): bool
-    {
-        return $this->summary->isBalanced();
     }
 
     public function getMagnitude(): Amount

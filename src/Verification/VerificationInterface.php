@@ -64,11 +64,6 @@ interface VerificationInterface extends AttributableInterface, QueryableInterfac
     public function getTransactions(): array;
 
     /**
-     * Check if verification is balanced
-     */
-    public function isBalanced(): bool;
-
-    /**
      * Get the sum of all positive transactions
      */
     public function getMagnitude(): Amount;
