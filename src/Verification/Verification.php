@@ -46,7 +46,7 @@ final class Verification implements VerificationInterface
 
     /**
      * @param array<TransactionInterface> $transactions
-     * @param array<string, string> $attributes
+     * @param array<string, mixed> $attributes
      * @throws InvalidVerificationException If data is invalid
      * @throws UnbalancedVerificationException If verification is not balanced
      */
@@ -90,10 +90,6 @@ final class Verification implements VerificationInterface
         foreach ($attributes as $key => $value) {
             if (!is_string($key)) {
                 throw new InvalidArgumentException('Attribute key must be string');
-            }
-
-            if (!is_string($value)) {
-                throw new InvalidArgumentException('Attribute value must be string');
             }
 
             $this->setAttribute($key, $value);

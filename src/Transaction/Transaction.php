@@ -40,7 +40,7 @@ final class Transaction implements TransactionInterface
 
     /**
      * @param array<DimensionInterface> $dimensions
-     * @param array<string, string> $attributes
+     * @param array<string, mixed> $attributes
      */
     public function __construct(
         private AccountInterface $account,
@@ -69,10 +69,6 @@ final class Transaction implements TransactionInterface
         foreach ($attributes as $key => $value) {
             if (!is_string($key)) {
                 throw new InvalidArgumentException('Attribute key must be string');
-            }
-
-            if (!is_string($value)) {
-                throw new InvalidArgumentException('Attribute value must be string');
             }
 
             $this->setAttribute($key, $value);

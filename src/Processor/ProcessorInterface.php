@@ -23,9 +23,6 @@ namespace byrokrat\accounting\Processor;
 
 use byrokrat\accounting\Container;
 
-/**
- * Process a container and set attributes according to calculations
- */
 interface ProcessorInterface
 {
     public function processContainer(Container $container): void;
