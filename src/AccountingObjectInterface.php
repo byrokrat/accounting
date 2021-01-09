@@ -19,10 +19,22 @@
  * Copyright 2016-21 Hannes Forsgård
  */
 
-declare(strict_types=1);
+namespace byrokrat\accounting;
 
-namespace byrokrat\accounting\Exception;
-
-class InvalidTemplateDataException extends InvalidVerificationException
+/**
+ * Common interface for accounting objects
+ */
+interface AccountingObjectInterface
 {
+    /**
+     * Get item identifier (note that uniqueness is not garantueed)
+     */
+    public function getId(): string;
+
+    /**
+     * Get items contained in this object
+     *
+     * @return array<AccountingObjectInterface>
+     */
+    public function getItems(): array;
 }

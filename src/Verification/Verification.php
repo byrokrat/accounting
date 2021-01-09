@@ -27,7 +27,6 @@ use byrokrat\accounting\AttributableTrait;
 use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidVerificationException;
 use byrokrat\accounting\Exception\UnbalancedVerificationException;
-use byrokrat\accounting\Query;
 use byrokrat\accounting\Summary;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\amount\Amount;
@@ -51,7 +50,7 @@ final class Verification implements VerificationInterface
      * @throws UnbalancedVerificationException If verification is not balanced
      */
     public function __construct(
-        private int $id = 0,
+        private string $id = '',
         ?\DateTimeImmutable $transactionDate = null,
         ?\DateTimeImmutable $registrationDate = null,
         private string $description = '',
@@ -59,7 +58,11 @@ final class Verification implements VerificationInterface
         private array $transactions = [],
         array $attributes = [],
     ) {
-        // @TODO should be a NullDate implementation?
+        if (!empty($this->id) && !ctype_digit($this->id)) {
+            throw new InvalidVerificationException('Verification id must be a numeric string');
+        }
+
+        // @TODO should be a NullDate implementation? AccountingDate::today()??
         $this->transactionDate = $transactionDate ?: new \DateTimeImmutable();
 
         $this->registrationDate = $registrationDate ?: $this->transactionDate;
@@ -96,7 +99,7 @@ final class Verification implements VerificationInterface
         }
     }
 
-    public function getVerificationId(): int
+    public function getId(): string
     {
         return $this->id;
     }
@@ -131,8 +134,8 @@ final class Verification implements VerificationInterface
         return $this->summary->getMagnitude();
     }
 
-    public function select(): Query
+    public function getItems(): array
     {
-        return new Query($this->getTransactions());
+        return $this->getTransactions();
     }
 }

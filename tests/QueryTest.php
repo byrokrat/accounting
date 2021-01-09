@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace byrokrat\accounting;
 
 use byrokrat\accounting\Exception\InvalidAccountException;
+use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidDimensionException;
+use byrokrat\accounting\Exception\InvalidVerificationException;
 use byrokrat\accounting\Exception\RuntimeException;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
@@ -17,31 +19,52 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 {
     use \Prophecy\PhpUnit\ProphecyTrait;
 
+    private function accountingMock(string $type = '', $id = '', array $items = []): AccountingObjectInterface
+    {
+        $item = $this->prophesize($type ?: AccountingObjectInterface::class);
+        $item->getId()->willReturn($id);
+        $item->getItems()->willReturn($items);
+
+        return $item->reveal();
+    }
+
+    public function testExceptionOnInvalidArgument()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        iterator_to_array(new Query(['this-is-not-an-accouting-object']));
+    }
+
     public function testAsArray()
     {
-        $this->assertSame(
-            [1, 2, 3],
-            (new Query([1, 2, 3]))->asArray()
-        );
+        $query = new Query([$item = $this->accountingMock()]);
+
+        $this->assertSame([$item], $query->asArray());
     }
 
     public function testAsContainer()
     {
-        $this->assertEquals(
-            new Container(1, 2, 3),
-            (new Query([1, 2, 3]))->asContainer()
-        );
+        $query = new Query([$item = $this->accountingMock()]);
+
+        $this->assertEquals(new Container($item), $query->asContainer());
     }
 
     public function testAsSummary()
     {
-        $trans = $this->prophesize(TransactionInterface::class);
-        $trans->getAmount()->willReturn(new Amount('50'));
-        $trans->select()->willReturn(new Query());
-        $trans = $trans->reveal();
+        $trans1 = $this->prophesize(TransactionInterface::class);
+        $trans1->getAmount()->willReturn(new Amount('50'));
+        $trans1->getItems()->willReturn([]);
+        $trans1->getId()->willReturn('1');
+
+        $trans2 = $this->prophesize(TransactionInterface::class);
+        $trans2->getAmount()->willReturn(new Amount('150'));
+        $trans2->getItems()->willReturn([]);
+        $trans2->getId()->willReturn('2');
+
+        $query = new Query([$trans1->reveal(), $trans2->reveal()]);
 
         $this->assertTrue(
-            (new Query([1, $trans, $trans]))->asSummary()->getOutgoingBalance()->equals(new Amount('100'))
+            $query->asSummary()->getOutgoingBalance()->equals(new Amount('200'))
         );
     }
 
@@ -50,92 +73,99 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testNestedIteration()
     {
-        $queryable1 = $this->prophesize(QueryableInterface::class);
-        $queryable1->select()->willReturn(new Query(['bar']));
-        $queryable1 = $queryable1->reveal();
+        $query = new Query([
+            $item1 = $this->accountingMock(
+                items: [
+                    $item2 = $this->accountingMock(
+                        items: [
+                            $item3 = $this->accountingMock()
+                        ]
+                    )
+                ]
+            )
+        ]);
 
-        $queryable2 = $this->prophesize(QueryableInterface::class);
-        $queryable2->select()->willReturn(new Query(['foo', $queryable1]));
-        $queryable2 = $queryable2->reveal();
-
-        $query = new Query(['before', $queryable2, 'after']);
-
-        $this->assertEquals(
-            ['before', $queryable2, 'foo', $queryable1, 'bar', 'after'],
+        $this->assertSame(
+            [$item1, $item2, $item3],
             $query->asArray(),
             'Nested iteration should yield values bottom down'
         );
 
-        $this->assertEquals(
-            ['before', $queryable2, 'foo', $queryable1, 'bar', 'after'],
+        $this->assertSame(
+            [$item1, $item2, $item3],
             $query->asArray(),
             'Query should be rewindable and yield the same results the second time'
         );
     }
 
     /**
-     * @depends testNestedIteration
+     * @depends testAsArray
      */
     public function testFilter()
     {
-        $queryable = $this->prophesize(QueryableInterface::class);
-        $queryable->select()->willReturn(new Query([2]));
+        $query = new Query([
+            $item = $this->accountingMock(),
+            $trans = $this->accountingMock(type: TransactionInterface::class),
+        ]);
 
         $this->assertSame(
-            [1, 2, 3],
-            (new Query([1, $queryable->reveal(), 3]))->filter('is_integer')->asArray()
-        );
-    }
-
-    public function testFilterType()
-    {
-        $this->assertSame(
-            [$query = new Query()],
-            (new Query([1, $query]))->filterType(Query::class)->asArray()
-        );
-    }
-
-    /**
-     * @depends testFilter
-     */
-    public function testThatFilterCreatesNewQuery()
-    {
-        $query = new Query([1, 'A', 2]);
-
-        $this->assertSame(
-            [1, 2],
-            $query->filter('is_integer')->asArray()
+            [$trans],
+            $query->filter(fn($item) => $item instanceof TransactionInterface)->asArray(),
+            'Only filtered objects should be returned'
         );
 
         $this->assertSame(
-            [1, 'A', 2],
-            $query->asArray()
+            [$item, $trans],
+            $query->asArray(),
+            'Original query should not be affected'
         );
     }
 
     public function testFirst()
     {
-        $this->assertSame(
-            1,
-            (new Query([1, 2, 3]))->getFirst()
-        );
+        $query = new Query([
+            $first = $this->accountingMock(),
+            $last = $this->accountingMock(),
+        ]);
+
+        $this->assertSame($first, $query->first());
     }
 
     /**
      * @depends testFirst
      * @depends testFilter
      */
-    public function testFirstFiltered()
+    public function testChaingFilterAndFirst()
     {
+        $query = new Query([
+            $this->accountingMock(),
+            $trans = $this->accountingMock(type: TransactionInterface::class),
+        ]);
+
         $this->assertSame(
-            3,
-            (new Query(['A', false, 3]))->filter('is_integer')->getFirst()
+            $trans,
+            $query->filter(fn($item) => $item instanceof TransactionInterface)->first()
         );
     }
 
     public function testFirstWithNoItems()
     {
-        $this->assertNull((new Query())->getFirst());
+        $this->assertNull((new Query())->first());
+    }
+
+    public function testLast()
+    {
+        $query = new Query([
+            $first = $this->accountingMock(),
+            $last = $this->accountingMock(),
+        ]);
+
+        $this->assertSame($last, $query->last());
+    }
+
+    public function testLastWithNoItems()
+    {
+        $this->assertNull((new Query())->last());
     }
 
     public function testIsEmpty()
@@ -145,7 +175,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertFalse(
-            (new Query([1]))->isEmpty()
+            (new Query([$this->accountingMock()]))->isEmpty()
         );
     }
 
@@ -153,29 +183,24 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      * @depends testIsEmpty
      * @depends testFilter
      */
-    public function testIsEmptyFiltered()
+    public function testChaingFilterAndEmpty()
     {
+        $query = new Query([$this->accountingMock(type: AccountingObjectInterface::class)]);
+
         $this->assertTrue(
-            (new Query(['A', null]))->filter('is_integer')->isEmpty()
+            $query->filter(fn($item) => $item instanceof TransactionInterface)->isEmpty()
         );
 
         $this->assertFalse(
-            (new Query([1]))->filter('is_integer')->isEmpty()
+            $query->filter(fn($item) => $item instanceof AccountingObjectInterface)->isEmpty()
         );
-    }
-
-    public function testContains()
-    {
-        $this->assertTrue((new Query(['A']))->contains('A'));
-        $this->assertFalse((new Query(['A']))->contains('B'));
     }
 
     public function testCountable()
     {
-        $this->assertSame(
-            3,
-            count(new Query([1, 2, 3]))
-        );
+        $query = new Query([$this->accountingMock(), $this->accountingMock()]);
+
+        $this->assertCount(2, $query);
     }
 
     /**
@@ -184,168 +209,198 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testCountingFilteredValues()
     {
-        $queryable = $this->prophesize(QueryableInterface::class);
-        $queryable->select()->willReturn(new Query([2]));
+        $query = new Query([$this->accountingMock(type: AccountingObjectInterface::class)]);
 
-        $this->assertSame(
-            3,
-            count((new Query([1, $queryable->reveal(), 3]))->filter('is_integer'))
+        $this->assertCount(
+            0,
+            $query->filter(fn($item) => $item instanceof TransactionInterface)
         );
     }
 
+    public function testAccount()
+    {
+        $query = new Query([
+            $account = $this->accountingMock(
+                type: AccountInterface::class,
+                id: '1234'
+            )
+        ]);
+
+        $this->assertSame($account, $query->account('1234'));
+    }
+
+    public function testExceptionOnUnknownAccount()
+    {
+        $query = new Query([
+            $this->accountingMock(
+                type: DimensionInterface::class,
+                id: '1234'
+            )
+        ]);
+
+        $this->expectException(InvalidAccountException::class);
+
+        $query->account('1234');
+    }
+
     /**
-     * @depends testFilter
+     * @depends testAsArray
      */
     public function testAccounts()
     {
-        $account = $this->createMock(AccountInterface::class);
+        $query = new Query([
+            $account1 = $this->accountingMock(type: AccountInterface::class, id: '1'),
+            $account1,
+            $account2 = $this->accountingMock(type: AccountInterface::class, id: '2'),
+            $this->accountingMock(type: TransactionInterface::class),
+        ]);
 
         $this->assertSame(
-            [$account, $account],
-            (new Query([1, $account, $account, 3]))->accounts()->asArray()
+            [$account1, $account2],
+            $query->accounts()->asArray()
         );
     }
 
-    /**
-     * @depends testAccounts
-     */
-    public function testuniqueAccounts()
+    public function testDimension()
     {
-        $account = $this->createMock(AccountInterface::class);
+        $query = new Query([
+            $dimension = $this->accountingMock(
+                type: DimensionInterface::class,
+                id: '1234'
+            )
+        ]);
 
-        $this->assertSame(
-            [$account],
-            (new Query([1, $account, $account, 3]))->uniqueAccounts()->asArray()
-        );
+        $this->assertSame($dimension, $query->dimension('1234'));
+    }
+
+    public function testExceptionOnUnknownDimensionNumber()
+    {
+        $this->expectException(InvalidDimensionException::class);
+        (new Query())->dimension('1234');
     }
 
     /**
-     * @depends testFilter
+     * @depends testAsArray
      */
     public function testDimensions()
     {
-        $dim = $this->createMock(DimensionInterface::class);
+        $query = new Query([
+            $dimension1 = $this->accountingMock(type: DimensionInterface::class, id: '1'),
+            $dimension1,
+            $dimension2 = $this->accountingMock(type: DimensionInterface::class, id: '2'),
+            $this->accountingMock(type: TransactionInterface::class),
+        ]);
 
         $this->assertSame(
-            [$dim, $dim],
-            (new Query([1, $dim, $dim, 3]))->dimensions()->asArray()
+            [$dimension1, $dimension2],
+            $query->dimensions()->asArray()
         );
     }
 
     /**
-     * @depends testDimensions
-     */
-    public function testUniqueDimensions()
-    {
-        $dim = $this->createMock(DimensionInterface::class);
-
-        $this->assertSame(
-            [$dim],
-            (new Query([1, $dim, $dim, 3]))->uniqueDimensions()->asArray()
-        );
-    }
-
-    public function testWhereAttribute()
-    {
-        $attributableProphecy = $this->prophesize(AttributableInterface::class);
-
-        $attributableProphecy->hasAttribute('A')->willReturn(true);
-        $attributableProphecy->getAttribute('A')->willReturn('foobar');
-        $attributableProphecy->hasAttribute('B')->willReturn(false);
-
-        $attributable = $attributableProphecy->reveal();
-
-        $this->assertSame(
-            [$attributable],
-            (new Query([1, $attributable, 3]))->whereAttribute('A')->asArray()
-        );
-
-        $this->assertSame(
-            [],
-            (new Query([1, $attributable, 3]))->whereAttribute('B')->asArray()
-        );
-
-        $this->assertSame(
-            [$attributable],
-            (new Query([1, $attributable, 3]))->whereAttribute('A', 'foobar')->asArray()
-        );
-
-        $this->assertSame(
-            [],
-            (new Query([1, $attributable, 3]))->whereAttribute('A', 'not-foobar')->asArray()
-        );
-    }
-
-    public function testQueryIsQueryable()
-    {
-        $this->assertSame(
-            $query = new Query(),
-            $query->select()
-        );
-    }
-
-    /**
-     * @depends testFilter
+     * @depends testAsArray
      */
     public function testTransactions()
     {
+        $query = new Query([
+            $this->accountingMock(type: DimensionInterface::class),
+            $trans1 = $this->accountingMock(type: TransactionInterface::class, id: '1'),
+            $trans1,
+            $trans2 = $this->accountingMock(type: TransactionInterface::class, id: '2'),
+        ]);
+
         $this->assertSame(
-            [$transaction = $this->createMock(TransactionInterface::class)],
-            (new Query([1, $transaction, 3]))->transactions()->asArray()
+            [$trans1, $trans2],
+            $query->transactions()->asArray()
         );
     }
 
+    public function testVerification()
+    {
+        $query = new Query([
+            $verification = $this->accountingMock(
+                type: VerificationInterface::class,
+                id: '1234'
+            )
+        ]);
+
+        $this->assertSame($verification, $query->verification('1234'));
+    }
+
+    public function testExceptionOnUnknownVerification()
+    {
+        $this->expectException(InvalidVerificationException::class);
+        (new Query())->verification('1234');
+    }
+
     /**
-     * @depends testFilter
+     * @depends testAsArray
      */
     public function testVerifications()
     {
-        $verification = $this->createMock(VerificationInterface::class);
+        $query = new Query([
+            $this->accountingMock(type: DimensionInterface::class),
+            $verification1 = $this->accountingMock(type: VerificationInterface::class, id: '1'),
+            $verification1,
+            $verification2 = $this->accountingMock(type: VerificationInterface::class, id: '2'),
+        ]);
 
         $this->assertSame(
-            [$verification, $verification],
-            (new Query([1, $verification, $verification, 3]))->verifications()->asArray()
-        );
-    }
-
-    /**
-     * @depends testVerifications
-     */
-    public function testUniqueVerifications()
-    {
-        $verification = $this->createMock(VerificationInterface::class);
-
-        $this->assertSame(
-            [$verification],
-            (new Query([1, $verification, $verification, 3]))->uniqueVerifications()->asArray()
+            [$verification1, $verification2],
+            $query->verifications()->asArray()
         );
     }
 
     public function testEach()
     {
+        $query = new Query([
+            $this->accountingMock(type: DimensionInterface::class),
+            $this->accountingMock(type: VerificationInterface::class),
+        ]);
+
         $str = '';
 
-        (new Query(['A', 'B', 'C']))->each(function ($letter) use (&$str) {
-            $str .= $letter;
+        $query->each(function ($item) use (&$str) {
+            $str .= get_class($item);
         });
 
-        $this->assertSame('ABC', $str);
+        $this->assertMatchesRegularExpression('/DimensionInterface/', $str);
+        $this->assertMatchesRegularExpression('/VerificationInterface/', $str);
+    }
+
+    public function testLazyEach()
+    {
+        $query = new Query([
+            $this->accountingMock(type: DimensionInterface::class),
+        ]);
+
+        $str = '';
+
+        $query->lazyEach(function ($item) use (&$str) {
+            $str .= get_class($item);
+        })->exec();
+
+        $this->assertMatchesRegularExpression('/DimensionInterface/', $str);
     }
 
     public function testLazyOn()
     {
-        $sum = 0;
+        $query = new Query([
+            $this->accountingMock(type: DimensionInterface::class),
+            $this->accountingMock(type: VerificationInterface::class),
+        ]);
 
-        (new Query([5, 'B', 5]))->lazyOn(
-            function ($item) {
-                    return is_integer($item);
-            },
-            function (int $integer) use (&$sum) {
-                $sum += $integer;
+        $str = '';
+
+        $query->lazyOn(
+            fn($item) => $item instanceof DimensionInterface,
+            function ($item) use (&$str) {
+                $str .= get_class($item);
             }
         )->exec();
 
-        $this->assertSame(10, $sum);
+        $this->assertMatchesRegularExpression('/DimensionInterface/', $str);
+        $this->assertDoesNotMatchRegularExpression('/VerificationInterface/', $str);
     }
 
     /**
@@ -353,31 +408,21 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testMap()
     {
-        $this->assertSame(
-            [10, 20],
-            (new Query([0, 10]))->map(function ($integer) {
-                return $integer + 10;
-            })->asArray()
-        );
-    }
+        $dimension = $this->accountingMock(type: DimensionInterface::class);
+        $verification = $this->accountingMock(type: VerificationInterface::class);
 
-    /**
-     * @depends testMap
-     */
-    public function testThatMapReturnesNewQuery()
-    {
-        $query = new Query([0, 10]);
+        $query = new Query([$dimension, $dimension]);
 
         $this->assertSame(
-            [10, 20],
-            $query->map(function ($integer) {
-                return $integer + 10;
-            })->asArray()
+            [$verification, $verification],
+            $query->map(fn($item) => $verification)->asArray(),
+            'Map should alter all items in query'
         );
 
         $this->assertSame(
-            [0, 10],
-            $query->asArray()
+            [$dimension, $dimension],
+            $query->asArray(),
+            'Original query should still be the same'
         );
     }
 
@@ -386,22 +431,43 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testOrderBy()
     {
+        $query = new Query([
+            $verification = $this->accountingMock(type: VerificationInterface::class),
+            $transaction = $this->accountingMock(type: TransactionInterface::class),
+            $dimension = $this->accountingMock(type: DimensionInterface::class),
+        ]);
+
         $this->assertSame(
-            [1, 2, 3],
-            (new Query([2, 3, 1]))->orderBy(function ($left, $right) {
-                return $left <=> $right;
-            })->asArray()
+            [$dimension, $transaction, $verification],
+            $query->orderBy(fn($left, $right) => get_class($left) <=> get_class($right))->asArray()
+        );
+    }
+
+    public function testOrderById()
+    {
+        $query = new Query([
+            $dimension = $this->accountingMock(type: DimensionInterface::class, id: '3'),
+            $transaction = $this->accountingMock(type: TransactionInterface::class, id: '2'),
+            $verification = $this->accountingMock(type: VerificationInterface::class, id: '1'),
+        ]);
+
+        $this->assertSame(
+            [$verification, $transaction, $dimension],
+            $query->orderById()->asArray()
         );
     }
 
     public function testReduce()
     {
-        $this->assertSame(
-            'ABC',
-            (new Query(['A', 'B', 'C']))->reduce(function ($carry, $item) {
-                return $carry . $item;
-            })
-        );
+        $query = new Query([
+            $this->accountingMock(type: DimensionInterface::class),
+            $this->accountingMock(type: VerificationInterface::class),
+        ]);
+
+        $str = $query->reduce(fn($carry, $item) => $carry . get_class($item));
+
+        $this->assertMatchesRegularExpression('/DimensionInterface/', $str);
+        $this->assertMatchesRegularExpression('/VerificationInterface/', $str);
     }
 
     /**
@@ -409,91 +475,116 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testReduceWithInitialValue()
     {
+        $query = new Query([
+            $this->accountingMock(),
+            $this->accountingMock(),
+            $this->accountingMock(),
+        ]);
+
         $this->assertSame(
-            'foobar',
-            (new Query(['b', 'a', 'r']))->reduce(function ($carry, $item) {
-                return $carry . $item;
-            }, 'foo')
+            'fooXXX',
+            $query->reduce(fn($carry, $item) => $carry . 'X', 'foo')
         );
     }
 
     /**
      * @depends testAsArray
      */
-    public function testWhereUnique()
+    public function testUnique()
     {
+        $item1 = $this->accountingMock(id: '1');
+        $item2 = $this->accountingMock(id: '2');
+
+        $query = new Query([$item1, $item1, $item2]);
+
         $this->assertSame(
-            [1, 2, 3],
-            (new Query([1, 2, 3, 2]))->whereUnique()->asArray()
+            [$item1, $item2],
+            $query->unique()->asArray()
         );
     }
 
     /**
-     * @depends testWhereUnique
-     */
-    public function testUniqueWithObjectItems()
-    {
-        $objA = (object)[];
-        $objB = (object)[];
-
-        $this->assertSame(
-            [$objA, $objB],
-            (new Query([$objA, $objB, $objB, $objA]))->whereUnique()->asArray()
-        );
-    }
-
-    /**
-     * @depends testWhereUnique
-     */
-    public function testUniqueWithInspector()
-    {
-        $arrAA = ['A', 'A'];
-        $arrAB = ['A', 'B'];
-        $arrBA = ['B', 'A'];
-        $arrBB = ['B', 'B'];
-
-        $inspector = function ($arr) {
-            return $arr[0];
-        };
-
-        $this->assertSame(
-            [$arrAA, $arrBA],
-            (new Query([$arrAA, $arrBA, $arrAB, $arrBB]))->whereUnique($inspector)->asArray()
-        );
-    }
-
-    /**
-     * @depends testAsArray
+     * @depends testNestedIteration
      */
     public function testWhere()
     {
-        $foo = new Query(['', 'foo']);
-        $bar = new Query(['', 'bar']);
+        $query = new Query([
+            $verA = $this->accountingMock(
+                type: VerificationInterface::class,
+                items: [$trans = $this->accountingMock(type: TransactionInterface::class)]
+            ),
+            $verB = $this->accountingMock(
+                type: VerificationInterface::class,
+                items: []
+            ),
+        ]);
 
         $this->assertSame(
-            [$foo],
-            (new Query([$foo, $bar]))->filterType(QueryableInterface::class)->where(function ($item) {
-                return is_string($item) && $item == 'foo';
-            })->asArray(),
-            '$bar should be removed as it does not contain the subitem foo'
+            [$verA, $trans],
+            $query->where(fn($item) => $item instanceof TransactionInterface)->asArray(),
+            'Get items that is, or contains, a transaction'
         );
     }
 
     /**
-     * @depends testAsArray
+     * @depends testNestedIteration
      */
     public function testWhereNot()
     {
-        $foo = new Query(['', 'foo']);
-        $bar = new Query(['', 'bar']);
+        $query = new Query([
+            $verA = $this->accountingMock(
+                type: VerificationInterface::class,
+                items: [$trans = $this->accountingMock(type: TransactionInterface::class)]
+            ),
+            $verB = $this->accountingMock(
+                type: VerificationInterface::class,
+                items: []
+            ),
+        ]);
 
-        $this->assertEquals(
-            [$bar],
-            (new Query([$foo, $bar]))->filterType(QueryableInterface::class)->whereNot(function ($item) {
-                return is_string($item) && $item == 'foo';
-            })->asArray(),
-            '$bar should be kept as it does not contain the subitem foo'
+        $this->assertSame(
+            [$verB],
+            $query->whereNot(fn($item) => $item instanceof TransactionInterface)->asArray(),
+            'Get items that are not, and does not contain, a transaction'
         );
+    }
+
+    public function testWhereAttribute()
+    {
+        $attributable = $this->prophesize(AttributableInterface::class);
+
+        $attributable->willImplement(AccountingObjectInterface::class);
+        $attributable->getItems()->willReturn([]);
+
+        $attributable->hasAttribute('A')->willReturn(true);
+        $attributable->hasAttribute('B')->willReturn(false);
+
+        $attributable = $attributable->reveal();
+
+        $query = new Query([$attributable]);
+
+        $this->assertSame([$attributable], $query->whereAttribute('A')->asArray());
+        $this->assertSame([], $query->whereAttribute('B')->asArray());
+    }
+
+    public function testWhereAttributeValue()
+    {
+        $attributable = $this->prophesize(AttributableInterface::class);
+
+        $attributable->willImplement(AccountingObjectInterface::class);
+        $attributable->getItems()->willReturn([]);
+
+        $attributable->hasAttribute('A')->willReturn(true);
+        $attributable->getAttribute('A')->willReturn('value');
+        $attributable->hasAttribute('B')->willReturn(false);
+
+        $attributable = $attributable->reveal();
+
+        $query = new Query([$attributable]);
+
+        $this->assertSame([$attributable], $query->whereAttributeValue('A', 'value')->asArray());
+        $this->assertSame([], $query->whereAttributeValue('A', 'not-value')->asArray());
+        $this->assertSame([], $query->whereAttributeValue('B', 'foobar')->asArray());
     }
 
     /**
@@ -501,21 +592,45 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testWhereAccount()
     {
-        $account1 = $this->prophesize(AccountInterface::class);
-        $account1->getId()->willReturn('1');
-        $account1->select()->willReturn(new Query());
-        $query1 = new Query([$account1->reveal()]);
-
-        $account2 = $this->prophesize(AccountInterface::class);
-        $account2->getId()->willReturn('2');
-        $account2->select()->willReturn(new Query());
-        $query2 = new Query([$account2->reveal()]);
+        $query = new Query([
+            $trans1 = $this->accountingMock(
+                items: [$account1 = $this->accountingMock(type: AccountInterface::class, id: '1')]
+            ),
+            $trans2 = $this->accountingMock(
+                items: [$account2 = $this->accountingMock(type: AccountInterface::class, id: '2')]
+            ),
+        ]);
 
         $this->assertSame(
-            [$query1],
-            (new Query([$query1, $query2]))->filterType(Query::class)->whereAccount('1')->asArray(),
-            'transB should be removed as it does not contain account 1'
+            [$trans1, $account1],
+            $query->whereAccount('1')->asArray(),
+            'Get items that are, or contains, account number 1'
         );
+    }
+
+    private function whereAmountQuery(): Query
+    {
+        $transA = $this->prophesize(TransactionInterface::class);
+        $transA->getAmount()->willReturn(new Amount('4'));
+        $transA->getItems()->willReturn([]);
+        $transA = $transA->reveal();
+
+        $transB = $this->prophesize(TransactionInterface::class);
+        $transB->getAmount()->willReturn(new Amount('2'));
+        $transB->getItems()->willReturn([]);
+        $transB = $transB->reveal();
+
+        $transC = $this->prophesize(TransactionInterface::class);
+        $transC->getAmount()->willReturn(new Amount('3'));
+        $transC->getItems()->willReturn([]);
+        $transC = $transC->reveal();
+
+        $transD = $this->prophesize(TransactionInterface::class);
+        $transD->getAmount()->willReturn(new Amount('1'));
+        $transD->getItems()->willReturn([]);
+        $transD = $transD->reveal();
+
+        return new Query([$transA, $transB, $transC, $transD]);
     }
 
     /**
@@ -523,113 +638,47 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testWhereAmountEquals()
     {
-        $transA = $this->prophesize(TransactionInterface::class);
-        $transA->getAmount()->willReturn(new Amount('4'));
-        $transA->select()->willReturn(new Query());
-        $transA = $transA->reveal();
-
-        $transB = $this->prophesize(TransactionInterface::class);
-        $transB->getAmount()->willReturn(new Amount('2'));
-        $transB->select()->willReturn(new Query());
-        $transB = $transB->reveal();
-
-        $verA = $this->prophesize(VerificationInterface::class);
-        $verA->getMagnitude()->willReturn(new Amount('3'));
-        $verA->select()->willReturn(new Query());
-        $verA = $verA->reveal();
-
-        $verB = $this->prophesize(VerificationInterface::class);
-        $verB->getMagnitude()->willReturn(new Amount('1'));
-        $verB->select()->willReturn(new Query());
-        $verB = $verB->reveal();
-
-        $testItems = [$transA, $transB, $verA, $verB];
-
-        $this->assertSame(
-            [$transA],
-            (new Query($testItems))->whereAmountEquals(new Amount('4'))->asArray()
-        );
-
-        $this->assertSame(
-            [$verA],
-            (new Query($testItems))->whereAmountEquals(new Amount('3'))->asArray()
-        );
-
-        return $testItems;
-    }
-
-    /**
-     * @depends testWhereAmountEquals
-     */
-    public function testWhereAmountIsGreaterThan(array $testItems)
-    {
         $this->assertCount(
-            2,
-            (new Query($testItems))->whereAmountIsGreaterThan(new Amount('2'))->asArray()
+            1,
+            $this->whereAmountQuery()->whereAmountEquals(new Amount('4'))
         );
 
         $this->assertCount(
             1,
-            (new Query($testItems))->whereAmountIsGreaterThan(new Amount('3'))->asArray()
+            $this->whereAmountQuery()->whereAmountEquals(new Amount('3'))
         );
     }
 
     /**
-     * @depends testWhereAmountEquals
+     * @depends testWhere
      */
-    public function testWhereAmountIsLessThan(array $testItems)
+    public function testWhereAmountIsGreaterThan()
+    {
+        $this->assertCount(
+            2,
+            $this->whereAmountQuery()->whereAmountIsGreaterThan(new Amount('2'))
+        );
+
+        $this->assertCount(
+            1,
+            $this->whereAmountQuery()->whereAmountIsGreaterThan(new Amount('3'))
+        );
+    }
+
+    /**
+     * @depends testWhere
+     */
+    public function testWhereAmountIsLessThan()
     {
         $this->assertCount(
             1,
-            (new Query($testItems))->whereAmountIsLessThan(new Amount('2'))->asArray()
+            $this->whereAmountQuery()->whereAmountIsLessThan(new Amount('2'))
         );
 
         $this->assertCount(
             2,
-            (new Query($testItems))->whereAmountIsLessThan(new Amount('3'))->asArray()
+            $this->whereAmountQuery()->whereAmountIsLessThan(new Amount('3'))
         );
-    }
-
-    public function testGetAccount()
-    {
-        $account = $this->prophesize(AccountInterface::class);
-        $account->getId()->willReturn('1234');
-        $account = $account->reveal();
-
-        $this->assertEquals(
-            $account,
-            (new Query(['foo', $account, 'bar']))->getAccount('1234')
-        );
-    }
-
-    public function testExceptionOnUnknownAccountNumber()
-    {
-        $this->expectException(InvalidAccountException::class);
-
-        $dimension = $this->prophesize(DimensionInterface::class);
-        $dimension->getId()->willReturn('1234');
-        $dimension->select()->willReturn(new Query());
-
-        (new Query([$dimension->reveal()]))->getAccount('1234');
-    }
-
-    public function testGetDimension()
-    {
-        $dimension = $this->prophesize(DimensionInterface::class);
-        $dimension->getId()->willReturn('1234');
-        $dimension->select()->willReturn(new Query());
-        $dimension = $dimension->reveal();
-
-        $this->assertEquals(
-            $dimension,
-            (new Query(['foo', $dimension, 'bar']))->getDimension('1234')
-        );
-    }
-
-    public function testExceptionOnUnknownDimensionNumber()
-    {
-        $this->expectException(InvalidDimensionException::class);
-        (new Query())->getDimension('1234');
     }
 
     /**
@@ -637,37 +686,31 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testLimit()
     {
-        $query = new Query([1, 2, 3, 4]);
+        $query = new Query([
+            $one = $this->accountingMock(),
+            $two = $this->accountingMock(),
+            $three = $this->accountingMock(),
+            $four = $this->accountingMock(),
+        ]);
 
-        $this->assertEquals(
-            [1, 2],
+        $this->assertSame(
+            [$one, $two],
             $query->limit(2)->asArray()
         );
 
-        $this->assertEquals(
-            [1, 2, 3, 4],
+        $this->assertSame(
+            [$one, $two, $three, $four],
             $query->limit(10)->asArray()
         );
 
-        $this->assertEquals(
-            [2, 3],
+        $this->assertSame(
+            [$two, $three],
             $query->limit(2, 1)->asArray()
         );
 
-        $this->assertEquals(
-            [3, 4],
-            $query->limit(100, 2)->asArray()
-        );
-    }
-
-    /**
-     * @depends testAsArray
-     */
-    public function testLoad()
-    {
         $this->assertSame(
-            [1, 2, 3, 4],
-            (new Query([1, 2]))->load([3, 4])->asArray()
+            [$three, $four],
+            $query->limit(100, 2)->asArray()
         );
     }
 
@@ -676,32 +719,32 @@ class QueryTest extends \PHPUnit\Framework\TestCase
      */
     public function testMacro()
     {
-        Query::macro('whereInternalType', function ($type) {
-            return $this->filter(function ($item) use ($type) {
-                return gettype($item) == $type;
-            });
+        Query::macro('whereId', function ($id) {
+            return $this->filter(fn($item) => $item->getId() == $id);
         });
 
+        $query = new Query([
+            $item1 = $this->accountingMock(id: '1'),
+            $item2 = $this->accountingMock(id: '2'),
+        ]);
+
         $this->assertSame(
-            ['A'],
-            (new Query([1, 'A', false]))->whereInternalType('string')->asArray()
+            [$item1],
+            $query->whereId('1')->asArray()
         );
     }
 
     public function testExceptionWhenOverwritingMethodWithMacro()
     {
         $this->expectException(RuntimeException::class);
-        Query::macro('filter', function () {
-        });
+        Query::macro('filter', fn() => true);
     }
 
     public function testExceptionWhenOverwritingMacro()
     {
         $this->expectException(RuntimeException::class);
-        Query::macro('thisRareMacroNameIsCreated', function () {
-        });
-        Query::macro('thisRareMacroNameIsCreated', function () {
-        });
+        Query::macro('thisRareMacroNameIsCreated', fn() => true);
+        Query::macro('thisRareMacroNameIsCreated', fn() => true);
     }
 
     public function testExceptionOnUndefinedMethodCall()

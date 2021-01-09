@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
+use byrokrat\accounting\AccountingObjectInterface;
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Transaction\Transaction;
@@ -32,10 +33,10 @@ use byrokrat\amount\Currency;
 
 class AbstractParser
 {
-    /** @var array<mixed> */
+    /** @var array<AccountingObjectInterface> */
     protected array $parsedItems = [];
 
-    /** @var array<mixed> */
+    /** @var array<string, mixed> */
     protected array $parsedAttributes = [];
 
     public function __construct(
@@ -52,7 +53,7 @@ class AbstractParser
     }
 
     /**
-     * @return array<mixed>
+     * @return array<string, mixed>
      */
     protected function getParsedAttributes(): array
     {
@@ -60,7 +61,7 @@ class AbstractParser
     }
 
     /**
-     * @return array<mixed>
+     * @return array<AccountingObjectInterface>
      */
     protected function getParsedItems(): array
     {
@@ -90,8 +91,6 @@ class AbstractParser
     /**
      * @param string $series The series verification should be a part of
      * @param array<array> $transactionData
-     * @TODO The $transactionData structure needs to be documentet or preferably refactored
-     * @TODO Why not pass $verificationId as int
      */
     protected function createVerification(
         string $series,
@@ -106,9 +105,10 @@ class AbstractParser
 
         foreach ($transactionData as $data) {
             // @TODO check the data integrity here..
+            // @TODO The $transactionData structure needs to be documentet or preferably refactored
             // @TODO why not use templating?
             $transactions[] = new Transaction(
-                verificationId: intval($verificationId),
+                verificationId: $verificationId,
                 transactionDate: $data['date'] ?: $transactionDate,
                 description: $data['description'] ?: $description,
                 signature: $data['signature'] ?: $signature,
@@ -122,7 +122,7 @@ class AbstractParser
         }
 
         return new Verification(
-            id: intval($verificationId),
+            id: $verificationId,
             transactionDate: $transactionDate,
             registrationDate: $registrationDate,
             description: $description,

@@ -24,39 +24,31 @@ declare(strict_types=1);
 namespace byrokrat\accounting;
 
 /**
- * A container is a queryable and attributable keeper of bookkeeping objects
- *
- * @implements \IteratorAggregate<mixed>
+ * A queryable keeper of bookkeeping objects
  */
-final class Container implements AttributableInterface, QueryableInterface, \IteratorAggregate
+final class Container implements AccountingObjectInterface, AttributableInterface
 {
     use AttributableTrait;
 
-    /** @var array<mixed> */
-    private $items;
+    /** @var array<AccountingObjectInterface> */
+    private array $items;
 
-    /**
-     * @param array<mixed> ...$items
-     */
-    public function __construct(...$items)
+    public function __construct(AccountingObjectInterface ...$items)
     {
         $this->items = $items;
     }
 
+    public function getId(): string
+    {
+        return (string)spl_object_id($this);
+    }
+
     /**
-     * @return array<mixed>
+     * @return array<AccountingObjectInterface>
      */
     public function getItems(): array
     {
         return $this->items;
-    }
-
-    /**
-     * @return iterable<mixed>
-     */
-    public function getIterator(): iterable
-    {
-        yield from $this->getItems();
     }
 
     public function select(): Query

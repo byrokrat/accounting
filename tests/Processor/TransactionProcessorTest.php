@@ -17,27 +17,31 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
         $account = new Account('1000');
         $dim = new Dimension('2000');
 
-        $trans = new Transaction(amount: new Amount('100'), account: $account, dimensions: [$dim]);
+        $transA = new Transaction(amount: new Amount('100'), account: $account, dimensions: [$dim]);
+        $transB = new Transaction(amount: new Amount('100'), account: $account, dimensions: [$dim]);
 
-        $container = new Container($trans, $trans);
-
-        (new TransactionProcessor())->processContainer($container);
-
-        $this->assertEquals(
-            [$trans, $trans],
-            $account->getAttribute('transactions')
-        );
-
-        $this->assertEquals(
-            [$trans, $trans],
-            $dim->getAttribute('transactions')
-        );
+        $container = new Container($transA, $transB);
 
         (new TransactionProcessor())->processContainer($container);
 
         $this->assertEquals(
-            [$trans, $trans],
-            $account->getAttribute('transactions')
+            [$transA, $transB],
+            $account->getAttribute('transactions'),
+            'Transactions should be written to account'
+        );
+
+        $this->assertEquals(
+            [$transA, $transB],
+            $dim->getAttribute('transactions'),
+            'Transactions should be written to dimension'
+        );
+
+        (new TransactionProcessor())->processContainer($container);
+
+        $this->assertEquals(
+            [$transA, $transB],
+            $account->getAttribute('transactions'),
+            'Rerunning processor should yield the same result'
         );
     }
 
@@ -46,9 +50,10 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
         $account = new Account('1000');
         $dim = new Dimension('2000');
 
-        $trans = new Transaction(amount: new Amount('100'), account: $account, dimensions: [$dim]);
+        $transA = new Transaction(amount: new Amount('100'), account: $account, dimensions: [$dim]);
+        $transB = new Transaction(amount: new Amount('100'), account: $account, dimensions: [$dim]);
 
-        $container = new Container($trans, $trans);
+        $container = new Container($transA, $transB);
 
         (new TransactionProcessor())->processContainer($container);
 
@@ -72,14 +77,21 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
         $account = new Account('1000');
         $dim = new Dimension('2000');
 
-        $trans = new Transaction(
+        $transA = new Transaction(
             amount: new Amount('0'),
             account: $account,
             quantity: new Amount('1'),
             dimensions: [$dim],
         );
 
-        $container = new Container($trans, $trans);
+        $transB = new Transaction(
+            amount: new Amount('0'),
+            account: $account,
+            quantity: new Amount('1'),
+            dimensions: [$dim],
+        );
+
+        $container = new Container($transA, $transB);
 
         (new TransactionProcessor())->processContainer($container);
 

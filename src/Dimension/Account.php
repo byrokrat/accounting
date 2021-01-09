@@ -39,7 +39,7 @@ final class Account extends Dimension implements AccountInterface
         private string $type = '',
         array $attributes = [],
     ) {
-        if (!is_numeric($id)) {
+        if (!ctype_digit($id)) {
             throw new InvalidAccountException('Account id must be a numeric string');
         }
 

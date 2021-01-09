@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
-use byrokrat\accounting\Exception\InvalidTemplateDataException;
 use byrokrat\accounting\Transaction\Transaction;
 use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\accounting\Verification\Verification;
@@ -42,12 +41,8 @@ final class TemplateRenderer
     {
         $template = $template->translate($translator);
 
-        if (!ctype_digit($template->id)) {
-            throw new InvalidTemplateDataException('Verification id must consist of digits');
-        }
-
         return new Verification(
-            id: (int)$template->id,
+            id: $template->id,
             transactionDate: $this->dateFactory->createDate($template->transactionDate),
             registrationDate: $this->dateFactory->createDate($template->registrationDate),
             description: $template->description,
@@ -63,22 +58,18 @@ final class TemplateRenderer
         );
     }
 
-    /**
-     * @TODO Quantity should be validated as a float-style number string. Here or in a factory.
-     * Or wrapp creation on a try block so we throw an internal exception..
-     */
     private function renderTransaction(TransactionTemplate $transTmpl, VerificationTemplate $verTmpl): Transaction
     {
         return new Transaction(
-            verificationId: (int)$verTmpl->id,
+            verificationId: $verTmpl->id,
             transactionDate: $this->dateFactory->createDate($transTmpl->transactionDate ?: $verTmpl->transactionDate),
             description: $transTmpl->description ?: $verTmpl->description,
             signature: $transTmpl->signature ?: $verTmpl->signature,
             amount: $this->moneyFactory->createMoney($transTmpl->amount),
             quantity: new Amount($transTmpl->quantity),
-            account: $this->dimensionQuery->getAccount($transTmpl->account),
+            account: $this->dimensionQuery->account($transTmpl->account),
             dimensions: array_map(
-                fn($dimId) => $this->dimensionQuery->getDimension($dimId),
+                fn($dimId) => $this->dimensionQuery->dimension($dimId),
                 $transTmpl->dimensions
             ),
             attributes: array_combine(

@@ -23,19 +23,14 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
-use byrokrat\accounting\QueryableInterface;
-use byrokrat\accounting\Query;
+use byrokrat\accounting\Container;
 
 final class TemplateRendererFactory
 {
-     public function createRenderer(QueryableInterface | Query $dimensions): TemplateRenderer
+     public function createRenderer(Container $dimensions): TemplateRenderer
      {
-         if ($dimensions instanceof QueryableInterface) {
-             $dimensions = $dimensions->select();
-         }
-
          return new TemplateRenderer(
-             $dimensions,
+             $dimensions->select(),
              new SekMoneyFactory(),
              new DateFactory(),
          );

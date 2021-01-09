@@ -21,20 +21,15 @@
 
 namespace byrokrat\accounting\Dimension;
 
+use byrokrat\accounting\AccountingObjectInterface;
 use byrokrat\accounting\AttributableInterface;
-use byrokrat\accounting\QueryableInterface;
 use byrokrat\accounting\Exception\RuntimeException;
 
 /**
  * A dimension is an entity through which transactions can be channeled
  */
-interface DimensionInterface extends AttributableInterface, QueryableInterface
+interface DimensionInterface extends AccountingObjectInterface, AttributableInterface
 {
-    /**
-     * Get dimension identification
-     */
-    public function getId(): string;
-
     /**
      * Get free text description
      */

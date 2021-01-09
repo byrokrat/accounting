@@ -4,7 +4,6 @@
 
 [![Packagist Version](https://img.shields.io/packagist/v/byrokrat/accounting.svg?style=flat-square)](https://packagist.org/packages/byrokrat/accounting)
 [![Build Status](https://img.shields.io/travis/byrokrat/accounting/master.svg?style=flat-square)](https://travis-ci.com/github/byrokrat/accounting)
-[![Quality Score](https://img.shields.io/scrutinizer/g/byrokrat/accounting.svg?style=flat-square)](https://scrutinizer-ci.com/g/byrokrat/accounting)
 
 Analysis and generation of bookkeeping data according to Swedish standards.
 
@@ -26,16 +25,15 @@ Accounting was to provide solutions for two scenarios:
    bookkeeping).
 
 To enable import and export of bookkeeping data Accounting supports parsing
-and generating files in the [SIE](http://www.sie.se/) file format.
+and generating files in the [SIE4](http://www.sie.se/) file format.
 
 ## Usage
 
 1. [Generating accounting data using templates](#generating-accounting-data-using-templates)
-1. [Writing SIE files](#writing-sie-files)
-1. [Parsing SIE files](#parsing-sie-files)
+1. [Writing SIE4 files](#writing-sie4-files)
+1. [Parsing SIE4 files](#parsing-sie4-files)
+1. [Querying accounting data](#querying-accounting-data)
 1. [Writing macros](#writing-macros)
-1. [Listing accounts](#listing-accounts)
-1. [Sorting transactions into a ledger (huvudbok)](#sorting-transactions-into-a-ledger-huvudbok)
 
 ### Generating accounting data using templates
 
@@ -51,8 +49,14 @@ $template = new VerificationTemplate(
     description: '{description}',
     transactionDate: '{now}',
     transactions: [
-        new TransactionTemplate(account: '1920', amount: '{bank_amount}'),
-        new TransactionTemplate(account: '{account}', amount: '{income_amount}'),
+        new TransactionTemplate(
+            account: '1920',
+            amount: '{bank_amount}'
+        ),
+        new TransactionTemplate(
+            account: '{income_account}',
+            amount: '{income_amount}'
+        )
     ]
 );
 ```
@@ -91,25 +95,25 @@ $verifications = new Container(
     $renderer->render(
         $template,
         new Translator([
-            'description' => 'basic income',
+            'description' => 'Some donation...',
             'bank_amount' => '999',
             'income_amount' => '-999',
-            'account' => '3000'
+            'income_account' => '3000'
         ])
     ),
     $renderer->render(
         $template,
         new Translator([
-            'description' => 'sales',
+            'description' => 'Daily cash register',
             'bank_amount' => '333',
             'income_amount' => '-333',
-            'account' => '3010'
+            'income_account' => '3010'
         ])
     )
 );
 ```
 
-### Writing SIE files
+### Writing SIE4 files
 
 <!--
     @example sie
@@ -121,7 +125,7 @@ use byrokrat\accounting\Sie4\Writer\Sie4Writer;
 $sie = (new Sie4Writer)->generateSie($verifications);
 ```
 
-### Parsing SIE files
+### Parsing SIE4 files
 
 <!--
     @example parsing-sie
@@ -136,41 +140,22 @@ $parser = (new Sie4ParserFactory)->createParser();
 $container = $parser->parse($sie);
 
 // Outputs '999.00'
-echo $container->select()->verifications()->getFirst()->getMagnitude();
+echo $container->select()->verifications()->first()->getMagnitude();
 ```
 
-### Writing macros
+### Querying accounting data
 
-Macros expose the posibility to extend the query api on the fly, without having
-to subclass the Query class itself. It is suitable for adding project specific
-order and filter methods. If we for example whant to order account objects
-based on number we can define a macro for this:
-
-<!--
-    @example macro
--->
-```php
-byrokrat\accounting\Query::macro('orderById', function () {
-    return $this->orderBy(function ($left, $right) {
-        return $left->getId() <=> $right->getId();
-    });
-});
-```
-
-### Listing accounts
-
-We can use our newly defined macro to order all account objects in a container.
+#### Listing accounts
 
 <!--
     @example list-accounts
     @include verifications
-    @include macro
 -->
 ```php
-$orderedAccounts = $verifications->select()->uniqueAccounts()->orderById()->asArray();
+$orderedAccounts = $verifications->select()->accounts()->orderById()->asArray();
 ```
 
-### Sorting transactions into a ledger (huvudbok)
+#### Sorting transactions into a ledger (huvudbok)
 
 An example of how Accounting may be used to sort transactions inte a ledger
 (or *huvudbok* as it is known in swedish).
@@ -178,7 +163,6 @@ An example of how Accounting may be used to sort transactions inte a ledger
 <!--
     @example ledger
     @include verifications
-    @include macro
     @expectOutput "/Outgoing balance 1332.00/"
 -->
 ```php
@@ -186,7 +170,7 @@ use byrokrat\accounting\Processor\TransactionProcessor;
 
 (new TransactionProcessor)->processContainer($verifications);
 
-$verifications->select()->uniqueAccounts()->orderById()->each(function ($account) {
+$verifications->select()->accounts()->orderById()->each(function ($account) {
     echo "{$account->getId()}: {$account->getDescription()}\n";
     echo "Incoming balance {$account->getAttribute('summary')->getIncomingBalance()}\n\n";
 
@@ -208,9 +192,42 @@ $verifications->select()->uniqueAccounts()->orderById()->each(function ($account
 });
 ```
 
+### Writing macros
+
+Macros expose the posibility to extend the query api on the fly, without having
+to subclass the Query class itself. It is suitable for adding project specific
+order and filter methods. If we for example whant to filter on description
+we can define a macro for this:
+
+<!--
+    @example register-macro
+-->
+```php
+use byrokrat\accounting\Query;
+
+Query::macro('filterOnDescription', function (string $desc) {
+    return $this->filter(
+        fn($item) => str_contains($item->getDescription(), $desc)
+    );
+});
+```
+
+And then use it to query accounting data:
+
+<!--
+    @example filterOnDescription
+    @include verifications
+    @include register-macro
+    @expectOutput "/Some donation.../"
+-->
+```php
+echo $verifications->select()->filterOnDescription('donation')->first()->getDescription();
+```
+
 ## Hacking
 
-With [composer](https://getcomposer.org/) installed as `composer`
+With [composer](https://getcomposer.org/) installed as `composer` and
+[phive](https://phar.io/) installed as `phive`
 
 ```shell
 make
@@ -219,5 +236,5 @@ make
 Or use something like
 
 ```shell
-make COMPOSER_CMD=./composer.phar
+make COMPOSER_CMD=./composer.phar PHIVE_CMD=./phive.phar
 ```

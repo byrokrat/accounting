@@ -21,21 +21,21 @@
 
 namespace byrokrat\accounting\Transaction;
 
+use byrokrat\accounting\AccountingObjectInterface;
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
-use byrokrat\accounting\QueryableInterface;
 use byrokrat\amount\Amount;
 
 /**
  * A pure transaction is an amount moved to or from an account
  */
-interface TransactionInterface extends AttributableInterface, QueryableInterface
+interface TransactionInterface extends AccountingObjectInterface, AttributableInterface
 {
     /**
      * Get the id of the verification this transaction is a part of
      */
-    public function getVerificationId(): int;
+    public function getVerificationId(): string;
 
     /**
      * Get transaction date
@@ -68,7 +68,7 @@ interface TransactionInterface extends AttributableInterface, QueryableInterface
     public function getAccount(): AccountInterface;
 
     /**
-     * Get registered dimensions
+     * Get registered dimensions (account not included)
      *
      * @return array<DimensionInterface>
      */

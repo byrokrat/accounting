@@ -8,7 +8,6 @@ use byrokrat\accounting\Query;
 use byrokrat\accounting\Container;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
-use byrokrat\accounting\Exception\InvalidTemplateDataException;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\amount\Amount;
@@ -54,19 +53,6 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testExceptionIfVerificationIdIsNotDigits()
-    {
-        $this->expectException(InvalidTemplateDataException::class);
-
-        $renderer = new TemplateRenderer(
-            $this->createMock(Query::class),
-            $this->createMock(MoneyFactoryInterface::class),
-            $this->createMock(DateFactory::class),
-        );
-
-        $renderer->render(new VerificationTemplate(id: 'these-are-not-digits'), new Translator([]));
-    }
-
     public function testVerificationValues()
     {
         $dateFactory = $this->prophesize(DateFactory::class);
@@ -94,7 +80,7 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
 
         $verification = $renderer->render($template, new Translator([]));
 
-        $this->assertSame(666, $verification->getVerificationId());
+        $this->assertSame('666', $verification->getId());
         $this->assertSame($transactionDate, $verification->getTransactionDate());
         $this->assertSame($registrationDate, $verification->getRegistrationDate());
         $this->assertSame('desc', $verification->getDescription());
@@ -126,8 +112,8 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $account = $this->createMock(AccountInterface::class);
 
         $query = $this->prophesize(Query::class);
-        $query->getDimension('dim')->willReturn($dimension)->shouldBeCalled();
-        $query->getAccount('1234')->willReturn($account)->shouldBeCalled();
+        $query->dimension('dim')->willReturn($dimension)->shouldBeCalled();
+        $query->account('1234')->willReturn($account)->shouldBeCalled();
 
         $amount = new Amount('0');
 
@@ -162,7 +148,7 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
 
         list($transaction) = $renderer->render($template, new Translator([]))->getTransactions();
 
-        $this->assertSame(666, $transaction->getVerificationId());
+        $this->assertSame('666', $transaction->getVerificationId());
         $this->assertSame($transactionDate, $transaction->getTransactionDate());
         $this->assertSame('desc', $transaction->getDescription());
         $this->assertSame('sign', $transaction->getSignature());
@@ -179,7 +165,7 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
     {
         $account = $this->createMock(AccountInterface::class);
         $query = $this->prophesize(Query::class);
-        $query->getAccount(Argument::any())->willReturn($account);
+        $query->account(Argument::any())->willReturn($account);
 
         $amount = new Amount('0');
         $moneyFactory = $this->prophesize(MoneyFactoryInterface::class);

@@ -10,7 +10,6 @@ use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidVerificationException;
 use byrokrat\accounting\Exception\UnbalancedVerificationException;
 use byrokrat\accounting\Transaction\TransactionInterface;
-use byrokrat\accounting\Query;
 use byrokrat\amount\Amount;
 use byrokrat\amount\Currency\SEK;
 use Prophecy\Argument;
@@ -23,6 +22,20 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
     protected function getAttributableToTest(): AttributableInterface
     {
         return new Verification();
+    }
+
+    public function testId()
+    {
+        $this->assertSame(
+            '1',
+            (new Verification(id: '1'))->getId()
+        );
+    }
+
+    public function testExceptionOnInvalidId()
+    {
+        $this->expectException(InvalidVerificationException::class);
+        new Verification(id: 'this-is-not-a-numerical-string');
     }
 
     public function testAttributesToConstructor()
@@ -55,14 +68,6 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         $trans->isDeleted()->willReturn(false);
 
         new Verification(transactions: [$trans->reveal()]);
-    }
-
-    public function testId()
-    {
-        $this->assertSame(
-            1,
-            (new Verification(id: 1))->getVerificationId()
-        );
     }
 
     public function testAssigningDates()
@@ -195,16 +200,16 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(0, $verification->getMagnitude()->getInt());
     }
 
-    public function testQueryable()
+    public function testGetItems()
     {
         $trans = $this->prophesize(TransactionInterface::class);
         $trans->getAmount()->willReturn(new Amount('100'));
         $trans->isDeleted()->willReturn(true);
         $trans = $trans->reveal();
 
-        $this->assertEquals(
-            new Query([$trans, $trans]),
-            (new Verification(transactions: [$trans, $trans]))->select()
+        $this->assertSame(
+            [$trans, $trans],
+            (new Verification(transactions: [$trans, $trans]))->getItems()
         );
     }
 }

@@ -28,13 +28,13 @@ use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidTransactionException;
-use byrokrat\accounting\Query;
 use byrokrat\amount\Amount;
 
 final class Transaction implements TransactionInterface
 {
     use AttributableTrait;
 
+    private string $id;
     private \DateTimeImmutable $transactionDate;
     private Amount $quantity;
 
@@ -45,7 +45,7 @@ final class Transaction implements TransactionInterface
     public function __construct(
         private AccountInterface $account,
         private Amount $amount,
-        private int $verificationId = 0,
+        private string $verificationId = '0',
         ?\DateTimeImmutable $transactionDate = null,
         private string $description = '',
         private string $signature = '',
@@ -55,7 +55,10 @@ final class Transaction implements TransactionInterface
         private bool $added = false,
         private bool $deleted = false,
     ) {
-        // @TODO should be a NullDate implementation?
+        // expected to be unique, store in property to support serialization/unserialization
+        $this->id = md5($this->verificationId . spl_object_id($this) . time());
+
+        // @TODO should be a NullDate implementation? AccountingDate::today()??
         $this->transactionDate = $transactionDate ?: new \DateTimeImmutable();
 
         $this->quantity = $quantity ?: new Amount('0');
@@ -79,7 +82,12 @@ final class Transaction implements TransactionInterface
         }
     }
 
-    public function getVerificationId(): int
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getVerificationId(): string
     {
         return $this->verificationId;
     }
@@ -129,8 +137,8 @@ final class Transaction implements TransactionInterface
         return $this->deleted;
     }
 
-    public function select(): Query
+    public function getItems(): array
     {
-        return new Query([$this->getAccount(), ...$this->getDimensions()]);
+        return [$this->getAccount(), ...$this->getDimensions()];
     }
 }

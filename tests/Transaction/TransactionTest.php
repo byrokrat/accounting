@@ -15,7 +15,6 @@ use byrokrat\amount\Amount;
 
 class TransactionTest extends \PHPUnit\Framework\TestCase
 {
-    use \Prophecy\PhpUnit\ProphecyTrait;
     use AttributableTestTrait;
 
     protected function getAttributableToTest(): AttributableInterface
@@ -24,6 +23,16 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             amount: new Amount('0'),
             account: $this->createMock(AccountInterface::class),
         );
+    }
+
+    public function testId()
+    {
+        $trans = new Transaction(
+            amount: new Amount('0'),
+            account: $this->createMock(AccountInterface::class),
+        );
+
+        $this->assertIsString($trans->getId());
     }
 
     public function testExceptionOnNonDimension()
@@ -89,12 +98,12 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     public function testGetVerificationId()
     {
         $trans = new Transaction(
-            verificationId: 999,
+            verificationId: '999',
             amount: new Amount('0'),
             account: $this->createMock(AccountInterface::class),
         );
 
-        $this->assertSame(999, $trans->getVerificationId());
+        $this->assertSame('999', $trans->getVerificationId());
     }
 
     public function testGetTransactionDate()
@@ -178,22 +187,18 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
         $this->assertSame([$dim, $dim], $trans->getDimensions());
     }
 
-    public function testQueryable()
+    public function testGetItems()
     {
-        $account = $this->prophesize(AccountInterface::class);
-        $account->select()->willReturn(new Query());
-        $account = $account->reveal();
+        $account = $this->createMock(AccountInterface::class);
+        $dim = $this->createMock(DimensionInterface::class);
 
         $trans = new Transaction(
             account: $account,
             amount: new Amount('0'),
-            dimensions: [$account],
+            dimensions: [$dim, $dim],
         );
 
-        $this->assertEquals(
-            [$account, $account],
-            $trans->select()->asArray()
-        );
+        $this->assertEquals([$account, $dim, $dim], $trans->getItems());
     }
 
     public function testDefaultsToNotAdded()

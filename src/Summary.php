@@ -54,7 +54,7 @@ final class Summary
     /**
      * Add transaction to summary calculations
      */
-    public function addAmount(Amount $amount): void
+    public function addAmount(Amount $amount): self
     {
         if (!$this->isInitialized()) {
             $this->initialize($amount->subtract($amount));
@@ -67,6 +67,8 @@ final class Summary
         } else {
             $this->credit = $this->credit->add($amount->getAbsolute());
         }
+
+        return $this;
     }
 
     /**

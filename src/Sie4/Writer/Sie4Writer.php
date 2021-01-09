@@ -129,7 +129,7 @@ final class Sie4Writer
 
         // Write accounts
 
-        $container->select()->uniqueAccounts()->each(function ($account) use ($output) {
+        $container->select()->accounts()->each(function ($account) use ($output) {
             $output->writeln(
                 '#KONTO %s %s',
                 $account->getId(),
@@ -153,15 +153,11 @@ final class Sie4Writer
 
         // Write verifications
 
-        $comp = function ($left, $right) {
-            return $left->getVerificationId() <=> $right->getVerificationId();
-        };
-
-        $container->select()->verifications()->orderBy($comp)->each(function ($ver) use ($output) {
+        $container->select()->verifications()->orderById()->each(function ($ver) use ($output) {
             $output->writeln(
                 '#VER %s %s %s %s %s %s',
                 $ver->getAttribute('series', ''),
-                (string)$ver->getVerificationId() ?: '',
+                $ver->getId(),
                 $ver->getTransactionDate()->format('Ymd'),
                 $ver->getDescription(),
                 $ver->getRegistrationDate()->format('Ymd'),

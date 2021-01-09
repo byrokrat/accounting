@@ -347,7 +347,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
      */
     public function testAccountType(string $raw, string $expectedNr, string $expectedDesc, string $expectedType)
     {
-        $account = $this->parse("#FLAGGA 1\n$raw\n")->select()->getAccount($expectedNr);
+        $account = $this->parse("#FLAGGA 1\n$raw\n")->select()->account($expectedNr);
 
         $this->assertSame(
             $expectedDesc,
@@ -387,7 +387,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             'kr',
-            $content->select()->getAccount('1920')->getAttribute('unit')
+            $content->select()->account('1920')->getAttribute('unit')
         );
     }
 
@@ -400,7 +400,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             2000,
-            $content->select()->getAccount('1920')->getAttribute('sru')
+            $content->select()->account('1920')->getAttribute('sru')
         );
     }
 
@@ -445,7 +445,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             #DIM 10 parent
             #UNDERDIM 20 child 10
             #OBJEKT 20 30 obj
-        ")->select()->getDimension('30');
+        ")->select()->dimension('30');
 
         $this->assertSame(
             'obj',
@@ -473,7 +473,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             $this->parse("
                 #FLAGGA 1
                 #OIB 0 0 $list 0 0
-            ")->select()->getDimension($objId)
+            ")->select()->dimension($objId)
         );
     }
 
@@ -521,7 +521,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         $account = $this->parse("
             #FLAGGA 1
             #IB 0 1920 $raw
-        ")->select()->getAccount('1920');
+        ")->select()->account('1920');
 
         $this->assertTrue(
             $account->getAttribute('incoming_balance')->equals($money)
@@ -543,13 +543,13 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             #OIB -1 1920 {10 \"20\"} 200 1
         ");
 
-        $objB = $content->select()->getDimension('30');
+        $objB = $content->select()->dimension('30');
 
         $this->assertTrue(
             $objB->getAttribute('incoming_balance')->equals(new SEK('100'))
         );
 
-        $objA = $content->select()->getDimension('20');
+        $objA = $content->select()->dimension('20');
 
         $this->assertTrue(
             $objA->getAttribute('incoming_balance')->equals(new SEK('100'))
@@ -598,7 +598,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
                 #RTRANS 1920 {} 100.00
                 #TRANS  1920 {} 100.00
             }
-        ")->select()->verifications()->getFirst();
+        ")->select()->verifications()->first();
 
         $this->assertTrue(
             $ver->getTransactions()[1]->isAdded(),
@@ -623,7 +623,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
                 #RTRANS 1920 {} 100.00
                 #TRANS  1920 {} 100.00
             }
-        ")->select()->verifications()->getFirst();
+        ")->select()->verifications()->first();
 
         $this->assertTrue(
             $ver->getTransactions()[1]->isDeleted(),
@@ -676,7 +676,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
                 #TRANS  3010 {} -100.00
                 #TRANS  1920 {} 100.00
             }
-        ")->select()->verifications()->whereAttribute('series', 'B')->asArray();
+        ")->select()->verifications()->whereAttributeValue('series', 'B')->asArray();
 
         $this->assertCount(1, $seriesA);
 
@@ -730,7 +730,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         $account = $this->parse("
             #FLAGGA 1
             #PBUDGET 0 201608 1920 {} 100 1
-        ")->select()->getAccount('1920');
+        ")->select()->account('1920');
 
         $this->assertTrue(
             $account->getAttribute('period_budget_balance[0.201608]')->equals(new SEK('100'))
@@ -746,7 +746,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         $account = $this->parse("
             #FLAGGA 1
             #PSALDO 0 201608 1920 {} 100 1
-        ")->select()->getAccount('1920');
+        ")->select()->account('1920');
 
         $this->assertTrue(
             $account->getAttribute('period_balance[0.201608]')->equals(new SEK('100'))

@@ -25,7 +25,6 @@ namespace byrokrat\accounting\Dimension;
 
 use byrokrat\accounting\AttributableTrait;
 use byrokrat\accounting\Exception\RuntimeException;
-use byrokrat\accounting\Query;
 
 class Dimension implements DimensionInterface
 {
@@ -80,8 +79,8 @@ class Dimension implements DimensionInterface
         return $this->getParent()->inDimension($dimension);
     }
 
-    public function select(): Query
+    public function getItems(): array
     {
-        return $this->hasParent() ? new Query([$this->getParent()]) : new Query();
+        return array_filter([$this->parent]);
     }
 }

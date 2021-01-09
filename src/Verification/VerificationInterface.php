@@ -21,21 +21,16 @@
 
 namespace byrokrat\accounting\Verification;
 
+use byrokrat\accounting\AccountingObjectInterface;
 use byrokrat\accounting\AttributableInterface;
-use byrokrat\accounting\QueryableInterface;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\amount\Amount;
 
 /**
  * The basic idea of a verification is a balanced collection of transactions
  */
-interface VerificationInterface extends AttributableInterface, QueryableInterface
+interface VerificationInterface extends AccountingObjectInterface, AttributableInterface
 {
-    /**
-     * Get verification id number (may return 0 if verification does not contain a propper id)
-     */
-    public function getVerificationId(): int;
-
     /**
      * Get date when transactions occured
      */

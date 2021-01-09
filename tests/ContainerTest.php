@@ -13,11 +13,16 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
         return new Container();
     }
 
+    public function testGetId()
+    {
+        $this->assertIsString((new Container())->getId());
+    }
+
     public function testGetItems()
     {
         $container = new Container(
-            $a = 'foo',
-            $b = 'bar'
+            $a = $this->createMock(AccountingObjectInterface::class),
+            $b = $this->createMock(AccountingObjectInterface::class),
         );
 
         $this->assertSame(
@@ -26,27 +31,33 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testIterable()
+    public function testQueryable()
     {
+        $container = new Container(
+            $a = $this->createMock(AccountingObjectInterface::class),
+            $b = $this->createMock(AccountingObjectInterface::class),
+        );
+
         $this->assertSame(
-            [
-                $a = 'foo',
-                $b = 'bar'
-            ],
-            iterator_to_array(
-                new Container($a, $b)
-            )
+            [$a, $b],
+            $container->select()->asArray()
         );
     }
 
-    public function testQueryable()
+    public function testNestingContainers()
     {
+        $inner = new Container(
+            $b = $this->createMock(AccountingObjectInterface::class),
+        );
+
+        $outer = new Container(
+            $a = $this->createMock(AccountingObjectInterface::class),
+            $inner
+        );
+
         $this->assertSame(
-            [
-                $a = 'foo',
-                $b = 'bar'
-            ],
-            (new Container($a, $b))->select()->asArray()
+            [$a, $inner, $b],
+            $outer->select()->asArray()
         );
     }
 }

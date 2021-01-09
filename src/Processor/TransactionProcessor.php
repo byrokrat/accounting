@@ -39,7 +39,7 @@ final class TransactionProcessor implements ProcessorInterface
 {
     public function processContainer(Container $container): void
     {
-        $container->select()->dimensions()->whereUnique()->each(function ($dim) {
+        $container->select()->dimensions()->each(function ($dim) {
             $dim->setAttribute('transactions', []);
 
             $dim->setAttribute(
