@@ -6,10 +6,12 @@ namespace byrokrat\accounting\Dimension;
 
 use byrokrat\accounting\AttributableTestTrait;
 use byrokrat\accounting\AttributableInterface;
-use byrokrat\accounting\Exception\RuntimeException;
+use byrokrat\accounting\Summary;
+use byrokrat\amount\Amount;
 
 class DimensionTest extends \PHPUnit\Framework\TestCase
 {
+    use \Prophecy\PhpUnit\ProphecyTrait;
     use AttributableTestTrait;
 
     protected function getAttributableToTest(): AttributableInterface
@@ -33,45 +35,56 @@ class DimensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testParent()
+    public function testChildren()
     {
-        $parent = new Dimension(id: '');
-        $child = new Dimension(id: '', parent: $parent);
+        $child = new Dimension(id: '');
+        $dim = new Dimension(id: '', children: [$child]);
 
-        $this->assertTrue($child->hasParent());
-        $this->assertSame($parent, $child->getParent());
-        $this->assertSame([$parent], $child->getItems());
+        $this->assertTrue($dim->hasChildren());
+        $this->assertSame([$child], $dim->getChildren());
+        $this->assertSame([$child], $dim->getItems());
     }
 
-    public function testNoParent()
+    public function testNoChildren()
     {
         $dim = new Dimension('');
 
-        $this->assertFalse($dim->hasParent());
+        $this->assertFalse($dim->hasChildren());
+        $this->assertSame([], $dim->getChildren());
         $this->assertSame([], $dim->getItems());
     }
 
-    public function testExceptionWhenNoParentIsSet()
+    public function testAttributesToConstructor()
     {
-        $this->expectException(RuntimeException::class);
-
-        (new Dimension(''))->getParent();
+        $this->assertSame(
+            'bar',
+            (new Dimension(id: '0', attributes: ['foo' => 'bar']))->getAttribute('foo')
+        );
     }
 
-    public function testInDimension()
+    public function testAddChild()
     {
-        $dim = new Dimension(
-            id: '0',
-            parent: new Dimension(
-                id: '1',
-                parent: new Dimension('2')
-            )
+        $child1 = new Dimension('child1');
+        $child2 = new Dimension('child2');
+
+        $dimension = new Dimension(
+            id: 'parent',
+            children: [$child1],
         );
 
-        $this->assertFalse($dim->inDimension('0'));
-        $this->assertTrue($dim->inDimension('1'));
-        $this->assertTrue($dim->inDimension('2'));
-        $this->assertTrue($dim->inDimension(new Dimension('2')));
-        $this->assertFalse($dim->inDimension('3'));
+        $dimension->addChild($child2);
+
+        $this->assertSame([$child1, $child2], $dimension->getChildren());
+    }
+
+    public function testChildSummaryIncluded()
+    {
+        $child = $this->prophesize(DimensionInterface::class);
+        $child->getSummary()->willReturn(Summary::fromAmount(new Amount('100')));
+        $child = $child->reveal();
+
+        $dim = new Dimension(id: '', children: [$child]);
+
+        $this->assertTrue($dim->getSummary()->getDebitTotal()->equals(new Amount('100')));
     }
 }

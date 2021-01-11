@@ -60,17 +60,6 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testExceptionOnNonStringAttributeKey()
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $trans = new Transaction(
-            amount: new Amount('0'),
-            account: $this->createMock(AccountInterface::class),
-            attributes: [1 => 'val'],
-        );
-    }
-
     public function testGetAmount()
     {
         $amount = new Amount('100');

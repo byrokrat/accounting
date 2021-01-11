@@ -25,17 +25,37 @@ namespace byrokrat\accounting\Dimension;
 
 use byrokrat\accounting\AttributableTrait;
 use byrokrat\accounting\Summary;
-use byrokrat\accounting\Exception\RuntimeException;
 
 class Dimension implements DimensionInterface
 {
     use AttributableTrait;
 
+    /** @var array<DimensionInterface> */
+    private array $children = [];
+
+    /**
+     * @param array<DimensionInterface> $children
+     * @param array<string, mixed> $attributes
+     */
     public function __construct(
         private string $id,
         private string $description = '',
-        private ?DimensionInterface $parent = null
-    ) {}
+        array $children = [],
+        array $attributes = [],
+    ) {
+        foreach ($children as $child) {
+            $this->addChild($child);
+        }
+
+        foreach ($attributes as $key => $value) {
+            $this->setAttribute($key, $value);
+        }
+    }
+
+    public function addChild(DimensionInterface $child): void
+    {
+        $this->children[] = $child;
+    }
 
     public function getId(): string
     {
@@ -47,47 +67,27 @@ class Dimension implements DimensionInterface
         return $this->description;
     }
 
-    public function hasParent(): bool
+    public function hasChildren(): bool
     {
-        return isset($this->parent);
+        return !empty($this->children);
     }
 
-    public function getParent(): DimensionInterface
+    public function getChildren(): array
     {
-        if (!isset($this->parent)) {
-            throw new RuntimeException(
-                'Unable to read parent dimension, did you check if parent is set using hasParent()?'
-            );
-        }
-
-        return $this->parent;
-    }
-
-    public function inDimension(DimensionInterface | string $dimension): bool
-    {
-        if ($dimension instanceof DimensionInterface) {
-            $dimension = $dimension->getId();
-        }
-
-        if (!$this->hasParent()) {
-            return false;
-        }
-
-        if ($this->getParent()->getId() === $dimension) {
-            return true;
-        }
-
-        return $this->getParent()->inDimension($dimension);
+        return $this->children;
     }
 
     public function getItems(): array
     {
-        return array_filter([$this->parent]);
+        return $this->getChildren();
     }
 
     public function getSummary(): Summary
     {
-        // TODO implement once we have transactions and children here
-        return new Summary();
+        return array_reduce(
+            $this->getChildren(),
+            fn($summary, $child) => $summary->withSummary($child->getSummary()),
+            new Summary()
+        );
     }
 }

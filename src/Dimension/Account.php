@@ -24,7 +24,7 @@ declare(strict_types=1);
 namespace byrokrat\accounting\Dimension;
 
 use byrokrat\accounting\Exception\InvalidAccountException;
-use byrokrat\accounting\Exception\InvalidArgumentException;
+use byrokrat\accounting\Exception\LogicException;
 
 final class Account extends Dimension implements AccountInterface
 {
@@ -49,15 +49,12 @@ final class Account extends Dimension implements AccountInterface
             throw new InvalidAccountException("Invalid account type {$this->type}, use one of the type constants");
         }
 
-        parent::__construct($id, $description);
+        parent::__construct(id: $id, description: $description, attributes: $attributes);
+    }
 
-        foreach ($attributes as $key => $value) {
-            if (!is_string($key)) {
-                throw new InvalidArgumentException('Attribute key must be string');
-            }
-
-            $this->setAttribute($key, $value);
-        }
+    public function addChild(DimensionInterface $child): void
+    {
+        throw new LogicException('Unable to add child dimension to account');
     }
 
     public function getType(): string

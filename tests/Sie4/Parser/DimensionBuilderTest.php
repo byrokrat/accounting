@@ -33,12 +33,12 @@ class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
             $this->createMock(Logger::class)
         );
 
-        $dimensionBuilder->addDimension('1', 'parent');
-        $dimensionBuilder->addDimension('2', 'child', '1');
+        $dimensionBuilder->addDimension('parent', '');
+        $dimensionBuilder->addDimension('child', '', 'parent');
 
         $this->assertSame(
-            $dimensionBuilder->getDimension('1'),
-            $dimensionBuilder->getDimension('2')->getParent()
+            [$dimensionBuilder->getDimension('child')],
+            $dimensionBuilder->getDimension('parent')->getChildren()
         );
     }
 
@@ -48,12 +48,12 @@ class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
             $this->createMock(Logger::class)
         );
 
-        $dimensionBuilder->addDimension('1', 'parent');
-        $dimensionBuilder->addObject('1', '2', 'object');
+        $dimensionBuilder->addDimension('parent', '');
+        $dimensionBuilder->addObject('parent', 'object', '');
 
         $this->assertSame(
-            $dimensionBuilder->getDimension('1'),
-            $dimensionBuilder->getObject('1', '2')->getParent()
+            [$dimensionBuilder->getObject('parent', 'object')],
+            $dimensionBuilder->getDimension('parent')->getChildren()
         );
 
         $this->assertCount(2, $dimensionBuilder->getDimensions());
@@ -117,8 +117,8 @@ class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertSame(
-            $dimensionBuilder->getDimension('1'),
-            $dim->getParent()
+            [$dim],
+            $dimensionBuilder->getDimension('1')->getChildren(),
         );
     }
 }

@@ -58,12 +58,6 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testExceptionOnNonStringAttributeKey()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        new Verification(attributes: [1 => '']);
-    }
-
     public function testExceptionOnNonTransactionArgument()
     {
         $this->expectException(InvalidArgumentException::class);

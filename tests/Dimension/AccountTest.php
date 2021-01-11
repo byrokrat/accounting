@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace byrokrat\accounting\Dimension;
 
 use byrokrat\accounting\Exception\InvalidAccountException;
-use byrokrat\accounting\Exception\InvalidArgumentException;
+use byrokrat\accounting\Exception\LogicException;
 
 class AccountTest extends \PHPUnit\Framework\TestCase
 {
@@ -75,9 +75,9 @@ class AccountTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testExceptionOnNonStringAttributeKey()
+    public function testExceptionOnAddChild()
     {
-        $this->expectException(InvalidArgumentException::class);
-        new Account(id: '0', attributes: [1234 => 'value']);
+        $this->expectException(LogicException::class);
+        (new Account(id: '1'))->addChild(new Account(id: '2'));
     }
 }

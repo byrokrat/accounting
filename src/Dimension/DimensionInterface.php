@@ -23,7 +23,6 @@ namespace byrokrat\accounting\Dimension;
 
 use byrokrat\accounting\AccountingObjectInterface;
 use byrokrat\accounting\AttributableInterface;
-use byrokrat\accounting\Exception\RuntimeException;
 
 /**
  * A dimension is an entity through which transactions can be channeled
@@ -31,19 +30,14 @@ use byrokrat\accounting\Exception\RuntimeException;
 interface DimensionInterface extends AccountingObjectInterface, AttributableInterface
 {
     /**
-     * Check if dimension has a parent
+     * Check if dimension has children
      */
-    public function hasParent(): bool;
+    public function hasChildren(): bool;
 
     /**
-     * Get dimension parent
+     * Get child dimensions
      *
-     * @throws RuntimeException If parent is not set
+     * @return array<DimensionInterface>
      */
-    public function getParent(): DimensionInterface;
-
-    /**
-     * Check if this dimension is contained in $dimension
-     */
-    public function inDimension(DimensionInterface | string $dimension): bool;
+    public function getChildren(): array;
 }

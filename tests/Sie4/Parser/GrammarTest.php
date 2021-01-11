@@ -440,26 +440,30 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
     public function testObjectType()
     {
-        $object = $this->parse("
+        $parent = $this->parse("
             #FLAGGA 1
             #DIM 10 parent
             #UNDERDIM 20 child 10
             #OBJEKT 20 30 obj
-        ")->select()->dimension('30');
+        ")->select()->dimension('10');
+
+        $this->assertSame(
+            'parent',
+            $parent->getDescription()
+        );
+
+        list($child) = $parent->getChildren();
+
+        $this->assertSame(
+            'child',
+            $child->getDescription()
+        );
+
+        list($object) = $child->getChildren();
 
         $this->assertSame(
             'obj',
             $object->getDescription()
-        );
-
-        $this->assertSame(
-            'child',
-            $object->getParent()->getDescription()
-        );
-
-        $this->assertSame(
-            'parent',
-            $object->getParent()->getParent()->getDescription()
         );
     }
 

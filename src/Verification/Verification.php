@@ -85,10 +85,6 @@ final class Verification implements VerificationInterface
         }
 
         foreach ($attributes as $key => $value) {
-            if (!is_string($key)) {
-                throw new InvalidArgumentException('Attribute key must be string');
-            }
-
             $this->setAttribute($key, $value);
         }
     }
