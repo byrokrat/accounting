@@ -69,25 +69,25 @@ final class Verification implements VerificationInterface
 
         $this->summary = new Summary();
 
-        foreach ($this->transactions as $transaction) {
-            if (!$transaction instanceof TransactionInterface) {
-                throw new InvalidArgumentException('Transaction must implement TransactionInterface');
-            }
+        try {
+            foreach ($this->transactions as $transaction) {
+                if (!$transaction instanceof TransactionInterface) {
+                    throw new InvalidArgumentException('Transaction must implement TransactionInterface');
+                }
 
-            try {
-                // Null amount if deleted, add it to validate currency
-                $this->summary->addAmount(
+                // Zero amount if deleted, add it to validate currency
+                $this->summary = $this->summary->withAmount(
                     $transaction->isDeleted()
                         ? $transaction->getAmount()->subtract($transaction->getAmount())
                         : $transaction->getAmount()
                 );
-            } catch (AmountException $exception) {
-                throw new InvalidVerificationException($exception->getMessage(), 0, $exception);
             }
-        }
 
-        if ($this->summary->isInitialized() && !$this->summary->isBalanced()) {
-            throw new UnbalancedVerificationException('Unable to create unbalanced verification');
+            if (!$this->summary->isBalanced()) {
+                throw new UnbalancedVerificationException('Unable to create unbalanced verification');
+            }
+        } catch (AmountException $exception) {
+            throw new InvalidVerificationException($exception->getMessage(), 0, $exception);
         }
 
         foreach ($attributes as $key => $value) {

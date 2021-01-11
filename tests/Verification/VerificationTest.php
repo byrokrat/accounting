@@ -11,6 +11,7 @@ use byrokrat\accounting\Exception\InvalidVerificationException;
 use byrokrat\accounting\Exception\UnbalancedVerificationException;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\amount\Amount;
+use byrokrat\amount\Currency\EUR;
 use byrokrat\amount\Currency\SEK;
 use Prophecy\Argument;
 
@@ -29,6 +30,14 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(
             '1',
             (new Verification(id: '1'))->getId()
+        );
+    }
+
+    public function testEmptyId()
+    {
+        $this->assertSame(
+            '',
+            (new Verification())->getId()
         );
     }
 
@@ -164,7 +173,7 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
     public function testExceptionOnCurrencyMissmatch()
     {
         $transA = $this->prophesize(TransactionInterface::class);
-        $transA->getAmount()->willReturn(new Amount('0'));
+        $transA->getAmount()->willReturn(new EUR('0'));
         $transA->isDeleted()->willReturn(false);
 
         $transSEK = $this->prophesize(TransactionInterface::class);
@@ -178,7 +187,7 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
     public function testExceptionOnCurrencyMissmatchInDeletedTransactions()
     {
         $transA = $this->prophesize(TransactionInterface::class);
-        $transA->getAmount()->willReturn(new Amount('0'));
+        $transA->getAmount()->willReturn(new EUR('0'));
         $transA->isDeleted()->willReturn(true);
 
         $transSEK = $this->prophesize(TransactionInterface::class);

@@ -148,7 +148,7 @@ class Query implements \IteratorAggregate, \Countable
     public function asSummary(): Summary
     {
         return $this->transactions()->reduce(
-            fn($summary, $transaction) => $summary->addAmount($transaction->getAmount()),
+            fn($summary, $transaction) => $summary->withAmount($transaction->getAmount()),
             new Summary()
         );
     }

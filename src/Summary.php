@@ -23,7 +23,8 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting;
 
-use byrokrat\accounting\Exception\RuntimeException;
+use byrokrat\accounting\Exception\SummaryEmptyException;
+use byrokrat\accounting\Exception\SummaryNotBalancedException;
 use byrokrat\amount\Amount;
 
 /**
@@ -31,44 +32,36 @@ use byrokrat\amount\Amount;
  */
 final class Summary
 {
-    private Amount $incoming;
-    private Amount $balance;
+    private Amount $incomingBalance;
+    private Amount $outgoingBalance;
     private Amount $debit;
     private Amount $credit;
 
-    public function __construct(Amount $incoming = null)
+    /** @var array<Amount> */
+    private array $amounts = [];
+
+    /**
+     * Create new summary with amount added
+     */
+    public static function fromAmount(Amount $amount): self
     {
-        if ($incoming) {
-            $this->initialize($incoming);
-        }
+        return (new static())->withAmount($amount);
     }
 
     /**
-     * Check if calculations has been initialized
+     * Create new summary with incoming balance
      */
-    public function isInitialized(): bool
+    public static function fromIncomingBalance(Amount $amount): self
     {
-        return isset($this->incoming);
+        return (new static())->withIncomingBalance($amount);
     }
 
     /**
-     * Add transaction to summary calculations
+     * Check if summary is empty
      */
-    public function addAmount(Amount $amount): self
+    public function isEmpty(): bool
     {
-        if (!$this->isInitialized()) {
-            $this->initialize($amount->subtract($amount));
-        }
-
-        $this->balance = $this->balance->add($amount);
-
-        if ($amount->isPositive()) {
-            $this->debit = $this->debit->add($amount);
-        } else {
-            $this->credit = $this->credit->add($amount->getAbsolute());
-        }
-
-        return $this;
+        return !isset($this->incomingBalance) && empty($this->amounts);
     }
 
     /**
@@ -76,34 +69,34 @@ final class Summary
      */
     public function getIncomingBalance(): Amount
     {
-        $this->checkState();
-        return $this->incoming;
+        $this->calculateSummaries();
+        return $this->incomingBalance;
     }
 
     /**
-     * Get current balance
+     * Get outgoing balance
      */
     public function getOutgoingBalance(): Amount
     {
-        $this->checkState();
-        return $this->balance;
+        $this->calculateSummaries();
+        return $this->outgoingBalance;
     }
 
     /**
-     * Get current debit summary
+     * Get debit summary
      */
-    public function getDebit(): Amount
+    public function getDebitTotal(): Amount
     {
-        $this->checkState();
+        $this->calculateSummaries();
         return $this->debit;
     }
 
     /**
-     * Get current credit summary
+     * Get credit summary
      */
-    public function getCredit(): Amount
+    public function getCreditTotal(): Amount
     {
-        $this->checkState();
+        $this->calculateSummaries();
         return $this->credit;
     }
 
@@ -112,33 +105,111 @@ final class Summary
      */
     public function isBalanced(): bool
     {
-        return $this->getDebit()->equals($this->getCredit());
+        if ($this->isEmpty()) {
+            return true;
+        }
+
+        return $this->getDebitTotal()->equals($this->getCreditTotal());
     }
 
     /**
      * Get collection magnitude (absolute value of debit or credit for balanced collections)
+     *
+     * @throws SummaryNotBalancedException if summary is not balanced
      */
     public function getMagnitude(): Amount
     {
         if (!$this->isBalanced()) {
-            throw new RuntimeException('Unable to calculate magnitude of unbalanced collection');
+            throw new SummaryNotBalancedException('Unable to calculate magnitude of unbalanced collection');
         }
 
-        return $this->getDebit();
+        return $this->getDebitTotal();
     }
 
-    private function initialize(Amount $incoming): void
+    /**
+     * Create a new summary from current with amount included
+     */
+    public function withAmount(Amount $amount): self
     {
-        $this->incoming = $incoming;
-        $this->balance = $incoming;
-        $this->debit = $incoming->subtract($incoming);
-        $this->credit = $this->debit;
+        $new = clone $this;
+        $new->amounts[] = $amount;
+
+        return $new;
     }
 
-    private function checkState(): void
+    /**
+     * Create a new summary from current with incoming balance overwritten
+     */
+    public function withIncomingBalance(Amount $incomingBalance): self
     {
-        if (!$this->isInitialized()) {
-            throw new RuntimeException('Unable to calculate, summary not initialized');
+        $new = clone $this;
+        $new->incomingBalance = $incomingBalance;
+
+        return $new;
+    }
+
+    /**
+     * Create a new summary from current with values from summary added
+     */
+    public function withSummary(Summary $summary): self
+    {
+        $new = clone $this;
+
+        if (isset($summary->incomingBalance)) {
+            $new->incomingBalance = isset($new->incomingBalance)
+                ? $new->incomingBalance->add($summary->incomingBalance)
+                : $summary->incomingBalance;
         }
+
+        $new->amounts = [...$new->amounts, ...$summary->amounts];
+
+        return $new;
+    }
+
+    private function calculateSummaries(): void
+    {
+        // no need to re-calculate
+        if (isset($this->outgoingBalance)) {
+            return;
+        }
+
+        // create zero amount to preserve currency
+        $zeroAmount = $this->createZeroAmount();
+
+        // set incoming balance to zero if not specified
+        if (!isset($this->incomingBalance)) {
+            $this->incomingBalance = $zeroAmount;
+        }
+
+        // set start values
+        $this->outgoingBalance = $this->incomingBalance;
+        $this->debit = $zeroAmount;
+        $this->credit = $zeroAmount;
+
+        // calculate
+        foreach ($this->amounts as $amount) {
+            $this->outgoingBalance = $this->outgoingBalance->add($amount);
+
+            if ($amount->isPositive()) {
+                $this->debit = $this->debit->add($amount);
+            } else {
+                $this->credit = $this->credit->add($amount->getAbsolute());
+            }
+        }
+    }
+
+    private function createZeroAmount(): Amount
+    {
+        if (isset($this->incomingBalance)) {
+            return $this->incomingBalance->subtract($this->incomingBalance);
+        }
+
+        if (count($this->amounts) == 0) {
+            throw new SummaryEmptyException('Unable to access empty summary');
+        }
+
+        return $this->amounts[count($this->amounts) - 1]->subtract(
+            $this->amounts[count($this->amounts) - 1]
+        );
     }
 }

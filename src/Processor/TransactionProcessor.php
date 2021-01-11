@@ -44,12 +44,16 @@ final class TransactionProcessor implements ProcessorInterface
 
             $dim->setAttribute(
                 'summary',
-                new Summary($dim->getAttribute('incoming_balance', null))
+                $dim->hasAttribute('incoming_balance')
+                    ? Summary::fromIncomingBalance($dim->getAttribute('incoming_balance'))
+                    : new Summary()
             );
 
             $dim->setAttribute(
                 'quantity_summary',
-                new Summary($dim->getAttribute('incoming_quantity', null))
+                $dim->hasAttribute('incoming_quantity')
+                    ? Summary::fromIncomingBalance($dim->getAttribute('incoming_quantity'))
+                    : new Summary()
             );
         });
 
@@ -57,8 +61,16 @@ final class TransactionProcessor implements ProcessorInterface
             $transactions = $dim->getAttribute('transactions');
             $transactions[] = $transaction;
             $dim->setAttribute('transactions', $transactions);
-            $dim->getAttribute('summary')->addAmount($transaction->getAmount());
-            $dim->getAttribute('quantity_summary')->addAmount($transaction->getQuantity());
+
+            $dim->setAttribute(
+                'summary',
+                $dim->getAttribute('summary')->withAmount($transaction->getAmount())
+            );
+
+            $dim->setAttribute(
+                'quantity_summary',
+                $dim->getAttribute('quantity_summary')->withAmount($transaction->getQuantity())
+            );
         };
 
         $container->select()->transactions()->each(function ($transaction) use ($updateDim) {
