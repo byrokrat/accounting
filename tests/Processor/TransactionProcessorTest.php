@@ -71,42 +71,4 @@ class TransactionProcessorTest extends \PHPUnit\Framework\TestCase
             $account->getAttribute('summary')->getOutgoingBalance()->equals(new Amount('200'))
         );
     }
-
-    public function testProcessQuantity()
-    {
-        $account = new Account('1000');
-        $dim = new Dimension('2000');
-
-        $transA = new Transaction(
-            amount: new Amount('0'),
-            account: $account,
-            quantity: new Amount('1'),
-            dimensions: [$dim],
-        );
-
-        $transB = new Transaction(
-            amount: new Amount('0'),
-            account: $account,
-            quantity: new Amount('1'),
-            dimensions: [$dim],
-        );
-
-        $container = new Container($transA, $transB);
-
-        (new TransactionProcessor())->processContainer($container);
-
-        $this->assertTrue(
-            $account->getAttribute('quantity_summary')->getOutgoingBalance()->equals(new Amount('2'))
-        );
-
-        $this->assertTrue(
-            $dim->getAttribute('quantity_summary')->getOutgoingBalance()->equals(new Amount('2'))
-        );
-
-        (new TransactionProcessor())->processContainer($container);
-
-        $this->assertTrue(
-            $account->getAttribute('quantity_summary')->getOutgoingBalance()->equals(new Amount('2'))
-        );
-    }
 }

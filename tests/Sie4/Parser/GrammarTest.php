@@ -559,8 +559,9 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             $objA->getAttribute('incoming_balance[-1]')->equals(new SEK('200'))
         );
 
-        $this->assertTrue(
-            $objA->getAttribute('incoming_quantity[-1]')->equals(new Amount('1'))
+        $this->assertSame(
+            '1',
+            $objA->getAttribute('incoming_quantity[-1]')
         );
     }
 
@@ -720,8 +721,9 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             "
         )->select()->transactions()->asArray();
 
-        $this->assertTrue(
-            $transactions[0]->getQuantity()->equals(new Amount('2.5'))
+        $this->assertSame(
+            '2.5',
+            $transactions[0]->getAttribute('quantity')
         );
     }
 
@@ -736,8 +738,9 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             $account->getAttribute('period_budget_balance[0.201608]')->equals(new SEK('100'))
         );
 
-        $this->assertTrue(
-            $account->getAttribute('period_budget_quantity[0.201608]')->equals(new Amount('1'))
+        $this->assertSame(
+            '1',
+            $account->getAttribute('period_budget_quantity[0.201608]')
         );
     }
 
@@ -752,8 +755,9 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             $account->getAttribute('period_balance[0.201608]')->equals(new SEK('100'))
         );
 
-        $this->assertTrue(
-            $account->getAttribute('period_quantity[0.201608]')->equals(new Amount('1'))
+        $this->assertSame(
+            '1',
+            $account->getAttribute('period_quantity[0.201608]')
         );
     }
 

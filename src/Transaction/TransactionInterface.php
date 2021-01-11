@@ -53,11 +53,6 @@ interface TransactionInterface extends AccountingObjectInterface, AttributableIn
     public function getAmount(): Amount;
 
     /**
-     * Get quantity of stuff moved to or from account
-     */
-    public function getQuantity(): Amount;
-
-    /**
      * Get Account this transaction concerns
      */
     public function getAccount(): AccountInterface;

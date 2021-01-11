@@ -151,29 +151,6 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('sign', $trans->getSignature());
     }
 
-    public function testGetQuantity()
-    {
-        $quantity = new Amount('100');
-
-        $trans = new Transaction(
-            amount: new Amount('0'),
-            account: $this->createMock(AccountInterface::class),
-            quantity: $quantity,
-        );
-
-        $this->assertSame($quantity, $trans->getQuantity());
-    }
-
-    public function testDefaultQuantity()
-    {
-        $trans = new Transaction(
-            amount: new Amount('100'),
-            account: $this->createMock(AccountInterface::class),
-        );
-
-        $this->assertEquals(new Amount('0'), $trans->getQuantity());
-    }
-
     public function testGetDimensions()
     {
         $dim = $this->createMock(DimensionInterface::class);

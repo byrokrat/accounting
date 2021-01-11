@@ -113,11 +113,11 @@ class AbstractParser
                 description: $data['description'] ?: $description,
                 signature: $data['signature'] ?: $signature,
                 amount: $data['amount'],
-                quantity: $data['quantity'],
                 account: $data['account'],
                 dimensions: $data['dimensions'],
                 added: $data['added'] ?? false,
                 deleted: $data['deleted'] ?? false,
+                attributes: ['quantity' => $data['quantity']],
             );
         }
 

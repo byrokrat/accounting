@@ -37,7 +37,6 @@ final class Transaction implements TransactionInterface
 
     private string $id;
     private \DateTimeImmutable $transactionDate;
-    private Amount $quantity;
 
     /**
      * @param array<DimensionInterface> $dimensions
@@ -50,7 +49,6 @@ final class Transaction implements TransactionInterface
         ?\DateTimeImmutable $transactionDate = null,
         private string $description = '',
         private string $signature = '',
-        ?Amount $quantity = null,
         private array $dimensions = [],
         array $attributes = [],
         private bool $added = false,
@@ -61,8 +59,6 @@ final class Transaction implements TransactionInterface
 
         // @TODO should be a NullDate implementation? AccountingDate::today()??
         $this->transactionDate = $transactionDate ?: new \DateTimeImmutable();
-
-        $this->quantity = $quantity ?: new Amount('0');
 
         foreach ($this->dimensions as $dimension) {
             if (!$dimension instanceof DimensionInterface) {
@@ -111,11 +107,6 @@ final class Transaction implements TransactionInterface
     public function getAmount(): Amount
     {
         return $this->amount;
-    }
-
-    public function getQuantity(): Amount
-    {
-        return $this->quantity;
     }
 
     public function getAccount(): AccountInterface

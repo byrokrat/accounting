@@ -27,7 +27,6 @@ use byrokrat\accounting\Transaction\Transaction;
 use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\accounting\Verification\Verification;
 use byrokrat\accounting\Query;
-use byrokrat\amount\Amount;
 
 final class TemplateRenderer
 {
@@ -66,7 +65,6 @@ final class TemplateRenderer
             description: $transTmpl->description ?: $verTmpl->description,
             signature: $transTmpl->signature ?: $verTmpl->signature,
             amount: $this->moneyFactory->createMoney($transTmpl->amount),
-            quantity: new Amount($transTmpl->quantity),
             account: $this->dimensionQuery->account($transTmpl->account),
             dimensions: array_map(
                 fn($dimId) => $this->dimensionQuery->dimension($dimId),

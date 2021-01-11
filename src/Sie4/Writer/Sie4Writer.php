@@ -177,7 +177,7 @@ final class Sie4Writer
                     $transaction->getAmount()->getString(2),
                     $transaction->getTransactionDate()->format('Ymd'),
                     $transaction->getDescription(),
-                    $transaction->getQuantity()->getString(2),
+                    '',
                     $transaction->getSignature()
                 );
             }

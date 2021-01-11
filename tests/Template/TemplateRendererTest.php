@@ -136,7 +136,6 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
                     description: 'desc',
                     signature: 'sign',
                     amount: '0',
-                    quantity: '1',
                     account: '1234',
                     dimensions: ['dim'],
                     attributes: [new AttributeTemplate('foo', 'bar')],
@@ -153,7 +152,6 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('desc', $transaction->getDescription());
         $this->assertSame('sign', $transaction->getSignature());
         $this->assertSame($amount, $transaction->getAmount());
-        $this->assertEquals(new Amount('1'), $transaction->getQuantity());
         $this->assertSame($account, $transaction->getAccount());
         $this->assertSame([$dimension], $transaction->getDimensions());
         $this->assertSame('bar', $transaction->getAttribute('foo'));

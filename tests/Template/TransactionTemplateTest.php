@@ -33,7 +33,6 @@ class TransactionTemplateTest extends \PHPUnit\Framework\TestCase
             description: 'foo',
             signature: 'foo',
             amount: 'foo',
-            quantity: 'foo',
             account: 'foo',
             added: 'foo',
             deleted: 'foo',
@@ -45,7 +44,6 @@ class TransactionTemplateTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('foo', $original->description);
         $this->assertSame('foo', $original->signature);
         $this->assertSame('foo', $original->amount);
-        $this->assertSame('foo', $original->quantity);
         $this->assertSame('foo', $original->account);
         $this->assertSame('foo', $original->added);
         $this->assertSame('foo', $original->deleted);
@@ -54,7 +52,6 @@ class TransactionTemplateTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('bar', $translated->description);
         $this->assertSame('bar', $translated->signature);
         $this->assertSame('bar', $translated->amount);
-        $this->assertSame('bar', $translated->quantity);
         $this->assertSame('bar', $translated->account);
         $this->assertSame('bar', $translated->added);
         $this->assertSame('bar', $translated->deleted);

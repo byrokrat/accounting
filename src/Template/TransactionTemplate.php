@@ -39,7 +39,6 @@ final class TransactionTemplate implements TemplateInterface
         public string $description = '',
         public string $signature = '',
         public string $amount = '0',
-        public string $quantity = '0',
         public string $account = '',
         public array $dimensions = [],
         public array $attributes = [],
@@ -66,7 +65,6 @@ final class TransactionTemplate implements TemplateInterface
             description: $translator->translate($this->description),
             signature: $translator->translate($this->signature),
             amount: $translator->translate($this->amount),
-            quantity: $translator->translate($this->quantity),
             account: $translator->translate($this->account),
             dimensions: array_map(
                 fn($dimension) => $translator->translate($dimension),

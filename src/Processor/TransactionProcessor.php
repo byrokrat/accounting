@@ -33,7 +33,6 @@ use byrokrat\accounting\Summary;
  *
  * - transactions     array filled with transaction objects
  * - summary          Summary object on amount
- * - quantity_summary Summary object on quantity
  */
 final class TransactionProcessor implements ProcessorInterface
 {
@@ -48,13 +47,6 @@ final class TransactionProcessor implements ProcessorInterface
                     ? Summary::fromIncomingBalance($dim->getAttribute('incoming_balance'))
                     : new Summary()
             );
-
-            $dim->setAttribute(
-                'quantity_summary',
-                $dim->hasAttribute('incoming_quantity')
-                    ? Summary::fromIncomingBalance($dim->getAttribute('incoming_quantity'))
-                    : new Summary()
-            );
         });
 
         $updateDim = function ($dim, $transaction) {
@@ -65,11 +57,6 @@ final class TransactionProcessor implements ProcessorInterface
             $dim->setAttribute(
                 'summary',
                 $dim->getAttribute('summary')->withAmount($transaction->getAmount())
-            );
-
-            $dim->setAttribute(
-                'quantity_summary',
-                $dim->getAttribute('quantity_summary')->withAmount($transaction->getQuantity())
             );
         };
 
