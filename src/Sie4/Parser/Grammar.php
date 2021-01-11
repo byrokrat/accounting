@@ -2593,10 +2593,7 @@ class Grammar extends AbstractParser
             $this->value = call_user_func(function () use (&$number, &$desc) {
                 if ($this->assertString($number, 'Expected account number') && $this->assertString($desc, 'Expected account description')) {
                     $this->getAccountBuilder()->addAccount($number, $desc);
-                    $this->getAccountBuilder()->getAccount($number)->setAttribute(
-                        'incoming_balance',
-                        $this->getCurrencyBuilder()->createMoney('0')
-                    );
+                    $this->getAccountBuilder()->getAccount($number)->setAttribute('incoming_balance', '0');
                 }
             });
         }
@@ -3525,7 +3522,7 @@ class Grammar extends AbstractParser
             $_cut144 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseAMOUNT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
@@ -3576,8 +3573,12 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$balance, &$quantity) {
-                if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
-                    $this->writeAttribute($account, "incoming_balance", $balance, $year);
+                if ($this->assertInt($year) && $this->assertAccount($account)) {
+                    if (0 === $year && $balance) {
+                        $account->setIncomingBalance($this->getCurrencyBuilder()->createMoney($balance));
+                    }
+
+                    $this->writeAttribute($account, "incoming_balance", (string)$balance, $year);
                     $this->writeAttribute($account, "incoming_quantity", (string)$quantity, $year);
                 }
             });
@@ -3686,7 +3687,7 @@ class Grammar extends AbstractParser
             $_cut153 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseAMOUNT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
@@ -3737,8 +3738,8 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$balance, &$quantity) {
-                if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
-                    $this->writeAttribute($account, "outgoing_balance", $balance, $year);
+                if ($this->assertInt($year) && $this->assertAccount($account)) {
+                    $this->writeAttribute($account, "outgoing_balance", (string)$balance, $year);
                     $this->writeAttribute($account, "outgoing_quantity", (string)$quantity, $year);
                 }
             });
@@ -3869,7 +3870,7 @@ class Grammar extends AbstractParser
             $_cut164 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseAMOUNT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
@@ -3920,9 +3921,13 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$dims, &$balance, &$quantity) {
-                if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($balance)) {
+                if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($dims)) {
                     foreach ($dims as $dim) {
-                        $this->writeAttribute($dim, "incoming_balance", $balance, $year);
+                        if (0 === $year && $balance) {
+                            $dim->setIncomingBalance($this->getCurrencyBuilder()->createMoney($balance));
+                        }
+
+                        $this->writeAttribute($dim, "incoming_balance", (string)$balance, $year);
                         $this->writeAttribute($dim, "incoming_quantity", (string)$quantity, $year);
                     }
                 }
@@ -4054,7 +4059,7 @@ class Grammar extends AbstractParser
             $_cut175 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseAMOUNT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
@@ -4105,9 +4110,9 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$dims, &$balance, &$quantity) {
-                if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($balance)) {
+                if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($dims)) {
                     foreach ($dims as $dim) {
-                        $this->writeAttribute($dim, "outgoing_balance", $balance, $year);
+                        $this->writeAttribute($dim, "outgoing_balance", (string)$balance, $year);
                         $this->writeAttribute($dim, "outgoing_quantity", (string)$quantity, $year);
                     }
                 }
@@ -4261,7 +4266,7 @@ class Grammar extends AbstractParser
             $_cut188 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseAMOUNT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
@@ -4312,14 +4317,14 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$period, &$account, &$dims, &$balance, &$quantity) {
-                if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($balance)) {
+                if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($dims)) {
                     $key = "$year.{$period->format('Ym')}";
 
-                    $this->writeAttribute($account, "period_budget_balance", $balance, $key);
+                    $this->writeAttribute($account, "period_budget_balance", (string)$balance, $key);
                     $this->writeAttribute($account, "period_budget_quantity", (string)$quantity, $key);
 
                     foreach ($dims as $dim) {
-                        $this->writeAttribute($dim, "period_budget_balance", $balance, $key);
+                        $this->writeAttribute($dim, "period_budget_balance", (string)$balance, $key);
                         $this->writeAttribute($dim, "period_budget_quantity", (string)$quantity, $key);
                     }
                 }
@@ -4473,7 +4478,7 @@ class Grammar extends AbstractParser
             $_cut201 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseAMOUNT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
@@ -4524,14 +4529,14 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$period, &$account, &$dims, &$balance, &$quantity) {
-                if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($balance)) {
+                if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($dims)) {
                     $key = "$year.{$period->format('Ym')}";
 
-                    $this->writeAttribute($account, "period_balance", $balance, $key);
+                    $this->writeAttribute($account, "period_balance", (string)$balance, $key);
                     $this->writeAttribute($account, "period_quantity", (string)$quantity, $key);
 
                     foreach ($dims as $dim) {
-                        $this->writeAttribute($dim, "period_balance", $balance, $key);
+                        $this->writeAttribute($dim, "period_balance", (string)$balance, $key);
                         $this->writeAttribute($dim, "period_quantity", (string)$quantity, $key);
                     }
                 }
@@ -4641,7 +4646,7 @@ class Grammar extends AbstractParser
             $_cut210 = $this->cut;
 
             $this->cut = false;
-            $_success = $this->parseAMOUNT();
+            $_success = $this->parseFLOAT();
 
             if (!$_success && !$this->cut) {
                 $_success = true;
@@ -4692,8 +4697,8 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$account, &$balance, &$quantity) {
-                if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertAmount($balance)) {
-                    $this->writeAttribute($account, "result_balance", $balance, $year);
+                if ($this->assertInt($year) && $this->assertAccount($account)) {
+                    $this->writeAttribute($account, "result_balance", (string)$balance, $year);
                     $this->writeAttribute($account, "result_quantity", (string)$quantity, $year);
                 }
             });
@@ -8167,7 +8172,7 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$int, &$trailing) {
-                return rtrim($int.'.'.implode($trailing), '.');
+                return rtrim($int . '.' .implode($trailing), '.');
             });
         }
 

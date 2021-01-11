@@ -60,10 +60,14 @@ final class Transaction implements TransactionInterface
         // @TODO should be a NullDate implementation? AccountingDate::today()??
         $this->transactionDate = $transactionDate ?: new \DateTimeImmutable();
 
+        $this->account->addTransaction($this);
+
         foreach ($this->dimensions as $dimension) {
             if (!$dimension instanceof DimensionInterface) {
                 throw new InvalidArgumentException('Dimension must implement DimensionInterface');
             }
+
+            $dimension->addTransaction($this);
         }
 
         foreach ($attributes as $key => $value) {

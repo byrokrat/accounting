@@ -23,6 +23,8 @@ namespace byrokrat\accounting\Dimension;
 
 use byrokrat\accounting\AccountingObjectInterface;
 use byrokrat\accounting\AttributableInterface;
+use byrokrat\accounting\Transaction\TransactionInterface;
+use byrokrat\amount\Amount;
 
 /**
  * A dimension is an entity through which transactions can be channeled
@@ -40,4 +42,24 @@ interface DimensionInterface extends AccountingObjectInterface, AttributableInte
      * @return array<DimensionInterface>
      */
     public function getChildren(): array;
+
+    /**
+     * Link transaction with dimension
+     *
+     * @internal Note that this method is used for setting up cross references from
+     *     transactions back to dimensions and should not be called from user land.
+     */
+    public function addTransaction(TransactionInterface $transaction): void;
+
+    /**
+     * Get linked transactions
+     *
+     * @return array<TransactionInterface>
+     */
+    public function getTransactions(): array;
+
+    /**
+     * Set incoming balance
+     */
+    public function setIncomingBalance(Amount $incomingBalance): void;
 }

@@ -11,9 +11,9 @@ use byrokrat\accounting\Verification\Verification;
 use byrokrat\amount\Amount;
 
 /**
- * @covers \byrokrat\accounting\Sie4\Writer\Sie4Writer
+ * @covers \byrokrat\accounting\Sie4\Writer\Sie4iWriter
  */
-class Sie4WriterTest extends \PHPUnit\Framework\TestCase
+class Sie4iWriterTest extends \PHPUnit\Framework\TestCase
 {
     public function testGenerate()
     {
@@ -26,6 +26,6 @@ class Sie4WriterTest extends \PHPUnit\Framework\TestCase
             )
         );
 
-        $this->assertIsString((new Sie4Writer())->generateSie($container));
+        $this->assertIsString((new Sie4iWriter())->generateSie($container));
     }
 }

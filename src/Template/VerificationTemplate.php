@@ -35,7 +35,7 @@ final class VerificationTemplate implements TemplateInterface
      * @param array<AttributeTemplate> $attributes
      */
     public function __construct(
-        public string $id = '0',
+        public string $id = '',
         public string $transactionDate = '{now}',
         public string $registrationDate = '{now}',
         public string $description = '',

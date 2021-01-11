@@ -12,9 +12,11 @@ use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidTransactionException;
 use byrokrat\accounting\Summary;
 use byrokrat\amount\Amount;
+use Prophecy\Argument;
 
 class TransactionTest extends \PHPUnit\Framework\TestCase
 {
+    use \Prophecy\PhpUnit\ProphecyTrait;
     use AttributableTestTrait;
 
     protected function getAttributableToTest(): AttributableInterface
@@ -84,6 +86,18 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($account, $trans->getAccount());
     }
 
+    public function testAddTransactionCalledOnAccount()
+    {
+        $account = $this->prophesize(AccountInterface::class);
+
+        $account->addTransaction(Argument::type(Transaction::class))->shouldBeCalled();
+
+        new Transaction(
+            amount: new Amount('0'),
+            account: $account->reveal(),
+        );
+    }
+
     public function testGetVerificationId()
     {
         $trans = new Transaction(
@@ -151,6 +165,19 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertSame([$dim, $dim], $trans->getDimensions());
+    }
+
+    public function testAddTransactionCalledOnDimension()
+    {
+        $dim = $this->prophesize(DimensionInterface::class);
+
+        $dim->addTransaction(Argument::type(Transaction::class))->shouldBeCalled();
+
+        new Transaction(
+            amount: new Amount('0'),
+            account: $this->createMock(AccountInterface::class),
+            dimensions: [$dim->reveal()],
+        );
     }
 
     public function testGetItems()

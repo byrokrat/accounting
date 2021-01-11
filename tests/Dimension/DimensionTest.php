@@ -7,6 +7,7 @@ namespace byrokrat\accounting\Dimension;
 use byrokrat\accounting\AttributableTestTrait;
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Summary;
+use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\amount\Amount;
 
 class DimensionTest extends \PHPUnit\Framework\TestCase
@@ -77,14 +78,65 @@ class DimensionTest extends \PHPUnit\Framework\TestCase
         $this->assertSame([$child1, $child2], $dimension->getChildren());
     }
 
-    public function testChildSummaryIncluded()
+    public function testChildrenIncludedInSummary()
     {
         $child = $this->prophesize(DimensionInterface::class);
         $child->getSummary()->willReturn(Summary::fromAmount(new Amount('100')));
-        $child = $child->reveal();
 
-        $dim = new Dimension(id: '', children: [$child]);
+        $dim = new Dimension(id: '', children: [$child->reveal()]);
 
         $this->assertTrue($dim->getSummary()->getDebitTotal()->equals(new Amount('100')));
+    }
+
+    public function testAddTransactions()
+    {
+        $trans = $this->createMock(TransactionInterface::class);
+
+        $dim = new Dimension(id: '');
+
+        $dim->addTransaction($trans);
+
+        $this->assertSame([$trans], $dim->getTransactions());
+    }
+
+    public function testTransactionsIncludedInSummary()
+    {
+        $trans = $this->prophesize(TransactionInterface::class);
+        $trans->getSummary()->willReturn(Summary::fromAmount(new Amount('100')));
+
+        $dim = new Dimension(id: '');
+
+        $dim->addTransaction($trans->reveal());
+
+        $this->assertTrue($dim->getSummary()->getDebitTotal()->equals(new Amount('100')));
+    }
+
+    public function testIncomingBalance()
+    {
+        $dim = new Dimension(id: '');
+
+        $dim->setIncomingBalance(new Amount('100'));
+
+        $this->assertTrue($dim->getSummary()->getIncomingBalance()->equals(new Amount('100')));
+    }
+
+    public function testSummaryFromAllChannels()
+    {
+        $trans = $this->prophesize(TransactionInterface::class);
+        $trans->getSummary()->willReturn(Summary::fromAmount(new Amount('50')));
+
+        $child = $this->prophesize(DimensionInterface::class);
+        $child->getSummary()->willReturn(Summary::fromAmount(new Amount('-50')));
+
+        $dim = new Dimension(id: '');
+
+        $dim->setIncomingBalance(new Amount('100'));
+
+        $dim->addTransaction($trans->reveal());
+
+        $dim->addChild($child->reveal());
+
+        $this->assertTrue($dim->getSummary()->getOutgoingBalance()->equals(new Amount('100')));
+        $this->assertTrue($dim->getSummary()->getMagnitude()->equals(new Amount('50')));
     }
 }

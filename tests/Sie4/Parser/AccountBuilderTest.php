@@ -72,13 +72,13 @@ class AccountBuilderTest extends \PHPUnit\Framework\TestCase
 
         $originalAccount = $accountBuilder->getAccount('1234');
 
-        $this->assertFalse($originalAccount->isDebt());
+        $this->assertFalse($originalAccount->isDebtAccount());
 
         $accountBuilder->setAccountType('1234', 'S');
 
         $editedAccount = $accountBuilder->getAccount('1234');
 
-        $this->assertTrue($editedAccount->isDebt());
+        $this->assertTrue($editedAccount->isDebtAccount());
     }
 
     public function testSetUnvalidAccountType()

@@ -41,30 +41,46 @@ class AccountTest extends \PHPUnit\Framework\TestCase
     {
         $account = new Account(id: '0', type: AccountInterface::TYPE_COST);
         $this->assertSame(AccountInterface::TYPE_COST, $account->getType());
-        $this->assertTrue($account->isCost());
-        $this->assertFalse($account->isAsset());
-        $this->assertFalse($account->isEarning());
-        $this->assertFalse($account->isDebt());
+        $this->assertTrue($account->isCostAccount());
+        $this->assertFalse($account->isAssetAccount());
+        $this->assertFalse($account->isEarningAccount());
+        $this->assertFalse($account->isDebtAccount());
     }
 
     public function testInferAssetType()
     {
-        $this->assertTrue((new Account(id: '1000'))->isAsset());
+        $account = new Account(id: '1000');
+
+        $this->assertTrue($account->isAssetAccount());
+        $this->assertTrue($account->isBalanceAccount());
+        $this->assertFalse($account->isResultAccount());
     }
 
     public function testInferDebtType()
     {
-        $this->assertTrue((new Account(id: '2000'))->isDebt());
+        $account = new Account(id: '2000');
+
+        $this->assertTrue($account->isDebtAccount());
+        $this->assertTrue($account->isBalanceAccount());
+        $this->assertFalse($account->isResultAccount());
     }
 
     public function testInferEarningType()
     {
-        $this->assertTrue((new Account(id: '3000'))->isEarning());
+        $account = new Account(id: '3000');
+
+        $this->assertTrue($account->isEarningAccount());
+        $this->assertFalse($account->isBalanceAccount());
+        $this->assertTrue($account->isResultAccount());
     }
 
     public function testInferCostType()
     {
-        $this->assertTrue((new Account(id: '4000'))->isCost());
+        $account = new Account(id: '4000');
+
+        $this->assertTrue($account->isCostAccount());
+        $this->assertFalse($account->isBalanceAccount());
+        $this->assertTrue($account->isResultAccount());
     }
 
     public function testAttribute()

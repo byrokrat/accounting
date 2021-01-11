@@ -520,19 +520,25 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider currencyTypeProvider
      */
-    public function testCurrencyType(string $raw, SEK $money)
+    public function testCurrencyType(string $rawMoney, string $parsedMoney)
     {
         $account = $this->parse("
             #FLAGGA 1
-            #IB 0 1920 $raw
+            #IB 0 1920 $rawMoney
         ")->select()->account('1920');
 
         $this->assertTrue(
-            $account->getAttribute('incoming_balance')->equals($money)
+            $account->getSummary()->getIncomingBalance()->equals(new SEK($parsedMoney))
         );
 
-        $this->assertTrue(
-            $account->getAttribute('incoming_balance[0]')->equals($money)
+        $this->assertSame(
+            $parsedMoney,
+            $account->getAttribute('incoming_balance')
+        );
+
+        $this->assertSame(
+            $parsedMoney,
+            $account->getAttribute('incoming_balance[0]')
         );
     }
 
@@ -549,18 +555,21 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
 
         $objB = $content->select()->dimension('30');
 
-        $this->assertTrue(
-            $objB->getAttribute('incoming_balance')->equals(new SEK('100'))
+        $this->assertSame(
+            '100',
+            $objB->getAttribute('incoming_balance')
         );
 
         $objA = $content->select()->dimension('20');
 
-        $this->assertTrue(
-            $objA->getAttribute('incoming_balance')->equals(new SEK('100'))
+        $this->assertSame(
+            '100',
+            $objA->getAttribute('incoming_balance')
         );
 
-        $this->assertTrue(
-            $objA->getAttribute('incoming_balance[-1]')->equals(new SEK('200'))
+        $this->assertSame(
+            '200',
+            $objA->getAttribute('incoming_balance[-1]')
         );
 
         $this->assertSame(
@@ -738,8 +747,9 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             #PBUDGET 0 201608 1920 {} 100 1
         ")->select()->account('1920');
 
-        $this->assertTrue(
-            $account->getAttribute('period_budget_balance[0.201608]')->equals(new SEK('100'))
+        $this->assertSame(
+            '100',
+            $account->getAttribute('period_budget_balance[0.201608]')
         );
 
         $this->assertSame(
@@ -755,8 +765,9 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
             #PSALDO 0 201608 1920 {} 100 1
         ")->select()->account('1920');
 
-        $this->assertTrue(
-            $account->getAttribute('period_balance[0.201608]')->equals(new SEK('100'))
+        $this->assertSame(
+            '100',
+            $account->getAttribute('period_balance[0.201608]')
         );
 
         $this->assertSame(

@@ -120,9 +120,9 @@ $verifications = new Container(
     @include verifications
 -->
 ```php
-use byrokrat\accounting\Sie4\Writer\Sie4Writer;
+use byrokrat\accounting\Sie4\Writer\Sie4iWriter;
 
-$sie = (new Sie4Writer)->generateSie($verifications);
+$sie = (new Sie4iWriter)->generateSie($verifications);
 ```
 
 ### Parsing SIE4 files
@@ -176,29 +176,24 @@ An example of how Accounting may be used to sort transactions inte a ledger
     @expectOutput "/Outgoing balance 1332.00/"
 -->
 ```php
-use byrokrat\accounting\Processor\TransactionProcessor;
-
-(new TransactionProcessor)->processContainer($verifications);
-
 $verifications->select()->accounts()->orderById()->each(function ($account) {
-    echo "{$account->getId()}: {$account->getDescription()}\n";
-    echo "Incoming balance {$account->getAttribute('summary')->getIncomingBalance()}\n\n";
+    printf(
+        "%s %s\nIncoming balance %s\n",
+        $account->getId(),
+        $account->getDescription(),
+        $account->getSummary()->getIncomingBalance()
+    );
 
-    $currentBalance = $account->getAttribute('summary')->getIncomingBalance();
-
-    foreach ($account->getAttribute('transactions') as $trans) {
-        echo $trans->getVerificationId(),
-            "\t",
-            $trans->getDescription(),
-            "\t",
+    foreach ($account->getTransactions() as $trans) {
+        printf(
+            "%s\t%s\t%s\n",
+            $trans->getVerificationId(),
+            $account->getDescription(),
             $trans->getAmount(),
-            "\t",
-            $currentBalance = $currentBalance->add($trans->getAmount()),
-            "\n";
+        );
     }
 
-    echo "\nOutgoing balance {$account->getAttribute('summary')->getOutgoingBalance()}\n\n";
-    echo "----------\n\n";
+    echo "Outgoing balance {$account->getSummary()->getOutgoingBalance()}\n\n";
 });
 ```
 

@@ -25,6 +25,8 @@ namespace byrokrat\accounting\Dimension;
 
 use byrokrat\accounting\AttributableTrait;
 use byrokrat\accounting\Summary;
+use byrokrat\accounting\Transaction\TransactionInterface;
+use byrokrat\amount\Amount;
 
 class Dimension implements DimensionInterface
 {
@@ -32,6 +34,11 @@ class Dimension implements DimensionInterface
 
     /** @var array<DimensionInterface> */
     private array $children = [];
+
+    /** @var array<TransactionInterface> */
+    private array $transactions = [];
+
+    private Summary $summary;
 
     /**
      * @param array<DimensionInterface> $children
@@ -50,11 +57,23 @@ class Dimension implements DimensionInterface
         foreach ($attributes as $key => $value) {
             $this->setAttribute($key, $value);
         }
+
+        $this->summary = new Summary();
     }
 
     public function addChild(DimensionInterface $child): void
     {
         $this->children[] = $child;
+    }
+
+    public function addTransaction(TransactionInterface $transaction): void
+    {
+        $this->transactions[] = $transaction;
+    }
+
+    public function getTransactions(): array
+    {
+        return $this->transactions;
     }
 
     public function getId(): string
@@ -85,9 +104,14 @@ class Dimension implements DimensionInterface
     public function getSummary(): Summary
     {
         return array_reduce(
-            $this->getChildren(),
+            [...$this->getTransactions(), ...$this->getChildren()],
             fn($summary, $child) => $summary->withSummary($child->getSummary()),
-            new Summary()
+            $this->summary
         );
+    }
+
+    public function setIncomingBalance(Amount $incomingBalance): void
+    {
+        $this->summary = Summary::fromIncomingBalance($incomingBalance);
     }
 }

@@ -37,22 +37,32 @@ interface AccountInterface extends DimensionInterface
     public function getType(): string;
 
     /**
+     * Check if object represents a balance account (asset or debt)
+     */
+    public function isBalanceAccount(): bool;
+
+    /**
+     * Check if object represents a result account (earning or cost)
+     */
+    public function isResultAccount(): bool;
+
+    /**
      * Check if object represents an asset account
      */
-    public function isAsset(): bool;
+    public function isAssetAccount(): bool;
 
     /**
      * Check if object represents a cost account
      */
-    public function isCost(): bool;
+    public function isCostAccount(): bool;
 
     /**
      * Check if object represents a debt account
      */
-    public function isDebt(): bool;
+    public function isDebtAccount(): bool;
 
     /**
      * Check if object represents an earnings account
      */
-    public function isEarning(): bool;
+    public function isEarningAccount(): bool;
 }

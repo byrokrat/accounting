@@ -62,22 +62,32 @@ final class Account extends Dimension implements AccountInterface
         return $this->type;
     }
 
-    public function isAsset(): bool
+    public function isBalanceAccount(): bool
+    {
+        return $this->isAssetAccount() || $this->isDebtAccount();
+    }
+
+    public function isResultAccount(): bool
+    {
+        return $this->isEarningAccount() || $this->isCostAccount();
+    }
+
+    public function isAssetAccount(): bool
     {
         return $this->getType() == self::TYPE_ASSET;
     }
 
-    public function isCost(): bool
+    public function isCostAccount(): bool
     {
         return $this->getType() == self::TYPE_COST;
     }
 
-    public function isDebt(): bool
+    public function isDebtAccount(): bool
     {
         return $this->getType() == self::TYPE_DEBT;
     }
 
-    public function isEarning(): bool
+    public function isEarningAccount(): bool
     {
         return $this->getType() == self::TYPE_EARNING;
     }

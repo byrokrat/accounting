@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Dimension\AccountInterface;
-use byrokrat\amount\Currency\SEK;
 
 /**
  * Phpunit data providers for the SIE types defined in Grammar
@@ -31,11 +30,11 @@ trait TypeProviderTrait
     public function currencyTypeProvider()
     {
         return [
-            ['1',      new SEK('1')],
-            ['10.11',  new SEK('10.11')],
-            ['10.1',   new SEK('10.10')],
-            ['-1',     new SEK('-1')],
-            ['"1.00"', new SEK('1')],
+            ['1',      '1'],
+            ['10.11',  '10.11'],
+            ['10.1',   '10.1'],
+            ['-1',     '-1'],
+            ['"1.00"', '1.00'],
         ];
     }
 
