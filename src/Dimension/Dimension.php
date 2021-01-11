@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace byrokrat\accounting\Dimension;
 
 use byrokrat\accounting\AttributableTrait;
+use byrokrat\accounting\Summary;
 use byrokrat\accounting\Exception\RuntimeException;
 
 class Dimension implements DimensionInterface
@@ -82,5 +83,11 @@ class Dimension implements DimensionInterface
     public function getItems(): array
     {
         return array_filter([$this->parent]);
+    }
+
+    public function getSummary(): Summary
+    {
+        // TODO implement once we have transactions and children here
+        return new Summary();
     }
 }

@@ -11,6 +11,7 @@ use byrokrat\accounting\Exception\InvalidVerificationException;
 use byrokrat\accounting\Exception\RuntimeException;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
+use byrokrat\accounting\Summary;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\amount\Amount;
@@ -19,11 +20,16 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 {
     use \Prophecy\PhpUnit\ProphecyTrait;
 
-    private function accountingMock(string $type = '', $id = '', array $items = []): AccountingObjectInterface
-    {
+    private function accountingMock(
+        string $type = '',
+        string $id = '',
+        array $items = [],
+        Summary $summary = null
+    ): AccountingObjectInterface {
         $item = $this->prophesize($type ?: AccountingObjectInterface::class);
         $item->getId()->willReturn($id);
         $item->getItems()->willReturn($items);
+        $item->getSummary()->willReturn($summary ?: new Summary());
 
         return $item->reveal();
     }
@@ -51,17 +57,19 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testAsSummary()
     {
-        $trans1 = $this->prophesize(TransactionInterface::class);
-        $trans1->getAmount()->willReturn(new Amount('50'));
-        $trans1->getItems()->willReturn([]);
-        $trans1->getId()->willReturn('1');
+        $item1 = $this->accountingMock(
+            type: TransactionInterface::class,
+            id: '1',
+            summary: Summary::fromAmount(new Amount('50'))
+        );
 
-        $trans2 = $this->prophesize(TransactionInterface::class);
-        $trans2->getAmount()->willReturn(new Amount('150'));
-        $trans2->getItems()->willReturn([]);
-        $trans2->getId()->willReturn('2');
+        $item2 = $this->accountingMock(
+            type: TransactionInterface::class,
+            id: '2',
+            summary: Summary::fromAmount(new Amount('150'))
+        );
 
-        $query = new Query([$trans1->reveal(), $trans2->reveal()]);
+        $query = new Query([$item1, $item2]);
 
         $this->assertTrue(
             $query->asSummary()->getOutgoingBalance()->equals(new Amount('200'))

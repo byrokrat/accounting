@@ -26,33 +26,23 @@ namespace byrokrat\accounting;
 /**
  * A queryable keeper of bookkeeping objects
  */
-final class Container implements AccountingObjectInterface, AttributableInterface
+final class Container implements AttributableInterface
 {
     use AttributableTrait;
 
     /** @var array<AccountingObjectInterface> */
     private array $items;
 
-    public function __construct(AccountingObjectInterface ...$items)
+    public function __construct(AccountingObjectInterface | Container ...$items)
     {
-        $this->items = $items;
-    }
-
-    public function getId(): string
-    {
-        return (string)spl_object_id($this);
-    }
-
-    /**
-     * @return array<AccountingObjectInterface>
-     */
-    public function getItems(): array
-    {
-        return $this->items;
+        $this->items = array_merge(...array_map(
+            fn($item) => $item instanceof Container ? $item->items : [$item],
+            $items
+        ));
     }
 
     public function select(): Query
     {
-        return new Query($this->getItems());
+        return new Query($this->items);
     }
 }

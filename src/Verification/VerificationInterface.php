@@ -24,7 +24,6 @@ namespace byrokrat\accounting\Verification;
 use byrokrat\accounting\AccountingObjectInterface;
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Transaction\TransactionInterface;
-use byrokrat\amount\Amount;
 
 /**
  * The basic idea of a verification is a balanced collection of transactions
@@ -42,11 +41,6 @@ interface VerificationInterface extends AccountingObjectInterface, AttributableI
     public function getRegistrationDate(): \DateTimeImmutable;
 
     /**
-     * Get freetext description
-     */
-    public function getDescription(): string;
-
-    /**
      * Get personal signature of accontant
      */
     public function getSignature(): string;
@@ -57,9 +51,4 @@ interface VerificationInterface extends AccountingObjectInterface, AttributableI
      * @return array<TransactionInterface>
      */
     public function getTransactions(): array;
-
-    /**
-     * Get the sum of all positive transactions
-     */
-    public function getMagnitude(): Amount;
 }

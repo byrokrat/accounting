@@ -13,25 +13,7 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
         return new Container();
     }
 
-    public function testGetId()
-    {
-        $this->assertIsString((new Container())->getId());
-    }
-
-    public function testGetItems()
-    {
-        $container = new Container(
-            $a = $this->createMock(AccountingObjectInterface::class),
-            $b = $this->createMock(AccountingObjectInterface::class),
-        );
-
-        $this->assertSame(
-            [$a, $b],
-            $container->getItems()
-        );
-    }
-
-    public function testQueryable()
+    public function testSimpleSelect()
     {
         $container = new Container(
             $a = $this->createMock(AccountingObjectInterface::class),
@@ -47,16 +29,21 @@ class ContainerTest extends \PHPUnit\Framework\TestCase
     public function testNestingContainers()
     {
         $inner = new Container(
+            $c = $this->createMock(AccountingObjectInterface::class),
+        );
+
+        $middle = new Container(
             $b = $this->createMock(AccountingObjectInterface::class),
+            $inner
         );
 
         $outer = new Container(
             $a = $this->createMock(AccountingObjectInterface::class),
-            $inner
+            $middle
         );
 
         $this->assertSame(
-            [$a, $inner, $b],
+            [$a, $b, $c],
             $outer->select()->asArray()
         );
     }

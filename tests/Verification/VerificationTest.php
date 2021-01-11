@@ -6,10 +6,12 @@ namespace byrokrat\accounting\Verification;
 
 use byrokrat\accounting\AttributableTestTrait;
 use byrokrat\accounting\AttributableInterface;
+use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidVerificationException;
 use byrokrat\accounting\Exception\UnbalancedVerificationException;
-use byrokrat\accounting\Transaction\TransactionInterface;
+use byrokrat\accounting\Summary;
+use byrokrat\accounting\Transaction\Transaction;
 use byrokrat\amount\Amount;
 use byrokrat\amount\Currency\EUR;
 use byrokrat\amount\Currency\SEK;
@@ -72,11 +74,12 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(UnbalancedVerificationException::class);
 
-        $trans = $this->prophesize(TransactionInterface::class);
-        $trans->getAmount()->willReturn(new Amount('1'));
-        $trans->isDeleted()->willReturn(false);
+        $trans = new Transaction(
+            amount: new SEK('1'),
+            account: $this->createMock(AccountInterface::class),
+        );
 
-        new Verification(transactions: [$trans->reveal()]);
+        new Verification(transactions: [$trans]);
     }
 
     public function testAssigningDates()
@@ -129,10 +132,10 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
 
     public function testAccessingTransactions()
     {
-        $trans = $this->prophesize(TransactionInterface::class);
-        $trans->getAmount()->willReturn(new Amount('0'));
-        $trans->isDeleted()->willReturn(false);
-        $trans = $trans->reveal();
+        $trans = new Transaction(
+            amount: new SEK('0'),
+            account: $this->createMock(AccountInterface::class),
+        );
 
         $this->assertSame(
             [$trans, $trans],
@@ -156,65 +159,69 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
      */
     public function testTransactionArithmetics(Amount $magnitude, Amount ...$amounts)
     {
-        $transactions = [];
+        $verification = new Verification(
+            transactions: array_map(
+                fn($amount) => new Transaction(amount: $amount, account: $this->createMock(AccountInterface::class)),
+                $amounts
+            )
+        );
 
-        foreach ($amounts as $amount) {
-            $trans = $this->prophesize(TransactionInterface::class);
-            $trans->getAmount()->willReturn($amount);
-            $trans->isDeleted()->willReturn(false);
-            $transactions[] = $trans->reveal();
-        }
-
-        $verification = new Verification(transactions: $transactions);
-
-        $this->assertTrue($magnitude->equals($verification->getMagnitude()));
+        $this->assertTrue($magnitude->equals($verification->getSummary()->getMagnitude()));
     }
 
     public function testExceptionOnCurrencyMissmatch()
     {
-        $transA = $this->prophesize(TransactionInterface::class);
-        $transA->getAmount()->willReturn(new EUR('0'));
-        $transA->isDeleted()->willReturn(false);
+        $transEUR = new Transaction(
+            amount: new EUR('0'),
+            account: $this->createMock(AccountInterface::class),
+        );
 
-        $transSEK = $this->prophesize(TransactionInterface::class);
-        $transSEK->getAmount()->willReturn(new SEK('0'));
-        $transSEK->isDeleted()->willReturn(false);
+        $transSEK = new Transaction(
+            amount: new SEK('0'),
+            account: $this->createMock(AccountInterface::class),
+        );
 
         $this->expectException(InvalidVerificationException::class);
-        $verification = new Verification(transactions: [$transSEK->reveal(), $transA->reveal()]);
+        $verification = new Verification(transactions: [$transSEK, $transEUR]);
     }
 
     public function testExceptionOnCurrencyMissmatchInDeletedTransactions()
     {
-        $transA = $this->prophesize(TransactionInterface::class);
-        $transA->getAmount()->willReturn(new EUR('0'));
-        $transA->isDeleted()->willReturn(true);
+        $transEUR = new Transaction(
+            amount: new EUR('0'),
+            account: $this->createMock(AccountInterface::class),
+            deleted: true
+        );
 
-        $transSEK = $this->prophesize(TransactionInterface::class);
-        $transSEK->getAmount()->willReturn(new SEK('0'));
-        $transSEK->isDeleted()->willReturn(true);
+        $transSEK = new Transaction(
+            amount: new SEK('0'),
+            account: $this->createMock(AccountInterface::class),
+            deleted: true
+        );
 
         $this->expectException(InvalidVerificationException::class);
-        $verification = new Verification(transactions: [$transSEK->reveal(), $transA->reveal()]);
+        $verification = new Verification(transactions: [$transEUR, $transSEK]);
     }
 
     public function testDeletedTransactionsDoesNotCount()
     {
-        $trans = $this->prophesize(TransactionInterface::class);
-        $trans->getAmount()->willReturn(new Amount('100'));
-        $trans->isDeleted()->willReturn(true);
+        $trans = new Transaction(
+            amount: new Amount('100'),
+            account: $this->createMock(AccountInterface::class),
+            deleted: true
+        );
 
-        $verification = new Verification(transactions: [$trans->reveal()]);
+        $verification = new Verification(transactions: [$trans]);
 
-        $this->assertSame(0, $verification->getMagnitude()->getInt());
+        $this->assertTrue($verification->getSummary()->getMagnitude()->equals(new Amount('0')));
     }
 
     public function testGetItems()
     {
-        $trans = $this->prophesize(TransactionInterface::class);
-        $trans->getAmount()->willReturn(new Amount('100'));
-        $trans->isDeleted()->willReturn(true);
-        $trans = $trans->reveal();
+        $trans = new Transaction(
+            amount: new Amount('0'),
+            account: $this->createMock(AccountInterface::class),
+        );
 
         $this->assertSame(
             [$trans, $trans],

@@ -116,7 +116,7 @@ $verifications = new Container(
 ### Writing SIE4 files
 
 <!--
-    @example sie
+    @example sie-generated
     @include verifications
 -->
 ```php
@@ -128,9 +128,9 @@ $sie = (new Sie4Writer)->generateSie($verifications);
 ### Parsing SIE4 files
 
 <!--
-    @example parsing-sie
-    @include sie
-    @expectOutput "/^999.00$/"
+    @example sie-parsed
+    @include sie-generated
+    @expectOutput "/Some donation.../"
 -->
 ```php
 use byrokrat\accounting\Sie4\Parser\Sie4ParserFactory;
@@ -139,8 +139,7 @@ $parser = (new Sie4ParserFactory)->createParser();
 
 $container = $parser->parse($sie);
 
-// Outputs '999.00'
-echo $container->select()->verifications()->first()->getMagnitude();
+echo $container->select()->verifications()->first()->getDescription();
 ```
 
 ### Querying accounting data
@@ -153,6 +152,17 @@ echo $container->select()->verifications()->first()->getMagnitude();
 -->
 ```php
 $orderedAccounts = $verifications->select()->accounts()->orderById()->asArray();
+```
+
+#### Calculate book magnitude
+
+<!--
+    @example calculate-magnitude
+    @include verifications
+    @expectOutput "1332.00"
+-->
+```php
+echo $verifications->select()->verifications()->asSummary()->getMagnitude();
 ```
 
 #### Sorting transactions into a ledger (huvudbok)

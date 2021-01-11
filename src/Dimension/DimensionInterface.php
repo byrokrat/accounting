@@ -31,11 +31,6 @@ use byrokrat\accounting\Exception\RuntimeException;
 interface DimensionInterface extends AccountingObjectInterface, AttributableInterface
 {
     /**
-     * Get free text description
-     */
-    public function getDescription(): string;
-
-    /**
      * Check if dimension has a parent
      */
     public function hasParent(): bool;

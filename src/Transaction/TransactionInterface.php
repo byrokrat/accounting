@@ -43,11 +43,6 @@ interface TransactionInterface extends AccountingObjectInterface, AttributableIn
     public function getTransactionDate(): \DateTimeImmutable;
 
     /**
-     * Get free text description
-     */
-    public function getDescription(): string;
-
-    /**
      * Get transaction signature
      */
     public function getSignature(): string;

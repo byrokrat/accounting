@@ -143,12 +143,18 @@ class Query implements \IteratorAggregate, \Countable
     }
 
     /**
-     * Summarize transactions in query
+     * Summarize items in query
+     *
+     * Note that in order to make sure that transactions are not counted twice
+     * you must use a type filter before calculating summary.
+     *
+     * @example $query->verifications()->asSummary()
+     * @example $query->accounts()->asSummary()
      */
     public function asSummary(): Summary
     {
-        return $this->transactions()->reduce(
-            fn($summary, $transaction) => $summary->withAmount($transaction->getAmount()),
+        return $this->reduce(
+            fn($summary, $item) => $summary->withSummary($item->getSummary()),
             new Summary()
         );
     }

@@ -32,9 +32,19 @@ interface AccountingObjectInterface
     public function getId(): string;
 
     /**
+     * Get item free text description
+     */
+    public function getDescription(): string;
+
+    /**
      * Get items contained in this object
      *
      * @return array<AccountingObjectInterface>
      */
     public function getItems(): array;
+
+    /**
+     * Get summary for this item (including contained items when applicable)
+     */
+    public function getSummary(): Summary;
 }

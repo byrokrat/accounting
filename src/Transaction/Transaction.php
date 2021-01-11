@@ -28,6 +28,7 @@ use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidTransactionException;
+use byrokrat\accounting\Summary;
 use byrokrat\amount\Amount;
 
 final class Transaction implements TransactionInterface
@@ -140,5 +141,12 @@ final class Transaction implements TransactionInterface
     public function getItems(): array
     {
         return [$this->getAccount(), ...$this->getDimensions()];
+    }
+
+    public function getSummary(): Summary
+    {
+        return $this->isDeleted()
+            ? Summary::fromAmount($this->amount->subtract($this->amount))
+            : Summary::fromAmount($this->amount);
     }
 }

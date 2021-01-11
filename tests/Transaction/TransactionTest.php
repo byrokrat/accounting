@@ -10,7 +10,7 @@ use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidTransactionException;
-use byrokrat\accounting\Query;
+use byrokrat\accounting\Summary;
 use byrokrat\amount\Amount;
 
 class TransactionTest extends \PHPUnit\Framework\TestCase
@@ -252,6 +252,32 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             account: $this->createMock(AccountInterface::class),
             added: true,
             deleted: true,
+        );
+    }
+
+    public function testGetSummary()
+    {
+        $trans = new Transaction(
+            amount: new Amount('100'),
+            account: $this->createMock(AccountInterface::class),
+        );
+
+        $this->assertEquals(
+            Summary::fromAmount(new Amount('100')),
+            $trans->getSummary()
+        );
+    }
+
+    public function testGetZeroSummaryForDeletedTransaction()
+    {
+        $trans = new Transaction(
+            amount: new Amount('100'),
+            account: $this->createMock(AccountInterface::class),
+            deleted: true
+        );
+
+        $this->assertTrue(
+            $trans->getSummary()->getMagnitude()->equals(new Amount('0'))
         );
     }
 }

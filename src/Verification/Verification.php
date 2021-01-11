@@ -29,7 +29,6 @@ use byrokrat\accounting\Exception\InvalidVerificationException;
 use byrokrat\accounting\Exception\UnbalancedVerificationException;
 use byrokrat\accounting\Summary;
 use byrokrat\accounting\Transaction\TransactionInterface;
-use byrokrat\amount\Amount;
 use byrokrat\amount\Exception as AmountException;
 
 /**
@@ -75,12 +74,7 @@ final class Verification implements VerificationInterface
                     throw new InvalidArgumentException('Transaction must implement TransactionInterface');
                 }
 
-                // Zero amount if deleted, add it to validate currency
-                $this->summary = $this->summary->withAmount(
-                    $transaction->isDeleted()
-                        ? $transaction->getAmount()->subtract($transaction->getAmount())
-                        : $transaction->getAmount()
-                );
+                $this->summary = $this->summary->withSummary($transaction->getSummary());
             }
 
             if (!$this->summary->isBalanced()) {
@@ -129,9 +123,9 @@ final class Verification implements VerificationInterface
         return $this->transactions;
     }
 
-    public function getMagnitude(): Amount
+    public function getSummary(): Summary
     {
-        return $this->summary->getMagnitude();
+        return $this->summary;
     }
 
     public function getItems(): array
