@@ -24,7 +24,7 @@ namespace byrokrat\accounting;
 /**
  * Common interface for accounting objects
  */
-interface AccountingObjectInterface
+interface AccountingObjectInterface extends AttributableInterface
 {
     /**
      * Get item identifier (note that uniqueness is not garantueed)

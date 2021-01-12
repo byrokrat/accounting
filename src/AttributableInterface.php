@@ -22,16 +22,14 @@
 namespace byrokrat\accounting;
 
 /**
- * Defines methods for reading and writing attributes
- *
- * NOTE that keys should be case-insensitive.
+ * Methods for reading and writing attributes
  */
 interface AttributableInterface
 {
     /**
      * Register attribute
      */
-    public function setAttribute(string $key, mixed $value): void;
+    public function setAttribute(string $key, string $value): void;
 
     /**
      * Check if attribute has been set
@@ -41,12 +39,12 @@ interface AttributableInterface
     /**
      * Read registered attribute
      */
-    public function getAttribute(string $key, mixed $default = ''): mixed;
+    public function getAttribute(string $key): string;
 
     /**
      * Get the array of all registered attributes
      *
-     * @return array<string, mixed>
+     * @return array<string, string>
      */
     public function getAttributes(): array;
 }

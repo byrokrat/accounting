@@ -54,7 +54,7 @@ grammar Grammar extends AbstractParser
 
     KSUMMA_END_POST = ROW_START 'KSUMMA' checksum:INT? ROW_END {
         if ($this->assertInt($checksum, 'Expected checksum')) {
-            $this->parsedAttributes['checksum'] = $checksum;
+            $this->parsedAttributes['checksum'] = (string)$checksum;
             $this->getLogger()->log('notice', 'Checksum detected but currently not handled');
         }
     };
@@ -88,29 +88,27 @@ grammar Grammar extends AbstractParser
         / VOID_ROW;
 
     ADRESS_POST = ROW_START 'ADRESS' ^ contact:STRING? street:STRING? postal:STRING? phone:STRING? ROW_END {
-        $this->parsedAttributes['company_address'] = [
-            'contact' => (string)$contact,
-            'street' => (string)$street,
-            'postal' => (string)$postal,
-            'phone' => (string)$phone
-        ];
+        $this->parsedAttributes['company_address_contact'] = (string)$contact;
+        $this->parsedAttributes['company_address_street'] = (string)$street;
+        $this->parsedAttributes['company_address_postal'] = (string)$postal;
+        $this->parsedAttributes['company_address_phone'] = (string)$phone;
     };
 
     BKOD_POST = ROW_START 'BKOD' ^ sni:INT? ROW_END {
         if ($this->assertInt($sni, 'Expected SNI code')) {
-            $this->parsedAttributes['company_sni_code'] = $sni;
+            $this->parsedAttributes['company_sni_code'] = (string)$sni;
         }
     };
 
     FNAMN_POST = ROW_START 'FNAMN' ^ name:STRING? ROW_END {
         if ($this->assertString($name, 'Expected company name')) {
-            $this->parsedAttributes['company_name'] = $name;
+            $this->parsedAttributes['company_name'] = (string)$name;
         }
     };
 
     FNR_POST = ROW_START 'FNR' ^ id:STRING? ROW_END {
         if ($this->assertString($id, 'Expected company identifier')) {
-            $this->parsedAttributes['company_id'] = $id;
+            $this->parsedAttributes['company_id'] = (string)$id;
         }
     };
 
@@ -120,45 +118,43 @@ grammar Grammar extends AbstractParser
                 $this->getLogger()->log('warning', "Unknown charset $charset defined using #FORMAT");
             }
 
-            $this->parsedAttributes['charset'] = $charset;
+            $this->parsedAttributes['charset'] = (string)$charset;
         }
     };
 
     FTYP_POST = ROW_START 'FTYP' ^ type:STRING? ROW_END {
         if ($this->assertString($type, 'Expected company type identifier')) {
-            $this->parsedAttributes['company_type'] = $type;
+            $this->parsedAttributes['company_type'] = (string)$type;
         }
     };
 
     GEN_POST = ROW_START 'GEN' ^ date:DATE? sign:STRING? ROW_END {
-        if ($this->assertDate($date)) {
-            $this->parsedAttributes['generation_date'] = $date;
-            $this->parsedAttributes['generating_user'] = strval($sign);
-        }
+        $this->parsedAttributes['generation_date'] = (string)$date;
+        $this->parsedAttributes['generating_user'] = strval($sign);
     };
 
     KPTYP_POST = ROW_START 'KPTYP' ^ type:STRING? ROW_END {
         if ($this->assertString($type, 'Expected account plan type identifier')) {
-            $this->parsedAttributes['account_plan_type'] = $type;
+            $this->parsedAttributes['account_plan_type'] = (string)$type;
         }
     };
 
     OMFATTN_POST = ROW_START 'OMFATTN' ^ date:DATE? ROW_END {
-        if ($this->assertDate($date)) {
-            $this->parsedAttributes['period_end_date'] = $date;
-        }
+        $this->parsedAttributes['period_end_date'] = (string)$date;
     };
 
     ORGNR_POST = ROW_START 'ORGNR' ^ number:STRING? acquisition:INT? operation:INT? ROW_END {
         if ($this->assertString($number, 'Expected organisation number')) {
-            $this->parsedAttributes['company_org_nr'] = [$number, intval($acquisition), intval($operation)];
+            $this->parsedAttributes['company_org_nr'] = (string)$number;
+            $this->parsedAttributes['company_acquisition_nr'] = (string)$acquisition;
+            $this->parsedAttributes['company_operation_nr'] = (string)$operation;
         }
     };
 
     PROGRAM_POST = ROW_START 'PROGRAM' ^ name:STRING? version:STRING? ROW_END {
         if ($this->assertString($name, 'Expected name') && $this->assertString($version, 'Expected version')) {
-            $this->parsedAttributes['generating_program'] = $name;
-            $this->parsedAttributes['generating_program_version'] = $version;
+            $this->parsedAttributes['generating_program'] = (string)$name;
+            $this->parsedAttributes['generating_program_version'] = (string)$version;
         }
     };
 
@@ -168,25 +164,26 @@ grammar Grammar extends AbstractParser
 
     RAR_POST = ROW_START 'RAR' ^ year:INT? startDate:DATE? endDate:DATE? ROW_END {
         if ($this->assertInt($year) && $this->assertDate($startDate) && $this->assertDate($endDate)) {
-            $this->parsedAttributes["financial_year[$year]"] = [$startDate, $endDate];
+            $this->parsedAttributes["financial_year_start[$year]"] = (string)$startDate;
+            $this->parsedAttributes["financial_year_end[$year]"] = (string)$endDate;
         }
     };
 
     SIETYP_POST = ROW_START 'SIETYP' ^ ver:INT? ROW_END {
         if ($this->assertInt($ver, 'Expected SIE version')) {
-            $this->parsedAttributes['sie_version'] = $ver;
+            $this->parsedAttributes['sie_version'] = (string)$ver;
         }
     };
 
     TAXAR_POST = ROW_START 'TAXAR' ^ year:INT ROW_END {
         if ($this->assertInt($year)) {
-            $this->parsedAttributes["taxation_year"] = $year;
+            $this->parsedAttributes["taxation_year"] = (string)$year;
         }
     };
 
     VALUTA_POST = ROW_START 'VALUTA' ^ currency:STRING? ROW_END {
         if ($this->assertString($currency, 'Expected currency name')) {
-            $this->parsedAttributes['currency'] = $currency;
+            $this->parsedAttributes['currency'] = (string)$currency;
             $this->getCurrencyBuilder()->setCurrencyClass($currency);
         }
     };
@@ -223,7 +220,7 @@ grammar Grammar extends AbstractParser
 
     SRU_POST = ROW_START 'SRU' ^ account:ACCOUNT? sru:INT? ROW_END {
         if ($this->assertAccount($account) && $this->assertInt($sru, 'Expected SRU code')) {
-            $account->setAttribute('sru', $sru);
+            $account->setAttribute('sru', (string)$sru);
         }
     };
 
@@ -299,7 +296,7 @@ grammar Grammar extends AbstractParser
 
     PBUDGET_POST = ROW_START 'PBUDGET' ^ year:INT? period:DATE? account:ACCOUNT? dims:OBJECT_LIST? balance:FLOAT? quantity:FLOAT? ROW_END {
         if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($dims)) {
-            $key = "$year.{$period->format('Ym')}";
+            $key = "$year.$period";
 
             $this->writeAttribute($account, "period_budget_balance", (string)$balance, $key);
             $this->writeAttribute($account, "period_budget_quantity", (string)$quantity, $key);
@@ -313,7 +310,7 @@ grammar Grammar extends AbstractParser
 
     PSALDO_POST = ROW_START 'PSALDO' ^ year:INT? period:DATE? account:ACCOUNT? dims:OBJECT_LIST? balance:FLOAT? quantity:FLOAT? ROW_END {
         if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($dims)) {
-            $key = "$year.{$period->format('Ym')}";
+            $key = "$year.$period";
 
             $this->writeAttribute($account, "period_balance", (string)$balance, $key);
             $this->writeAttribute($account, "period_quantity", (string)$quantity, $key);
@@ -337,9 +334,9 @@ grammar Grammar extends AbstractParser
             $this->parsedItems[] = $this->createVerification(
                 $series,
                 $number,
-                $date,
+                new \DateTimeImmutable($date),
                 $desc ?: '',
-                $regdate ?: null,
+                $regdate ? new \DateTimeImmutable($regdate) : null,
                 $sign ?: '',
                 $trans
             );
@@ -356,7 +353,7 @@ grammar Grammar extends AbstractParser
                 'account' => $account,
                 'dimensions' => $dims,
                 'amount' => $amount,
-                'date' => $date,
+                'date' => $date ? new \DateTimeImmutable($date) : null,
                 'description' => $desc,
                 'quantity' => (string)$quantity,
                 'signature' => $sign,
@@ -371,7 +368,7 @@ grammar Grammar extends AbstractParser
                 'account' => $account,
                 'dimensions' => $dims,
                 'amount' => $amount,
-                'date' => $date,
+                'date' => $date ? new \DateTimeImmutable($date) : null,
                 'description' => $desc,
                 'quantity' => (string)$quantity,
                 'signature' => $sign,
@@ -386,7 +383,7 @@ grammar Grammar extends AbstractParser
                 'account' => $account,
                 'dimensions' => $dims,
                 'amount' => $amount,
-                'date' => $date,
+                'date' => $date ? new \DateTimeImmutable($date) : null,
                 'description' => $desc,
                 'quantity' => (string)$quantity,
                 'signature' => $sign,
@@ -489,11 +486,7 @@ grammar Grammar extends AbstractParser
     };
 
     RAW_DATE = year:([0-9] [0-9] [0-9] [0-9]) month:([0-9] [0-9])? day:([0-9] [0-9])? {
-        return new \DateTimeImmutable(
-            implode($year)
-            . (implode((array)$month) ?: '01')
-            . (implode((array)$day) ?: '01')
-        );
+        return implode($year) . implode((array)$month) . implode((array)$day);
     };
 
     // Amount

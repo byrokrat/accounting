@@ -11,7 +11,7 @@ return function (Container $container) {
     );
 
     $this->assertSame(
-        0,
-        $account->getAttribute('SRU')
+        '0',
+        $account->getAttribute('sru')
     );
 };

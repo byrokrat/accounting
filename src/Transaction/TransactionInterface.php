@@ -22,7 +22,6 @@
 namespace byrokrat\accounting\Transaction;
 
 use byrokrat\accounting\AccountingObjectInterface;
-use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\amount\Amount;
@@ -30,7 +29,7 @@ use byrokrat\amount\Amount;
 /**
  * A pure transaction is an amount moved to or from an account
  */
-interface TransactionInterface extends AccountingObjectInterface, AttributableInterface
+interface TransactionInterface extends AccountingObjectInterface
 {
     /**
      * Get the id of the verification this transaction is a part of

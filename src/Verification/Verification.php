@@ -44,7 +44,7 @@ final class Verification implements VerificationInterface
 
     /**
      * @param array<TransactionInterface> $transactions
-     * @param array<string, mixed> $attributes
+     * @param array<string, string> $attributes
      * @throws InvalidVerificationException If data is invalid
      * @throws UnbalancedVerificationException If verification is not balanced
      */

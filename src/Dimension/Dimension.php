@@ -42,7 +42,7 @@ class Dimension implements DimensionInterface
 
     /**
      * @param array<DimensionInterface> $children
-     * @param array<string, mixed> $attributes
+     * @param array<string, string> $attributes
      */
     public function __construct(
         private string $id,

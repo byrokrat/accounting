@@ -15,6 +15,7 @@ use byrokrat\accounting\Summary;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\amount\Amount;
+use Prophecy\Argument;
 
 class QueryTest extends \PHPUnit\Framework\TestCase
 {
@@ -24,12 +25,21 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         string $type = '',
         string $id = '',
         array $items = [],
-        Summary $summary = null
+        Summary $summary = null,
+        array $attributes = [],
     ): AccountingObjectInterface {
         $item = $this->prophesize($type ?: AccountingObjectInterface::class);
+
         $item->getId()->willReturn($id);
         $item->getItems()->willReturn($items);
         $item->getSummary()->willReturn($summary ?: new Summary());
+
+        foreach ($attributes as $key => $value) {
+            $item->hasAttribute($key)->willReturn(true);
+            $item->getAttribute($key)->willReturn($value);
+        }
+
+        $item->hasAttribute(Argument::any())->willReturn(false);
 
         return $item->reveal();
     }
@@ -559,15 +569,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testWhereAttribute()
     {
-        $attributable = $this->prophesize(AttributableInterface::class);
-
-        $attributable->willImplement(AccountingObjectInterface::class);
-        $attributable->getItems()->willReturn([]);
-
-        $attributable->hasAttribute('A')->willReturn(true);
-        $attributable->hasAttribute('B')->willReturn(false);
-
-        $attributable = $attributable->reveal();
+        $attributable = $this->accountingMock(attributes: ['A' => 'A']);
 
         $query = new Query([$attributable]);
 
@@ -577,16 +579,7 @@ class QueryTest extends \PHPUnit\Framework\TestCase
 
     public function testWhereAttributeValue()
     {
-        $attributable = $this->prophesize(AttributableInterface::class);
-
-        $attributable->willImplement(AccountingObjectInterface::class);
-        $attributable->getItems()->willReturn([]);
-
-        $attributable->hasAttribute('A')->willReturn(true);
-        $attributable->getAttribute('A')->willReturn('value');
-        $attributable->hasAttribute('B')->willReturn(false);
-
-        $attributable = $attributable->reveal();
+        $attributable = $this->accountingMock(attributes: ['A' => 'value']);
 
         $query = new Query([$attributable]);
 

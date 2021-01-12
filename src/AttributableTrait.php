@@ -28,22 +28,22 @@ namespace byrokrat\accounting;
  */
 trait AttributableTrait
 {
-    /** @var array<string, mixed> */
+    /** @var array<string, string> */
     private $attributes = [];
 
-    public function setAttribute(string $name, mixed $value): void
+    public function setAttribute(string $name, string $value): void
     {
-        $this->attributes[strtolower($name)] = $value;
+        $this->attributes[$name] = $value;
     }
 
     public function hasAttribute(string $name): bool
     {
-        return isset($this->attributes[strtolower($name)]);
+        return isset($this->attributes[$name]);
     }
 
-    public function getAttribute(string $name, mixed $default = ''): mixed
+    public function getAttribute(string $name): string
     {
-        return $this->attributes[strtolower($name)] ?? $default;
+        return $this->attributes[$name] ?? '';
     }
 
     public function getAttributes(): array

@@ -44,11 +44,11 @@ trait TypeProviderTrait
     public function dateTypeProvider()
     {
         return [
-            ['20160722',   new \DateTimeImmutable('20160722')],
-            ['"20160722"', new \DateTimeImmutable('20160722')],
-            ['201607',     new \DateTimeImmutable('20160701')],
-            ['2016',       new \DateTimeImmutable('20160101')],
-            ['20160722',   new \DateTimeImmutable('20160722')],
+            ['20160722',   '20160722'],
+            ['"20160722"', '20160722'],
+            ['201607',     '201607'],
+            ['2016',       '2016'],
+            ['20160722',   '20160722'],
         ];
     }
 

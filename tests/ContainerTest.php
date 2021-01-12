@@ -6,11 +6,21 @@ namespace byrokrat\accounting;
 
 class ContainerTest extends \PHPUnit\Framework\TestCase
 {
-    use AttributableTestTrait;
-
-    protected function getAttributableToTest(): AttributableInterface
+    public function testAttributes()
     {
-        return new Container();
+        $attributable = new Container();
+
+        $this->assertFalse($attributable->hasAttribute('does-not-exist'));
+
+        $this->assertSame('', $attributable->getAttribute('does-not-exist'));
+
+        $attributable->setAttribute('foo', 'bar');
+
+        $this->assertTrue($attributable->hasAttribute('foo'));
+
+        $this->assertSame('bar', $attributable->getAttribute('foo'));
+
+        $this->assertSame(['foo' => 'bar'], $attributable->getAttributes());
     }
 
     public function testSimpleSelect()

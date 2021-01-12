@@ -22,14 +22,13 @@
 namespace byrokrat\accounting\Dimension;
 
 use byrokrat\accounting\AccountingObjectInterface;
-use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\amount\Amount;
 
 /**
  * A dimension is an entity through which transactions can be channeled
  */
-interface DimensionInterface extends AccountingObjectInterface, AttributableInterface
+interface DimensionInterface extends AccountingObjectInterface
 {
     /**
      * Check if dimension has children

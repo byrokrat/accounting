@@ -497,7 +497,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$checksum) {
                 if ($this->assertInt($checksum, 'Expected checksum')) {
-                    $this->parsedAttributes['checksum'] = $checksum;
+                    $this->parsedAttributes['checksum'] = (string)$checksum;
                     $this->getLogger()->log('notice', 'Checksum detected but currently not handled');
                 }
             });
@@ -852,12 +852,10 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$contact, &$street, &$postal, &$phone) {
-                $this->parsedAttributes['company_address'] = [
-                    'contact' => (string)$contact,
-                    'street' => (string)$street,
-                    'postal' => (string)$postal,
-                    'phone' => (string)$phone
-                ];
+                $this->parsedAttributes['company_address_contact'] = (string)$contact;
+                $this->parsedAttributes['company_address_street'] = (string)$street;
+                $this->parsedAttributes['company_address_postal'] = (string)$postal;
+                $this->parsedAttributes['company_address_phone'] = (string)$phone;
             });
         }
 
@@ -950,7 +948,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$sni) {
                 if ($this->assertInt($sni, 'Expected SNI code')) {
-                    $this->parsedAttributes['company_sni_code'] = $sni;
+                    $this->parsedAttributes['company_sni_code'] = (string)$sni;
                 }
             });
         }
@@ -1044,7 +1042,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$name) {
                 if ($this->assertString($name, 'Expected company name')) {
-                    $this->parsedAttributes['company_name'] = $name;
+                    $this->parsedAttributes['company_name'] = (string)$name;
                 }
             });
         }
@@ -1138,7 +1136,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$id) {
                 if ($this->assertString($id, 'Expected company identifier')) {
-                    $this->parsedAttributes['company_id'] = $id;
+                    $this->parsedAttributes['company_id'] = (string)$id;
                 }
             });
         }
@@ -1236,7 +1234,7 @@ class Grammar extends AbstractParser
                         $this->getLogger()->log('warning', "Unknown charset $charset defined using #FORMAT");
                     }
 
-                    $this->parsedAttributes['charset'] = $charset;
+                    $this->parsedAttributes['charset'] = (string)$charset;
                 }
             });
         }
@@ -1330,7 +1328,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$type) {
                 if ($this->assertString($type, 'Expected company type identifier')) {
-                    $this->parsedAttributes['company_type'] = $type;
+                    $this->parsedAttributes['company_type'] = (string)$type;
                 }
             });
         }
@@ -1445,10 +1443,8 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$date, &$sign) {
-                if ($this->assertDate($date)) {
-                    $this->parsedAttributes['generation_date'] = $date;
-                    $this->parsedAttributes['generating_user'] = strval($sign);
-                }
+                $this->parsedAttributes['generation_date'] = (string)$date;
+                $this->parsedAttributes['generating_user'] = strval($sign);
             });
         }
 
@@ -1541,7 +1537,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$type) {
                 if ($this->assertString($type, 'Expected account plan type identifier')) {
-                    $this->parsedAttributes['account_plan_type'] = $type;
+                    $this->parsedAttributes['account_plan_type'] = (string)$type;
                 }
             });
         }
@@ -1634,9 +1630,7 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$date) {
-                if ($this->assertDate($date)) {
-                    $this->parsedAttributes['period_end_date'] = $date;
-                }
+                $this->parsedAttributes['period_end_date'] = (string)$date;
             });
         }
 
@@ -1773,7 +1767,9 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$number, &$acquisition, &$operation) {
                 if ($this->assertString($number, 'Expected organisation number')) {
-                    $this->parsedAttributes['company_org_nr'] = [$number, intval($acquisition), intval($operation)];
+                    $this->parsedAttributes['company_org_nr'] = (string)$number;
+                    $this->parsedAttributes['company_acquisition_nr'] = (string)$acquisition;
+                    $this->parsedAttributes['company_operation_nr'] = (string)$operation;
                 }
             });
         }
@@ -1889,8 +1885,8 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$name, &$version) {
                 if ($this->assertString($name, 'Expected name') && $this->assertString($version, 'Expected version')) {
-                    $this->parsedAttributes['generating_program'] = $name;
-                    $this->parsedAttributes['generating_program_version'] = $version;
+                    $this->parsedAttributes['generating_program'] = (string)$name;
+                    $this->parsedAttributes['generating_program_version'] = (string)$version;
                 }
             });
         }
@@ -2130,7 +2126,8 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$startDate, &$endDate) {
                 if ($this->assertInt($year) && $this->assertDate($startDate) && $this->assertDate($endDate)) {
-                    $this->parsedAttributes["financial_year[$year]"] = [$startDate, $endDate];
+                    $this->parsedAttributes["financial_year_start[$year]"] = (string)$startDate;
+                    $this->parsedAttributes["financial_year_end[$year]"] = (string)$endDate;
                 }
             });
         }
@@ -2224,7 +2221,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$ver) {
                 if ($this->assertInt($ver, 'Expected SIE version')) {
-                    $this->parsedAttributes['sie_version'] = $ver;
+                    $this->parsedAttributes['sie_version'] = (string)$ver;
                 }
             });
         }
@@ -2306,7 +2303,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year) {
                 if ($this->assertInt($year)) {
-                    $this->parsedAttributes["taxation_year"] = $year;
+                    $this->parsedAttributes["taxation_year"] = (string)$year;
                 }
             });
         }
@@ -2400,7 +2397,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$currency) {
                 if ($this->assertString($currency, 'Expected currency name')) {
-                    $this->parsedAttributes['currency'] = $currency;
+                    $this->parsedAttributes['currency'] = (string)$currency;
                     $this->getCurrencyBuilder()->setCurrencyClass($currency);
                 }
             });
@@ -2941,7 +2938,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$account, &$sru) {
                 if ($this->assertAccount($account) && $this->assertInt($sru, 'Expected SRU code')) {
-                    $account->setAttribute('sru', $sru);
+                    $account->setAttribute('sru', (string)$sru);
                 }
             });
         }
@@ -4318,7 +4315,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$period, &$account, &$dims, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($dims)) {
-                    $key = "$year.{$period->format('Ym')}";
+                    $key = "$year.$period";
 
                     $this->writeAttribute($account, "period_budget_balance", (string)$balance, $key);
                     $this->writeAttribute($account, "period_budget_quantity", (string)$quantity, $key);
@@ -4530,7 +4527,7 @@ class Grammar extends AbstractParser
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$period, &$account, &$dims, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($dims)) {
-                    $key = "$year.{$period->format('Ym')}";
+                    $key = "$year.$period";
 
                     $this->writeAttribute($account, "period_balance", (string)$balance, $key);
                     $this->writeAttribute($account, "period_quantity", (string)$quantity, $key);
@@ -4928,9 +4925,9 @@ class Grammar extends AbstractParser
                     $this->parsedItems[] = $this->createVerification(
                         $series,
                         $number,
-                        $date,
+                        new \DateTimeImmutable($date),
                         $desc ?: '',
-                        $regdate ?: null,
+                        $regdate ? new \DateTimeImmutable($regdate) : null,
                         $sign ?: '',
                         $trans
                     );
@@ -5246,7 +5243,7 @@ class Grammar extends AbstractParser
                         'account' => $account,
                         'dimensions' => $dims,
                         'amount' => $amount,
-                        'date' => $date,
+                        'date' => $date ? new \DateTimeImmutable($date) : null,
                         'description' => $desc,
                         'quantity' => (string)$quantity,
                         'signature' => $sign,
@@ -5481,7 +5478,7 @@ class Grammar extends AbstractParser
                         'account' => $account,
                         'dimensions' => $dims,
                         'amount' => $amount,
-                        'date' => $date,
+                        'date' => $date ? new \DateTimeImmutable($date) : null,
                         'description' => $desc,
                         'quantity' => (string)$quantity,
                         'signature' => $sign,
@@ -5722,7 +5719,7 @@ class Grammar extends AbstractParser
                         'account' => $account,
                         'dimensions' => $dims,
                         'amount' => $amount,
-                        'date' => $date,
+                        'date' => $date ? new \DateTimeImmutable($date) : null,
                         'description' => $desc,
                         'quantity' => (string)$quantity,
                         'signature' => $sign,
@@ -7227,11 +7224,7 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$year, &$month, &$day) {
-                return new \DateTimeImmutable(
-                    implode($year)
-                    . (implode((array)$month) ?: '01')
-                    . (implode((array)$day) ?: '01')
-                );
+                return implode($year) . implode((array)$month) . implode((array)$day);
             });
         }
 

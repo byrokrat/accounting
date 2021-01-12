@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Verification;
 
-use byrokrat\accounting\AttributableTestTrait;
-use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidVerificationException;
@@ -20,11 +18,22 @@ use Prophecy\Argument;
 class VerificationTest extends \PHPUnit\Framework\TestCase
 {
     use \Prophecy\PhpUnit\ProphecyTrait;
-    use AttributableTestTrait;
 
-    protected function getAttributableToTest(): AttributableInterface
+    public function testAttributes()
     {
-        return new Verification();
+        $attributable = new Verification();
+
+        $this->assertFalse($attributable->hasAttribute('does-not-exist'));
+
+        $this->assertSame('', $attributable->getAttribute('does-not-exist'));
+
+        $attributable->setAttribute('foo', 'bar');
+
+        $this->assertTrue($attributable->hasAttribute('foo'));
+
+        $this->assertSame('bar', $attributable->getAttribute('foo'));
+
+        $this->assertSame(['foo' => 'bar'], $attributable->getAttributes());
     }
 
     public function testId()

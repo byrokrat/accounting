@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Dimension;
 
-use byrokrat\accounting\AttributableTestTrait;
-use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Summary;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\amount\Amount;
@@ -13,11 +11,22 @@ use byrokrat\amount\Amount;
 class DimensionTest extends \PHPUnit\Framework\TestCase
 {
     use \Prophecy\PhpUnit\ProphecyTrait;
-    use AttributableTestTrait;
 
-    protected function getAttributableToTest(): AttributableInterface
+    public function testAttributes()
     {
-        return new Dimension('');
+        $attributable = new Dimension('');
+
+        $this->assertFalse($attributable->hasAttribute('does-not-exist'));
+
+        $this->assertSame('', $attributable->getAttribute('does-not-exist'));
+
+        $attributable->setAttribute('foo', 'bar');
+
+        $this->assertTrue($attributable->hasAttribute('foo'));
+
+        $this->assertSame('bar', $attributable->getAttribute('foo'));
+
+        $this->assertSame(['foo' => 'bar'], $attributable->getAttributes());
     }
 
     public function testGetId()

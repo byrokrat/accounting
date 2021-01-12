@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Transaction;
 
-use byrokrat\accounting\AttributableTestTrait;
-use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Exception\InvalidArgumentException;
@@ -17,14 +15,25 @@ use Prophecy\Argument;
 class TransactionTest extends \PHPUnit\Framework\TestCase
 {
     use \Prophecy\PhpUnit\ProphecyTrait;
-    use AttributableTestTrait;
 
-    protected function getAttributableToTest(): AttributableInterface
+    public function testAttributes()
     {
-        return new Transaction(
+        $attributable = new Transaction(
             amount: new Amount('0'),
             account: $this->createMock(AccountInterface::class),
         );
+
+        $this->assertFalse($attributable->hasAttribute('does-not-exist'));
+
+        $this->assertSame('', $attributable->getAttribute('does-not-exist'));
+
+        $attributable->setAttribute('foo', 'bar');
+
+        $this->assertTrue($attributable->hasAttribute('foo'));
+
+        $this->assertSame('bar', $attributable->getAttribute('foo'));
+
+        $this->assertSame(['foo' => 'bar'], $attributable->getAttributes());
     }
 
     public function testId()

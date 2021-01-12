@@ -36,7 +36,7 @@ class AbstractParser
     /** @var array<AccountingObjectInterface> */
     protected array $parsedItems = [];
 
-    /** @var array<string, mixed> */
+    /** @var array<string, string> */
     protected array $parsedAttributes = [];
 
     public function __construct(
@@ -53,7 +53,7 @@ class AbstractParser
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<string, string>
      */
     protected function getParsedAttributes(): array
     {
@@ -135,7 +135,7 @@ class AbstractParser
     /**
      * Helper that writes an attribute to an attributable
      */
-    protected function writeAttribute(AttributableInterface $attr, string $key, mixed $value, string $year = ''): void
+    protected function writeAttribute(AttributableInterface $attr, string $key, string $value, string $year = ''): void
     {
         if ('' == $year || '0' == $year) {
             $attr->setAttribute($key, $value);
@@ -213,6 +213,6 @@ class AbstractParser
      */
     protected function assertDate(mixed $expr, string $failureMessage = 'Expected date'): bool
     {
-        return $this->assert(is_object($expr) && $expr instanceof \DateTimeImmutable, $failureMessage);
+        return $this->assert(is_string($expr) && ctype_digit($expr), $failureMessage);
     }
 }

@@ -173,11 +173,11 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider dateTypeProvider
      */
-    public function testDateType(string $raw, \DateTimeImmutable $date)
+    public function testDateType(string $raw, string $expected)
     {
         $this->assertAttributes(
             [
-                'period_end_date' => $date
+                'period_end_date' => $expected
             ],
             $this->parse("
                 #FLAGGA 1
@@ -274,29 +274,29 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertAttributes(
             [
-                'company_sni_code' => 1234,
-                'company_address' => [
-                    'contact' => 'A',
-                    'street' => 'B',
-                    'postal' => 'C',
-                    'phone' => 'D',
-                ],
+                'company_sni_code' => '1234',
+                'company_address_contact' => 'A',
+                'company_address_street' => 'B',
+                'company_address_postal' => 'C',
+                'company_address_phone' => 'D',
                 'company_name' => 'name',
                 'company_id' => 'X',
                 'charset' => 'PC8',
                 'company_type' => 'AB',
-                'generation_date' => new \DateTimeImmutable('20160824'),
+                'generation_date' => '20160824',
                 'generating_user' => 'HF',
                 'account_plan_type' => 'BAS95',
-                'period_end_date' => new \DateTimeImmutable('20160101'),
-                'company_org_nr' => ['123456-1234', 0, 0],
+                'period_end_date' => '20160101',
+                'company_org_nr' => '123456-1234',
                 'generating_program' => 'byrokrat',
                 'generating_program_version' => '1.0',
                 'description' => 'foo bar baz',
-                'financial_year[0]' => [new \DateTimeImmutable('20160101'), new \DateTimeImmutable('20161231')],
-                'financial_year[-1]' => [new \DateTimeImmutable('20150101'), new \DateTimeImmutable('20151231')],
-                'sie_version' => 4,
-                'taxation_year' => 2016,
+                'financial_year_start[0]' => '20160101',
+                'financial_year_end[0]' => '20161231',
+                'financial_year_start[-1]' => '20150101',
+                'financial_year_end[-1]' => '20151231',
+                'sie_version' => '4',
+                'taxation_year' => '2016',
                 'currency' => 'EUR',
             ],
             $this->parse("
@@ -399,7 +399,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         ");
 
         $this->assertSame(
-            2000,
+            '2000',
             $content->select()->account('1920')->getAttribute('sru')
         );
     }

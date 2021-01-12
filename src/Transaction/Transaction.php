@@ -40,7 +40,7 @@ final class Transaction implements TransactionInterface
 
     /**
      * @param array<DimensionInterface> $dimensions
-     * @param array<string, mixed> $attributes
+     * @param array<string, string> $attributes
      */
     public function __construct(
         private AccountInterface $account,

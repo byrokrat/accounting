@@ -22,13 +22,12 @@
 namespace byrokrat\accounting\Verification;
 
 use byrokrat\accounting\AccountingObjectInterface;
-use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Transaction\TransactionInterface;
 
 /**
  * The basic idea of a verification is a balanced collection of transactions
  */
-interface VerificationInterface extends AccountingObjectInterface, AttributableInterface
+interface VerificationInterface extends AccountingObjectInterface
 {
     /**
      * Get date when transactions occured

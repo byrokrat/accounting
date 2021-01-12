@@ -496,19 +496,15 @@ class Query implements \IteratorAggregate, \Countable
      */
     public function whereAttribute(string $key): Query
     {
-        return $this->where(fn($item) => $item instanceof AttributableInterface && $item->hasAttribute($key));
+        return $this->where(fn($item) => $item->hasAttribute($key));
     }
 
     /**
      * Create a new query with objects containing attribute value
      */
-    public function whereAttributeValue(string $key, mixed $value): Query
+    public function whereAttributeValue(string $key, string $value): Query
     {
-        return $this->where(function ($item) use ($key, $value) {
-            return $item instanceof AttributableInterface
-                && $item->hasAttribute($key)
-                && $item->getAttribute($key) == $value;
-        });
+        return $this->where(fn($item) => $item->hasAttribute($key) && $item->getAttribute($key) == $value);
     }
 
     private static function fromClosure(\Closure $factory): Query
