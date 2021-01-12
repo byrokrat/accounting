@@ -26,7 +26,7 @@ namespace byrokrat\accounting\Dimension;
 use byrokrat\accounting\AttributableTrait;
 use byrokrat\accounting\Summary;
 use byrokrat\accounting\Transaction\TransactionInterface;
-use byrokrat\amount\Amount;
+use Money\Money;
 
 class Dimension implements DimensionInterface
 {
@@ -110,7 +110,7 @@ class Dimension implements DimensionInterface
         );
     }
 
-    public function setIncomingBalance(Amount $incomingBalance): void
+    public function setIncomingBalance(Money $incomingBalance): void
     {
         $this->summary = Summary::fromIncomingBalance($incomingBalance);
     }

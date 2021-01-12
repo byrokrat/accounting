@@ -24,11 +24,16 @@ declare(strict_types=1);
 namespace byrokrat\accounting\Template;
 
 use byrokrat\accounting\Container;
+use byrokrat\accounting\MoneyFactory;
+use Money\Currency;
 
 final class TemplateRendererFactory
 {
-     public function createRenderer(Container $dimensions): TemplateRenderer
-     {
-         return new TemplateRenderer($dimensions->select(), new SekMoneyFactory());
-     }
+    public function createRenderer(Container $dimensions, Currency $currency = null): TemplateRenderer
+    {
+        return new TemplateRenderer(
+            $dimensions->select(),
+            new MoneyFactory($currency)
+        );
+    }
 }

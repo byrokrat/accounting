@@ -32,7 +32,7 @@ use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Verification\VerificationInterface;
-use byrokrat\amount\Amount;
+use Money\Money;
 
 /**
  * Filter and iterate over collections of accounting objects
@@ -464,7 +464,7 @@ class Query implements \IteratorAggregate, \Countable
     /**
      * Create a new query with objects containing an amount equal to $amount
      */
-    public function whereAmountEquals(Amount $amount): Query
+    public function whereAmountEquals(Money $amount): Query
     {
         return $this->where(
             fn($item) => $item instanceof TransactionInterface && $item->getAmount()->equals($amount)
@@ -474,20 +474,20 @@ class Query implements \IteratorAggregate, \Countable
     /**
      * Create a new query with objects containing an amount greater than $amount
      */
-    public function whereAmountIsGreaterThan(Amount $amount): Query
+    public function whereAmountIsGreaterThan(Money $amount): Query
     {
         return $this->where(
-            fn($item) => $item instanceof TransactionInterface && $item->getAmount()->isGreaterThan($amount)
+            fn($item) => $item instanceof TransactionInterface && $item->getAmount()->greaterThan($amount)
         );
     }
 
     /**
      * Create a new query with objects containing an amount less than $amount
      */
-    public function whereAmountIsLessThan(Amount $amount): Query
+    public function whereAmountIsLessThan(Money $amount): Query
     {
         return $this->where(
-            fn($item) => $item instanceof TransactionInterface && $item->getAmount()->isLessThan($amount)
+            fn($item) => $item instanceof TransactionInterface && $item->getAmount()->lessThan($amount)
         );
     }
 

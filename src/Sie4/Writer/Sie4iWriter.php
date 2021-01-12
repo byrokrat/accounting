@@ -25,6 +25,9 @@ namespace byrokrat\accounting\Sie4\Writer;
 
 use byrokrat\accounting\Container;
 use byrokrat\accounting\Dimension\AccountInterface;
+use Money\Formatter\DecimalMoneyFormatter;
+use Money\Currencies\ISOCurrencies;
+use Money\MoneyFormatter;
 
 /**
  * SIE 4I file format implementation.
@@ -41,12 +44,19 @@ use byrokrat\accounting\Dimension\AccountInterface;
  */
 final class Sie4iWriter
 {
+    private MoneyFormatter $moneyFormatter;
+
     private const ACCOUNT_TYPE_MAP = [
         AccountInterface::TYPE_ASSET => 'T',
         AccountInterface::TYPE_COST => 'K',
         AccountInterface::TYPE_DEBT => 'S',
         AccountInterface::TYPE_EARNING => 'I',
     ];
+
+    public function __construct()
+    {
+        $this->moneyFormatter = new DecimalMoneyFormatter(new ISOCurrencies());
+    }
 
     public function generateSie(Container $container, MetaData $metaData = null): string
     {
@@ -129,7 +139,7 @@ final class Sie4iWriter
                 $output->writeln(
                     "#TRANS %s {} %s %s %s %s %s",
                     $transaction->getAccount()->getId(),
-                    $transaction->getAmount()->getString(2),
+                    $this->moneyFormatter->format($transaction->getAmount()),
                     $transaction->getTransactionDate()->formatSie4(),
                     $transaction->getDescription(),
                     '',

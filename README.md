@@ -30,10 +30,25 @@ and generating files in the [SIE4](http://www.sie.se/) file format.
 ## Usage
 
 1. [Generating accounting data using templates](#generating-accounting-data-using-templates)
+1. [Handling monetary amounts](#handling-monetary-amounts)
 1. [Writing SIE4 files](#writing-sie4-files)
 1. [Parsing SIE4 files](#parsing-sie4-files)
 1. [Querying accounting data](#querying-accounting-data)
 1. [Writing macros](#writing-macros)
+
+### Handling monetary amounts
+
+*Accounting* uses [Moneyphp](https://moneyphp.org) to hande monetary amounts. More
+information on the money api can be found on their website. In these examples
+we need to format amounts, wich we do using the simple `DecimalMoneyFormatter`.
+
+<!-- @example moneyFormatter -->
+```php
+use Money\Formatter\DecimalMoneyFormatter;
+use Money\Currencies\ISOCurrencies;
+
+$moneyFormatter = new DecimalMoneyFormatter(new ISOCurrencies());
+```
 
 ### Generating accounting data using templates
 
@@ -161,10 +176,13 @@ $orderedAccounts = $verifications->select()->accounts()->orderById()->asArray();
 <!--
     @example calculate-magnitude
     @include verifications
+    @include moneyFormatter
     @expectOutput "1332.00"
 -->
 ```php
-echo $verifications->select()->verifications()->asSummary()->getMagnitude();
+echo $moneyFormatter->format(
+    $verifications->select()->verifications()->asSummary()->getMagnitude()
+);
 ```
 
 #### Sorting transactions into a ledger (huvudbok)
@@ -175,15 +193,16 @@ An example of how Accounting may be used to sort transactions inte a ledger
 <!--
     @example ledger
     @include verifications
+    @include moneyFormatter
     @expectOutput "/Outgoing balance 1332.00/"
 -->
 ```php
-$verifications->select()->accounts()->orderById()->each(function ($account) {
+$verifications->select()->accounts()->orderById()->each(function ($account) use ($moneyFormatter) {
     printf(
         "%s %s\nIncoming balance %s\n",
         $account->getId(),
         $account->getDescription(),
-        $account->getSummary()->getIncomingBalance()
+        $moneyFormatter->format($account->getSummary()->getIncomingBalance())
     );
 
     foreach ($account->getTransactions() as $trans) {
@@ -191,11 +210,14 @@ $verifications->select()->accounts()->orderById()->each(function ($account) {
             "%s\t%s\t%s\n",
             $trans->getVerificationId(),
             $account->getDescription(),
-            $trans->getAmount(),
+            $moneyFormatter->format($trans->getAmount()),
         );
     }
 
-    echo "Outgoing balance {$account->getSummary()->getOutgoingBalance()}\n\n";
+    printf(
+        "Outgoing balance %s\n\n",
+        $moneyFormatter->format($account->getSummary()->getOutgoingBalance())
+    );
 });
 ```
 

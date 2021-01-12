@@ -30,7 +30,7 @@ use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidTransactionException;
 use byrokrat\accounting\Summary;
-use byrokrat\amount\Amount;
+use Money\Money;
 
 final class Transaction implements TransactionInterface
 {
@@ -45,7 +45,7 @@ final class Transaction implements TransactionInterface
      */
     public function __construct(
         private AccountInterface $account,
-        private Amount $amount,
+        private Money $amount,
         private string $verificationId = '0',
         ?AccountingDate $transactionDate = null,
         private string $description = '',
@@ -104,7 +104,7 @@ final class Transaction implements TransactionInterface
         return $this->signature;
     }
 
-    public function getAmount(): Amount
+    public function getAmount(): Money
     {
         return $this->amount;
     }

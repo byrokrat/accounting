@@ -3,6 +3,7 @@
 namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\AccountingDate;
+use Money\Currency;
 
 class Grammar extends AbstractParser
 {
@@ -2400,7 +2401,7 @@ class Grammar extends AbstractParser
             $this->value = call_user_func(function () use (&$currency) {
                 if ($this->assertString($currency, 'Expected currency name')) {
                     $this->parsedAttributes['currency'] = (string)$currency;
-                    $this->getCurrencyBuilder()->setCurrencyClass($currency);
+                    $this->getMoneyFactory()->setCurrency(new Currency($currency));
                 }
             });
         }
@@ -3574,7 +3575,7 @@ class Grammar extends AbstractParser
             $this->value = call_user_func(function () use (&$year, &$account, &$balance, &$quantity) {
                 if ($this->assertInt($year) && $this->assertAccount($account)) {
                     if (0 === $year && $balance) {
-                        $account->setIncomingBalance($this->getCurrencyBuilder()->createMoney($balance));
+                        $account->setIncomingBalance($this->getMoneyFactory()->createMoney($balance));
                     }
 
                     $this->writeAttribute($account, "incoming_balance", (string)$balance, $year);
@@ -3923,7 +3924,7 @@ class Grammar extends AbstractParser
                 if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($dims)) {
                     foreach ($dims as $dim) {
                         if (0 === $year && $balance) {
-                            $dim->setIncomingBalance($this->getCurrencyBuilder()->createMoney($balance));
+                            $dim->setIncomingBalance($this->getMoneyFactory()->createMoney($balance));
                         }
 
                         $this->writeAttribute($dim, "incoming_balance", (string)$balance, $year);
@@ -7567,7 +7568,7 @@ class Grammar extends AbstractParser
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$negation, &$units, &$subunits) {
-                return $this->getCurrencyBuilder()->createMoney($negation.implode($units).'.'.implode($subunits));
+                return $this->getMoneyFactory()->createMoney($negation.implode($units).'.'.implode($subunits));
             });
         }
 

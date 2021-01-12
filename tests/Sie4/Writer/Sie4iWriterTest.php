@@ -8,7 +8,7 @@ use byrokrat\accounting\Container;
 use byrokrat\accounting\Dimension\Account;
 use byrokrat\accounting\Transaction\Transaction;
 use byrokrat\accounting\Verification\Verification;
-use byrokrat\amount\Amount;
+use Money\Money;
 
 /**
  * @covers \byrokrat\accounting\Sie4\Writer\Sie4iWriter
@@ -20,8 +20,8 @@ class Sie4iWriterTest extends \PHPUnit\Framework\TestCase
         $container = new Container(
             new Verification(
                 transactions: [
-                    new Transaction(amount: new Amount('100'), account: new Account('1000')),
-                    new Transaction(amount: new Amount('-100'), account: new Account('1000')),
+                    new Transaction(amount: Money::SEK('100'), account: new Account('1000')),
+                    new Transaction(amount: Money::SEK('-100'), account: new Account('1000')),
                 ]
             )
         );

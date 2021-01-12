@@ -21,16 +21,8 @@
 
 declare(strict_types=1);
 
-namespace byrokrat\accounting\Template;
+namespace byrokrat\accounting\Exception;
 
-use byrokrat\amount\Amount;
-use byrokrat\amount\Currency\SEK;
-
-final class SekMoneyFactory implements MoneyFactoryInterface
+class InvalidAmountException extends InvalidDimensionException
 {
-    // @TODO Exception if $rawMoney is not a parsable string
-    public function createMoney(string $rawMoney): Amount
-    {
-        return new SEK($rawMoney);
-    }
 }

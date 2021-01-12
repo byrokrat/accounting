@@ -14,7 +14,7 @@ use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Summary;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Verification\VerificationInterface;
-use byrokrat\amount\Amount;
+use Money\Money;
 use Prophecy\Argument;
 
 class QueryTest extends \PHPUnit\Framework\TestCase
@@ -70,19 +70,19 @@ class QueryTest extends \PHPUnit\Framework\TestCase
         $item1 = $this->accountingMock(
             type: TransactionInterface::class,
             id: '1',
-            summary: Summary::fromAmount(new Amount('50'))
+            summary: Summary::fromAmount(Money::SEK('50'))
         );
 
         $item2 = $this->accountingMock(
             type: TransactionInterface::class,
             id: '2',
-            summary: Summary::fromAmount(new Amount('150'))
+            summary: Summary::fromAmount(Money::SEK('150'))
         );
 
         $query = new Query([$item1, $item2]);
 
         $this->assertTrue(
-            $query->asSummary()->getOutgoingBalance()->equals(new Amount('200'))
+            $query->asSummary()->getOutgoingBalance()->equals(Money::SEK('200'))
         );
     }
 
@@ -612,22 +612,22 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     private function whereAmountQuery(): Query
     {
         $transA = $this->prophesize(TransactionInterface::class);
-        $transA->getAmount()->willReturn(new Amount('4'));
+        $transA->getAmount()->willReturn(Money::SEK('4'));
         $transA->getItems()->willReturn([]);
         $transA = $transA->reveal();
 
         $transB = $this->prophesize(TransactionInterface::class);
-        $transB->getAmount()->willReturn(new Amount('2'));
+        $transB->getAmount()->willReturn(Money::SEK('2'));
         $transB->getItems()->willReturn([]);
         $transB = $transB->reveal();
 
         $transC = $this->prophesize(TransactionInterface::class);
-        $transC->getAmount()->willReturn(new Amount('3'));
+        $transC->getAmount()->willReturn(Money::SEK('3'));
         $transC->getItems()->willReturn([]);
         $transC = $transC->reveal();
 
         $transD = $this->prophesize(TransactionInterface::class);
-        $transD->getAmount()->willReturn(new Amount('1'));
+        $transD->getAmount()->willReturn(Money::SEK('1'));
         $transD->getItems()->willReturn([]);
         $transD = $transD->reveal();
 
@@ -641,12 +641,12 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertCount(
             1,
-            $this->whereAmountQuery()->whereAmountEquals(new Amount('4'))
+            $this->whereAmountQuery()->whereAmountEquals(Money::SEK('4'))
         );
 
         $this->assertCount(
             1,
-            $this->whereAmountQuery()->whereAmountEquals(new Amount('3'))
+            $this->whereAmountQuery()->whereAmountEquals(Money::SEK('3'))
         );
     }
 
@@ -657,12 +657,12 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertCount(
             2,
-            $this->whereAmountQuery()->whereAmountIsGreaterThan(new Amount('2'))
+            $this->whereAmountQuery()->whereAmountIsGreaterThan(Money::SEK('2'))
         );
 
         $this->assertCount(
             1,
-            $this->whereAmountQuery()->whereAmountIsGreaterThan(new Amount('3'))
+            $this->whereAmountQuery()->whereAmountIsGreaterThan(Money::SEK('3'))
         );
     }
 
@@ -673,12 +673,12 @@ class QueryTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertCount(
             1,
-            $this->whereAmountQuery()->whereAmountIsLessThan(new Amount('2'))
+            $this->whereAmountQuery()->whereAmountIsLessThan(Money::SEK('2'))
         );
 
         $this->assertCount(
             2,
-            $this->whereAmountQuery()->whereAmountIsLessThan(new Amount('3'))
+            $this->whereAmountQuery()->whereAmountIsLessThan(Money::SEK('3'))
         );
     }
 

@@ -30,7 +30,6 @@ use byrokrat\accounting\Exception\InvalidVerificationException;
 use byrokrat\accounting\Exception\UnbalancedVerificationException;
 use byrokrat\accounting\Summary;
 use byrokrat\accounting\Transaction\TransactionInterface;
-use byrokrat\amount\Exception as AmountException;
 
 /**
  * Verification value object wrapping a set of transactions
@@ -80,7 +79,7 @@ final class Verification implements VerificationInterface
             if (!$this->summary->isBalanced()) {
                 throw new UnbalancedVerificationException('Unable to create unbalanced verification');
             }
-        } catch (AmountException $exception) {
+        } catch (\InvalidArgumentException $exception) {
             throw new InvalidVerificationException($exception->getMessage(), 0, $exception);
         }
 

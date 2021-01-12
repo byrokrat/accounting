@@ -25,7 +25,7 @@ use byrokrat\accounting\AccountingDate;
 use byrokrat\accounting\AccountingObjectInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
-use byrokrat\amount\Amount;
+use Money\Money;
 
 /**
  * A pure transaction is an amount moved to or from an account
@@ -50,7 +50,7 @@ interface TransactionInterface extends AccountingObjectInterface
     /**
      * Get amount of money moved to or from account
      */
-    public function getAmount(): Amount;
+    public function getAmount(): Money;
 
     /**
      * Get Account this transaction concerns

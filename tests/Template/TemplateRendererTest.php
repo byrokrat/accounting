@@ -8,10 +8,11 @@ use byrokrat\accounting\AccountingDate;
 use byrokrat\accounting\Container;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
+use byrokrat\accounting\MoneyFactory;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use byrokrat\accounting\Query;
 use byrokrat\accounting\Verification\VerificationInterface;
-use byrokrat\amount\Amount;
+use Money\Money;
 use Prophecy\Argument;
 
 /**
@@ -25,7 +26,7 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
     {
         $renderer = new TemplateRenderer(
             $this->createMock(Query::class),
-            $this->createMock(MoneyFactoryInterface::class),
+            $this->createMock(MoneyFactory::class),
         );
 
         $this->assertInstanceOf(
@@ -43,7 +44,7 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
 
         $renderer = new TemplateRenderer(
             $this->createMock(Query::class),
-            $this->createMock(MoneyFactoryInterface::class),
+            $this->createMock(MoneyFactory::class),
         );
 
         $renderer->render(
@@ -65,7 +66,7 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
 
         $renderer = new TemplateRenderer(
             $this->createMock(Query::class),
-            $this->createMock(MoneyFactoryInterface::class),
+            $this->createMock(MoneyFactory::class),
         );
 
         $verification = $renderer->render($template, new Translator([]));
@@ -80,8 +81,8 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
 
     public function testRenderTransaction()
     {
-        $moneyFactory = $this->prophesize(MoneyFactoryInterface::class);
-        $moneyFactory->createMoney(Argument::any())->willReturn(new Amount('0'));
+        $moneyFactory = $this->prophesize(MoneyFactory::class);
+        $moneyFactory->createMoney(Argument::any())->willReturn(Money::SEK('0'));
 
         $renderer = new TemplateRenderer(
             $this->createMock(Query::class),
@@ -104,9 +105,9 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $query->dimension('dim')->willReturn($dimension)->shouldBeCalled();
         $query->account('1234')->willReturn($account)->shouldBeCalled();
 
-        $amount = new Amount('0');
+        $amount = Money::SEK('0');
 
-        $moneyFactory = $this->prophesize(MoneyFactoryInterface::class);
+        $moneyFactory = $this->prophesize(MoneyFactory::class);
         $moneyFactory->createMoney('0')->willReturn($amount)->shouldBeCalled();
 
         $renderer = new TemplateRenderer($query->reveal(), $moneyFactory->reveal());
@@ -148,8 +149,8 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $query = $this->prophesize(Query::class);
         $query->account(Argument::any())->willReturn($account);
 
-        $amount = new Amount('0');
-        $moneyFactory = $this->prophesize(MoneyFactoryInterface::class);
+        $amount = Money::SEK('0');
+        $moneyFactory = $this->prophesize(MoneyFactory::class);
         $moneyFactory->createMoney(Argument::any())->willReturn($amount);
 
         $renderer = new TemplateRenderer($query->reveal(), $moneyFactory->reveal());

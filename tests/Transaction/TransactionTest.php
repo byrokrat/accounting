@@ -10,7 +10,7 @@ use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidTransactionException;
 use byrokrat\accounting\Summary;
-use byrokrat\amount\Amount;
+use Money\Money;
 use Prophecy\Argument;
 
 class TransactionTest extends \PHPUnit\Framework\TestCase
@@ -20,7 +20,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     public function testAttributes()
     {
         $attributable = new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
         );
 
@@ -40,7 +40,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     public function testId()
     {
         $trans = new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
         );
 
@@ -52,7 +52,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
         $this->expectException(InvalidArgumentException::class);
 
         new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
             dimensions: ['this-is-not-a-dimension-object'],
         );
@@ -61,7 +61,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     public function testAttributesToConstructor()
     {
         $trans = new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
             attributes: ['key' => 'val'],
         );
@@ -74,7 +74,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
 
     public function testGetAmount()
     {
-        $amount = new Amount('100');
+        $amount = Money::SEK('100');
 
         $trans = new Transaction(
             amount: $amount,
@@ -89,7 +89,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
         $account = $this->createMock(AccountInterface::class);
 
         $trans = new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $account,
         );
 
@@ -103,7 +103,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
         $account->addTransaction(Argument::type(Transaction::class))->shouldBeCalled();
 
         new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $account->reveal(),
         );
     }
@@ -112,7 +112,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     {
         $trans = new Transaction(
             verificationId: '999',
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
         );
 
@@ -124,7 +124,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
         $transactionDate = AccountingDate::fromString('20210112');
 
         $trans = new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
             transactionDate: $transactionDate,
         );
@@ -135,7 +135,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     public function testDefaultTransactionDate()
     {
         $trans = new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
         );
 
@@ -145,7 +145,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     public function testGetDescription()
     {
         $trans = new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
             description: 'desc',
         );
@@ -156,7 +156,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     public function testGetSignature()
     {
         $trans = new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
             signature: 'sign',
         );
@@ -169,7 +169,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
         $dim = $this->createMock(DimensionInterface::class);
 
         $trans = new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
             dimensions: [$dim, $dim],
         );
@@ -184,7 +184,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
         $dim->addTransaction(Argument::type(Transaction::class))->shouldBeCalled();
 
         new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
             dimensions: [$dim->reveal()],
         );
@@ -197,7 +197,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
 
         $trans = new Transaction(
             account: $account,
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             dimensions: [$dim, $dim],
         );
 
@@ -207,7 +207,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     public function testDefaultsToNotAdded()
     {
         $trans = new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
         );
 
@@ -217,7 +217,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     public function testAdded()
     {
         $trans = new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
             added: true,
         );
@@ -228,7 +228,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     public function testDefaultsToNotDeleted()
     {
         $trans = new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
         );
 
@@ -238,7 +238,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     public function testDeleted()
     {
         $trans = new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
             deleted: true,
         );
@@ -251,7 +251,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
         $this->expectException(InvalidTransactionException::class);
 
         new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
             added: true,
             deleted: true,
@@ -261,12 +261,12 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     public function testGetSummary()
     {
         $trans = new Transaction(
-            amount: new Amount('100'),
+            amount: Money::SEK('100'),
             account: $this->createMock(AccountInterface::class),
         );
 
         $this->assertEquals(
-            Summary::fromAmount(new Amount('100')),
+            Summary::fromAmount(Money::SEK('100')),
             $trans->getSummary()
         );
     }
@@ -274,13 +274,13 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
     public function testGetZeroSummaryForDeletedTransaction()
     {
         $trans = new Transaction(
-            amount: new Amount('100'),
+            amount: Money::SEK('100'),
             account: $this->createMock(AccountInterface::class),
             deleted: true
         );
 
         $this->assertTrue(
-            $trans->getSummary()->getMagnitude()->equals(new Amount('0'))
+            $trans->getSummary()->getMagnitude()->equals(Money::SEK('0'))
         );
     }
 }

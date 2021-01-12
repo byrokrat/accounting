@@ -23,7 +23,7 @@ namespace byrokrat\accounting\Dimension;
 
 use byrokrat\accounting\AccountingObjectInterface;
 use byrokrat\accounting\Transaction\TransactionInterface;
-use byrokrat\amount\Amount;
+use Money\Money;
 
 /**
  * A dimension is an entity through which transactions can be channeled
@@ -60,5 +60,5 @@ interface DimensionInterface extends AccountingObjectInterface
     /**
      * Set incoming balance
      */
-    public function setIncomingBalance(Amount $incomingBalance): void;
+    public function setIncomingBalance(Money $incomingBalance): void;
 }

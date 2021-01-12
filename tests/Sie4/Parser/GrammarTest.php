@@ -7,8 +7,7 @@ namespace byrokrat\accounting\Sie4\Parser;
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Container;
 use byrokrat\accounting\Dimension\DimensionInterface;
-use byrokrat\amount\Amount;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
 
 /**
  * Tests the grammar specification in Grammar.peg
@@ -520,7 +519,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider currencyTypeProvider
      */
-    public function testCurrencyType(string $rawMoney, string $parsedMoney)
+    public function testCurrencyType(string $rawMoney, string $parsedMoney, string $inSmallestUnit)
     {
         $account = $this->parse("
             #FLAGGA 1
@@ -528,7 +527,7 @@ class GrammarTest extends \PHPUnit\Framework\TestCase
         ")->select()->account('1920');
 
         $this->assertTrue(
-            $account->getSummary()->getIncomingBalance()->equals(new SEK($parsedMoney))
+            $account->getSummary()->getIncomingBalance()->equals(Money::SEK($inSmallestUnit))
         );
 
         $this->assertSame(

@@ -25,25 +25,25 @@ namespace byrokrat\accounting;
 
 use byrokrat\accounting\Exception\SummaryEmptyException;
 use byrokrat\accounting\Exception\SummaryNotBalancedException;
-use byrokrat\amount\Amount;
+use Money\Money;
 
 /**
  * Calculate amount summaries
  */
 final class Summary
 {
-    private Amount $incomingBalance;
-    private Amount $outgoingBalance;
-    private Amount $debit;
-    private Amount $credit;
+    private Money $incomingBalance;
+    private Money $outgoingBalance;
+    private Money $debit;
+    private Money $credit;
 
-    /** @var array<Amount> */
+    /** @var array<Money> */
     private array $amounts = [];
 
     /**
      * Create new summary with amount added
      */
-    public static function fromAmount(Amount $amount): self
+    public static function fromAmount(Money $amount): self
     {
         return (new static())->withAmount($amount);
     }
@@ -51,7 +51,7 @@ final class Summary
     /**
      * Create new summary with incoming balance
      */
-    public static function fromIncomingBalance(Amount $amount): self
+    public static function fromIncomingBalance(Money $amount): self
     {
         return (new static())->withIncomingBalance($amount);
     }
@@ -67,7 +67,7 @@ final class Summary
     /**
      * Get incoming balance
      */
-    public function getIncomingBalance(): Amount
+    public function getIncomingBalance(): Money
     {
         $this->calculateSummaries();
         return $this->incomingBalance;
@@ -76,7 +76,7 @@ final class Summary
     /**
      * Get outgoing balance
      */
-    public function getOutgoingBalance(): Amount
+    public function getOutgoingBalance(): Money
     {
         $this->calculateSummaries();
         return $this->outgoingBalance;
@@ -85,7 +85,7 @@ final class Summary
     /**
      * Get debit summary
      */
-    public function getDebitTotal(): Amount
+    public function getDebitTotal(): Money
     {
         $this->calculateSummaries();
         return $this->debit;
@@ -94,7 +94,7 @@ final class Summary
     /**
      * Get credit summary
      */
-    public function getCreditTotal(): Amount
+    public function getCreditTotal(): Money
     {
         $this->calculateSummaries();
         return $this->credit;
@@ -117,7 +117,7 @@ final class Summary
      *
      * @throws SummaryNotBalancedException if summary is not balanced
      */
-    public function getMagnitude(): Amount
+    public function getMagnitude(): Money
     {
         if (!$this->isBalanced()) {
             throw new SummaryNotBalancedException('Unable to calculate magnitude of unbalanced collection');
@@ -129,7 +129,7 @@ final class Summary
     /**
      * Create a new summary from current with amount included
      */
-    public function withAmount(Amount $amount): self
+    public function withAmount(Money $amount): self
     {
         $new = clone $this;
         $new->amounts[] = $amount;
@@ -140,7 +140,7 @@ final class Summary
     /**
      * Create a new summary from current with incoming balance overwritten
      */
-    public function withIncomingBalance(Amount $incomingBalance): self
+    public function withIncomingBalance(Money $incomingBalance): self
     {
         $new = clone $this;
         $new->incomingBalance = $incomingBalance;
@@ -193,12 +193,12 @@ final class Summary
             if ($amount->isPositive()) {
                 $this->debit = $this->debit->add($amount);
             } else {
-                $this->credit = $this->credit->add($amount->getAbsolute());
+                $this->credit = $this->credit->add($amount->absolute());
             }
         }
     }
 
-    private function createZeroAmount(): Amount
+    private function createZeroAmount(): Money
     {
         if (isset($this->incomingBalance)) {
             return $this->incomingBalance->subtract($this->incomingBalance);

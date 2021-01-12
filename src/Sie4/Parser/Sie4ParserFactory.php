@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
+use byrokrat\accounting\MoneyFactory;
+
 final class Sie4ParserFactory
 {
     public function createParser(): Sie4Parser
@@ -32,7 +34,7 @@ final class Sie4ParserFactory
         return new Sie4Parser(
             $logger,
             new AccountBuilder($logger),
-            new CurrencyBuilder($logger),
+            new MoneyFactory(),
             new DimensionBuilder($logger)
         );
     }

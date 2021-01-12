@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace byrokrat\accounting\Template;
 
 use byrokrat\accounting\AccountingDate;
+use byrokrat\accounting\MoneyFactory;
 use byrokrat\accounting\Transaction\Transaction;
 use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\accounting\Verification\Verification;
@@ -33,7 +34,7 @@ final class TemplateRenderer
 {
     public function __construct(
         private Query $dimensionQuery,
-        private MoneyFactoryInterface $moneyFactory,
+        private MoneyFactory $moneyFactory,
     ) {}
 
     public function render(VerificationTemplate $template, TranslatorInterface $translator): VerificationInterface

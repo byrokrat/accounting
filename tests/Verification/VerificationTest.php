@@ -11,9 +11,7 @@ use byrokrat\accounting\Exception\InvalidVerificationException;
 use byrokrat\accounting\Exception\UnbalancedVerificationException;
 use byrokrat\accounting\Summary;
 use byrokrat\accounting\Transaction\Transaction;
-use byrokrat\amount\Amount;
-use byrokrat\amount\Currency\EUR;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
 use Prophecy\Argument;
 
 class VerificationTest extends \PHPUnit\Framework\TestCase
@@ -79,7 +77,7 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
         $this->expectException(UnbalancedVerificationException::class);
 
         $trans = new Transaction(
-            amount: new SEK('1'),
+            amount: Money::SEK('1'),
             account: $this->createMock(AccountInterface::class),
         );
 
@@ -137,7 +135,7 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
     public function testAccessingTransactions()
     {
         $trans = new Transaction(
-            amount: new SEK('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
         );
 
@@ -151,17 +149,17 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
     {
         return [
             // magnitude        transaction amounts...
-            [new Amount('30'),  new Amount('10'),  new Amount('20'), new Amount('-30')],
-            [new Amount('200'), new Amount('200'), new Amount('-200')],
-            [new SEK('300'),    new SEK('100'),    new SEK('200'),   new SEK('-300')],
-            [new SEK('200'),    new SEK('200'),    new SEK('-200')],
+            [Money::EUR('30'),  Money::EUR('10'),  Money::EUR('20'),    Money::EUR('-30')],
+            [Money::EUR('200'), Money::EUR('200'), Money::EUR('-200')],
+            [Money::SEK('300'), Money::SEK('100'), Money::SEK('200'),   Money::SEK('-300')],
+            [Money::SEK('200'), Money::SEK('200'), Money::SEK('-200')],
         ];
     }
 
     /**
      * @dataProvider transactionArithmeticsProvider
      */
-    public function testTransactionArithmetics(Amount $magnitude, Amount ...$amounts)
+    public function testTransactionArithmetics(Money $magnitude, Money ...$amounts)
     {
         $verification = new Verification(
             transactions: array_map(
@@ -176,12 +174,12 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
     public function testExceptionOnCurrencyMissmatch()
     {
         $transEUR = new Transaction(
-            amount: new EUR('0'),
+            amount: Money::EUR('0'),
             account: $this->createMock(AccountInterface::class),
         );
 
         $transSEK = new Transaction(
-            amount: new SEK('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
         );
 
@@ -192,13 +190,13 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
     public function testExceptionOnCurrencyMissmatchInDeletedTransactions()
     {
         $transEUR = new Transaction(
-            amount: new EUR('0'),
+            amount: Money::EUR('0'),
             account: $this->createMock(AccountInterface::class),
             deleted: true
         );
 
         $transSEK = new Transaction(
-            amount: new SEK('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
             deleted: true
         );
@@ -210,20 +208,20 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
     public function testDeletedTransactionsDoesNotCount()
     {
         $trans = new Transaction(
-            amount: new Amount('100'),
+            amount: Money::SEK('100'),
             account: $this->createMock(AccountInterface::class),
             deleted: true
         );
 
         $verification = new Verification(transactions: [$trans]);
 
-        $this->assertTrue($verification->getSummary()->getMagnitude()->equals(new Amount('0')));
+        $this->assertTrue($verification->getSummary()->getMagnitude()->equals(Money::SEK('0')));
     }
 
     public function testGetItems()
     {
         $trans = new Transaction(
-            amount: new Amount('0'),
+            amount: Money::SEK('0'),
             account: $this->createMock(AccountInterface::class),
         );
 

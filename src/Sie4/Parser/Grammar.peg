@@ -22,6 +22,7 @@
 namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\AccountingDate;
+use Money\Currency;
 
 /**
  * Grammar for generating a SIE version 4 compliant parser
@@ -186,7 +187,7 @@ grammar Grammar extends AbstractParser
     VALUTA_POST = ROW_START 'VALUTA' ^ currency:STRING? ROW_END {
         if ($this->assertString($currency, 'Expected currency name')) {
             $this->parsedAttributes['currency'] = (string)$currency;
-            $this->getCurrencyBuilder()->setCurrencyClass($currency);
+            $this->getMoneyFactory()->setCurrency(new Currency($currency));
         }
     };
 
@@ -259,7 +260,7 @@ grammar Grammar extends AbstractParser
     IB_POST = ROW_START 'IB' ^ year:INT? account:ACCOUNT? balance:FLOAT? quantity:FLOAT? ROW_END {
         if ($this->assertInt($year) && $this->assertAccount($account)) {
             if (0 === $year && $balance) {
-                $account->setIncomingBalance($this->getCurrencyBuilder()->createMoney($balance));
+                $account->setIncomingBalance($this->getMoneyFactory()->createMoney($balance));
             }
 
             $this->writeAttribute($account, "incoming_balance", (string)$balance, $year);
@@ -278,7 +279,7 @@ grammar Grammar extends AbstractParser
         if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($dims)) {
             foreach ($dims as $dim) {
                 if (0 === $year && $balance) {
-                    $dim->setIncomingBalance($this->getCurrencyBuilder()->createMoney($balance));
+                    $dim->setIncomingBalance($this->getMoneyFactory()->createMoney($balance));
                 }
 
                 $this->writeAttribute($dim, "incoming_balance", (string)$balance, $year);
@@ -502,7 +503,7 @@ grammar Grammar extends AbstractParser
     };
 
     RAW_AMOUNT = negation:"-"? units:[0-9]+ "."? subunits:([0-9]? [0-9]?) {
-        return $this->getCurrencyBuilder()->createMoney($negation.implode($units).'.'.implode($subunits));
+        return $this->getMoneyFactory()->createMoney($negation.implode($units).'.'.implode($subunits));
     };
 
     // Account

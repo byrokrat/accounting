@@ -27,10 +27,11 @@ use byrokrat\accounting\AccountingDate;
 use byrokrat\accounting\AccountingObjectInterface;
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
+use byrokrat\accounting\MoneyFactory;
 use byrokrat\accounting\Transaction\Transaction;
 use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\accounting\Verification\Verification;
-use byrokrat\amount\Currency;
+use Money\Money;
 
 class AbstractParser
 {
@@ -43,7 +44,7 @@ class AbstractParser
     public function __construct(
         private Logger $logger,
         private AccountBuilder $accountBuilder,
-        private CurrencyBuilder $currencyBuilder,
+        private MoneyFactory $moneyFactory,
         private DimensionBuilder $dimensionBuilder
     ) {}
 
@@ -74,9 +75,9 @@ class AbstractParser
         return $this->accountBuilder;
     }
 
-    protected function getCurrencyBuilder(): CurrencyBuilder
+    protected function getMoneyFactory(): MoneyFactory
     {
-        return $this->currencyBuilder;
+        return $this->moneyFactory;
     }
 
     protected function getDimensionBuilder(): DimensionBuilder
@@ -206,7 +207,7 @@ class AbstractParser
      */
     protected function assertAmount(mixed $expr, string $failureMessage = 'Expected monetary amount'): bool
     {
-        return $this->assert(is_object($expr) && $expr instanceof Currency, $failureMessage);
+        return $this->assert(is_object($expr) && $expr instanceof Money, $failureMessage);
     }
 
     /**

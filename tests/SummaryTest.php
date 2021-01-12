@@ -6,7 +6,7 @@ namespace byrokrat\accounting;
 
 use byrokrat\accounting\Exception\SummaryEmptyException;
 use byrokrat\accounting\Exception\SummaryNotBalancedException;
-use byrokrat\amount\Amount;
+use Money\Money;
 
 class SummaryTest extends \PHPUnit\Framework\TestCase
 {
@@ -19,7 +19,7 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary();
 
-        $summary = $summary->withIncomingBalance(new Amount('1'));
+        $summary = $summary->withIncomingBalance(Money::SEK('1'));
 
         $this->assertFalse($summary->isEmpty());
     }
@@ -28,7 +28,7 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary();
 
-        $summary = $summary->withAmount(new Amount('1'));
+        $summary = $summary->withAmount(Money::SEK('1'));
 
         $this->assertFalse($summary->isEmpty());
     }
@@ -43,18 +43,18 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary();
 
-        $summary = $summary->withIncomingBalance(new Amount('1'));
+        $summary = $summary->withIncomingBalance(Money::SEK('1'));
 
-        $this->assertTrue($summary->getIncomingBalance()->equals(new Amount('1')));
+        $this->assertTrue($summary->getIncomingBalance()->equals(Money::SEK('1')));
     }
 
     public function testGetEmptyIncomingBalance()
     {
         $summary = new Summary();
 
-        $summary = $summary->withAmount(new Amount('1'));
+        $summary = $summary->withAmount(Money::SEK('1'));
 
-        $this->assertTrue($summary->getIncomingBalance()->equals(new Amount('0')));
+        $this->assertTrue($summary->getIncomingBalance()->equals(Money::SEK('0')));
     }
 
     public function testExceptionGetOutgoingBalanceOnEmptySummary()
@@ -67,11 +67,11 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary();
 
-        $summary = $summary->withIncomingBalance(new Amount('1'));
+        $summary = $summary->withIncomingBalance(Money::SEK('1'));
 
-        $summary = $summary->withAmount(new Amount('1'));
+        $summary = $summary->withAmount(Money::SEK('1'));
 
-        $this->assertTrue($summary->getOutgoingBalance()->equals(new Amount('2')));
+        $this->assertTrue($summary->getOutgoingBalance()->equals(Money::SEK('2')));
     }
 
     public function testExceptionGetDebitOnEmptySummary()
@@ -90,20 +90,20 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary();
 
-        $summary = $summary->withAmount(new Amount('1'));
+        $summary = $summary->withAmount(Money::SEK('1'));
 
-        $this->assertTrue($summary->getDebitTotal()->equals(new Amount('1')));
-        $this->assertTrue($summary->getCreditTotal()->equals(new Amount('0')));
+        $this->assertTrue($summary->getDebitTotal()->equals(Money::SEK('1')));
+        $this->assertTrue($summary->getCreditTotal()->equals(Money::SEK('0')));
     }
 
     public function testGetDebitAndCreditOnNegativeAmount()
     {
         $summary = new Summary();
 
-        $summary = $summary->withAmount(new Amount('-1'));
+        $summary = $summary->withAmount(Money::SEK('-1'));
 
-        $this->assertTrue($summary->getDebitTotal()->equals(new Amount('0')));
-        $this->assertTrue($summary->getCreditTotal()->equals(new Amount('1')));
+        $this->assertTrue($summary->getDebitTotal()->equals(Money::SEK('0')));
+        $this->assertTrue($summary->getCreditTotal()->equals(Money::SEK('1')));
     }
 
     public function testEmptySummaryIsConsideredBalanced()
@@ -115,7 +115,7 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = (new Summary());
 
-        $summary = $summary->withAmount(new Amount('1'));
+        $summary = $summary->withAmount(Money::SEK('1'));
 
         $this->assertFalse($summary->isBalanced());
     }
@@ -124,8 +124,8 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary();
 
-        $summary = $summary->withAmount(new Amount('1'));
-        $summary = $summary->withAmount(new Amount('-1'));
+        $summary = $summary->withAmount(Money::SEK('1'));
+        $summary = $summary->withAmount(Money::SEK('-1'));
 
         $this->assertTrue($summary->isBalanced());
     }
@@ -134,7 +134,7 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary();
 
-        $summary = $summary->withIncomingBalance(new Amount('1'));
+        $summary = $summary->withIncomingBalance(Money::SEK('1'));
 
         $this->assertTrue($summary->isBalanced());
     }
@@ -149,7 +149,7 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(SummaryNotBalancedException::class);
         $summary = new Summary();
-        $summary = $summary->withAmount(new Amount('5'));
+        $summary = $summary->withAmount(Money::SEK('5'));
         $summary->getMagnitude();
     }
 
@@ -157,49 +157,49 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary();
 
-        $summary = $summary->withAmount(new Amount('1'));
-        $summary = $summary->withAmount(new Amount('-1'));
+        $summary = $summary->withAmount(Money::SEK('1'));
+        $summary = $summary->withAmount(Money::SEK('-1'));
 
-        $this->assertTrue($summary->getMagnitude()->equals(new Amount('1')));
+        $this->assertTrue($summary->getMagnitude()->equals(Money::SEK('1')));
     }
 
     public function testGetMagnitudeOnSummaryWithOnlyIncomingBalance()
     {
         $summary = new Summary();
 
-        $summary = $summary->withIncomingBalance(new Amount('1'));
+        $summary = $summary->withIncomingBalance(Money::SEK('1'));
 
-        $this->assertTrue($summary->getMagnitude()->equals(new Amount('0')));
+        $this->assertTrue($summary->getMagnitude()->equals(Money::SEK('0')));
     }
 
     public function testBasicSummary()
     {
         $summary = new Summary();
 
-        $summary = $summary->withIncomingBalance(new Amount('10'));
-        $summary = $summary->withAmount(new Amount('5'));
-        $summary = $summary->withAmount(new Amount('-5'));
+        $summary = $summary->withIncomingBalance(Money::SEK('10'));
+        $summary = $summary->withAmount(Money::SEK('5'));
+        $summary = $summary->withAmount(Money::SEK('-5'));
 
         $this->assertTrue(
-            $summary->getIncomingBalance()->equals(new Amount('10'))
+            $summary->getIncomingBalance()->equals(Money::SEK('10'))
         );
 
         $this->assertTrue(
-            $summary->getOutgoingBalance()->equals(new Amount('10'))
+            $summary->getOutgoingBalance()->equals(Money::SEK('10'))
         );
 
         $this->assertTrue(
-            $summary->getDebitTotal()->equals(new Amount('5'))
+            $summary->getDebitTotal()->equals(Money::SEK('5'))
         );
 
         $this->assertTrue(
-            $summary->getCreditTotal()->equals(new Amount('5'))
+            $summary->getCreditTotal()->equals(Money::SEK('5'))
         );
 
         $this->assertTrue($summary->isBalanced());
 
         $this->assertTrue(
-            $summary->getMagnitude()->equals(new Amount('5'))
+            $summary->getMagnitude()->equals(Money::SEK('5'))
         );
     }
 
@@ -207,25 +207,25 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary();
 
-        $summary = $summary->withIncomingBalance(new Amount('10'));
-        $summary = $summary->withAmount(new Amount('5'));
-        $summary = $summary->withAmount(new Amount('5'));
-        $summary = $summary->withAmount(new Amount('-5'));
+        $summary = $summary->withIncomingBalance(Money::SEK('10'));
+        $summary = $summary->withAmount(Money::SEK('5'));
+        $summary = $summary->withAmount(Money::SEK('5'));
+        $summary = $summary->withAmount(Money::SEK('-5'));
 
         $this->assertTrue(
-            $summary->getIncomingBalance()->equals(new Amount('10'))
+            $summary->getIncomingBalance()->equals(Money::SEK('10'))
         );
 
         $this->assertTrue(
-            $summary->getOutgoingBalance()->equals(new Amount('15'))
+            $summary->getOutgoingBalance()->equals(Money::SEK('15'))
         );
 
         $this->assertTrue(
-            $summary->getDebitTotal()->equals(new Amount('10'))
+            $summary->getDebitTotal()->equals(Money::SEK('10'))
         );
 
         $this->assertTrue(
-            $summary->getCreditTotal()->equals(new Amount('5'))
+            $summary->getCreditTotal()->equals(Money::SEK('5'))
         );
 
         $this->assertFalse($summary->isBalanced());
@@ -235,25 +235,25 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary();
 
-        $summary = $summary->withIncomingBalance(new Amount('10'));
-        $summary = $summary->withAmount(new Amount('5'));
-        $summary = $summary->withAmount(new Amount('-5'));
-        $summary = $summary->withAmount(new Amount('-5'));
+        $summary = $summary->withIncomingBalance(Money::SEK('10'));
+        $summary = $summary->withAmount(Money::SEK('5'));
+        $summary = $summary->withAmount(Money::SEK('-5'));
+        $summary = $summary->withAmount(Money::SEK('-5'));
 
         $this->assertTrue(
-            $summary->getIncomingBalance()->equals(new Amount('10'))
+            $summary->getIncomingBalance()->equals(Money::SEK('10'))
         );
 
         $this->assertTrue(
-            $summary->getOutgoingBalance()->equals(new Amount('5'))
+            $summary->getOutgoingBalance()->equals(Money::SEK('5'))
         );
 
         $this->assertTrue(
-            $summary->getDebitTotal()->equals(new Amount('5'))
+            $summary->getDebitTotal()->equals(Money::SEK('5'))
         );
 
         $this->assertTrue(
-            $summary->getCreditTotal()->equals(new Amount('10'))
+            $summary->getCreditTotal()->equals(Money::SEK('10'))
         );
 
         $this->assertFalse($summary->isBalanced());
@@ -263,30 +263,30 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary();
 
-        $summary = $summary->withIncomingBalance(new Amount('-10'));
-        $summary = $summary->withAmount(new Amount('5'));
-        $summary = $summary->withAmount(new Amount('-5'));
+        $summary = $summary->withIncomingBalance(Money::SEK('-10'));
+        $summary = $summary->withAmount(Money::SEK('5'));
+        $summary = $summary->withAmount(Money::SEK('-5'));
 
         $this->assertTrue(
-            $summary->getIncomingBalance()->equals(new Amount('-10'))
+            $summary->getIncomingBalance()->equals(Money::SEK('-10'))
         );
 
         $this->assertTrue(
-            $summary->getOutgoingBalance()->equals(new Amount('-10'))
+            $summary->getOutgoingBalance()->equals(Money::SEK('-10'))
         );
 
         $this->assertTrue(
-            $summary->getDebitTotal()->equals(new Amount('5'))
+            $summary->getDebitTotal()->equals(Money::SEK('5'))
         );
 
         $this->assertTrue(
-            $summary->getCreditTotal()->equals(new Amount('5'))
+            $summary->getCreditTotal()->equals(Money::SEK('5'))
         );
 
         $this->assertTrue($summary->isBalanced());
 
         $this->assertTrue(
-            $summary->getMagnitude()->equals(new Amount('5'))
+            $summary->getMagnitude()->equals(Money::SEK('5'))
         );
     }
 
@@ -294,29 +294,29 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $summary = new Summary();
 
-        $summary = $summary->withAmount(new Amount('5'));
-        $summary = $summary->withAmount(new Amount('-5'));
+        $summary = $summary->withAmount(Money::SEK('5'));
+        $summary = $summary->withAmount(Money::SEK('-5'));
 
         $this->assertTrue(
-            $summary->getIncomingBalance()->equals(new Amount('0'))
+            $summary->getIncomingBalance()->equals(Money::SEK('0'))
         );
 
         $this->assertTrue(
-            $summary->getOutgoingBalance()->equals(new Amount('0'))
+            $summary->getOutgoingBalance()->equals(Money::SEK('0'))
         );
 
         $this->assertTrue(
-            $summary->getDebitTotal()->equals(new Amount('5'))
+            $summary->getDebitTotal()->equals(Money::SEK('5'))
         );
 
         $this->assertTrue(
-            $summary->getCreditTotal()->equals(new Amount('5'))
+            $summary->getCreditTotal()->equals(Money::SEK('5'))
         );
 
         $this->assertTrue($summary->isBalanced());
 
         $this->assertTrue(
-            $summary->getMagnitude()->equals(new Amount('5'))
+            $summary->getMagnitude()->equals(Money::SEK('5'))
         );
     }
 
@@ -324,67 +324,67 @@ class SummaryTest extends \PHPUnit\Framework\TestCase
     {
         $addedSummary = new Summary();
 
-        $addedSummary = $addedSummary->withAmount(new Amount('5'));
+        $addedSummary = $addedSummary->withAmount(Money::SEK('5'));
 
         $summary = new Summary();
 
-        $summary = $summary->withAmount(new Amount('5'));
+        $summary = $summary->withAmount(Money::SEK('5'));
 
         $summary = $summary->withSummary($addedSummary);
 
-        $this->assertTrue($summary->getDebitTotal()->equals(new Amount('10')));
+        $this->assertTrue($summary->getDebitTotal()->equals(Money::SEK('10')));
     }
 
     public function testWithSummaryIncomingBalanceKeptInNew()
     {
         $summary = new Summary();
 
-        $summary = $summary->withIncomingBalance(new Amount('1'));
+        $summary = $summary->withIncomingBalance(Money::SEK('1'));
 
         $summary = $summary->withSummary(new Summary());
 
-        $this->assertTrue($summary->getIncomingBalance()->equals(new Amount('1')));
+        $this->assertTrue($summary->getIncomingBalance()->equals(Money::SEK('1')));
     }
 
     public function testWithSummaryIncomingBalanceOnlyInAddedSummary()
     {
         $addedSummary = new Summary();
 
-        $addedSummary = $addedSummary->withIncomingBalance(new Amount('1'));
+        $addedSummary = $addedSummary->withIncomingBalance(Money::SEK('1'));
 
         $summary = new Summary();
 
         $summary = $summary->withSummary($addedSummary);
 
-        $this->assertTrue($summary->getIncomingBalance()->equals(new Amount('1')));
+        $this->assertTrue($summary->getIncomingBalance()->equals(Money::SEK('1')));
     }
 
     public function testWithSummaryIncomingBalanceInBoth()
     {
         $addedSummary = new Summary();
 
-        $addedSummary = $addedSummary->withIncomingBalance(new Amount('1'));
+        $addedSummary = $addedSummary->withIncomingBalance(Money::SEK('1'));
 
         $summary = new Summary();
 
-        $summary = $summary->withIncomingBalance(new Amount('1'));
+        $summary = $summary->withIncomingBalance(Money::SEK('1'));
 
         $summary = $summary->withSummary($addedSummary);
 
-        $this->assertTrue($summary->getIncomingBalance()->equals(new Amount('2')));
+        $this->assertTrue($summary->getIncomingBalance()->equals(Money::SEK('2')));
     }
 
     public function testFromAmount()
     {
-        $summary = Summary::fromAmount(new Amount('1'));
+        $summary = Summary::fromAmount(Money::SEK('1'));
 
-        $this->assertTrue($summary->getDebitTotal()->equals(new Amount('1')));
+        $this->assertTrue($summary->getDebitTotal()->equals(Money::SEK('1')));
     }
 
     public function testFromIncomingBalance()
     {
-        $summary = Summary::fromIncomingBalance(new Amount('1'));
+        $summary = Summary::fromIncomingBalance(Money::SEK('1'));
 
-        $this->assertTrue($summary->getIncomingBalance()->equals(new Amount('1')));
+        $this->assertTrue($summary->getIncomingBalance()->equals(Money::SEK('1')));
     }
 }

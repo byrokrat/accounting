@@ -23,7 +23,7 @@
     },
     "require": {
         "php": "^8.0",
-        "byrokrat/amount": "^2"
+        "moneyphp/money": "^3"
     },
     "require-dev": {
         "phpunit/phpunit": "^9",
