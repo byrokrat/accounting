@@ -12,4 +12,5 @@
 /phpunit.xml export-ignore
 /README.md export-ignore
 /Makefile export-ignore
+/check_sie4_file.php export-ignore
 /src/Sie4/Parser/Grammar.php binary

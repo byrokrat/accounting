@@ -11,9 +11,6 @@
             "email": "hannes.forsgard@fripost.org"
         }
     ],
-    "bin": [
-        "bin/check_sie4_file"
-    ],
     "autoload": {
         "psr-4": {
             "byrokrat\\accounting\\": "src/"

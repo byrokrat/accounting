@@ -2,7 +2,7 @@
 <ruleset>
     <rule ref="PSR12"/>
 
-    <file>./bin</file>
+    <file>./check_sie4_file.php</file>
     <file>./integrations</file>
     <file>./src</file>
     <file>./tests</file>
