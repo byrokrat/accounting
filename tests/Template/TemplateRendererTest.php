@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
-use byrokrat\accounting\Query;
+use byrokrat\accounting\AccountingDate;
 use byrokrat\accounting\Container;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Transaction\TransactionInterface;
+use byrokrat\accounting\Query;
 use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\amount\Amount;
 use Prophecy\Argument;
@@ -25,7 +26,6 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $renderer = new TemplateRenderer(
             $this->createMock(Query::class),
             $this->createMock(MoneyFactoryInterface::class),
-            $this->createMock(DateFactory::class),
         );
 
         $this->assertInstanceOf(
@@ -44,7 +44,6 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $renderer = new TemplateRenderer(
             $this->createMock(Query::class),
             $this->createMock(MoneyFactoryInterface::class),
-            $this->createMock(DateFactory::class),
         );
 
         $renderer->render(
@@ -55,18 +54,10 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
 
     public function testVerificationValues()
     {
-        $dateFactory = $this->prophesize(DateFactory::class);
-
-        $transactionDate = new \DateTimeImmutable();
-        $dateFactory->createDate('transactionDate')->willReturn($transactionDate)->shouldBeCalled();
-
-        $registrationDate = new \DateTimeImmutable();
-        $dateFactory->createDate('registrationDate')->willReturn($registrationDate)->shouldBeCalled();
-
         $template = new VerificationTemplate(
             id: '666',
-            transactionDate: 'transactionDate',
-            registrationDate: 'registrationDate',
+            transactionDate: '20200101',
+            registrationDate: '20201231',
             description: 'desc',
             signature: 'sign',
             attributes: [new AttributeTemplate('foo', 'bar')],
@@ -75,14 +66,13 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $renderer = new TemplateRenderer(
             $this->createMock(Query::class),
             $this->createMock(MoneyFactoryInterface::class),
-            $dateFactory->reveal()
         );
 
         $verification = $renderer->render($template, new Translator([]));
 
         $this->assertSame('666', $verification->getId());
-        $this->assertSame($transactionDate, $verification->getTransactionDate());
-        $this->assertSame($registrationDate, $verification->getRegistrationDate());
+        $this->assertEquals(AccountingDate::fromString('20200101'), $verification->getTransactionDate());
+        $this->assertEquals(AccountingDate::fromString('20201231'), $verification->getRegistrationDate());
         $this->assertSame('desc', $verification->getDescription());
         $this->assertSame('sign', $verification->getSignature());
         $this->assertSame('bar', $verification->getAttribute('foo'));
@@ -96,7 +86,6 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $renderer = new TemplateRenderer(
             $this->createMock(Query::class),
             $moneyFactory->reveal(),
-            $this->createMock(DateFactory::class),
         );
 
         $template = new VerificationTemplate(transactions: [new TransactionTemplate()]);
@@ -120,19 +109,13 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $moneyFactory = $this->prophesize(MoneyFactoryInterface::class);
         $moneyFactory->createMoney('0')->willReturn($amount)->shouldBeCalled();
 
-        $dateFactory = $this->prophesize(DateFactory::class);
-
-        $transactionDate = new \DateTimeImmutable();
-        $dateFactory->createDate('transactionDate')->willReturn($transactionDate)->shouldBeCalled();
-        $dateFactory->createDate(Argument::any())->willReturn(new \DateTimeImmutable());
-
-        $renderer = new TemplateRenderer($query->reveal(), $moneyFactory->reveal(), $dateFactory->reveal());
+        $renderer = new TemplateRenderer($query->reveal(), $moneyFactory->reveal());
 
         $template = new VerificationTemplate(
             id: '666',
             transactions: [
                 new TransactionTemplate(
-                    transactionDate: 'transactionDate',
+                    transactionDate: '19900102',
                     description: 'desc',
                     signature: 'sign',
                     amount: '0',
@@ -148,7 +131,7 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         list($transaction) = $renderer->render($template, new Translator([]))->getTransactions();
 
         $this->assertSame('666', $transaction->getVerificationId());
-        $this->assertSame($transactionDate, $transaction->getTransactionDate());
+        $this->assertEquals(AccountingDate::fromString('19900102'), $transaction->getTransactionDate());
         $this->assertSame('desc', $transaction->getDescription());
         $this->assertSame('sign', $transaction->getSignature());
         $this->assertSame($amount, $transaction->getAmount());
@@ -169,16 +152,11 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
         $moneyFactory = $this->prophesize(MoneyFactoryInterface::class);
         $moneyFactory->createMoney(Argument::any())->willReturn($amount);
 
-        $dateFactory = $this->prophesize(DateFactory::class);
-        $transactionDate = new \DateTimeImmutable();
-        $dateFactory->createDate('transactionDate')->willReturn($transactionDate);
-        $dateFactory->createDate(Argument::any())->willReturn(new \DateTimeImmutable());
-
-        $renderer = new TemplateRenderer($query->reveal(), $moneyFactory->reveal(), $dateFactory->reveal());
+        $renderer = new TemplateRenderer($query->reveal(), $moneyFactory->reveal());
 
         $template = new VerificationTemplate(
             id: '666',
-            transactionDate: 'transactionDate',
+            transactionDate: '20200101',
             description: 'desc',
             signature: 'sign',
             transactions: [new TransactionTemplate()]
@@ -186,7 +164,7 @@ class TemplateRendererTest extends \PHPUnit\Framework\TestCase
 
         list($transaction) = $renderer->render($template, new Translator([]))->getTransactions();
 
-        $this->assertSame($transactionDate, $transaction->getTransactionDate());
+        $this->assertEquals(AccountingDate::fromString('20200101'), $transaction->getTransactionDate());
         $this->assertSame('desc', $transaction->getDescription());
         $this->assertSame('sign', $transaction->getSignature());
     }

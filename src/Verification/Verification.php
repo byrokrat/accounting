@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Verification;
 
+use byrokrat\accounting\AccountingDate;
 use byrokrat\accounting\AttributableTrait;
 use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidVerificationException;
@@ -39,8 +40,8 @@ final class Verification implements VerificationInterface
     use AttributableTrait;
 
     private Summary $summary;
-    private \DateTimeImmutable $transactionDate;
-    private \DateTimeImmutable $registrationDate;
+    private AccountingDate $transactionDate;
+    private AccountingDate $registrationDate;
 
     /**
      * @param array<TransactionInterface> $transactions
@@ -50,8 +51,8 @@ final class Verification implements VerificationInterface
      */
     public function __construct(
         private string $id = '',
-        ?\DateTimeImmutable $transactionDate = null,
-        ?\DateTimeImmutable $registrationDate = null,
+        ?AccountingDate $transactionDate = null,
+        ?AccountingDate $registrationDate = null,
         private string $description = '',
         private string $signature = '',
         private array $transactions = [],
@@ -61,8 +62,7 @@ final class Verification implements VerificationInterface
             throw new InvalidVerificationException('Verification id must be a numeric string');
         }
 
-        // @TODO should be a NullDate implementation? AccountingDate::today()??
-        $this->transactionDate = $transactionDate ?: new \DateTimeImmutable();
+        $this->transactionDate = $transactionDate ?: AccountingDate::today();
 
         $this->registrationDate = $registrationDate ?: $this->transactionDate;
 
@@ -94,12 +94,12 @@ final class Verification implements VerificationInterface
         return $this->id;
     }
 
-    public function getTransactionDate(): \DateTimeImmutable
+    public function getTransactionDate(): AccountingDate
     {
         return $this->transactionDate;
     }
 
-    public function getRegistrationDate(): \DateTimeImmutable
+    public function getRegistrationDate(): AccountingDate
     {
         return $this->registrationDate;
     }

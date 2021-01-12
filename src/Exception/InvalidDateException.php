@@ -21,24 +21,8 @@
 
 declare(strict_types=1);
 
-namespace byrokrat\accounting\Template;
+namespace byrokrat\accounting\Exception;
 
-class DateFactory
+class InvalidDateException extends RuntimeException
 {
-    private \DateTimeImmutable $now;
-
-    public function __construct(\DateTimeImmutable $now = null)
-    {
-        $this->now = $now ?: new \DateTimeImmutable();
-    }
-
-    // @TODO Exception if $rawDate is not a parsable string
-    public function createDate(string $rawDate): \DateTimeImmutable
-    {
-        if ($rawDate == '{now}') {
-            return $this->now;
-        }
-
-        return new \DateTimeImmutable($rawDate);
-    }
 }

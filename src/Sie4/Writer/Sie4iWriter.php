@@ -62,7 +62,7 @@ final class Sie4iWriter
 
         $output->writeln('#PROGRAM %s %s', $metaData->generatingProgram, $metaData->generatingProgramVersion);
 
-        $output->writeln('#GEN %s %s', $metaData->generationDate->format('Ymd'), $metaData->generatingUser);
+        $output->writeln('#GEN %s %s', $metaData->generationDate->formatSie4(), $metaData->generatingUser);
 
         $output->writeln('#FNAMN %s', $metaData->companyName);
 
@@ -113,9 +113,9 @@ final class Sie4iWriter
                 '#VER %s %s %s %s %s %s',
                 '',
                 $ver->getId(),
-                $ver->getTransactionDate()->format('Ymd'),
+                $ver->getTransactionDate()->formatSie4(),
                 $ver->getDescription(),
-                $ver->getRegistrationDate()->format('Ymd'),
+                $ver->getRegistrationDate()->formatSie4(),
                 $ver->getSignature()
             );
 
@@ -130,7 +130,7 @@ final class Sie4iWriter
                     "#TRANS %s {} %s %s %s %s %s",
                     $transaction->getAccount()->getId(),
                     $transaction->getAmount()->getString(2),
-                    $transaction->getTransactionDate()->format('Ymd'),
+                    $transaction->getTransactionDate()->formatSie4(),
                     $transaction->getDescription(),
                     '',
                     $transaction->getSignature()

@@ -21,6 +21,7 @@
 
 namespace byrokrat\accounting\Verification;
 
+use byrokrat\accounting\AccountingDate;
 use byrokrat\accounting\AccountingObjectInterface;
 use byrokrat\accounting\Transaction\TransactionInterface;
 
@@ -32,12 +33,12 @@ interface VerificationInterface extends AccountingObjectInterface
     /**
      * Get date when transactions occured
      */
-    public function getTransactionDate(): \DateTimeImmutable;
+    public function getTransactionDate(): AccountingDate;
 
     /**
      * Get the date verification was entered into the registry
      */
-    public function getRegistrationDate(): \DateTimeImmutable;
+    public function getRegistrationDate(): AccountingDate;
 
     /**
      * Get personal signature of accontant

@@ -36,8 +36,8 @@ final class VerificationTemplate implements TemplateInterface
      */
     public function __construct(
         public string $id = '',
-        public string $transactionDate = '{now}',
-        public string $registrationDate = '{now}',
+        public string $transactionDate = '',
+        public string $registrationDate = '',
         public string $description = '',
         public string $signature = '',
         public array $transactions = [],

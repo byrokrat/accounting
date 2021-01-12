@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
+use byrokrat\accounting\AccountingDate;
 use byrokrat\accounting\AccountingObjectInterface;
 use byrokrat\accounting\AttributableInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
@@ -95,9 +96,9 @@ class AbstractParser
     protected function createVerification(
         string $series,
         string $verificationId,
-        \DateTimeImmutable $transactionDate,
+        AccountingDate $transactionDate,
         string $description = '',
-        \DateTimeImmutable $registrationDate = null,
+        AccountingDate $registrationDate = null,
         string $signature = '',
         array $transactionData = []
     ): VerificationInterface {

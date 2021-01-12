@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Verification;
 
+use byrokrat\accounting\AccountingDate;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidVerificationException;
@@ -87,8 +88,8 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
 
     public function testAssigningDates()
     {
-        $transactionDate = new \DateTimeImmutable();
-        $registrationDate = new \DateTimeImmutable();
+        $transactionDate = AccountingDate::fromString('20210101');
+        $registrationDate = AccountingDate::fromString('19900101');
 
         $ver = new Verification(
             transactionDate: $transactionDate,
@@ -101,15 +102,15 @@ class VerificationTest extends \PHPUnit\Framework\TestCase
 
     public function testTransactionDefaultDate()
     {
-        $this->assertInstanceOf(
-            \DateTimeImmutable::class,
+        $this->assertSame(
+            AccountingDate::today(),
             (new Verification())->getTransactionDate()
         );
     }
 
     public function testRegistrationDateDefaultsToTransactionDate()
     {
-        $transactionDate = new \DateTimeImmutable();
+        $transactionDate = AccountingDate::fromString('19820323');
 
         $this->assertSame(
             $transactionDate,

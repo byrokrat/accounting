@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Transaction;
 
+use byrokrat\accounting\AccountingDate;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Exception\InvalidArgumentException;
@@ -120,7 +121,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTransactionDate()
     {
-        $transactionDate = new \DateTimeImmutable();
+        $transactionDate = AccountingDate::fromString('20210112');
 
         $trans = new Transaction(
             amount: new Amount('0'),
@@ -138,7 +139,7 @@ class TransactionTest extends \PHPUnit\Framework\TestCase
             account: $this->createMock(AccountInterface::class),
         );
 
-        $this->assertInstanceOf(\DateTimeImmutable::class, $trans->getTransactionDate());
+        $this->assertSame(AccountingDate::today(), $trans->getTransactionDate());
     }
 
     public function testGetDescription()

@@ -23,15 +23,16 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Writer;
 
+use byrokrat\accounting\AccountingDate;
+
 final class MetaData
 {
-    // @TODO should be AccountingDate here, and AccountingDate | DateTimeInterface i construct
-    public \DateTimeInterface $generationDate;
+    public AccountingDate $generationDate;
 
     public function __construct(
         public string $generatingProgram = 'byrokrat/accounting',
         public string $generatingProgramVersion = '2',
-        \DateTimeInterface $generationDate = null,
+        AccountingDate | \DateTimeInterface $generationDate = null,
         public string $generatingUser = '',
         public string $companyName = '',
         public string $companyIdCode = '',
@@ -40,6 +41,10 @@ final class MetaData
         public string $currency = '',
         public string $accountPlanType = '',
     ) {
-        $this->generationDate = $generationDate ?: new \DateTimeImmutable();
+        if ($generationDate instanceof \DateTimeInterface) {
+            $generationDate = AccountingDate::fromDateTime($generationDate);
+        }
+
+        $this->generationDate = $generationDate ?: AccountingDate::today();
     }
 }

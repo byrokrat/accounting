@@ -2,6 +2,8 @@
 
 namespace byrokrat\accounting\Sie4\Parser;
 
+use byrokrat\accounting\AccountingDate;
+
 class Grammar extends AbstractParser
 {
     protected function parseFILE()
@@ -4925,9 +4927,9 @@ class Grammar extends AbstractParser
                     $this->parsedItems[] = $this->createVerification(
                         $series,
                         $number,
-                        new \DateTimeImmutable($date),
+                        AccountingDate::fromString($date),
                         $desc ?: '',
-                        $regdate ? new \DateTimeImmutable($regdate) : null,
+                        $regdate ? AccountingDate::fromString($regdate) : null,
                         $sign ?: '',
                         $trans
                     );
@@ -5243,7 +5245,7 @@ class Grammar extends AbstractParser
                         'account' => $account,
                         'dimensions' => $dims,
                         'amount' => $amount,
-                        'date' => $date ? new \DateTimeImmutable($date) : null,
+                        'date' => $date ? AccountingDate::fromString($date) : null,
                         'description' => $desc,
                         'quantity' => (string)$quantity,
                         'signature' => $sign,
@@ -5478,7 +5480,7 @@ class Grammar extends AbstractParser
                         'account' => $account,
                         'dimensions' => $dims,
                         'amount' => $amount,
-                        'date' => $date ? new \DateTimeImmutable($date) : null,
+                        'date' => $date ? AccountingDate::fromString($date) : null,
                         'description' => $desc,
                         'quantity' => (string)$quantity,
                         'signature' => $sign,
@@ -5719,7 +5721,7 @@ class Grammar extends AbstractParser
                         'account' => $account,
                         'dimensions' => $dims,
                         'amount' => $amount,
-                        'date' => $date ? new \DateTimeImmutable($date) : null,
+                        'date' => $date ? AccountingDate::fromString($date) : null,
                         'description' => $desc,
                         'quantity' => (string)$quantity,
                         'signature' => $sign,

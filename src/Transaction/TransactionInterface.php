@@ -21,6 +21,7 @@
 
 namespace byrokrat\accounting\Transaction;
 
+use byrokrat\accounting\AccountingDate;
 use byrokrat\accounting\AccountingObjectInterface;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
@@ -39,7 +40,7 @@ interface TransactionInterface extends AccountingObjectInterface
     /**
      * Get transaction date
      */
-    public function getTransactionDate(): \DateTimeImmutable;
+    public function getTransactionDate(): AccountingDate;
 
     /**
      * Get transaction signature

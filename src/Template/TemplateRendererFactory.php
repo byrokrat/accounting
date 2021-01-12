@@ -29,10 +29,6 @@ final class TemplateRendererFactory
 {
      public function createRenderer(Container $dimensions): TemplateRenderer
      {
-         return new TemplateRenderer(
-             $dimensions->select(),
-             new SekMoneyFactory(),
-             new DateFactory(),
-         );
+         return new TemplateRenderer($dimensions->select(), new SekMoneyFactory());
      }
 }

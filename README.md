@@ -47,7 +47,7 @@ use byrokrat\accounting\Template\VerificationTemplate;
 
 $template = new VerificationTemplate(
     description: '{description}',
-    transactionDate: '{now}',
+    transactionDate: '{date}',
     transactions: [
         new TransactionTemplate(
             account: '1920',
@@ -96,6 +96,7 @@ $verifications = new Container(
         $template,
         new Translator([
             'description' => 'Some donation...',
+            'date' => '2021-01-12',
             'bank_amount' => '999',
             'income_amount' => '-999',
             'income_account' => '3000'
@@ -105,6 +106,7 @@ $verifications = new Container(
         $template,
         new Translator([
             'description' => 'Daily cash register',
+            'date' => '2021-01-12',
             'bank_amount' => '333',
             'income_amount' => '-333',
             'income_account' => '3010'

@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Transaction;
 
+use byrokrat\accounting\AccountingDate;
 use byrokrat\accounting\AttributableTrait;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
@@ -36,7 +37,7 @@ final class Transaction implements TransactionInterface
     use AttributableTrait;
 
     private string $id;
-    private \DateTimeImmutable $transactionDate;
+    private AccountingDate $transactionDate;
 
     /**
      * @param array<DimensionInterface> $dimensions
@@ -46,7 +47,7 @@ final class Transaction implements TransactionInterface
         private AccountInterface $account,
         private Amount $amount,
         private string $verificationId = '0',
-        ?\DateTimeImmutable $transactionDate = null,
+        ?AccountingDate $transactionDate = null,
         private string $description = '',
         private string $signature = '',
         private array $dimensions = [],
@@ -57,8 +58,7 @@ final class Transaction implements TransactionInterface
         // expected to be unique, store in property to support serialization/unserialization
         $this->id = md5($this->verificationId . spl_object_id($this) . time());
 
-        // @TODO should be a NullDate implementation? AccountingDate::today()??
-        $this->transactionDate = $transactionDate ?: new \DateTimeImmutable();
+        $this->transactionDate = $transactionDate ?: AccountingDate::today();
 
         $this->account->addTransaction($this);
 
@@ -89,7 +89,7 @@ final class Transaction implements TransactionInterface
         return $this->verificationId;
     }
 
-    public function getTransactionDate(): \DateTimeImmutable
+    public function getTransactionDate(): AccountingDate
     {
         return $this->transactionDate;
     }

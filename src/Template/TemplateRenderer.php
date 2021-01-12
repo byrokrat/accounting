@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Template;
 
+use byrokrat\accounting\AccountingDate;
 use byrokrat\accounting\Transaction\Transaction;
 use byrokrat\accounting\Verification\VerificationInterface;
 use byrokrat\accounting\Verification\Verification;
@@ -33,7 +34,6 @@ final class TemplateRenderer
     public function __construct(
         private Query $dimensionQuery,
         private MoneyFactoryInterface $moneyFactory,
-        private DateFactory $dateFactory,
     ) {}
 
     public function render(VerificationTemplate $template, TranslatorInterface $translator): VerificationInterface
@@ -42,8 +42,8 @@ final class TemplateRenderer
 
         return new Verification(
             id: $template->id,
-            transactionDate: $this->dateFactory->createDate($template->transactionDate),
-            registrationDate: $this->dateFactory->createDate($template->registrationDate),
+            transactionDate: AccountingDate::fromString($template->transactionDate),
+            registrationDate: AccountingDate::fromString($template->registrationDate),
             description: $template->description,
             signature: $template->signature,
             transactions: array_map(
@@ -61,7 +61,7 @@ final class TemplateRenderer
     {
         return new Transaction(
             verificationId: $verTmpl->id,
-            transactionDate: $this->dateFactory->createDate($transTmpl->transactionDate ?: $verTmpl->transactionDate),
+            transactionDate: AccountingDate::fromString($transTmpl->transactionDate ?: $verTmpl->transactionDate),
             description: $transTmpl->description ?: $verTmpl->description,
             signature: $transTmpl->signature ?: $verTmpl->signature,
             amount: $this->moneyFactory->createMoney($transTmpl->amount),
