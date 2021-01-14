@@ -105,7 +105,7 @@ class Dimension implements DimensionInterface
     {
         return array_reduce(
             [...$this->getTransactions(), ...$this->getChildren()],
-            fn($summary, $child) => $summary->withSummary($child->getSummary()),
+            fn($summary, $item) => $summary->withSummary($item->getSummary()),
             $this->summary
         );
     }

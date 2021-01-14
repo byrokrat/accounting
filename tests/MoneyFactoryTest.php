@@ -120,7 +120,7 @@ class MoneyFactoryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             Money::SEK('-10'),
-            $factory->createMoney('-.1')
+            $factory->createMoney('-0.1')
         );
     }
 

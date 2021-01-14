@@ -45,30 +45,13 @@ class MoneyFactory
 
     public function createMoney(string $rawMoney): Money
     {
-        if (!preg_match('/^(-?)0*(\d*)\.?(\d?\d?)$/', $rawMoney, $matches)) {
+        if (!preg_match('/^(-?)0*(\d+)\.?(\d?\d?)$/', $rawMoney, $matches)) {
             throw new InvalidAmountException("Invalid monetary amount $rawMoney, expected xxx or xxx.xx");
         }
 
-        list(, $negation, $leading, $fraction) = $matches;
-
-        if (empty($leading)) {
-            $leading = '0';
-        }
-
-        if (strlen($fraction) == 1) {
-            $fraction .= '0';
-        }
-
-        if (empty($fraction)) {
-            $fraction = '00';
-        }
-
-        $money = ltrim($leading . $fraction, '0');
-
-        if (empty($money)) {
-            $money = '0';
-        }
-
-        return new Money($negation . $money, $this->currency);
+        return new Money(
+            $matches[1] . (ltrim($matches[2] . str_pad($matches[3], 2, '0'), '0') ?: '0'),
+            $this->currency
+        );
     }
 }
