@@ -150,9 +150,9 @@ $sie = (new Sie4iWriter)->generateSie($verifications);
     @expectOutput "/Some donation.../"
 -->
 ```php
-use byrokrat\accounting\Sie4\Parser\Sie4ParserFactory;
+use byrokrat\accounting\Sie4\Parser\Sie4Parser;
 
-$parser = (new Sie4ParserFactory)->createParser();
+$parser = new Sie4Parser();
 
 $container = $parser->parse($sie);
 

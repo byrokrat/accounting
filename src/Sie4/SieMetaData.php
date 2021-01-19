@@ -21,18 +21,14 @@
 
 declare(strict_types=1);
 
-namespace byrokrat\accounting\Sie4\Writer;
+namespace byrokrat\accounting\Sie4;
 
-use byrokrat\accounting\AccountingDate;
-
-final class MetaData
+final class SieMetaData
 {
-    public AccountingDate $generationDate;
-
     public function __construct(
-        public string $generatingProgram = 'byrokrat/accounting',
-        public string $generatingProgramVersion = '2',
-        AccountingDate | \DateTimeInterface $generationDate = null,
+        public string $generatingProgram = '',
+        public string $generatingProgramVersion = '',
+        public string $generationDate = '',
         public string $generatingUser = '',
         public string $companyName = '',
         public string $companyIdCode = '',
@@ -40,11 +36,13 @@ final class MetaData
         public string $description = '',
         public string $currency = '',
         public string $accountPlanType = '',
-    ) {
-        if ($generationDate instanceof \DateTimeInterface) {
-            $generationDate = AccountingDate::fromDateTime($generationDate);
-        }
-
-        $this->generationDate = $generationDate ?: AccountingDate::today();
-    }
+        public string $accountingYearStart = '',
+        public string $accountingYearEnd = '',
+        public string $previousAccountingYearStart = '',
+        public string $previousAccountingYearEnd = '',
+        public string $taxationYear = '',
+        public string $charset = '',
+        public string $sieFlag = '',
+        public string $sieVersion = '',
+    ) {}
 }

@@ -1,0 +1,15 @@
+<?php
+
+use byrokrat\accounting\Container;
+
+return function (Container $container) {
+    $this->assertSame(
+        "Objekt",
+        $container->select()->dimension('20')->getDescription()
+    );
+
+    $this->assertSame(
+        "Avdelning 1",
+        $container->select()->dimension('20.001')->getDescription()
+    );
+};

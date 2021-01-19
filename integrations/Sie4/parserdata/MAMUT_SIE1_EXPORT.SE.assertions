@@ -9,9 +9,4 @@ return function (Container $container) {
         "Belånade fordringar",
         $account->getDescription()
     );
-
-    $this->assertSame(
-        '0',
-        $account->getAttribute('sru')
-    );
 };

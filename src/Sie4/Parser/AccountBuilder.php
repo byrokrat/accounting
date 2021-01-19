@@ -25,7 +25,9 @@ namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Dimension\Account;
 use byrokrat\accounting\Dimension\AccountInterface;
-use byrokrat\accounting\Exception\RuntimeException;
+use byrokrat\accounting\Exception\InvalidAccountException;
+use byrokrat\accounting\Exception\InvalidSieFileException;
+use Money\Money;
 
 /**
  * Builder that creates and keeps track of account objects
@@ -37,70 +39,68 @@ final class AccountBuilder
         'S' => AccountInterface::TYPE_DEBT,
         'K' => AccountInterface::TYPE_COST,
         'I' => AccountInterface::TYPE_EARNING,
+        '' => '',
     ];
 
     /** @var array<string, AccountInterface> */
     private array $accounts = [];
 
-    public function __construct(
-        private Logger $logger
-    ) {}
-
-    public function addAccount(string $number, string $description): void
-    {
-        if (isset($this->accounts[$number])) {
-            $this->logger->log('warning', "Overwriting previously created account $number");
-        }
-
-        try {
-            $this->accounts[$number] = new Account(id: $number, description: $description);
-        } catch (RuntimeException $e) {
-            $this->logger->log('warning', "Unable to create account $number ($description): {$e->getMessage()}");
-        }
-    }
-
     /**
-     * @param string $type Type of account (T, S, I or K)
+     * @param array<string, string> $attributes
      */
-    public function setAccountType(string $number, string $type): void
-    {
+    public function defineAccount(
+        string $id,
+        string $description = '',
+        string $type = '',
+        ?Money $incomingBalance = null,
+        array $attributes = [],
+    ): void {
         if (!isset(self::ACCOUNT_TYPE_MAP[$type])) {
-            $this->logger->log('warning', "Unknown type $type for account number $number");
-            return;
+            throw new InvalidAccountException("Unknown type $type for account $id");
         }
 
-        $account = $this->getAccount($number);
+        $oldAccount = $this->accounts[$id] ?? new Account($id);
 
-        $this->accounts[$number] = new Account(
-            id: $number,
-            description: $account->getDescription(),
-            type: self::ACCOUNT_TYPE_MAP[$type],
-            attributes: $account->getAttributes(),
+        if ($oldAccount->getTransactions()) {
+            throw new InvalidSieFileException("Unable to alter account definition once verifications has been created");
+        }
+
+        $newAccount = new Account(
+            id: $oldAccount->getId(),
+            description: $description ?: $oldAccount->getDescription(),
+            type: self::ACCOUNT_TYPE_MAP[$type] ?: $oldAccount->getType(),
+            attributes: $oldAccount->getAttributes(),
         );
+
+        if (!$oldAccount->getSummary()->isEmpty()) {
+            $newAccount->setIncomingBalance($oldAccount->getSummary()->getIncomingBalance());
+        }
+
+        if ($incomingBalance) {
+            $newAccount->setIncomingBalance($incomingBalance);
+        }
+
+        foreach ($attributes as $key => $value) {
+            $newAccount->setAttribute($key, $value);
+        }
+
+        $this->accounts[$id] = $newAccount;
     }
 
-    /**
-     * @throws RuntimeException If account does not exist and can not be created
-     */
-    public function getAccount(string $number): AccountInterface
+    public function getAccount(string $id): AccountInterface
     {
-        if (!isset($this->accounts[$number])) {
-            $this->logger->log('warning', "Account number $number not defined", 1);
-            $this->addAccount($number, 'UNSPECIFIED');
+        if (!isset($this->accounts[$id])) {
+            $this->defineAccount($id);
         }
 
-        if (!isset($this->accounts[$number])) {
-            throw new RuntimeException("Unable to get account $number");
-        }
-
-        return $this->accounts[$number];
+        return $this->accounts[$id];
     }
 
     /**
-     * @return array<string, AccountInterface>
+     * @return array<AccountInterface>
      */
     public function getAccounts(): array
     {
-        return $this->accounts;
+        return array_values($this->accounts);
     }
 }

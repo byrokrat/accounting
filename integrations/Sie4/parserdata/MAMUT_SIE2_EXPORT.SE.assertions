@@ -1,0 +1,10 @@
+<?php
+
+use byrokrat\accounting\Container;
+
+return function (Container $container) {
+    $this->assertSame(
+        "Redovisat resultat",
+        $container->select()->account('8999')->getDescription()
+    );
+};

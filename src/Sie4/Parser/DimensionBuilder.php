@@ -24,102 +24,107 @@ declare(strict_types=1);
 namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Dimension\Dimension;
+use byrokrat\accounting\Dimension\DimensionInterface;
+use Money\Money;
 
 /**
- * Builder that creates and manages accounting dimensions
- *
- * @TODO If we use templates then maybe Dimension::addChild is not needed anymore
+ * Builder that creates and keeps track of dimension objects
  */
 final class DimensionBuilder
 {
-    private const UNSPECIFIED = 'UNSPECIFIED';
-
-    /** @var array<Dimension> */
+    /** @var array<string, Dimension> */
     private array $dimensions = [];
 
-    public function __construct(
-        private Logger $logger,
-    ) {}
+    /**
+     * @param array<string, string> $attributes
+     */
+    public function defineDimension(
+        string $id,
+        string $parent = '',
+        string $description = '',
+        ?Money $incomingBalance = null,
+        array $attributes = [],
+    ): void {
+        $dimension = $this->dimensions[$id] ?? new Dimension(id: $id, description: $description);
 
-    public function addDimension(string $dimId, string $desc = self::UNSPECIFIED, string $parentId = ''): void
-    {
-        if (isset($this->dimensions[$dimId])) {
-            $this->logger->log('warning', "Overwriting previously created dimension $dimId");
+        // According to SIE rule 8.17 dimension 2 should by default be a subdimension to 1
+        if ('2' == $id && !$parent) {
+            $parent = '1';
         }
 
-        $this->dimensions[$dimId] = new Dimension($dimId, $desc);
+        if ($parent) {
+            $parentDimension = $this->getDimension($parent);
 
-        if ($parentId) {
-            $this->getDimension($parentId)->addChild($this->dimensions[$dimId]);
-        }
-    }
-
-    public function addObject(string $parentId, string $objectId, string $desc = self::UNSPECIFIED): void
-    {
-        if (isset($this->dimensions["$parentId.$objectId"])) {
-            $this->logger->log('warning', "Overwriting previously created object $parentId.$objectId");
+            if (!in_array($dimension, $parentDimension->getChildren())) {
+                $parentDimension->addChild($dimension);
+            }
         }
 
-        $this->dimensions["$parentId.$objectId"] = new Dimension($objectId, $desc);
+        if ($incomingBalance) {
+            $dimension->setIncomingBalance($incomingBalance);
+        }
 
-        $this->getDimension($parentId)->addChild($this->dimensions["$parentId.$objectId"]);
+        foreach ($attributes as $key => $value) {
+            $dimension->setAttribute($key, $value);
+        }
+
+        $this->dimensions[$id] = $dimension;
     }
 
     /**
-     * Get dimension from internal store using number as key
-     *
-     * If dimension is not defined a new dimension is created, using one of the
-     * reserved sie dimension descriptions if applicable.
+     * @param array<string, string> $attributes
      */
-    public function getDimension(string $dimId): Dimension
-    {
-        if (isset($this->dimensions[$dimId])) {
-            return $this->dimensions[$dimId];
-        }
-
-        $this->logger->log('warning', "Dimension number $dimId not defined", 1);
-
-        $this->addDimension(
-            $dimId,
-            $this->getReservedDimensionDesc($dimId)
+    public function defineObject(
+        string $id,
+        string $parent,
+        string $description = '',
+        ?Money $incomingBalance = null,
+        array $attributes = [],
+    ): void {
+        $this->defineDimension(
+            id: "$parent.$id",
+            parent: $parent,
+            description: $description,
+            incomingBalance: $incomingBalance,
+            attributes: $attributes,
         );
-
-        $dimension =  $this->getDimension($dimId);
-
-        if ('2' === $dimId) {
-            $this->getDimension('1')->addChild($dimension);
-        }
-
-        return $dimension;
     }
 
-    /**
-     * Get accounting object from internal store using number and super as key
-     */
-    public function getObject(string $parentId, string $objectId): Dimension
+    public function getDimension(string $id): Dimension
     {
-        if (isset($this->dimensions["$parentId.$objectId"])) {
-            return $this->dimensions["$parentId.$objectId"];
+        if (!isset($this->dimensions[$id])) {
+            $this->defineDimension(
+                id: $id,
+                description: $this->getDefaultDimensionDescription($id),
+            );
         }
 
-        $this->logger->log('warning', "Object number $parentId.$objectId not defined", 1);
+        return $this->dimensions[$id];
+    }
 
-        $this->addObject($parentId, $objectId);
+    public function getObject(string $id, string $parent): Dimension
+    {
+        if (!isset($this->dimensions["$parent.$id"])) {
+            $this->defineObject($id, $parent);
+        }
 
-        return $this->getObject($parentId, $objectId);
+        return $this->dimensions["$parent.$id"];
     }
 
     /**
-     * @return array<Dimension>
+     * @return array<DimensionInterface>
      */
     public function getDimensions(): array
     {
-        return $this->dimensions;
+        return array_values($this->dimensions);
     }
 
-    private function getReservedDimensionDesc(string $dimId): string
+    /**
+     * Default dimension descriptions according to SIE rule 8.17
+     */
+    private function getDefaultDimensionDescription(string $id): string
     {
-        return match($dimId) {
+        return match($id) {
             '1' => 'Kostnadsställe/resultatenhet',
             '2' => 'Kostnadsbärare',
             '6' => 'Projekt',
@@ -127,7 +132,7 @@ final class DimensionBuilder
             '8' => 'Kund',
             '9' => 'Leverantör',
             '10' => 'Faktura',
-            default => self::UNSPECIFIED
+            default => ''
         };
     }
 }

@@ -24,53 +24,48 @@ declare(strict_types=1);
 namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\Container;
+use byrokrat\accounting\Exception\InvalidSieFileException;
+use byrokrat\accounting\Exception\RuntimeException;
+use byrokrat\accounting\Sie4\SieMetaData;
 
-final class Sie4Parser extends Grammar
+/**
+ * Sie4 compliant parser
+ *
+ * Note that content should be passed in the PC8 charset (code page 437)
+ */
+final class Sie4Parser implements ParserAttributes
 {
-    /**
-     * Parse SIE content
-     *
-     * Please note that content should be passed in the PC8 charset (code page 437)
-     *
-     * @param string $content
-     */
-    public function parse($content): Container
+    private Grammar $grammar;
+
+    public function __construct()
     {
-        $this->resetInternalState();
-
-        $content = (string)preg_replace(
-            '/[\xFF]/',
-            ' ',
-            (string)iconv('CP437', 'UTF-8//IGNORE', $content)
-        );
-
-        $this->getLogger()->resetLog($content);
-
-        try {
-            parent::parse($content);
-        } catch (\Exception $e) {
-            $this->getLogger()->incrementLineCount();
-            $this->getLogger()->log('error', $e->getMessage());
-        }
-
-        $container = new Container(
-            ...array_values($this->getAccountBuilder()->getAccounts()),
-            ...array_values($this->getDimensionBuilder()->getDimensions()),
-            ...$this->getParsedItems()
-        );
-
-        foreach ($this->getParsedAttributes() as $key => $value) {
-            $container->setAttribute($key, $value);
-        }
-
-        return $container;
+        $this->grammar = new Grammar();
     }
 
-    /**
-     * @return array<string>
-     */
-    public function getErrorLog(): array
+    public function parse(string $content): Container
     {
-        return $this->getLogger()->getLog();
+        try {
+            $content = (string)preg_replace(
+                '/[\xFF]/',
+                ' ',
+                (string)iconv('CP437', 'UTF-8//IGNORE', $content)
+            );
+
+            return new Container(
+                ...$this->grammar->parse($content),
+                // @phpstan-ignore-next-line
+                ...$this->grammar->accounts->getAccounts(),
+                // @phpstan-ignore-next-line
+                ...$this->grammar->dimensions->getDimensions(),
+            );
+        } catch (\Exception $exception) {
+            throw new InvalidSieFileException($exception->getMessage(), 0, $exception);
+        }
+    }
+
+    public function getParsedMetaData(): SieMetaData
+    {
+        // @phpstan-ignore-next-line
+        return $this->grammar->meta ?? throw new RuntimeException('Unable to access meta data, nothing parsed');
     }
 }

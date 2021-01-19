@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\accounting\Exception\RuntimeException;
+use byrokrat\accounting\Dimension\AccountInterface;
+use byrokrat\accounting\Exception\InvalidAccountException;
+use byrokrat\accounting\Exception\InvalidSieFileException;
+use byrokrat\accounting\Transaction\TransactionInterface;
+use Money\Money;
 use Prophecy\Argument;
 
 /**
@@ -12,83 +16,141 @@ use Prophecy\Argument;
  */
 class AccountBuilderTest extends \PHPUnit\Framework\TestCase
 {
-    use \Prophecy\PhpUnit\ProphecyTrait;
-
-    public function testCreateAccount()
+    public function testDefineAccount()
     {
-        $logger = $this->prophesize(Logger::class);
+        $accountBuilder = new AccountBuilder();
 
-        $accountBuilder = new AccountBuilder($logger->reveal());
-
-        $accountBuilder->addAccount('1234', 'foobar');
+        $accountBuilder->defineAccount(id: '1234', description: 'foobar');
 
         $account = $accountBuilder->getAccount('1234');
 
         $this->assertSame('1234', $account->getId());
         $this->assertSame('foobar', $account->getDescription());
-        $this->assertEquals(['1234' => $account], $accountBuilder->getAccounts());
     }
 
-    public function testCreateUnspecifiedAccount()
+    /**
+     * @depends testDefineAccount
+     */
+    public function testMultipleAccountDefinitions()
     {
-        $logger = $this->prophesize(Logger::class);
+        $accountBuilder = new AccountBuilder();
 
-        $accountBuilder = new AccountBuilder($logger->reveal());
-
-        $account = $accountBuilder->getAccount('1234');
-
-        $this->assertSame('UNSPECIFIED', $account->getDescription());
-    }
-
-    public function testWarningOnFailureCreatingAccount()
-    {
-        $logger = $this->prophesize(Logger::class);
-
-        $logger->log('warning', Argument::any())->shouldBeCalled();
-
-        $accountBuilder = new AccountBuilder($logger->reveal());
-
-        $accountBuilder->addAccount('this-is-not-numerical', '');
-    }
-
-    public function testExceptionOnFailureGettingAccount()
-    {
-        $logger = $this->prophesize(Logger::class);
-
-        $accountBuilder = new AccountBuilder($logger->reveal());
-
-        $this->expectException(RuntimeException::class);
-
-        $accountBuilder->getAccount('this-is-not-numerical');
-    }
-
-    public function testSetAccountType()
-    {
-        $logger = $this->prophesize(Logger::class);
-
-        $accountBuilder = new AccountBuilder($logger->reveal());
-
-        $accountBuilder->addAccount('1234', '');
+        $accountBuilder->defineAccount(id: '1234', description: 'desc');
 
         $originalAccount = $accountBuilder->getAccount('1234');
 
         $this->assertFalse($originalAccount->isDebtAccount());
 
-        $accountBuilder->setAccountType('1234', 'S');
+        $accountBuilder->defineAccount(id: '1234', type: 'S');
 
         $editedAccount = $accountBuilder->getAccount('1234');
 
         $this->assertTrue($editedAccount->isDebtAccount());
     }
 
-    public function testSetUnvalidAccountType()
+    public function testDefineIncomingBalance()
     {
-        $logger = $this->prophesize(Logger::class);
+        $accountBuilder = new AccountBuilder();
 
-        $logger->log('warning', Argument::any())->shouldBeCalled();
+        $money = Money::SEK('100');
 
-        $accountBuilder = new AccountBuilder($logger->reveal());
+        $accountBuilder->defineAccount(id: '1234', incomingBalance: $money);
 
-        $accountBuilder->setAccountType('1234', 'not-a-valid-account-type-identifier');
+        $account = $accountBuilder->getAccount('1234');
+
+        $this->assertSame($money, $account->getSummary()->getIncomingBalance());
+    }
+
+    /**
+     * @depends testDefineIncomingBalance
+     */
+    public function testIncomingBalanceIsPassedDuringDefine()
+    {
+        $accountBuilder = new AccountBuilder();
+
+        $money = Money::SEK('100');
+
+        $accountBuilder->defineAccount(id: '1234', incomingBalance: $money);
+
+        $accountBuilder->defineAccount(id: '1234', description: 'desc');
+
+        $account = $accountBuilder->getAccount('1234');
+
+        $this->assertSame($money, $account->getSummary()->getIncomingBalance());
+    }
+
+    public function testDefineAttributes()
+    {
+        $accountBuilder = new AccountBuilder();
+
+        $accountBuilder->defineAccount(id: '1234', attributes: ['foo' => 'foo']);
+
+        $accountBuilder->defineAccount(id: '1234', attributes: ['bar' => 'bar']);
+
+        $accountBuilder->defineAccount(id: '1234', description: 'desc');
+
+        $account = $accountBuilder->getAccount('1234');
+
+        $this->assertSame(['foo' => 'foo', 'bar' => 'bar'], $account->getAttributes());
+    }
+
+    public function testGetUnspecifiedAccount()
+    {
+        $accountBuilder = new AccountBuilder();
+
+        $this->assertInstanceOf(
+            AccountInterface::class,
+            $accountBuilder->getAccount('1234')
+        );
+    }
+
+    /**
+     * @depends testGetUnspecifiedAccount
+     */
+    public function testGetAccounts()
+    {
+        $accountBuilder = new AccountBuilder();
+
+        $accounts = [
+            $accountBuilder->getAccount('1'),
+            $accountBuilder->getAccount('2'),
+        ];
+
+        $this->assertSame($accounts, $accountBuilder->getAccounts());
+    }
+
+    public function testExceptionOnFailureCreatingAccount()
+    {
+        $accountBuilder = new AccountBuilder();
+
+        $this->expectException(InvalidAccountException::class);
+
+        $accountBuilder->defineAccount('this-is-not-numerical');
+    }
+
+    public function testExceptionOnInvalidAccountType()
+    {
+        $accountBuilder = new AccountBuilder();
+
+        $this->expectException(InvalidAccountException::class);
+
+        $accountBuilder->defineAccount(id: '1234', type: 'not-a-valid-account-type-identifier');
+    }
+
+    /**
+     * @depends testGetUnspecifiedAccount
+     * @depends testDefineAccount
+     */
+    public function testExceptionOnAddingDefinitionToAccountWithTransactions()
+    {
+        $accountBuilder = new AccountBuilder();
+
+        $account = $accountBuilder->getAccount('1');
+
+        $account->addTransaction($this->createMock(TransactionInterface::class));
+
+        $this->expectException(InvalidSieFileException::class);
+
+        $accountBuilder->defineAccount('1');
     }
 }

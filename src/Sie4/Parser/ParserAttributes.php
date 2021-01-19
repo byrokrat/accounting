@@ -19,23 +19,15 @@
  * Copyright 2016-21 Hannes Forsgård
  */
 
-declare(strict_types=1);
-
 namespace byrokrat\accounting\Sie4\Parser;
 
-use byrokrat\accounting\MoneyFactory;
-
-final class Sie4ParserFactory
+interface ParserAttributes
 {
-    public function createParser(): Sie4Parser
-    {
-        $logger = new Logger();
+    public const OUTGOING_BALANCE_ATTRIBUTE = 'expected_outgoing_balance';
 
-        return new Sie4Parser(
-            $logger,
-            new AccountBuilder($logger),
-            new MoneyFactory(),
-            new DimensionBuilder($logger)
-        );
-    }
+    public const PREVIOUS_INCOMING_BALANCE_ATTRIBUTE = 'previous_incoming_balance';
+
+    public const PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE = 'previous_outgoing_balance';
+
+    public const VERIFICATION_SERIES_ATTRIBUTE = 'series';
 }

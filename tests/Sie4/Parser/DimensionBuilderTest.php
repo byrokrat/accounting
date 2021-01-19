@@ -4,20 +4,28 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Parser;
 
+use Money\Money;
+
 /**
  * @covers \byrokrat\accounting\Sie4\Parser\DimensionBuilder
  */
 class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
 {
-    use \Prophecy\PhpUnit\ProphecyTrait;
-
-    public function testCreateAndGetDimension()
+    public function testDefineDimension()
     {
-        $dimensionBuilder = new DimensionBuilder(
-            $this->createMock(Logger::class)
-        );
+        $dimensionBuilder = new DimensionBuilder();
 
-        $dimensionBuilder->addDimension('1', 'foobar');
+        $dimensionBuilder->defineDimension(id: '1234', description: 'foobar');
+
+        $dimension = $dimensionBuilder->getDimension('1234');
+
+        $this->assertSame('1234', $dimension->getId());
+        $this->assertSame('foobar', $dimension->getDescription());
+    }
+
+    public function testGetUnspecifiedDimension()
+    {
+        $dimensionBuilder = new DimensionBuilder();
 
         $this->assertSame(
             $dimensionBuilder->getDimension('1'),
@@ -27,14 +35,12 @@ class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $dimensionBuilder->getDimensions());
     }
 
-    public function testCreateAndGetChildDimension()
+    public function testDefineChildDimension()
     {
-        $dimensionBuilder = new DimensionBuilder(
-            $this->createMock(Logger::class)
-        );
+        $dimensionBuilder = new DimensionBuilder();
 
-        $dimensionBuilder->addDimension('parent', '');
-        $dimensionBuilder->addDimension('child', '', 'parent');
+        $dimensionBuilder->defineDimension(id: 'parent');
+        $dimensionBuilder->defineDimension(id: 'child', parent:'parent');
 
         $this->assertSame(
             [$dimensionBuilder->getDimension('child')],
@@ -42,17 +48,15 @@ class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testCreateAndGetObject()
+    public function testDefineObject()
     {
-        $dimensionBuilder = new DimensionBuilder(
-            $this->createMock(Logger::class)
-        );
+        $dimensionBuilder = new DimensionBuilder();
 
-        $dimensionBuilder->addDimension('parent', '');
-        $dimensionBuilder->addObject('parent', 'object', '');
+        $dimensionBuilder->defineDimension(id: 'parent');
+        $dimensionBuilder->defineObject(id: 'object', parent: 'parent');
 
         $this->assertSame(
-            [$dimensionBuilder->getObject('parent', 'object')],
+            [$dimensionBuilder->getObject(id: 'object', parent: 'parent')],
             $dimensionBuilder->getDimension('parent')->getChildren()
         );
 
@@ -61,41 +65,17 @@ class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetUnspecifiedObject()
     {
-        $logger = $this->prophesize(Logger::class);
-
-        $dimensionBuilder = new DimensionBuilder(
-            $logger->reveal()
-        );
+        $dimensionBuilder = new DimensionBuilder();
 
         $this->assertSame(
-            'UNSPECIFIED',
-            $dimensionBuilder->getObject('1', '2')->getDescription()
+            [$dimensionBuilder->getObject(id: 'object', parent: 'parent')],
+            $dimensionBuilder->getDimension('parent')->getChildren()
         );
-
-        $logger->log('warning', 'Object number 1.2 not defined', 1)->shouldHaveBeenCalled();
-    }
-
-    public function testGetUnspecifiedDimension()
-    {
-        $logger = $this->prophesize(Logger::class);
-
-        $dimensionBuilder = new DimensionBuilder(
-            $logger->reveal()
-        );
-
-        $this->assertSame(
-            'UNSPECIFIED',
-            $dimensionBuilder->getDimension('100')->getDescription()
-        );
-
-        $logger->log('warning', 'Dimension number 100 not defined', 1)->shouldHaveBeenCalled();
     }
 
     public function testGetUnspecifiedReservedDimension()
     {
-        $dimensionBuilder = new DimensionBuilder(
-            $this->createMock(Logger::class)
-        );
+        $dimensionBuilder = new DimensionBuilder();
 
         $this->assertSame(
             'Anställd',
@@ -105,9 +85,7 @@ class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetUnspecifiedReservedCostDimension()
     {
-        $dimensionBuilder = new DimensionBuilder(
-            $this->createMock(Logger::class)
-        );
+        $dimensionBuilder = new DimensionBuilder();
 
         $dim = $dimensionBuilder->getDimension('2');
 
@@ -120,5 +98,118 @@ class DimensionBuilderTest extends \PHPUnit\Framework\TestCase
             [$dim],
             $dimensionBuilder->getDimension('1')->getChildren(),
         );
+    }
+
+    /**
+     * @depends testDefineDimension
+     */
+    public function testMultipleDimensionDefinitions()
+    {
+        $dimensionBuilder = new DimensionBuilder();
+
+        $dimensionBuilder->defineDimension(id: '1234', description: 'original');
+        $dimensionBuilder->defineDimension(id: '1234', description: 'edited');
+        $dimensionBuilder->defineDimension(id: '1234', parent: 'parent');
+
+        $dimension = $dimensionBuilder->getDimension('1234');
+
+        $this->assertSame(
+            'original',
+            $dimension->getDescription()
+        );
+
+        $this->assertSame(
+            [$dimension],
+            $dimensionBuilder->getDimension('parent')->getChildren(),
+        );
+    }
+
+    public function testDefineIncomingBalance()
+    {
+        $dimensionBuilder = new DimensionBuilder();
+
+        $money = Money::SEK('100');
+
+        $dimensionBuilder->defineDimension(id: '1234', incomingBalance: $money);
+
+        $dimension = $dimensionBuilder->getDimension('1234');
+
+        $this->assertSame($money, $dimension->getSummary()->getIncomingBalance());
+    }
+
+    /**
+     * @depends testDefineIncomingBalance
+     */
+    public function testIncomingBalanceIsPassedDuringDefine()
+    {
+        $dimensionBuilder = new DimensionBuilder();
+
+        $money = Money::SEK('100');
+
+        $dimensionBuilder->defineDimension(id: '1234', incomingBalance: $money);
+
+        $dimensionBuilder->defineDimension(id: '1234', description: 'desc');
+
+        $dimension = $dimensionBuilder->getDimension('1234');
+
+        $this->assertSame($money, $dimension->getSummary()->getIncomingBalance());
+    }
+
+    public function testDefineAttributes()
+    {
+        $dimensionBuilder = new DimensionBuilder();
+
+        $dimensionBuilder->defineDimension(id: '1234', attributes: ['foo' => 'foo']);
+
+        $dimensionBuilder->defineDimension(id: '1234', attributes: ['bar' => 'bar']);
+
+        $dimensionBuilder->defineDimension(id: '1234', description: 'desc');
+
+        $dimension = $dimensionBuilder->getDimension('1234');
+
+        $this->assertSame(['foo' => 'foo', 'bar' => 'bar'], $dimension->getAttributes());
+    }
+
+    public function testDefineObjectIncomingBalance()
+    {
+        $dimensionBuilder = new DimensionBuilder();
+
+        $money = Money::SEK('100');
+
+        $dimensionBuilder->defineObject(id: '1234', parent: 'foo', incomingBalance: $money);
+
+        $obj = $dimensionBuilder->getObject(id: '1234', parent: 'foo');
+
+        $this->assertSame($money, $obj->getSummary()->getIncomingBalance());
+    }
+
+    public function testDefineObjectAttributes()
+    {
+        $dimensionBuilder = new DimensionBuilder();
+
+        $dimensionBuilder->defineObject(id: '1234', parent: 'foo', attributes: ['foo' => 'foo']);
+
+        $dimensionBuilder->defineObject(id: '1234', parent: 'foo', attributes: ['bar' => 'bar']);
+
+        $dimensionBuilder->defineObject(id: '1234', parent: 'foo', description: 'desc');
+
+        $obj = $dimensionBuilder->getObject(id: '1234', parent: 'foo');
+
+        $this->assertSame(['foo' => 'foo', 'bar' => 'bar'], $obj->getAttributes());
+    }
+
+    /**
+     * @depends testGetUnspecifiedDimension
+     */
+    public function testGetDimensions()
+    {
+        $dimensionBuilder = new DimensionBuilder();
+
+        $dimensions = [
+            $dimensionBuilder->getDimension('1'),
+            $dimensionBuilder->getObject('2', '1'),
+        ];
+
+        $this->assertSame($dimensions, $dimensionBuilder->getDimensions());
     }
 }

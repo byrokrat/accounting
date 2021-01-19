@@ -23,8 +23,10 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Sie4\Writer;
 
+use byrokrat\accounting\AccountingDate;
 use byrokrat\accounting\Container;
 use byrokrat\accounting\Dimension\AccountInterface;
+use byrokrat\accounting\Sie4\SieMetaData;
 use Money\Formatter\DecimalMoneyFormatter;
 use Money\Currencies\ISOCurrencies;
 use Money\MoneyFormatter;
@@ -58,9 +60,9 @@ final class Sie4iWriter
         $this->moneyFormatter = new DecimalMoneyFormatter(new ISOCurrencies());
     }
 
-    public function generateSie(Container $container, MetaData $metaData = null): string
+    public function generateSie(Container $container, SieMetaData $metaData = null): string
     {
-        $metaData = $metaData ?: new MetaData();
+        $metaData = $metaData ?: new SieMetaData();
 
         $output = new Output();
 
@@ -72,7 +74,11 @@ final class Sie4iWriter
 
         $output->writeln('#PROGRAM %s %s', $metaData->generatingProgram, $metaData->generatingProgramVersion);
 
-        $output->writeln('#GEN %s %s', $metaData->generationDate->formatSie4(), $metaData->generatingUser);
+        $output->writeln(
+            '#GEN %s %s',
+            AccountingDate::fromString($metaData->generationDate)->formatSie4(),
+            $metaData->generatingUser
+        );
 
         $output->writeln('#FNAMN %s', $metaData->companyName);
 

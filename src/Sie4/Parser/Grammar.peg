@@ -22,559 +22,281 @@
 namespace byrokrat\accounting\Sie4\Parser;
 
 use byrokrat\accounting\AccountingDate;
+use byrokrat\accounting\MoneyFactory;
+use byrokrat\accounting\Sie4\SieMetaData;
+use byrokrat\accounting\Transaction\Transaction;
+use byrokrat\accounting\Verification\Verification;
 use Money\Currency;
 
 /**
  * Grammar for generating a SIE version 4 compliant parser
+ *
+ * Referenced rules are from the SIE specs dated 2008-09-30
  */
-grammar Grammar extends AbstractParser
+grammar Grammar
 {
-    start FILE =
-        FLAGGA_POST
-        (CHECKSUMED_SIE_CONTENT / SIE_CONTENT)
-        EMPTY_LINE*
-        _;
-
-    CHECKSUMED_SIE_CONTENT =
-        KSUMMA_START_POST
-        SIE_CONTENT
-        KSUMMA_END_POST;
-
-    SIE_CONTENT =
-        IDENTIFICATION_POST*
-        (ACCOUNT_PLAN_POST / MISPLACED_IDENTIFICATION_POST)*
-        (BALANCE_POST / MISPLACED_IDENTIFICATION_POST / MISPLACED_ACCOUNT_PLAN_POST)*;
-
-    // Flag and checksum posts
-
-    FLAGGA_POST = ROW_START 'FLAGGA' ^ flag:BOOLEAN? ROW_END {
-        if ($this->assertBool($flag)) {
-            $this->parsedAttributes['flag'] = (string)$flag;
-        }
-    };
-
-    KSUMMA_START_POST = ROW_START 'KSUMMA' ROW_END;
-
-    KSUMMA_END_POST = ROW_START 'KSUMMA' checksum:INT? ROW_END {
-        if ($this->assertInt($checksum, 'Expected checksum')) {
-            $this->parsedAttributes['checksum'] = (string)$checksum;
-            $this->getLogger()->log('notice', 'Checksum detected but currently not handled');
-        }
-    };
-
-    // Posts for identification and meta-data
-
-    MISPLACED_IDENTIFICATION_POST = IDENTIFICATION_POST {
-        $this->getLogger()->log('warning', 'Misplaced identification post');
-    };
-
-    MISPLACED_ACCOUNT_PLAN_POST = ACCOUNT_PLAN_POST {
-        $this->getLogger()->log('warning', 'Misplaced account plan post');
-    };
-
-    IDENTIFICATION_POST = ADRESS_POST
-        / BKOD_POST
-        / FNAMN_POST
-        / FNR_POST
-        / FORMAT_POST
-        / FTYP_POST
-        / GEN_POST
-        / KPTYP_POST
-        / OMFATTN_POST
-        / ORGNR_POST
-        / PROGRAM_POST
-        / PROSA_POST
-        / RAR_POST
-        / SIETYP_POST
-        / TAXAR_POST
-        / VALUTA_POST
-        / VOID_ROW;
-
-    ADRESS_POST = ROW_START 'ADRESS' ^ contact:STRING? street:STRING? postal:STRING? phone:STRING? ROW_END {
-        $this->parsedAttributes['company_address_contact'] = (string)$contact;
-        $this->parsedAttributes['company_address_street'] = (string)$street;
-        $this->parsedAttributes['company_address_postal'] = (string)$postal;
-        $this->parsedAttributes['company_address_phone'] = (string)$phone;
-    };
-
-    BKOD_POST = ROW_START 'BKOD' ^ sni:INT? ROW_END {
-        if ($this->assertInt($sni, 'Expected SNI code')) {
-            $this->parsedAttributes['company_sni_code'] = (string)$sni;
-        }
-    };
-
-    FNAMN_POST = ROW_START 'FNAMN' ^ name:STRING? ROW_END {
-        if ($this->assertString($name, 'Expected company name')) {
-            $this->parsedAttributes['company_name'] = (string)$name;
-        }
-    };
-
-    FNR_POST = ROW_START 'FNR' ^ id:STRING? ROW_END {
-        if ($this->assertString($id, 'Expected company identifier')) {
-            $this->parsedAttributes['company_id'] = (string)$id;
-        }
-    };
-
-    FORMAT_POST = ROW_START 'FORMAT' ^ charset:STRING? ROW_END {
-        if ($this->assertString($charset, 'Expected charset identifier')) {
-            if ($charset != 'PC8') {
-                $this->getLogger()->log('warning', "Unknown charset $charset defined using #FORMAT");
-            }
-
-            $this->parsedAttributes['charset'] = (string)$charset;
-        }
-    };
-
-    FTYP_POST = ROW_START 'FTYP' ^ type:STRING? ROW_END {
-        if ($this->assertString($type, 'Expected company type identifier')) {
-            $this->parsedAttributes['company_type'] = (string)$type;
-        }
-    };
-
-    GEN_POST = ROW_START 'GEN' ^ date:DATE? sign:STRING? ROW_END {
-        $this->parsedAttributes['generation_date'] = (string)$date;
-        $this->parsedAttributes['generating_user'] = strval($sign);
-    };
-
-    KPTYP_POST = ROW_START 'KPTYP' ^ type:STRING? ROW_END {
-        if ($this->assertString($type, 'Expected account plan type identifier')) {
-            $this->parsedAttributes['account_plan_type'] = (string)$type;
-        }
-    };
-
-    OMFATTN_POST = ROW_START 'OMFATTN' ^ date:DATE? ROW_END {
-        $this->parsedAttributes['period_end_date'] = (string)$date;
-    };
-
-    ORGNR_POST = ROW_START 'ORGNR' ^ number:STRING? acquisition:INT? operation:INT? ROW_END {
-        if ($this->assertString($number, 'Expected organisation number')) {
-            $this->parsedAttributes['company_org_nr'] = (string)$number;
-            $this->parsedAttributes['company_acquisition_nr'] = (string)$acquisition;
-            $this->parsedAttributes['company_operation_nr'] = (string)$operation;
-        }
-    };
-
-    PROGRAM_POST = ROW_START 'PROGRAM' ^ name:STRING? version:STRING? ROW_END {
-        if ($this->assertString($name, 'Expected name') && $this->assertString($version, 'Expected version')) {
-            $this->parsedAttributes['generating_program'] = (string)$name;
-            $this->parsedAttributes['generating_program_version'] = (string)$version;
-        }
-    };
-
-    PROSA_POST = ROW_START 'PROSA' ^ text:STRING* ROW_END {
-        $this->parsedAttributes['description'] = implode(' ', $text);
-    };
-
-    RAR_POST = ROW_START 'RAR' ^ year:INT? startDate:DATE? endDate:DATE? ROW_END {
-        if ($this->assertInt($year) && $this->assertDate($startDate) && $this->assertDate($endDate)) {
-            $this->parsedAttributes["financial_year_start[$year]"] = (string)$startDate;
-            $this->parsedAttributes["financial_year_end[$year]"] = (string)$endDate;
-        }
-    };
-
-    SIETYP_POST = ROW_START 'SIETYP' ^ ver:INT? ROW_END {
-        if ($this->assertInt($ver, 'Expected SIE version')) {
-            $this->parsedAttributes['sie_version'] = (string)$ver;
-        }
-    };
-
-    TAXAR_POST = ROW_START 'TAXAR' ^ year:INT ROW_END {
-        if ($this->assertInt($year)) {
-            $this->parsedAttributes["taxation_year"] = (string)$year;
-        }
-    };
-
-    VALUTA_POST = ROW_START 'VALUTA' ^ currency:STRING? ROW_END {
-        if ($this->assertString($currency, 'Expected currency name')) {
-            $this->parsedAttributes['currency'] = (string)$currency;
-            $this->getMoneyFactory()->setCurrency(new Currency($currency));
-        }
-    };
-
-    // Posts defining the account plan
-
-    ACCOUNT_PLAN_POST = KONTO_POST
-        / KTYP_POST
-        / ENHET_POST
-        / SRU_POST
-        / DIM_POST
-        / UNDERDIM_POST
-        / OBJEKT_POST
-        / VOID_ROW;
-
-    KONTO_POST = ROW_START 'KONTO' ^ number:STRING? desc:STRING? ROW_END {
-        if ($this->assertString($number, 'Expected account number') && $this->assertString($desc, 'Expected account description')) {
-            $this->getAccountBuilder()->addAccount($number, $desc);
-            $this->getAccountBuilder()->getAccount($number)->setAttribute('incoming_balance', '0');
-        }
-    };
-
-    KTYP_POST = ROW_START 'KTYP' ^ number:STRING? type:STRING? ROW_END {
-        if ($this->assertString($number, 'Expected account number') && $this->assertString($type, 'Expected account type identifier')) {
-            $this->getAccountBuilder()->setAccountType($number, $type);
-        }
-    };
-
-    ENHET_POST = ROW_START 'ENHET' ^ account:ACCOUNT? unit:STRING? ROW_END {
-        if ($this->assertAccount($account) && $this->assertString($unit, 'Expected unit')) {
-            $account->setAttribute('unit', $unit);
-        }
-    };
-
-    SRU_POST = ROW_START 'SRU' ^ account:ACCOUNT? sru:INT? ROW_END {
-        if ($this->assertAccount($account) && $this->assertInt($sru, 'Expected SRU code')) {
-            $account->setAttribute('sru', (string)$sru);
-        }
-    };
-
-    DIM_POST = ROW_START 'DIM' ^ dim:INT? desc:STRING? ROW_END {
-        if ($this->assertInt($dim) && $this->assertString($desc)) {
-            $this->getDimensionBuilder()->addDimension((string)$dim, $desc);
-        }
-    };
-
-    UNDERDIM_POST = ROW_START 'UNDERDIM' ^ dim:INT? desc:STRING? super:INT? ROW_END {
-        if ($this->assertInt($dim) && $this->assertString($desc) && $this->assertInt($super)) {
-            $this->getDimensionBuilder()->addDimension((string)$dim, $desc, (string)$super);
-        }
-    };
-
-    OBJEKT_POST = ROW_START 'OBJEKT' ^ dim:INT? obj:STRING? desc:STRING? ROW_END {
-        if ($this->assertInt($dim) && $this->assertString($obj) && $this->assertString($desc)) {
-            $this->getDimensionBuilder()->addObject((string)$dim, $obj, $desc);
-        }
-    };
-
-    // Posts defining balances and verifications
-
-    BALANCE_POST = IB_POST
-        / UB_POST
-        / OIB_POST
-        / OUB_POST
-        / PBUDGET_POST
-        / PSALDO_POST
-        / RES_POST
-        / VER_POST
-        / VOID_ROW;
-
-    IB_POST = ROW_START 'IB' ^ year:INT? account:ACCOUNT? balance:FLOAT? quantity:FLOAT? ROW_END {
-        if ($this->assertInt($year) && $this->assertAccount($account)) {
-            if (0 === $year && $balance) {
-                $account->setIncomingBalance($this->getMoneyFactory()->createMoney($balance));
-            }
-
-            $this->writeAttribute($account, "incoming_balance", (string)$balance, $year);
-            $this->writeAttribute($account, "incoming_quantity", (string)$quantity, $year);
-        }
-    };
-
-    UB_POST = ROW_START 'UB' ^ year:INT? account:ACCOUNT? balance:FLOAT? quantity:FLOAT? ROW_END {
-        if ($this->assertInt($year) && $this->assertAccount($account)) {
-            $this->writeAttribute($account, "outgoing_balance", (string)$balance, $year);
-            $this->writeAttribute($account, "outgoing_quantity", (string)$quantity, $year);
-        }
-    };
-
-    OIB_POST = ROW_START 'OIB' ^ year:INT? account:ACCOUNT? dims:OBJECT_LIST? balance:FLOAT? quantity:FLOAT? ROW_END {
-        if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($dims)) {
-            foreach ($dims as $dim) {
-                if (0 === $year && $balance) {
-                    $dim->setIncomingBalance($this->getMoneyFactory()->createMoney($balance));
-                }
-
-                $this->writeAttribute($dim, "incoming_balance", (string)$balance, $year);
-                $this->writeAttribute($dim, "incoming_quantity", (string)$quantity, $year);
-            }
-        }
-    };
-
-    OUB_POST = ROW_START 'OUB' ^ year:INT? account:ACCOUNT? dims:OBJECT_LIST? balance:FLOAT? quantity:FLOAT? ROW_END {
-        if ($this->assertInt($year) && $this->assertAccount($account) && $this->assertArray($dims)) {
-            foreach ($dims as $dim) {
-                $this->writeAttribute($dim, "outgoing_balance", (string)$balance, $year);
-                $this->writeAttribute($dim, "outgoing_quantity", (string)$quantity, $year);
-            }
-        }
-    };
-
-    PBUDGET_POST = ROW_START 'PBUDGET' ^ year:INT? period:DATE? account:ACCOUNT? dims:OBJECT_LIST? balance:FLOAT? quantity:FLOAT? ROW_END {
-        if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($dims)) {
-            $key = "$year.$period";
-
-            $this->writeAttribute($account, "period_budget_balance", (string)$balance, $key);
-            $this->writeAttribute($account, "period_budget_quantity", (string)$quantity, $key);
-
-            foreach ($dims as $dim) {
-                $this->writeAttribute($dim, "period_budget_balance", (string)$balance, $key);
-                $this->writeAttribute($dim, "period_budget_quantity", (string)$quantity, $key);
-            }
-        }
-    };
-
-    PSALDO_POST = ROW_START 'PSALDO' ^ year:INT? period:DATE? account:ACCOUNT? dims:OBJECT_LIST? balance:FLOAT? quantity:FLOAT? ROW_END {
-        if ($this->assertInt($year) && $this->assertDate($period) && $this->assertAccount($account) && $this->assertArray($dims)) {
-            $key = "$year.$period";
-
-            $this->writeAttribute($account, "period_balance", (string)$balance, $key);
-            $this->writeAttribute($account, "period_quantity", (string)$quantity, $key);
-
-            foreach ($dims as $dim) {
-                $this->writeAttribute($dim, "period_balance", (string)$balance, $key);
-                $this->writeAttribute($dim, "period_quantity", (string)$quantity, $key);
-            }
-        }
-    };
-
-    RES_POST = ROW_START 'RES' ^ year:INT? account:ACCOUNT? balance:FLOAT? quantity:FLOAT? ROW_END {
-        if ($this->assertInt($year) && $this->assertAccount($account)) {
-            $this->writeAttribute($account, "result_balance", (string)$balance, $year);
-            $this->writeAttribute($account, "result_quantity", (string)$quantity, $year);
-        }
-    };
-
-    VER_POST = ROW_START 'VER' ^ series:STRING? number:STRING? date:DATE? desc:STRING? regdate:DATE? sign:STRING? ROW_END SUBROW_START trans:TRANS_LIST SUBROW_END {
-        if ($this->assertString($series) && $this->assertString($number) && $this->assertDate($date)) {
-            $this->parsedItems[] = $this->createVerification(
-                $series,
-                $number,
-                AccountingDate::fromString($date),
-                $desc ?: '',
-                $regdate ? AccountingDate::fromString($regdate) : null,
-                $sign ?: '',
-                $trans
-            );
-        }
-    };
-
-    TRANS_LIST = trans:(TRANS_POST / BTRANS_POST / RTRANS_POST / UNKNOWN_POST)* {
-        return array_filter($trans);
-    };
-
-    TRANS_POST = ROW_START 'TRANS' ^ account:ACCOUNT? dims:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END {
-        if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
-            return [
-                'account' => $account,
-                'dimensions' => $dims,
-                'amount' => $amount,
-                'date' => $date ? AccountingDate::fromString($date) : null,
-                'description' => $desc,
-                'quantity' => (string)$quantity,
-                'signature' => $sign,
-            ];
-        }
-    };
-
-    BTRANS_POST = ROW_START 'BTRANS' ^ account:ACCOUNT? dims:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END {
-        if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
-            return [
-                'deleted' => true,
-                'account' => $account,
-                'dimensions' => $dims,
-                'amount' => $amount,
-                'date' => $date ? AccountingDate::fromString($date) : null,
-                'description' => $desc,
-                'quantity' => (string)$quantity,
-                'signature' => $sign,
-            ];
-        }
-    };
-
-    RTRANS_POST = ROW_START 'RTRANS' ^ account:ACCOUNT? dims:OBJECT_LIST? amount:AMOUNT? date:OPTIONAL_DATE? desc:STRING? quantity:FLOAT? sign:STRING? ROW_END TRANS_POST {
-        if ($this->assertAccount($account) && $this->assertArray($dims) && $this->assertAmount($amount)) {
-            return [
-                'added' => true,
-                'account' => $account,
-                'dimensions' => $dims,
-                'amount' => $amount,
-                'date' => $date ? AccountingDate::fromString($date) : null,
-                'description' => $desc,
-                'quantity' => (string)$quantity,
-                'signature' => $sign,
-            ];
-        }
-    };
-
-    //
-    // Unknown rows and lines
-    //
-
-    VOID_ROW = UNKNOWN_POST / INVALID_LINE / EMPTY_LINE;
-
-    INVALID_LINE = _ !'#' fields:STRING+ EOL {
-        $this->getLogger()->log('warning', 'Ignored invalid line "' . implode(' ', $fields) . '"');
-    };
-
-    UNKNOWN_POST = ROW_START !VALID_LABEL label:VALID_CHARS ^ vars:STRING* EOL {
-        $this->getLogger()->log(
-            'notice',
-            array_reduce(
-                $vars,
-                function ($carry, $var) {
-                    return "$carry \"$var\"";
-                },
-                "Ignored unknown statement: #$label"
-            )
+    start SIE_CONTENT = RESET_STATE FLAGGA_POST posts:(VALID_POST / IGNORED_CONTENT)* _ {
+        return array_filter(
+            $posts,
+            fn($post) => $post instanceof Verification
         );
     };
 
-    VALID_LABEL = 'ADRESS'
-        / 'BKOD'
-        / 'DIM'
-        / 'ENHET'
-        / 'FLAGGA'
-        / 'FNAMN'
-        / 'FNR'
-        / 'FORMAT'
-        / 'FTYP'
-        / 'GEN'
-        / 'IB'
-        / 'KONTO'
-        / 'KPTYP'
-        / 'KSUMMA'
-        / 'KTYP'
-        / 'OBJEKT'
-        / 'OIB'
-        / 'OMFATTN'
-        / 'ORGNR'
-        / 'OUB'
-        / 'PBUDGET'
-        / 'PROGRAM'
-        / 'PROSA'
-        / 'PSALDO'
-        / 'RAR'
-        / 'RES'
-        / 'SIETYP'
-        / 'SRU'
-        / 'TAXAR'
-        / 'TRANS'
-        / 'RTRANS'
-        / 'BTRANS'
-        / 'UB'
-        / 'UNDERDIM'
-        / 'VALUTA'
-        / 'VER';
+    RESET_STATE = '' {
+        $this->accounts = new AccountBuilder();
+        $this->dimensions = new DimensionBuilder();
+        $this->meta = new SieMetaData();
+        $this->moneyFactory = new MoneyFactory();
+    };
 
-    //
-    // Row utilities
-    //
+    FLAGGA_POST = ROW_START 'FLAGGA' ^ flag:STRING? ROW_END {
+        $this->meta->sieFlag = (string)$flag;
+    };
 
-    SUBROW_START = _ '{' _ EOL;
+    VALID_POST = FNAMN_POST
+        / FNR_POST
+        / FORMAT_POST
+        / GEN_POST
+        / KPTYP_POST
+        / ORGNR_POST
+        / PROGRAM_POST
+        / PROSA_POST
+        / SIETYP_POST
+        / RAR_POST
+        / TAXAR_POST
+        / VALUTA_POST
+        / KONTO_POST
+        / KTYP_POST
+        / DIM_POST
+        / UNDERDIM_POST
+        / OBJEKT_POST
+        / IB_POST
+        / UB_POST
+        / OIB_POST
+        / OUB_POST
+        / RES_POST
+        / VER_POST;
 
-    SUBROW_END = _ '}' _ EOL?;
+    FNAMN_POST = ROW_START 'FNAMN' ^ name:STRING? ROW_END {
+        $this->meta->companyName = (string)$name;
+    };
 
-    ROW_START = EMPTY_LINE* _ '#';
+    FNR_POST = ROW_START 'FNR' ^ id:STRING? ROW_END {
+        $this->meta->companyIdCode = (string)$id;
+    };
 
-    ROW_END = fields:STRING* _ EOL? {
-        foreach ($fields as $field) {
-            $this->getLogger()->log('notice', "Ignored unknown field $field at end of line");
+    FORMAT_POST = ROW_START 'FORMAT' ^ charset:STRING? ROW_END {
+        $this->meta->charset = (string)$charset;
+    };
+
+    GEN_POST = ROW_START 'GEN' ^ date:STRING? user:STRING? ROW_END {
+        $this->meta->generationDate = (string)$date;
+        $this->meta->generatingUser = (string)$user;
+    };
+
+    KPTYP_POST = ROW_START 'KPTYP' ^ type:STRING? ROW_END {
+        $this->meta->accountPlanType = (string)$type;
+    };
+
+    ORGNR_POST = ROW_START 'ORGNR' ^ number:STRING? ROW_END {
+        $this->meta->companyOrgNr = (string)$number;
+    };
+
+    PROGRAM_POST = ROW_START 'PROGRAM' ^ name:STRING? version:STRING? ROW_END {
+        $this->meta->generatingProgram = (string)$name;
+        $this->meta->generatingProgramVersion = (string)$version;
+    };
+
+    PROSA_POST = ROW_START 'PROSA' ^ text:STRING* ROW_END {
+        $this->meta->description = implode(' ', $text);
+    };
+
+    SIETYP_POST = ROW_START 'SIETYP' ^ ver:STRING? ROW_END {
+        $this->meta->sieVersion = (string)$ver;
+    };
+
+    RAR_POST = RAR_CURRENT_YEAR / RAR_PREVIOUS_YEAR;
+
+    RAR_CURRENT_YEAR = ROW_START 'RAR' CURRENT_YEAR ^ yearStart:STRING? yearEnd:STRING? ROW_END {
+        $this->meta->accountingYearStart = (string)$yearStart;
+        $this->meta->accountingYearEnd = (string)$yearEnd;
+    };
+
+    RAR_PREVIOUS_YEAR = ROW_START 'RAR' PREVIOUS_YEAR ^ yearStart:STRING? yearEnd:STRING? ROW_END {
+        $this->meta->previousAccountingYearStart = (string)$yearStart;
+        $this->meta->previousAccountingYearEnd = (string)$yearEnd;
+    };
+
+    TAXAR_POST = ROW_START 'TAXAR' ^ year:STRING? ROW_END {
+        $this->meta->taxationYear = (string)$year;
+    };
+
+    VALUTA_POST = ROW_START 'VALUTA' ^ currency:STRING? ROW_END {
+        $this->meta->currency = (string)$currency;
+        $this->moneyFactory->setCurrency(new Currency($currency));
+    };
+
+    KONTO_POST = ROW_START 'KONTO' ^ number:STRING? desc:STRING? ROW_END {
+        $this->accounts->defineAccount(id: (string)$number, description: (string)$desc);
+    };
+
+    KTYP_POST = ROW_START 'KTYP' ^ number:STRING? type:STRING? ROW_END {
+        $this->accounts->defineAccount(id: (string)$number, type: (string)$type);
+    };
+
+    DIM_POST = ROW_START 'DIM' ^ id:STRING? desc:STRING? ROW_END {
+        $this->dimensions->defineDimension(id: (string)$id, description: (string)$desc);
+    };
+
+    UNDERDIM_POST = ROW_START 'UNDERDIM' ^ id:STRING? desc:STRING? parent:STRING? ROW_END {
+        $this->dimensions->defineDimension(id: (string)$id, parent: (string)$parent, description: (string)$desc);
+    };
+
+    OBJEKT_POST = ROW_START 'OBJEKT' ^ parent:STRING? id:STRING? desc:STRING? ROW_END {
+        $this->dimensions->defineObject(id: (string)$id, parent: (string)$parent, description: (string)$desc);
+    };
+
+    IB_POST = IB_CURRENT_YEAR / IB_PREVIOUS_YEAR;
+
+    IB_CURRENT_YEAR = ROW_START 'IB' CURRENT_YEAR ^ number:STRING balance:STRING ROW_END {
+        $this->accounts->defineAccount(id: $number, incomingBalance: $this->moneyFactory->createMoney($balance));
+    };
+
+    IB_PREVIOUS_YEAR = ROW_START 'IB' PREVIOUS_YEAR ^ number:STRING balance:STRING ROW_END {
+        $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::PREVIOUS_INCOMING_BALANCE_ATTRIBUTE => $balance]);
+    };
+
+    UB_POST = UB_CURRENT_YEAR / UB_PREVIOUS_YEAR;
+
+    UB_CURRENT_YEAR = ROW_START 'UB' CURRENT_YEAR ^ number:STRING balance:STRING ROW_END {
+        $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::OUTGOING_BALANCE_ATTRIBUTE => $balance]);
+    };
+
+    UB_PREVIOUS_YEAR = ROW_START 'UB' PREVIOUS_YEAR ^ number:STRING balance:STRING ROW_END {
+        $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE => $balance]);
+    };
+
+    OIB_POST = OIB_CURRENT_YEAR / OIB_PREVIOUS_YEAR;
+
+    OIB_CURRENT_YEAR = ROW_START 'OIB' CURRENT_YEAR ^ STRING dims:OBJECT_LIST balance:STRING ROW_END {
+        foreach ($dims as list($parent, $id)) {
+            $this->dimensions->defineObject(id: $id, parent: $parent, incomingBalance: $this->moneyFactory->createMoney($balance));
         }
     };
 
-    //
-    // The type system
-    //
-
-    // Date
-
-    OPTIONAL_DATE = date:(DATE / EMPTY_STRING) {
-        return $date ?: null;
+    OIB_PREVIOUS_YEAR = ROW_START 'OIB' PREVIOUS_YEAR ^ STRING dims:OBJECT_LIST balance:STRING ROW_END {
+        foreach ($dims as list($parent, $id)) {
+            $this->dimensions->defineObject(id: $id, parent: $parent, attributes: [ParserAttributes::PREVIOUS_INCOMING_BALANCE_ATTRIBUTE => $balance]);
+        }
     };
 
-    DATE = _ date:(RAW_DATE / QUOTED_DATE) _ {
-        return $date;
+    OUB_POST = OUB_CURRENT_YEAR / OUB_PREVIOUS_YEAR;
+
+    OUB_CURRENT_YEAR = ROW_START 'OUB' CURRENT_YEAR ^ STRING dims:OBJECT_LIST balance:STRING ROW_END {
+        foreach ($dims as list($parent, $id)) {
+            $this->dimensions->defineObject(id: $id, parent: $parent, attributes: [ParserAttributes::OUTGOING_BALANCE_ATTRIBUTE => $balance]);
+        }
     };
 
-    QUOTED_DATE = '"' date:RAW_DATE '"' {
-            return $date;
+    OUB_PREVIOUS_YEAR = ROW_START 'OUB' PREVIOUS_YEAR ^ STRING dims:OBJECT_LIST balance:STRING ROW_END {
+        foreach ($dims as list($parent, $id)) {
+            $this->dimensions->defineObject(id: $id, parent: $parent, attributes: [ParserAttributes::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE => $balance]);
+        }
     };
 
-    RAW_DATE = year:([0-9] [0-9] [0-9] [0-9]) month:([0-9] [0-9])? day:([0-9] [0-9])? {
-        return implode($year) . implode((array)$month) . implode((array)$day);
+    RES_POST = RES_CURRENT_YEAR / RES_PREVIOUS_YEAR;
+
+    RES_CURRENT_YEAR = ROW_START 'RES' CURRENT_YEAR ^ number:STRING balance:STRING ROW_END {
+        $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::OUTGOING_BALANCE_ATTRIBUTE => $balance]);
     };
 
-    // Amount
-
-    AMOUNT = _ amount:(RAW_AMOUNT / QUOTED_AMOUNT) _ {
-        return $amount;
+    RES_PREVIOUS_YEAR = ROW_START 'RES' PREVIOUS_YEAR ^ number:STRING balance:STRING ROW_END {
+        $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE => $balance]);
     };
 
-    QUOTED_AMOUNT = '"' amount:RAW_AMOUNT '"' {
-        return $amount;
+    VER_POST = ROW_START 'VER' ^ series:STRING? number:STRING? date:STRING? desc:STRING? regdate:STRING? sign:STRING? ROW_END trans:TRANS_LIST {
+        return new Verification(
+            id: (string)$number,
+            transactionDate: AccountingDate::fromString((string)$date),
+            registrationDate: $regdate ? AccountingDate::fromString($regdate) : null,
+            description: (string)$desc,
+            signature: (string)$sign,
+            transactions: array_map(
+                fn($tran) => new Transaction(
+                    added: $tran['added'] ?? false,
+                    deleted: $tran['deleted'] ?? false,
+                    verificationId: (string)$number,
+                    transactionDate: AccountingDate::fromString($tran['date'] ?: (string)$date),
+                    description: $tran['desc'] ?: (string)$desc,
+                    signature: $tran['sign'] ?: (string)$sign,
+                    amount: $this->moneyFactory->createMoney($tran['amount']),
+                    account: $this->accounts->getAccount($tran['account']),
+                    dimensions: array_map(
+                        fn($def) => $this->dimensions->getObject(id: $def[1], parent: $def[0]),
+                        $tran['dims']
+                    ),
+                ),
+                $trans
+            ),
+            attributes: [ParserAttributes::VERIFICATION_SERIES_ATTRIBUTE => (string)$series],
+        );
     };
 
-    RAW_AMOUNT = negation:"-"? units:[0-9]+ "."? subunits:([0-9]? [0-9]?) {
-        return $this->getMoneyFactory()->createMoney($negation.implode($units).'.'.implode($subunits));
+    TRANS_LIST = _ '{' _ EOL trans:(TRANS_POST / ADDED_TRANS_POST / IGNORED_CONTENT)* _ '}' _ EOL? {
+        return array_filter($trans);
     };
 
-    // Account
-
-    ACCOUNT = number:STRING {
-        return $this->getAccountBuilder()->getAccount($number);
+    TRANS_POST = ROW_START label:('TRANS' / 'BTRANS') ^ account:STRING dims:OBJECT_LIST amount:STRING date:STRING? desc:STRING? STRING? sign:STRING? ROW_END {
+        return [
+            'deleted' => 'BTRANS' == $label,
+            'account' => $account,
+            'amount' => $amount,
+            'date' => $date,
+            'desc' => (string)$desc,
+            'sign' => (string)$sign,
+            'dims' => $dims,
+        ];
     };
 
-    // Object
-
-    OBJECT = super:INT obj:OBJECT_LIST_SAFE_STRING {
-        return $this->getDimensionBuilder()->getObject((string)$super, $obj);
+    ADDED_TRANS_POST = ROW_START 'RTRANS' ^ account:STRING dims:OBJECT_LIST amount:STRING date:STRING? desc:STRING? STRING? sign:STRING? ROW_END TRANS_POST {
+        return [
+            'added' => true,
+            'account' => $account,
+            'amount' => $amount,
+            'date' => $date,
+            'desc' => (string)$desc,
+            'sign' => (string)$sign,
+            'dims' => $dims,
+        ];
     };
 
-    OBJECT_LIST_SAFE_STRING = _ string:(OBJECT_ID_SAFE_CHARS / QUOTED_STRING) _ {
+    IGNORED_CONTENT = UNKNOWN_POST / EMPTY_LINE;
+
+    UNKNOWN_POST = ROW_START STRING* EOL;
+
+    ROW_START = EMPTY_LINE* _ '#';
+
+    ROW_END = fields:STRING* _ EOL?;
+
+    CURRENT_YEAR = _ '0' _;
+
+    PREVIOUS_YEAR = _ '-1' _;
+
+    OBJECT_LIST = _ '{' definitions:OBJECT_DEFINITION* '}' _ {
+        return $definitions;
+    };
+
+    OBJECT_DEFINITION = parent:OBJECT_LIST_SAFE_STRING id:OBJECT_LIST_SAFE_STRING {
+        return [$parent, $id];
+    };
+
+    OBJECT_LIST_SAFE_STRING = _ string:($(OBJECT_ID_SAFE_CHAR+) / QUOTED_STRING) _ {
         return $string;
     };
 
-    OBJECT_ID_SAFE_CHARS = chars:[a-zA-Z0-9!#$%&'()*+,-.\/:;<=>?@\[\\\]^_`|~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■]+ {
-        return implode($chars);
-    };
+    OBJECT_ID_SAFE_CHAR = ![{}] CHAR;
 
-    OBJECT_LIST = _ '{' objects:OBJECT* '}' _ {
-        return $objects;
-    };
-
-    // Float
-
-    FLOAT = _ float:(RAW_FLOAT / QUOTED_FLOAT / EMPTY_STRING) _ {
-        return $float;
-    };
-
-    QUOTED_FLOAT = '"' float:RAW_FLOAT '"' {
-        return $float;
-    };
-
-    RAW_FLOAT = int:RAW_INT '.'? trailing:[0-9]* {
-        return rtrim($int . '.' .implode($trailing), '.');
-    };
-
-    // Integer
-
-    INT = _ int:(RAW_INT / QUOTED_INT) _ {
-        return $int;
-    };
-
-    QUOTED_INT = '"' int:RAW_INT '"' {
-        return $int;
-    };
-
-    RAW_INT = negation:"-"? units:[0-9]+ {
-        return intval($negation.implode($units));
-    };
-
-    // Boolean
-
-    BOOLEAN = _ bool:(RAW_BOOLEAN / QUOTED_BOOLEAN) _ {
-        return $bool;
-    };
-
-    QUOTED_BOOLEAN = '"' bool:RAW_BOOLEAN '"' {
-        return $bool;
-    };
-
-    RAW_BOOLEAN = bool:[01] {
-        return !!$bool;
-    };
-
-    // String
-
-    STRING = _ string:(VALID_CHARS / QUOTED_STRING / EMPTY_STRING) _ {
+    STRING = _ string:($(CHAR+) / QUOTED_STRING / EMPTY_STRING) _ {
         return $string;
     };
 
@@ -582,7 +304,7 @@ grammar Grammar extends AbstractParser
         return '';
     };
 
-    QUOTED_STRING = '"' string:(ESCAPED_QUOTE / ' ' / VALID_CHARS)* '"' {
+    QUOTED_STRING = '"' string:(ESCAPED_QUOTE / ' ' / CHAR)* '"' {
         return implode($string);
     };
 
@@ -590,19 +312,11 @@ grammar Grammar extends AbstractParser
         return '"';
     };
 
-    VALID_CHARS = chars:[a-zA-Z0-9!#$%&'()*+,-.\/:;<=>?@\[\\\]^_`{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■]+ {
-        return implode($chars);
-    };
-
-    //
-    // Miscellaneous
-    //
+    CHAR = [a-zA-Z0-9!#$%&'()*+,-.\/:;<=>?@\[\\\]^_`{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■];
 
     EMPTY_LINE = _ EOL;
 
-    EOL = "\r"? "\n" {
-        $this->getLogger()->incrementLineCount();
-    };
+    EOL = "\r"? "\n";
 
     _ = (" " / "\t")*;
 }
