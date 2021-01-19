@@ -24,12 +24,28 @@ declare(strict_types=1);
 namespace byrokrat\accounting;
 
 /**
- * Basic implementation of an attributable object
+ * Basic AccountingObjectInterface implementation
  */
-trait AttributableTrait
+abstract class AbstractAccountingObject implements AccountingObjectInterface
 {
-    /** @var array<string, string> */
-    private $attributes = [];
+    /**
+     * @param array<string, string> $attributes
+     */
+    public function __construct(
+        private string $id = '',
+        private string $description = '',
+        private array $attributes = [],
+    ) {}
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
 
     public function setAttribute(string $name, string $value): void
     {

@@ -23,15 +23,13 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Dimension;
 
-use byrokrat\accounting\AttributableTrait;
+use byrokrat\accounting\AbstractAccountingObject;
 use byrokrat\accounting\Summary;
 use byrokrat\accounting\Transaction\TransactionInterface;
 use Money\Money;
 
-class Dimension implements DimensionInterface
+class Dimension extends AbstractAccountingObject implements DimensionInterface
 {
-    use AttributableTrait;
-
     /** @var array<DimensionInterface> */
     private array $children = [];
 
@@ -50,12 +48,10 @@ class Dimension implements DimensionInterface
         array $children = [],
         array $attributes = [],
     ) {
+        parent::__construct($id, $description, $attributes);
+
         foreach ($children as $child) {
             $this->addChild($child);
-        }
-
-        foreach ($attributes as $key => $value) {
-            $this->setAttribute($key, $value);
         }
 
         $this->summary = new Summary();
@@ -74,16 +70,6 @@ class Dimension implements DimensionInterface
     public function getTransactions(): array
     {
         return $this->transactions;
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function getDescription(): string
-    {
-        return $this->description;
     }
 
     public function hasChildren(): bool

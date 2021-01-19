@@ -23,8 +23,8 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Verification;
 
+use byrokrat\accounting\AbstractAccountingObject;
 use byrokrat\accounting\AccountingDate;
-use byrokrat\accounting\AttributableTrait;
 use byrokrat\accounting\Exception\InvalidArgumentException;
 use byrokrat\accounting\Exception\InvalidVerificationException;
 use byrokrat\accounting\Exception\UnbalancedVerificationException;
@@ -34,10 +34,8 @@ use byrokrat\accounting\Transaction\TransactionInterface;
 /**
  * Verification value object wrapping a set of transactions
  */
-final class Verification implements VerificationInterface
+final class Verification extends AbstractAccountingObject implements VerificationInterface
 {
-    use AttributableTrait;
-
     private Summary $summary;
     private AccountingDate $transactionDate;
     private AccountingDate $registrationDate;
@@ -49,17 +47,19 @@ final class Verification implements VerificationInterface
      * @throws UnbalancedVerificationException If verification is not balanced
      */
     public function __construct(
-        private string $id = '',
+        string $id = '',
         ?AccountingDate $transactionDate = null,
         ?AccountingDate $registrationDate = null,
-        private string $description = '',
+        string $description = '',
         private string $signature = '',
         private array $transactions = [],
         array $attributes = [],
     ) {
-        if (!empty($this->id) && !ctype_digit($this->id)) {
+        if (!empty($id) && !ctype_digit($id)) {
             throw new InvalidVerificationException('Verification id must be a numeric string');
         }
+
+        parent::__construct($id, $description, $attributes);
 
         $this->transactionDate = $transactionDate ?: AccountingDate::today();
 
@@ -88,11 +88,6 @@ final class Verification implements VerificationInterface
         }
     }
 
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
     public function getTransactionDate(): AccountingDate
     {
         return $this->transactionDate;
@@ -101,11 +96,6 @@ final class Verification implements VerificationInterface
     public function getRegistrationDate(): AccountingDate
     {
         return $this->registrationDate;
-    }
-
-    public function getDescription(): string
-    {
-        return $this->description;
     }
 
     public function getSignature(): string

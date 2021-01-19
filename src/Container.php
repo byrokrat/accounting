@@ -26,10 +26,8 @@ namespace byrokrat\accounting;
 /**
  * A queryable keeper of bookkeeping objects
  */
-final class Container implements AttributableInterface
+final class Container
 {
-    use AttributableTrait;
-
     /** @var array<AccountingObjectInterface> */
     private array $items;
 

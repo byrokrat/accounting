@@ -6,23 +6,6 @@ namespace byrokrat\accounting;
 
 class ContainerTest extends \PHPUnit\Framework\TestCase
 {
-    public function testAttributes()
-    {
-        $attributable = new Container();
-
-        $this->assertFalse($attributable->hasAttribute('does-not-exist'));
-
-        $this->assertSame('', $attributable->getAttribute('does-not-exist'));
-
-        $attributable->setAttribute('foo', 'bar');
-
-        $this->assertTrue($attributable->hasAttribute('foo'));
-
-        $this->assertSame('bar', $attributable->getAttribute('foo'));
-
-        $this->assertSame(['foo' => 'bar'], $attributable->getAttributes());
-    }
-
     public function testSimpleSelect()
     {
         $container = new Container(

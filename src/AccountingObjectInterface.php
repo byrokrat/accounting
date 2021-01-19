@@ -24,7 +24,7 @@ namespace byrokrat\accounting;
 /**
  * Common interface for accounting objects
  */
-interface AccountingObjectInterface extends AttributableInterface
+interface AccountingObjectInterface
 {
     /**
      * Get item identifier (note that uniqueness is not garantueed)
@@ -47,4 +47,26 @@ interface AccountingObjectInterface extends AttributableInterface
      * Get summary for this item (including contained items when applicable)
      */
     public function getSummary(): Summary;
+
+    /**
+     * Register attribute
+     */
+    public function setAttribute(string $key, string $value): void;
+
+    /**
+     * Check if attribute has been set
+     */
+    public function hasAttribute(string $key): bool;
+
+    /**
+     * Read registered attribute
+     */
+    public function getAttribute(string $key): string;
+
+    /**
+     * Get the array of all registered attributes
+     *
+     * @return array<string, string>
+     */
+    public function getAttributes(): array;
 }

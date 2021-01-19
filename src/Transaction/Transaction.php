@@ -23,8 +23,8 @@ declare(strict_types=1);
 
 namespace byrokrat\accounting\Transaction;
 
+use byrokrat\accounting\AbstractAccountingObject;
 use byrokrat\accounting\AccountingDate;
-use byrokrat\accounting\AttributableTrait;
 use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Exception\InvalidArgumentException;
@@ -32,11 +32,8 @@ use byrokrat\accounting\Exception\InvalidTransactionException;
 use byrokrat\accounting\Summary;
 use Money\Money;
 
-final class Transaction implements TransactionInterface
+final class Transaction extends AbstractAccountingObject implements TransactionInterface
 {
-    use AttributableTrait;
-
-    private string $id;
     private AccountingDate $transactionDate;
 
     /**
@@ -48,15 +45,18 @@ final class Transaction implements TransactionInterface
         private Money $amount,
         private string $verificationId = '0',
         ?AccountingDate $transactionDate = null,
-        private string $description = '',
+        string $description = '',
         private string $signature = '',
         private array $dimensions = [],
         array $attributes = [],
         private bool $added = false,
         private bool $deleted = false,
     ) {
-        // expected to be unique, store in property to support serialization/unserialization
-        $this->id = md5($this->verificationId . spl_object_id($this) . time());
+        parent::__construct(
+            id: md5($this->verificationId . spl_object_id($this) . time()),
+            description: $description,
+            attributes: $attributes,
+        );
 
         $this->transactionDate = $transactionDate ?: AccountingDate::today();
 
@@ -79,11 +79,6 @@ final class Transaction implements TransactionInterface
         }
     }
 
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
     public function getVerificationId(): string
     {
         return $this->verificationId;
@@ -92,11 +87,6 @@ final class Transaction implements TransactionInterface
     public function getTransactionDate(): AccountingDate
     {
         return $this->transactionDate;
-    }
-
-    public function getDescription(): string
-    {
-        return $this->description;
     }
 
     public function getSignature(): string
