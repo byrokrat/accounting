@@ -9,7 +9,6 @@ use byrokrat\accounting\Dimension\AccountInterface;
 use byrokrat\accounting\Dimension\DimensionInterface;
 use byrokrat\accounting\Exception\InvalidSieFileException;
 use byrokrat\accounting\Exception\RuntimeException;
-use byrokrat\accounting\MoneyFactory;
 use byrokrat\accounting\Sie4\SieMetaData;
 use Money\Money;
 
@@ -709,8 +708,8 @@ class Sie4ParserTest extends \PHPUnit\Framework\TestCase
 
         $account = $container->select()->account('1920');
 
-        $this->assertSame(
-            '100',
+        $this->assertEquals(
+            Money::SEK('10000'),
             $account->getAttribute(Sie4Parser::PREVIOUS_INCOMING_BALANCE_ATTRIBUTE)
         );
     }
@@ -745,13 +744,13 @@ class Sie4ParserTest extends \PHPUnit\Framework\TestCase
 
         $account = $container->select()->account('1920');
 
-        $this->assertSame(
-            '666',
+        $this->assertEquals(
+            Money::SEK('66600'),
             $account->getAttribute(Sie4Parser::OUTGOING_BALANCE_ATTRIBUTE)
         );
 
-        $this->assertSame(
-            '999',
+        $this->assertEquals(
+            Money::SEK('99900'),
             $account->getAttribute(Sie4Parser::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE)
         );
     }
@@ -770,13 +769,13 @@ class Sie4ParserTest extends \PHPUnit\Framework\TestCase
 
         $account = $container->select()->account('3000');
 
-        $this->assertSame(
-            '666',
+        $this->assertEquals(
+            Money::SEK('66600'),
             $account->getAttribute(Sie4Parser::OUTGOING_BALANCE_ATTRIBUTE)
         );
 
-        $this->assertSame(
-            '999',
+        $this->assertEquals(
+            Money::SEK('99900'),
             $account->getAttribute(Sie4Parser::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE)
         );
     }
@@ -798,19 +797,21 @@ class Sie4ParserTest extends \PHPUnit\Framework\TestCase
 
         $objA = $container->select()->dimension('10.20');
 
-        $this->assertTrue(
-            $objA->getSummary()->getIncomingBalance()->equals(Money::SEK('10000'))
+        $this->assertEquals(
+            Money::SEK('10000'),
+            $objA->getSummary()->getIncomingBalance()
         );
 
-        $this->assertSame(
-            '200',
+        $this->assertEquals(
+            Money::SEK('20000'),
             $objA->getAttribute(Sie4Parser::PREVIOUS_INCOMING_BALANCE_ATTRIBUTE)
         );
 
         $objB = $container->select()->dimension('10.30');
 
-        $this->assertTrue(
-            $objB->getSummary()->getIncomingBalance()->equals(Money::SEK('10000'))
+        $this->assertEquals(
+            Money::SEK('10000'),
+            $objB->getSummary()->getIncomingBalance()
         );
     }
 
@@ -828,13 +829,13 @@ class Sie4ParserTest extends \PHPUnit\Framework\TestCase
 
         $obj = $container->select()->dimension('10.20');
 
-        $this->assertSame(
-            '100',
+        $this->assertEquals(
+            Money::SEK('10000'),
             $obj->getAttribute(Sie4Parser::OUTGOING_BALANCE_ATTRIBUTE)
         );
 
-        $this->assertSame(
-            '200',
+        $this->assertEquals(
+            Money::SEK('20000'),
             $obj->getAttribute(Sie4Parser::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE)
         );
     }
@@ -1048,19 +1049,17 @@ class Sie4ParserTest extends \PHPUnit\Framework\TestCase
             "
         );
 
-        $moneyFactory = new MoneyFactory();
-
         $balanceAccount = $container->select()->account('1920');
 
         $this->assertEquals(
-            $moneyFactory->createMoney($balanceAccount->getAttribute(Sie4Parser::OUTGOING_BALANCE_ATTRIBUTE)),
+            $balanceAccount->getAttribute(Sie4Parser::OUTGOING_BALANCE_ATTRIBUTE),
             $balanceAccount->getSummary()->getOutgoingBalance()
         );
 
         $resultAccount = $container->select()->account('3010');
 
         $this->assertEquals(
-            $moneyFactory->createMoney($resultAccount->getAttribute(Sie4Parser::OUTGOING_BALANCE_ATTRIBUTE)),
+            $resultAccount->getAttribute(Sie4Parser::OUTGOING_BALANCE_ATTRIBUTE),
             $resultAccount->getSummary()->getOutgoingBalance()
         );
     }
@@ -1082,12 +1081,10 @@ class Sie4ParserTest extends \PHPUnit\Framework\TestCase
             "
         );
 
-        $moneyFactory = new MoneyFactory();
-
         $object = $container->select()->dimension('1.2');
 
         $this->assertEquals(
-            $moneyFactory->createMoney($object->getAttribute(Sie4Parser::OUTGOING_BALANCE_ATTRIBUTE)),
+            $object->getAttribute(Sie4Parser::OUTGOING_BALANCE_ATTRIBUTE),
             $object->getSummary()->getOutgoingBalance()
         );
     }

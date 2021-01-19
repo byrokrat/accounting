@@ -51,7 +51,7 @@ interface AccountingObjectInterface
     /**
      * Register attribute
      */
-    public function setAttribute(string $key, string $value): void;
+    public function setAttribute(string $key, mixed $value): void;
 
     /**
      * Check if attribute has been set
@@ -61,12 +61,12 @@ interface AccountingObjectInterface
     /**
      * Read registered attribute
      */
-    public function getAttribute(string $key): string;
+    public function getAttribute(string $key): mixed;
 
     /**
      * Get the array of all registered attributes
      *
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     public function getAttributes(): array;
 }

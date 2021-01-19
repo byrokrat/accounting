@@ -36,7 +36,7 @@ final class DimensionBuilder
     private array $dimensions = [];
 
     /**
-     * @param array<string, string> $attributes
+     * @param array<string, mixed> $attributes
      */
     public function defineDimension(
         string $id,
@@ -72,7 +72,7 @@ final class DimensionBuilder
     }
 
     /**
-     * @param array<string, string> $attributes
+     * @param array<string, mixed> $attributes
      */
     public function defineObject(
         string $id,

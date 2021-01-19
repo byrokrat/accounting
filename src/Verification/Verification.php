@@ -42,7 +42,7 @@ final class Verification extends AbstractAccountingObject implements Verificatio
 
     /**
      * @param array<TransactionInterface> $transactions
-     * @param array<string, string> $attributes
+     * @param array<string, mixed> $attributes
      * @throws InvalidVerificationException If data is invalid
      * @throws UnbalancedVerificationException If verification is not balanced
      */

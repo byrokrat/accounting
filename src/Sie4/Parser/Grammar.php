@@ -2598,7 +2598,7 @@ class Grammar
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$number, &$balance) {
-                $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::PREVIOUS_INCOMING_BALANCE_ATTRIBUTE => $balance]);
+                $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::PREVIOUS_INCOMING_BALANCE_ATTRIBUTE => $this->moneyFactory->createMoney($balance)]);
             });
         }
 
@@ -2733,7 +2733,7 @@ class Grammar
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$number, &$balance) {
-                $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::OUTGOING_BALANCE_ATTRIBUTE => $balance]);
+                $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::OUTGOING_BALANCE_ATTRIBUTE => $this->moneyFactory->createMoney($balance)]);
             });
         }
 
@@ -2829,7 +2829,7 @@ class Grammar
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$number, &$balance) {
-                $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE => $balance]);
+                $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE => $this->moneyFactory->createMoney($balance)]);
             });
         }
 
@@ -3075,7 +3075,7 @@ class Grammar
         if ($_success) {
             $this->value = call_user_func(function () use (&$dims, &$balance) {
                 foreach ($dims as list($parent, $id)) {
-                    $this->dimensions->defineObject(id: $id, parent: $parent, attributes: [ParserAttributes::PREVIOUS_INCOMING_BALANCE_ATTRIBUTE => $balance]);
+                    $this->dimensions->defineObject(id: $id, parent: $parent, attributes: [ParserAttributes::PREVIOUS_INCOMING_BALANCE_ATTRIBUTE => $this->moneyFactory->createMoney($balance)]);
                 }
             });
         }
@@ -3218,7 +3218,7 @@ class Grammar
         if ($_success) {
             $this->value = call_user_func(function () use (&$dims, &$balance) {
                 foreach ($dims as list($parent, $id)) {
-                    $this->dimensions->defineObject(id: $id, parent: $parent, attributes: [ParserAttributes::OUTGOING_BALANCE_ATTRIBUTE => $balance]);
+                    $this->dimensions->defineObject(id: $id, parent: $parent, attributes: [ParserAttributes::OUTGOING_BALANCE_ATTRIBUTE => $this->moneyFactory->createMoney($balance)]);
                 }
             });
         }
@@ -3322,7 +3322,7 @@ class Grammar
         if ($_success) {
             $this->value = call_user_func(function () use (&$dims, &$balance) {
                 foreach ($dims as list($parent, $id)) {
-                    $this->dimensions->defineObject(id: $id, parent: $parent, attributes: [ParserAttributes::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE => $balance]);
+                    $this->dimensions->defineObject(id: $id, parent: $parent, attributes: [ParserAttributes::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE => $this->moneyFactory->createMoney($balance)]);
                 }
             });
         }
@@ -3458,7 +3458,7 @@ class Grammar
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$number, &$balance) {
-                $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::OUTGOING_BALANCE_ATTRIBUTE => $balance]);
+                $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::OUTGOING_BALANCE_ATTRIBUTE => $this->moneyFactory->createMoney($balance)]);
             });
         }
 
@@ -3554,7 +3554,7 @@ class Grammar
 
         if ($_success) {
             $this->value = call_user_func(function () use (&$number, &$balance) {
-                $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE => $balance]);
+                $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE => $this->moneyFactory->createMoney($balance)]);
             });
         }
 

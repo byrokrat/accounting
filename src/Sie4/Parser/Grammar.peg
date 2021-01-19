@@ -163,17 +163,17 @@ grammar Grammar
     };
 
     IB_PREVIOUS_YEAR = ROW_START 'IB' PREVIOUS_YEAR ^ number:STRING balance:STRING ROW_END {
-        $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::PREVIOUS_INCOMING_BALANCE_ATTRIBUTE => $balance]);
+        $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::PREVIOUS_INCOMING_BALANCE_ATTRIBUTE => $this->moneyFactory->createMoney($balance)]);
     };
 
     UB_POST = UB_CURRENT_YEAR / UB_PREVIOUS_YEAR;
 
     UB_CURRENT_YEAR = ROW_START 'UB' CURRENT_YEAR ^ number:STRING balance:STRING ROW_END {
-        $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::OUTGOING_BALANCE_ATTRIBUTE => $balance]);
+        $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::OUTGOING_BALANCE_ATTRIBUTE => $this->moneyFactory->createMoney($balance)]);
     };
 
     UB_PREVIOUS_YEAR = ROW_START 'UB' PREVIOUS_YEAR ^ number:STRING balance:STRING ROW_END {
-        $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE => $balance]);
+        $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE => $this->moneyFactory->createMoney($balance)]);
     };
 
     OIB_POST = OIB_CURRENT_YEAR / OIB_PREVIOUS_YEAR;
@@ -186,7 +186,7 @@ grammar Grammar
 
     OIB_PREVIOUS_YEAR = ROW_START 'OIB' PREVIOUS_YEAR ^ STRING dims:OBJECT_LIST balance:STRING ROW_END {
         foreach ($dims as list($parent, $id)) {
-            $this->dimensions->defineObject(id: $id, parent: $parent, attributes: [ParserAttributes::PREVIOUS_INCOMING_BALANCE_ATTRIBUTE => $balance]);
+            $this->dimensions->defineObject(id: $id, parent: $parent, attributes: [ParserAttributes::PREVIOUS_INCOMING_BALANCE_ATTRIBUTE => $this->moneyFactory->createMoney($balance)]);
         }
     };
 
@@ -194,24 +194,24 @@ grammar Grammar
 
     OUB_CURRENT_YEAR = ROW_START 'OUB' CURRENT_YEAR ^ STRING dims:OBJECT_LIST balance:STRING ROW_END {
         foreach ($dims as list($parent, $id)) {
-            $this->dimensions->defineObject(id: $id, parent: $parent, attributes: [ParserAttributes::OUTGOING_BALANCE_ATTRIBUTE => $balance]);
+            $this->dimensions->defineObject(id: $id, parent: $parent, attributes: [ParserAttributes::OUTGOING_BALANCE_ATTRIBUTE => $this->moneyFactory->createMoney($balance)]);
         }
     };
 
     OUB_PREVIOUS_YEAR = ROW_START 'OUB' PREVIOUS_YEAR ^ STRING dims:OBJECT_LIST balance:STRING ROW_END {
         foreach ($dims as list($parent, $id)) {
-            $this->dimensions->defineObject(id: $id, parent: $parent, attributes: [ParserAttributes::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE => $balance]);
+            $this->dimensions->defineObject(id: $id, parent: $parent, attributes: [ParserAttributes::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE => $this->moneyFactory->createMoney($balance)]);
         }
     };
 
     RES_POST = RES_CURRENT_YEAR / RES_PREVIOUS_YEAR;
 
     RES_CURRENT_YEAR = ROW_START 'RES' CURRENT_YEAR ^ number:STRING balance:STRING ROW_END {
-        $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::OUTGOING_BALANCE_ATTRIBUTE => $balance]);
+        $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::OUTGOING_BALANCE_ATTRIBUTE => $this->moneyFactory->createMoney($balance)]);
     };
 
     RES_PREVIOUS_YEAR = ROW_START 'RES' PREVIOUS_YEAR ^ number:STRING balance:STRING ROW_END {
-        $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE => $balance]);
+        $this->accounts->defineAccount(id: $number, attributes: [ParserAttributes::PREVIOUS_OUTGOING_BALANCE_ATTRIBUTE => $this->moneyFactory->createMoney($balance)]);
     };
 
     VER_POST = ROW_START 'VER' ^ series:STRING? number:STRING? date:STRING? desc:STRING? regdate:STRING? sign:STRING? ROW_END trans:TRANS_LIST {

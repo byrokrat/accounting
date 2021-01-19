@@ -46,7 +46,7 @@ final class AccountBuilder
     private array $accounts = [];
 
     /**
-     * @param array<string, string> $attributes
+     * @param array<string, mixed> $attributes
      */
     public function defineAccount(
         string $id,

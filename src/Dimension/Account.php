@@ -31,7 +31,7 @@ final class Account extends Dimension implements AccountInterface
     private const VALID_TYPES = [self::TYPE_ASSET, self::TYPE_COST, self::TYPE_DEBT, self::TYPE_EARNING];
 
     /**
-     * @param array<string, string> $attributes
+     * @param array<string, mixed> $attributes
      */
     public function __construct(
         string $id,

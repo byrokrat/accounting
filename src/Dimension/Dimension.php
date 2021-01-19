@@ -40,7 +40,7 @@ class Dimension extends AbstractAccountingObject implements DimensionInterface
 
     /**
      * @param array<DimensionInterface> $children
-     * @param array<string, string> $attributes
+     * @param array<string, mixed> $attributes
      */
     public function __construct(
         private string $id,

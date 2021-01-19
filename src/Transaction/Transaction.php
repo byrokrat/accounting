@@ -38,7 +38,7 @@ final class Transaction extends AbstractAccountingObject implements TransactionI
 
     /**
      * @param array<DimensionInterface> $dimensions
-     * @param array<string, string> $attributes
+     * @param array<string, mixed> $attributes
      */
     public function __construct(
         private AccountInterface $account,

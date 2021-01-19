@@ -29,7 +29,7 @@ namespace byrokrat\accounting;
 abstract class AbstractAccountingObject implements AccountingObjectInterface
 {
     /**
-     * @param array<string, string> $attributes
+     * @param array<string, mixed> $attributes
      */
     public function __construct(
         private string $id = '',
@@ -47,7 +47,7 @@ abstract class AbstractAccountingObject implements AccountingObjectInterface
         return $this->description;
     }
 
-    public function setAttribute(string $name, string $value): void
+    public function setAttribute(string $name, mixed $value): void
     {
         $this->attributes[$name] = $value;
     }
@@ -57,7 +57,7 @@ abstract class AbstractAccountingObject implements AccountingObjectInterface
         return isset($this->attributes[$name]);
     }
 
-    public function getAttribute(string $name): string
+    public function getAttribute(string $name): mixed
     {
         return $this->attributes[$name] ?? '';
     }
